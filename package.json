@@ -1,18 +1,24 @@
 {
-  "name": "demo",
-  "version": "0.0.0",
-  "private": "true",
-  "main": "server.js",
+  "name": "keyboard-survivor",
+  "version": "1.0.0",
+  "private": true,
+  "main": "backend/server.js",
   "scripts": {
-    "test": "mocha --exit tests/*",
-    "start": "node server.js"
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "mocha": "^10.2.0",
-    "supertest": "^6.3.4"
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }
