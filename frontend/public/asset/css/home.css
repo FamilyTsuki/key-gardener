@@ -1,0 +1,101 @@
+body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+/* ===============BUTTON =============== */
+
+.start-btn {
+    padding: 10px 20px;
+    background-color: #ff5722;
+    color: #fff;
+    border-radius: 16px;
+    text-decoration: none;
+    font-size: 28px;
+    font-weight: 800;
+    transition: background-color 0.3s ease;
+}
+
+.start-btn:hover {
+    background-color: #ff7043;
+}
+
+/* ===============GLOBAL =============== */
+
+.first-home-img {
+    width: 40vw;
+    height: 40vw;
+    margin: 0;
+
+    object-fit: cover;
+    border-radius: 100px;
+    padding: 20px;
+}
+
+.home-title {
+    font-size: 90px;
+    font-weight: 800;
+    margin: 0;
+}
+
+/* ===============HOME PAGE 1 =============== */
+
+.home-contaner-1 {
+    display: flex;
+    flex-direction: row;
+    padding: 0 5vw;
+    height: 90dvh;
+    align-items: center;
+}
+
+.home-description {
+    font-size: 22px;
+    font-weight: 400;
+}
+
+.home-presantation-container {
+    display: flex;
+    flex-direction: column;
+    width: 40vw;
+    margin: 0;
+}
+
+/* ===============HOME PAGE 2 =============== */
+
+.home-contaner-2 {
+    display: flex;
+    flex-direction: row;
+    padding: 0 5vw;
+    height: 100dvh;
+    align-items: center;
+}
+
+.home-info-container {
+    display: flex;
+    flex-direction: column;
+    width: 40vw;
+    margin: 0;
+    text-align: right;
+}
+
+.home-info {
+    font-size: 22px;
+    font-weight: 400;
+}
+
+/* ===============FOOTER =============== */
+
+.home-footer {
+    height: 100dvh;
+    background-color: #000;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

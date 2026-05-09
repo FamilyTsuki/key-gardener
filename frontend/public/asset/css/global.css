@@ -1,0 +1,19 @@
+:root {
+    /* Define global design tokens here */
+    --primary-color: #f39c12;
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --font-main: "Inter", sans-serif;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    max-width: 100vw;
+    height: 100dvh;
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}

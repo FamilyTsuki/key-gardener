@@ -1,0 +1,16 @@
+nav {
+    height: 10dvh;
+    background-color: #000;
+    text-align: center;
+}
+
+nav a {
+    color: var(--primary-color);
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
