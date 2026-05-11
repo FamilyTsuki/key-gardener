@@ -2,8 +2,11 @@ export default class Navbar {
     static getHtml() {
         return `
             <nav>
-                <a href="/" data-link>Home</a> |
-                <a href="/hub" data-link>Community Hub</a>
+                <div class="nav-page">
+                    <a href="/" data-link>Home</a>
+                    <a href="/hub" data-link>Community Hub</a>
+                </div>
+                <a href="/login" data-link class="login">Login</a>
             </nav>
         `;
     }

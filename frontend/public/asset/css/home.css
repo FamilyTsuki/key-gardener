@@ -4,6 +4,12 @@ body {
     padding: 0;
     background-color: #1a1a1a;
     color: #fff;
+    position: relative;
+}
+
+.content {
+    position: relative;
+    z-index: 1;
 }
 
 /* ===============BUTTON =============== */
@@ -90,7 +96,7 @@ body {
 
 .home-footer {
     height: 100dvh;
-    background-color: #000;
+    background-color: #00000082;
     text-align: center;
     display: flex;
     align-items: center;
