@@ -1,0 +1,94 @@
+#app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90dvh;
+}
+
+.register-container {
+    width: min(420px, 95vw);
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+}
+
+.register-container h2 {
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    margin: 0;
+    letter-spacing: 0.04em;
+    color: #fff;
+}
+
+.register-container form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.register-input {
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    box-sizing: border-box;
+    transition:
+        border-color 0.22s ease,
+        box-shadow 0.22s ease,
+        background 0.22s ease;
+}
+
+.register-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.register-input:focus {
+    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 4px rgba(243, 156, 18, 0.14);
+}
+
+button.register-btn {
+    width: 100%;
+    padding: 16px 18px;
+    border: none;
+    border-radius: 16px;
+    background-color: var(--primary-color);
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+button.register-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+@media (max-width: 600px) {
+    .register-container {
+        padding: 28px 20px;
+        gap: 18px;
+    }
+
+    .register-input {
+        padding: 14px 16px;
+    }
+
+    button.register-btn {
+        padding: 14px;
+    }
+}

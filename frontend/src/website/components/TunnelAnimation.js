@@ -3,10 +3,6 @@ import { gsap } from "/node_modules/gsap/index.js";
 import { ScrollTrigger } from "/node_modules/gsap/ScrollTrigger.js";
 
 export class TunnelAnimation {
-    /**
-     * Initializes the 3D tunnel animation and binds it to scroll.
-     * @param {HTMLElement} containerElement - The DOM element to append the canvas to.
-     */
     static init(containerElement) {
         gsap.registerPlugin(ScrollTrigger);
 
