@@ -1,50 +1,63 @@
 import { AuthService } from "../services/auth.service.js";
+import { el } from "../utils/DOMBuilder.js";
+import { FlashMessageManager } from "../utils/FlashMessageManager.js";
+
 export default class Navbar {
-    static async getHtml() {
-        let loginLink = `<a href="/login" data-link class="login">Login</a>`;
-
-        if (AuthService.isAuthenticated()) {
-            loginLink = `
-                <div class="nav-user">
-                    <span id="nav-username"></span>
-                    <button id="logout-btn" class="nav-logout">Logout</button>
-                </div>
-            `;
-        }
-
-        return `
-            <nav>
-                <div class="nav-page">
-                    <a href="/" data-link>Home</a>
-                    <a href="/hub" data-link>Community Hub</a>
-                </div>
-                ${loginLink}
-            </nav>
-        `;
-    }
-
     static async render() {
         const container = document.getElementById("nav-container");
-        if (container) {
-            container.innerHTML = await this.getHtml();
+        if (!container) return;
+
+        let userComponent = el("a", { href: "/login", dataset: { link: true }, className: "login" }, "Login");
+
+        if (AuthService.isAuthenticated()) {
+            const logoutBtn = el("button", { 
+                id: "logout-btn", 
+                className: "nav-logout", 
+                onclick: () => {
+                    AuthService.logout();
+                    Navbar.render();
+                    history.pushState(null, null, "/");
+                    window.dispatchEvent(new Event("popstate"));
+                    FlashMessageManager.show("You have been logged out.", "success");
+                } 
+            }, "Logout");
+            
+            this.usernameSpan = el("span", { id: "nav-username" });
+
+            userComponent = el("div", { className: "nav-user" },
+                this.usernameSpan,
+                logoutBtn
+            );
+        }
+
+        const nav = el("nav", {},
+            el("div", { className: "nav-page" },
+                el("a", { href: "/", dataset: { link: true } }, "Home"),
+                el("a", { href: "/hub", dataset: { link: true } }, "| Community Hub")
+            ),
+            userComponent
+        );
+
+        container.innerHTML = "";
+        container.appendChild(nav);
+
+        if (AuthService.isAuthenticated()) {
             await this.updateUserInfo();
-            this.addListeners();
         }
     }
 
     static async updateUserInfo() {
-        const usernameElement = document.getElementById("nav-username");
-        if (!usernameElement) {
-            return;
-        }
+        if (!this.usernameSpan) return;
 
         try {
             const user = await AuthService.getCurrentUser();
-            usernameElement.textContent = user.username;
+            this.usernameSpan.textContent = user.username;
         } catch (error) {
             console.error("Navbar failed to load user data:", error);
             AuthService.logout();
-            window.location.reload();
+            Navbar.render();
+            history.pushState(null, null, "/");
+            window.dispatchEvent(new Event("popstate"));
         }
     }
 }

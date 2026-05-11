@@ -43,11 +43,9 @@ export default class Router {
         }
 
         const view = new match.view();
+        const appContainer = document.querySelector("#app");
 
-        document
-            .querySelectorAll("link[data-dynamic-css]")
-            .forEach((link) => link.remove());
-
+        const oldLinks = document.querySelectorAll("link[data-dynamic-css]");
         const cssFiles = view.getCss();
         const loadStyles = cssFiles.map((cssPath) => {
             return new Promise((resolve, reject) => {
@@ -66,15 +64,14 @@ export default class Router {
         try {
             await Promise.all(loadStyles);
         } catch (error) {
-            console.error(error);
+            console.error("Erreur de chargement CSS:", error);
         }
 
-        const appContainer = document.querySelector("#app");
         if (appContainer) {
             appContainer.innerHTML = "";
             const node = await view.render();
             appContainer.appendChild(node);
-            
+            oldLinks.forEach((link) => link.remove());
             if (typeof view.init === "function") {
                 await view.init();
             }

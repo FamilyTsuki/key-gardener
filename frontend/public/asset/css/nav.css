@@ -1,5 +1,7 @@
 nav {
-    position: relative;
+    position: fixed;
+    top: 0;
+    width: 100%;
     z-index: 10;
     display: flex;
     height: 10dvh;
@@ -7,6 +9,7 @@ nav {
     text-align: center;
     align-items: center;
     justify-content: space-around;
+    font-size: 25px;
 }
 
 nav a {
@@ -14,6 +17,7 @@ nav a {
     text-decoration: none;
     margin: 0 15px;
     font-weight: bold;
+    
 }
 
 nav a:hover {
