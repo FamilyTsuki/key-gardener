@@ -1,7 +1,12 @@
 nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
     height: 10dvh;
     background-color: #000;
     text-align: center;
+    align-items: center;
+    justify-content: space-around;
 }
 
 nav a {
@@ -13,4 +18,15 @@ nav a {
 
 nav a:hover {
     text-decoration: underline;
+}
+.nav-page {
+    display: inline-block;
+}
+
+.login {
+    padding: 4px 30px;
+    background-color: var(--primary-color);
+    color: #000;
+    border-radius: 15px;
+    font-size: 35px;
 }
