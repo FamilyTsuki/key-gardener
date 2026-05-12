@@ -1,7 +1,7 @@
-import AbstractView from "./AbstractView.js";
+import AbstractView from "../../core/views/AbstractView.js";
 import { TunnelAnimation } from "../components/TunnelAnimation.js";
-import { AuthService } from "../services/auth.service.js";
-import { el } from "../utils/DOMBuilder.js";
+import { AuthService } from "../../core/services/auth.service.js";
+import { el } from "../../core/utils/DOMBuilder.js";
 
 export default class HomeView extends AbstractView {
     constructor(params) {
@@ -61,3 +61,4 @@ export default class HomeView extends AbstractView {
         return ["/asset/css/home.css"];
     }
 }
+

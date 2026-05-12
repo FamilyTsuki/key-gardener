@@ -18,4 +18,7 @@ export default class AbstractView {
     }
 
     async init() {}
+
+    destroy() {
+    }
 }
