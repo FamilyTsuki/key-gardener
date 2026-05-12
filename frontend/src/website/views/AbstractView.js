@@ -1,3 +1,5 @@
+import { el } from "../utils/DOMBuilder.js";
+
 export default class AbstractView {
     constructor(params) {
         this.params = params;
@@ -7,8 +9,8 @@ export default class AbstractView {
         document.title = title;
     }
 
-    async getHtml() {
-        return "";
+    async render() {
+        return el("div", {}, "Empty View");
     }
 
     getCss() {

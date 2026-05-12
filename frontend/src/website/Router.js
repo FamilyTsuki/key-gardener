@@ -1,11 +1,17 @@
 import HomeView from "./views/HomeView.js";
 import HubView from "./views/HubView.js";
+import LoginView from "./views/LoginView.js";
+import RegisterView from "./views/RegisterView.js";
+import SaveView from "./views/SaveView.js";
 
 export default class Router {
     constructor() {
         this.routes = [
             { path: "/", view: HomeView },
             { path: "/hub", view: HubView },
+            { path: "/login", view: LoginView },
+            { path: "/register", view: RegisterView },
+            { path: "/save", view: SaveView },
         ];
 
         window.addEventListener("popstate", () => {
@@ -39,23 +45,35 @@ export default class Router {
         }
 
         const view = new match.view();
+        const appContainer = document.querySelector("#app");
 
-        document
-            .querySelectorAll("link[data-dynamic-css]")
-            .forEach((link) => link.remove());
-
+        const oldLinks = document.querySelectorAll("link[data-dynamic-css]");
         const cssFiles = view.getCss();
-        cssFiles.forEach((cssPath) => {
-            const linkElement = document.createElement("link");
-            linkElement.rel = "stylesheet";
-            linkElement.href = cssPath;
-            linkElement.setAttribute("data-dynamic-css", "true");
-            document.head.appendChild(linkElement);
+        const loadStyles = cssFiles.map((cssPath) => {
+            return new Promise((resolve, reject) => {
+                const linkElement = document.createElement("link");
+                linkElement.rel = "stylesheet";
+                linkElement.href = cssPath;
+                linkElement.setAttribute("data-dynamic-css", "true");
+                
+                linkElement.onload = () => resolve();
+                linkElement.onerror = () => reject(new Error(`Failed to load CSS: ${cssPath}`));
+                
+                document.head.appendChild(linkElement);
+            });
         });
 
-        const appContainer = document.querySelector("#app");
+        try {
+            await Promise.all(loadStyles);
+        } catch (error) {
+            console.error("Erreur de chargement CSS:", error);
+        }
+
         if (appContainer) {
-            appContainer.innerHTML = await view.getHtml();
+            appContainer.innerHTML = "";
+            const node = await view.render();
+            appContainer.appendChild(node);
+            oldLinks.forEach((link) => link.remove());
             if (typeof view.init === "function") {
                 await view.init();
             }
