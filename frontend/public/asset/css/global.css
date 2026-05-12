@@ -1,6 +1,5 @@
 :root {
-    /* Define global design tokens here */
-    --primary-color: #f39c12;
+    --primary-color: #3ff312;
     --bg-color: #1a1a1a;
     --text-color: #ffffff;
     --font-main: "Inter", sans-serif;
@@ -20,6 +19,7 @@ body {
 #app {
     position: relative;
     z-index: 1;
+    margin-top: 10dvh;
 }
 
 #bg-canvas {

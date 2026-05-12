@@ -1,0 +1,98 @@
+#flash-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    pointer-events: none; /* Let clicks pass through empty space */
+}
+
+.flash-message {
+    pointer-events: auto; /* Re-enable clicks on the message itself */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 280px;
+    max-width: 400px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #333;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: inherit;
+    font-size: 14px;
+    will-change: transform, opacity;
+    animation: flashSlideIn 0.3s ease-out forwards;
+}
+
+.flash-success {
+    background: #28a745;
+    border-left: 4px solid #1e7e34;
+}
+
+.flash-error {
+    background: #dc3545;
+    border-left: 4px solid #bd2130;
+}
+
+.flash-warning {
+    background: #ffc107;
+    color: #333;
+    border-left: 4px solid #d39e00;
+}
+
+.flash-text {
+    flex-grow: 1;
+    margin-right: 12px;
+}
+
+.flash-close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.flash-close:hover {
+    opacity: 1;
+}
+
+.flash-close-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.flash-hiding {
+    animation: flashSlideOut 0.4s ease-in forwards !important;
+}
+
+@keyframes flashSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes flashSlideOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}

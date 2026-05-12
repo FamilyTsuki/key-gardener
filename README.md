@@ -16,5 +16,14 @@
 - Node.js (v14+)
 - PostgreSQL
 
+<button id="logout-btn" class="nav-logout">Logout</button>
 
-MIT
+static addListeners() {
+const logoutBtn = document.getElementById("logout-btn");
+if (logoutBtn) {
+logoutBtn.addEventListener("click", () => {
+AuthService.logout();
+window.location.href = "/";
+});
+}
+}

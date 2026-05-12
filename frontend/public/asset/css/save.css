@@ -1,0 +1,24 @@
+#app {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    width: 100dvw;
+    height: 100dvh;
+}
+
+.save-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50dvw;
+    height: 70dvh;
+    gap: 3dvh;
+}
+
+.save-content {
+    background-color: red;
+    width: 100%;
+    height: 15vh;
+}
