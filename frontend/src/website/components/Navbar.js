@@ -8,6 +8,7 @@ export default class Navbar {
         if (!container) return;
 
         let userComponent = el("a", { href: "/login", dataset: { link: true }, className: "login" }, "Login");
+        let saveComponent = null;
 
         if (AuthService.isAuthenticated()) {
             const logoutBtn = el("button", { 
@@ -28,12 +29,15 @@ export default class Navbar {
                 this.usernameSpan,
                 logoutBtn
             );
+            saveComponent = el("a", { href: "/save", dataset: { link: true }, className: "save" }, "| Save");
+            
         }
 
         const nav = el("nav", {},
             el("div", { className: "nav-page" },
                 el("a", { href: "/", dataset: { link: true } }, "Home"),
-                el("a", { href: "/hub", dataset: { link: true } }, "| Community Hub")
+                el("a", { href: "/hub", dataset: { link: true } }, "| Community Hub"),
+                saveComponent
             ),
             userComponent
         );

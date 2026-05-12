@@ -19,6 +19,7 @@ body {
 #app {
     position: relative;
     z-index: 1;
+    margin-top: 10dvh;
 }
 
 #bg-canvas {

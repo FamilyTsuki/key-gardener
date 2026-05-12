@@ -2,6 +2,7 @@ import HomeView from "./views/HomeView.js";
 import HubView from "./views/HubView.js";
 import LoginView from "./views/LoginView.js";
 import RegisterView from "./views/RegisterView.js";
+import SaveView from "./views/SaveView.js";
 
 export default class Router {
     constructor() {
@@ -10,6 +11,7 @@ export default class Router {
             { path: "/hub", view: HubView },
             { path: "/login", view: LoginView },
             { path: "/register", view: RegisterView },
+            { path: "/save", view: SaveView },
         ];
 
         window.addEventListener("popstate", () => {

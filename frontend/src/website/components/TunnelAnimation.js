@@ -22,7 +22,17 @@ export class TunnelAnimation {
         const positions = new Float32Array(particleCount * 3);
 
         for (let i = 0; i < particleCount * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 200;
+            switch (i % 3) {
+                case 0:
+                    positions[i] = (Math.random() - 0.5) * 200;
+                    break;
+                case 1:
+                    positions[i] = (Math.random() - 0.5) * 600;
+                    break;
+                case 2:
+                    positions[i] = (Math.random() - 0.5) * 200;
+                    break;
+            }
         }
 
         geometry.setAttribute(
