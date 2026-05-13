@@ -12,26 +12,16 @@ export default class GameView extends AbstractView {
     }
 
     async render() {
-        this.canvas = el("canvas", { className: "game-canvas" });
+        this.canvas = el("canvas", {
+            id: "game-canvas",
+            className: "game-canvas",
+        });
         return el("div", { className: "game-container" }, this.canvas);
     }
 
     async init() {
-        this.engine = new GameEngine(this.canvas);
-        
-        this.engine.addEntity({
-            x: window.innerWidth / 2,
-            y: window.innerHeight / 2,
-            radius: 50,
-            update: function(dt) {
-            },
-            draw: function(ctx) {
-                ctx.fillStyle = "#3ff312";
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        });
+        this.engine = new GameEngine();
+        await this.engine.init();
 
         this.engine.start();
     }
@@ -46,4 +36,3 @@ export default class GameView extends AbstractView {
         return ["/asset/css/game.css"];
     }
 }
-
