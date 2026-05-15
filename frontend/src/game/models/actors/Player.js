@@ -18,10 +18,9 @@ export default class Player extends Actor {
         fireballModel,
         enemiesManager
     ) {
-        const spacing = 3.2;
         const position = {
-            x: rawPosition.x * spacing,
-            y: rawPosition.y * spacing,
+            x: rawPosition.x,
+            y: rawPosition.y,
             z: rawPosition.z,
         };
 
@@ -37,6 +36,11 @@ export default class Player extends Actor {
 
         this.targetPosition = { x: position.x, y: position.y, z: position.z };
         this.speed = 0.1;
+        this.spacingX = 3.2;
+        this.spacingZ = 3.2;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.offsetZ = 0;
 
         this.mesh = new THREE.Group();
         this.scene = scene;
@@ -114,27 +118,24 @@ export default class Player extends Actor {
         const dx = this.targetPosition.x - this.x;
         const dy = this.targetPosition.y - this.y;
         const currentDist = Math.sqrt(dx * dx + dy * dy);
-        const spacing = 3.2;
 
         this.x += dx * this.speed;
         this.y += dy * this.speed;
         this.#wordSpells.forEach((spell) => {
             if (spell.update) {
-                // On passe un deltaTime approximatif (16.6ms pour 60fps)
-                // Ou tu peux passer deltaTime en argument de la fonction update(dt)
                 spell.update(16.6);
             }
         });
         if (this.mesh && this.playerModel) {
-            this.mesh.position.set(this.x, 0, this.y);
+            const worldCurrentX = this.x * this.spacingX + this.offsetX;
+            const worldCurrentZ = this.y * this.spacingZ + this.offsetZ;
+            this.mesh.position.set(worldCurrentX, this.offsetY, worldCurrentZ);
 
             if (currentDist > 0.01) {
-                const worldTargetX = this.targetPosition.x * spacing;
-                const worldTargetZ = this.targetPosition.y * spacing;
+                const worldTargetX = this.targetPosition.x * this.spacingX + this.offsetX;
+                const worldTargetZ = this.targetPosition.y * this.spacingZ + this.offsetZ;
 
-                this.mesh.position.set(this.x * spacing, 0, this.y * spacing);
-
-                this.mesh.lookAt(worldTargetX, 0, worldTargetZ);
+                this.mesh.lookAt(worldTargetX, this.offsetY, worldTargetZ);
 
                 const progression =
                     this.totalJumpDist > 0

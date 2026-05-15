@@ -1,7 +1,6 @@
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import Game from "../systems/Game.js";
-import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
+import { WorldPhase } from "./WorldPhase.js";
+
 export class GameEngine {
     constructor() {
         this.canvas = document.getElementById("game-canvas");
@@ -26,45 +25,33 @@ export class GameEngine {
 
         this.isRunning = false;
         this.lastTime = 0;
-        this.myGame = null;
+        this.gamePhase = null;
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-        this.scene.add(ambientLight);
-        const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
-        sunLight.position.set(10, 20, 10);
-        this.scene.add(sunLight);
-        const fillLight = new THREE.PointLight(0x0088ff, 0.5);
-
-        fillLight.position.set(-10, 10, -10);
-        this.scene.add(fillLight);
         this.resize();
+
         window.addEventListener("resize", () => this.resize());
-
         window.addEventListener("keydown", (e) => {
-            const keyName = e.key.toUpperCase();
-            const keyTile = this.myGame.keyboard.find(keyName);
-            if (keyTile) keyTile.isPressed = true;
-
-            if (this.myGame.player) {
-                const target = this.myGame.keyboard.find(keyName);
-
-                if (target) {
-                    this.myGame.enemies.updatePath(
-                        target.key,
-                        this.myGame.keyboard
-                    );
-
-                    this.myGame.player.move({
-                        x: target.rawPosition.x,
-                        y: target.rawPosition.y,
-                    });
-                }
+            if (this.gamePhase) {
+                this.gamePhase.handleKeyDown(e);
             }
         });
     }
 
     async init() {
-        this.myGame = await Game.init(this.scene, KEYBOARD_LAYOUT);
+        // Start the game with WorldPhase
+        await this.setPhase(new WorldPhase(this));
+    }
+
+    async setPhase(newPhase) {
+        if (this.gamePhase && this.gamePhase.cleanup) {
+            this.gamePhase.cleanup();
+        }
+        
+        this.gamePhase = newPhase;
+        
+        if (this.gamePhase.init) {
+            await this.gamePhase.init();
+        }
     }
 
     resize() {
@@ -105,52 +92,28 @@ export class GameEngine {
     }
 
     loop(currentTime) {
-        this.myGame.update();
-
         if (!this.isRunning) return;
-        if (!this.renderer || !this.myGame?.player) return;
 
         const deltaTime = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
 
-        this.update(deltaTime);
+        if (this.gamePhase) {
+            this.gamePhase.update(deltaTime);
+            this.gamePhase.draw();
+        }
+
         this.render();
 
         requestAnimationFrame((time) => this.loop(time));
-
-        this.myGame.player.update();
-
-        if (this.myGame.player.mesh) {
-            const spacing = 3.2;
-
-            const targetX = this.myGame.player.position.x;
-            const targetY = this.myGame.player.position.y;
-
-            this.myGame.player.mesh.position.set(
-                targetX * spacing,
-                1.5,
-                targetY * spacing
-            );
-        }
-        if (this.myGame && this.myGame.keyboard) {
-            this.myGame.keyboard.keyboardLayout.forEach((tile) => {
-                const isPlayerOnTile =
-                    Math.abs(this.myGame.player.position.x * 3.2 - tile.x) <
-                        0.4 &&
-                    Math.abs(this.myGame.player.position.y * 3.2 - tile.y) <
-                        0.4;
-
-                tile.isPressed = isPlayerOnTile;
-            });
-
-            this.myGame.keyboard.update();
-        }
     }
 
-    update(deltaTime) {}
-
     render() {
-        if (!this.renderer || !this.scene || !this.camera) return;
-        this.renderer.render(this.scene, this.camera);
+        if (!this.renderer || !this.scene) return;
+        
+        const activeCamera = (this.gamePhase && this.gamePhase.camera) ? this.gamePhase.camera : this.camera;
+        
+        if (!activeCamera) return;
+        
+        this.renderer.render(this.scene, activeCamera);
     }
 }
