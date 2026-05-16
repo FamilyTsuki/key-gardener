@@ -6,11 +6,11 @@
     flex-direction: column;
     gap: 10px;
     z-index: 9999;
-    pointer-events: none; /* Let clicks pass through empty space */
+    pointer-events: none;
 }
 
 .flash-message {
-    pointer-events: auto; /* Re-enable clicks on the message itself */
+    pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;

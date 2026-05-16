@@ -1,20 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Keyboard Survivor</title>
+        <link
+            rel="icon"
+            href="/asset/img/favicon.jpg"
+            sizes="32x32"
+            type="image/jpg"
+        />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keyboard Survivor</title>
-    <link rel="icon" href="/asset/img/favicon.jpg" sizes="32x32" type="image/jpg">
+        <link rel="stylesheet" href="/asset/css/global.css" />
+        <link rel="stylesheet" href="/asset/css/nav.css" />
+        <link rel="stylesheet" href="/asset/css/flash.css" />
 
-    <link rel="stylesheet" href="/asset/css/global.css">
-    <link rel="stylesheet" href="/asset/css/nav.css">
-    <link rel="stylesheet" href="/asset/css/flash.css">
-</head>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "/node_modules/three/build/three.module.js",
+                    "three/addons/": "/node_modules/three/examples/jsm/",
+                    "three/examples/jsm/": "/node_modules/three/examples/jsm/"
+                }
+            }
+        </script>
+    </head>
 
-<body>
-    <div id="nav-container"></div>
-    <div id="app"></div>
-    <script type="module" src="/src/website/app.js"></script>
-</body>
+    <body>
+        <div id="nav-container"></div>
+        <div id="app"></div>
+        <script type="module" src="/src/main.js"></script>
+    </body>
 </html>

@@ -1,0 +1,104 @@
+import * as THREE from "three";
+import DamageObject from "./DamageObject.js";
+
+export default class Bonk extends DamageObject {
+    constructor(position, size, damage, scene, spacing) {
+        super(position, size, damage);
+
+        this.timer = 0;
+        this.isAttacking = false;
+        this.duration = 1000;
+        this.attackWindow = 200;
+        this.spacing = spacing;
+        const geoWidth = size.width * spacing * 0.9;
+        const geoHeight = size.height * spacing * 0.9;
+        this.bonkSound = new Audio("/asset/game_assets/sounds/bonk.wav");
+        this.bonkSound.volume = 0.5;
+        const geometry = new THREE.PlaneGeometry(geoWidth, geoHeight);
+        this.material = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            transparent: true,
+            opacity: 0.3,
+            side: THREE.DoubleSide,
+        });
+
+        this.mesh = new THREE.Mesh(geometry, this.material);
+
+        this.mesh.position.set(position.x * spacing, 1.2, position.y * spacing);
+        this.mesh.rotation.x = -Math.PI / 2;
+
+        scene.add(this.mesh);
+    }
+
+    update(deltaTime, player) {
+        this.timer += deltaTime;
+
+        if (this.timer < this.duration) {
+            this.isAttacking = false;
+            this.material.opacity = 0.3;
+            this.material.color.set(0xff0000);
+        } else if (this.timer < this.duration + this.attackWindow) {
+            if (!this.isAttacking) {
+                this.isAttacking = true;
+                this.material.opacity = 0.8;
+                this.material.color.set(0xffffff);
+                this.bonkSound.play();
+                if (typeof window.startShake === "function") {
+                    window.startShake(1.5);
+                } else {
+                    console.warn(
+                        "window.startShake n'est pas encore définie !"
+                    );
+                }
+                if (this.checkCollision(player)) {
+                    player.damage(this.damage);
+                }
+            }
+        } else {
+            this.isDead = true;
+            if (this.mesh) {
+                this.mesh.parent.remove(this.mesh);
+                this.mesh.geometry.dispose();
+                this.material.dispose();
+            }
+        }
+    }
+
+    draw(ctx) {
+        ctx.save();
+        if (!this.isAttacking) {
+            ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 2;
+            ctx.fillRect(
+                this.position.x,
+                this.position.y,
+                this.size.width,
+                this.size.height
+            );
+            ctx.strokeRect(
+                this.position.x,
+                this.position.y,
+                this.size.width,
+                this.size.height
+            );
+        } else {
+            ctx.fillStyle = "white";
+            ctx.fillRect(
+                this.position.x,
+                this.position.y,
+                this.size.width,
+                this.size.height
+            );
+            ctx.fillStyle = "red";
+            ctx.globalAlpha = 0.8;
+            ctx.fillRect(
+                this.position.x,
+                this.position.y,
+                this.size.width,
+                this.size.height
+            );
+        }
+        ctx.restore();
+    }
+}
