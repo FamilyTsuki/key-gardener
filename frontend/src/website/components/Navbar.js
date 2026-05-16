@@ -1,6 +1,6 @@
-import { AuthService } from "../services/auth.service.js";
-import { el } from "../utils/DOMBuilder.js";
-import { FlashMessageManager } from "../utils/FlashMessageManager.js";
+import { AuthService } from "../../core/services/auth.service.js";
+import { el } from "../../core/utils/DOMBuilder.js";
+import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 
 export default class Navbar {
     static async render() {
@@ -65,3 +65,4 @@ export default class Navbar {
         }
     }
 }
+

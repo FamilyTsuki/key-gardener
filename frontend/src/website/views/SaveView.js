@@ -1,5 +1,5 @@
-import AbstractView from "./AbstractView.js";
-import { el } from "../utils/DOMBuilder.js";
+import AbstractView from "../../core/views/AbstractView.js";
+import { el } from "../../core/utils/DOMBuilder.js";
 
 export default class SaveView extends AbstractView {
     constructor(params) {

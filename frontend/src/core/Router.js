@@ -1,8 +1,9 @@
-import HomeView from "./views/HomeView.js";
-import HubView from "./views/HubView.js";
-import LoginView from "./views/LoginView.js";
-import RegisterView from "./views/RegisterView.js";
-import SaveView from "./views/SaveView.js";
+import HomeView from "../website/views/HomeView.js";
+import HubView from "../website/views/HubView.js";
+import LoginView from "../website/views/LoginView.js";
+import RegisterView from "../website/views/RegisterView.js";
+import SaveView from "../website/views/SaveView.js";
+import GameView from "../website/views/GameView.js";
 
 export default class Router {
     constructor() {
@@ -12,6 +13,7 @@ export default class Router {
             { path: "/login", view: LoginView },
             { path: "/register", view: RegisterView },
             { path: "/save", view: SaveView },
+            { path: "/game", view: GameView },
         ];
 
         window.addEventListener("popstate", () => {
@@ -70,6 +72,11 @@ export default class Router {
         }
 
         if (appContainer) {
+            if (this.currentView && typeof this.currentView.destroy === "function") {
+                this.currentView.destroy();
+            }
+            this.currentView = view;
+
             appContainer.innerHTML = "";
             const node = await view.render();
             appContainer.appendChild(node);

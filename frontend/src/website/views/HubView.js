@@ -1,5 +1,5 @@
-import AbstractView from "./AbstractView.js";
-import { el } from "../utils/DOMBuilder.js";
+import AbstractView from "../../core/views/AbstractView.js";
+import { el } from "../../core/utils/DOMBuilder.js";
 
 export default class HubView extends AbstractView {
     constructor(params) {
@@ -52,3 +52,4 @@ export default class HubView extends AbstractView {
         return ["/asset/css/hub.css"];
     }
 }
+
