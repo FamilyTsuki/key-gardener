@@ -17,3 +17,84 @@
     width: 100%;
     z-index: 1;
 }
+.door-mini-game-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 20px;
+    z-index: 1000;
+    background: rgba(0,0,0,0.7);
+    padding: 30px;
+    border-radius: 15px;
+}
+
+@keyframes shake {
+    0% { transform: translate(-50%, -50%); }
+    20% { transform: translate(calc(-50% - 10px), -50%); }
+    40% { transform: translate(calc(-50% + 10px), -50%); }
+    60% { transform: translate(calc(-50% - 10px), -50%); }
+    80% { transform: translate(calc(-50% + 10px), -50%); }
+    100% { transform: translate(-50%, -50%); }
+}
+
+.door-mini-game-overlay.error {
+    animation: shake 0.4s ease-in-out;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+}
+
+.door-mini-game-letter {
+    font-size: 40px;
+    font-weight: bold;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    border: 3px solid #fff;
+    
+    transition: all 0.2s ease-in-out;
+}
+
+.door-mini-game-letter.done {
+    background-color: #4caf50;
+    color: white;
+    border-color: #4caf50;
+}
+
+.door-mini-game-letter.active {
+    background-color: white;
+    color: black;
+}
+
+.door-mini-game-letter.pending {
+    background-color: transparent;
+    color: white;
+}
+
+
+.enter-prompt-overlay {
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+}
+
+.enter-prompt-title {
+    margin-bottom: 10px;
+}
+
+.enter-prompt-key {
+    padding: 5px 20px;
+    border: 3px solid white;
+    border-radius: 8px;
+    margin-top: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

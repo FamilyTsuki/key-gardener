@@ -20,21 +20,59 @@ export function createWordlLayout() {
     }
 
     let test = 0;
+    let lastCenterX = 0;
     for (let y = 0; y < tab_width.length; y++) {
         if (y % 2 === 0) test += 1;
         for (let x = 0; x < tab_width[y]; x++) {
             let min_decal= 0;
             let genere_leter = tab_lettre[Math.floor(Math.random() * 26)];
             if (y % 2 === 1) min_decal = 0.5;
+            
+            let posX = x + min_decal + test + tab_decalage[y];
+            if (x === Math.floor(tab_width[y] / 2)) {
+                lastCenterX = posX;
+            }
+
             worldLayout.push({
-                id: `${x + min_decal + test + tab_decalage[y]}-${-y}`,
-                x: x + min_decal + test + tab_decalage[y],
+                id: `${posX}-${-y}`,
+                x: posX,
                 y: -y,
                 letter: genere_leter,
                 isPressed: false,
             });
         }
     }
+
+    let y_start = height;
+    let island_widths = [2, 3, 5, 7, 7, 5, 3]; 
+    for (let i = 0; i < island_widths.length; i++) {
+        let y = y_start + i;
+        if (y % 2 === 0) test += 1;
+        let w = island_widths[i];
+        
+        let min_decal = (y % 2 === 1) ? 0.5 : 0;
+        let decalage = Math.round(lastCenterX - ((w - 1) / 2 + min_decal + test));
+        
+        for (let x = 0; x < w; x++) {
+            let posX = x + min_decal + test + decalage;
+            let isDoorCenter = (i === 4 && x === Math.floor(w/2)); 
+            
+            let letterValue = null;
+            if (x === Math.floor(w/2) && i <= 4) {
+                letterValue = (i + 1).toString();
+            }
+
+            worldLayout.push({
+                id: `island-${posX}-${-y}`,
+                x: posX,
+                y: -y,
+                letter: letterValue, 
+                isPressed: false,
+                isDoorTile: isDoorCenter
+            });
+        }
+    }
+
     return worldLayout;
 }
 

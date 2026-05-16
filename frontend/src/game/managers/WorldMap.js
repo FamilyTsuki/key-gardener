@@ -80,6 +80,90 @@ export default class WorldMap {
 
             tile.mesh = hexMesh;
             this.group.add(hexMesh);
+
+            if (tile.isDoorTile) {
+                this.createDoor(hexMesh);
+            }
+        });
+    }
+
+    createDoor(parentMesh) {
+        const doorGroup = new THREE.Group();
+
+        const pillarMat = new THREE.MeshStandardMaterial({ 
+            map: this.stoneTexture, 
+            color: 0x888888,
+            roughness: 0.9,
+            metalness: 0.1
+        });
+
+        const pillarGeo = new THREE.BoxGeometry(1.5, 12, 1.5);
+        const leftPillar = new THREE.Mesh(pillarGeo, pillarMat);
+        leftPillar.position.set(-3, 6, 0);
+
+        const rightPillar = new THREE.Mesh(pillarGeo, pillarMat);
+        rightPillar.position.set(3, 6, 0);
+
+        const archGeo = new THREE.BoxGeometry(7.5, 2, 1.5);
+        const arch = new THREE.Mesh(archGeo, pillarMat);
+        arch.position.set(0, 13, 0);
+
+        const doorMat = new THREE.MeshStandardMaterial({
+            color: 0x5c4033,
+            roughness: 0.9,
+            metalness: 0.1
+        });
+        const doorGeo = new THREE.BoxGeometry(2.25, 12, 0.5);
+
+        const leftDoorPivot = new THREE.Group();
+        leftDoorPivot.position.set(-2.25, 6, 0);
+        const leftDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+        leftDoorMesh.position.set(1.125, 0, 0);
+        leftDoorPivot.add(leftDoorMesh);
+
+        const rightDoorPivot = new THREE.Group();
+        rightDoorPivot.position.set(2.25, 6, 0);
+        const rightDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+        rightDoorMesh.position.set(-1.125, 0, 0);
+        rightDoorPivot.add(rightDoorMesh);
+
+        this.leftDoorPivot = leftDoorPivot;
+        this.rightDoorPivot = rightDoorPivot;
+
+        doorGroup.add(leftPillar);
+        doorGroup.add(rightPillar);
+        doorGroup.add(arch);
+        doorGroup.add(leftDoorPivot);
+        doorGroup.add(rightDoorPivot);
+
+        doorGroup.position.set(0, 2, 0);
+        parentMesh.add(doorGroup);
+    }
+
+    openDoor() {
+        return new Promise((resolve) => {
+            if (!this.leftDoorPivot || !this.rightDoorPivot) {
+                resolve();
+                return;
+            }
+            const duration = 1500; 
+            const startTime = performance.now();
+
+            const animateFade = (time) => {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const angle = progress * (Math.PI / 2);
+                this.leftDoorPivot.rotation.y = -angle; 
+                this.rightDoorPivot.rotation.y = angle; 
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateFade);
+                } else {
+                    resolve();
+                }
+            };
+            requestAnimationFrame(animateFade);
         });
     }
 
@@ -130,15 +214,18 @@ export default class WorldMap {
     static async init(scene, worldLayout) {
         const initialSize = 1;
         const layout = worldLayout.map(
-            (tileRaw) =>
-                new HexTile(
+            (tileRaw) => {
+                const hex = new HexTile(
                     tileRaw.id || tileRaw.key, 
                     tileRaw.x,
                     tileRaw.y,
                     tileRaw.isPressed || false,
                     initialSize,
                     tileRaw.letter
-                )
+                );
+                hex.isDoorTile = tileRaw.isDoorTile;
+                return hex;
+            }
         );
 
         const textureLoader = new THREE.TextureLoader();
