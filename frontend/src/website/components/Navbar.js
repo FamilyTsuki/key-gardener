@@ -11,32 +11,36 @@ export default class Navbar {
         let saveComponent = null;
 
         if (AuthService.isAuthenticated()) {
-            const logoutBtn = el("button", { 
-                id: "logout-btn", 
-                className: "nav-logout", 
-                onclick: () => {
-                    AuthService.logout();
-                    Navbar.render();
-                    history.pushState(null, null, "/");
-                    window.dispatchEvent(new Event("popstate"));
-                    FlashMessageManager.show("You have been logged out.", "success");
-                } 
-            }, "Logout");
             
-            this.usernameSpan = el("span", { id: "nav-username" });
+            
+            this.usernameSpan = el("a", { href: "/account", dataset: { link: true }, id: "nav-username" });
+            this.personalPictureImg = el("img", { 
+                className: "nav-user-avatar",
+                onclick: () => {
+                    history.pushState(null, null, "/account");
+                    window.dispatchEvent(new Event("popstate"));
+                }
+            });
 
             userComponent = el("div", { className: "nav-user" },
                 this.usernameSpan,
-                logoutBtn
+                this.personalPictureImg
             );
-            saveComponent = el("a", { href: "/save", dataset: { link: true }, className: "save" }, "| Save");
+            saveComponent = el("a", { href: "/save", dataset: { link: true }, className: "save" }, "Save");
             
         }
 
+        const homeLink = el("a", { href: "/", dataset: { link: true } }, "Home");
+        const hubLink = el("a", { href: "/hub", dataset: { link: true } }, "Community Hub");
+        const sep1 = el("span", { className: "nav-separator" }, "|");
+        const sep2 = saveComponent ? el("span", { className: "nav-separator" }, "|") : null;
+
         const nav = el("nav", {},
             el("div", { className: "nav-page" },
-                el("a", { href: "/", dataset: { link: true } }, "Home"),
-                el("a", { href: "/hub", dataset: { link: true } }, "| Community Hub"),
+                homeLink,
+                sep1,
+                hubLink,
+                saveComponent ? sep2 : null,
                 saveComponent
             ),
             userComponent
@@ -56,6 +60,11 @@ export default class Navbar {
         try {
             const user = await AuthService.getCurrentUser();
             this.usernameSpan.textContent = user.username;
+            if (user.personalPicture.startsWith('/')) {
+                this.personalPictureImg.src = user.personalPicture;
+            } else {
+                this.personalPictureImg.src = "/asset/img/users/" + user.personalPicture;
+            }
         } catch (error) {
             console.error("Navbar failed to load user data:", error);
             AuthService.logout();

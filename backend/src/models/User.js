@@ -40,6 +40,14 @@ class User {
         return result.rows[0];
     }
 
+    static async updateAvatar(id, filename) {
+        const result = await db.query(
+            "UPDATE users SET personal_picture = $1 WHERE id = $2 RETURNING personal_picture",
+            [filename, id]
+        );
+        return result.rows[0];
+    }
+
     static async delete(id) {
         const result = await db.query(
             "DELETE FROM users WHERE id = $1 RETURNING id",
@@ -53,6 +61,30 @@ class User {
             "SELECT id, username, email, created_at FROM users ORDER BY created_at DESC"
         );
         return result.rows;
+    }
+
+    static async saveResetCode(email, code, expiresAt) {
+        const result = await db.query(
+            "UPDATE users SET reset_code = $1, reset_code_expires_at = $2 WHERE email = $3 RETURNING id",
+            [code, expiresAt, email]
+        );
+        return result.rows[0];
+    }
+
+    static async findByResetCode(email, code) {
+        const result = await db.query(
+            "SELECT * FROM users WHERE email = $1 AND reset_code = $2 AND reset_code_expires_at > CURRENT_TIMESTAMP",
+            [email, code]
+        );
+        return result.rows[0];
+    }
+
+    static async updatePassword(id, passwordHash) {
+        const result = await db.query(
+            "UPDATE users SET password_hash = $1, reset_code = NULL, reset_code_expires_at = NULL WHERE id = $2 RETURNING id",
+            [passwordHash, id]
+        );
+        return result.rows[0];
     }
 }
 

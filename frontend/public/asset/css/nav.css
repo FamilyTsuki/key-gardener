@@ -10,6 +10,8 @@ nav {
     align-items: center;
     justify-content: space-around;
     font-size: 25px;
+    font-family: var(--font-main, sans-serif);
+    box-sizing: border-box;
 }
 
 nav a {
@@ -17,11 +19,20 @@ nav a {
     text-decoration: none;
     margin: 0 15px;
     font-weight: bold;
-    
+    border-bottom: 3px solid transparent;
+    padding-bottom: 4px;
+    text-decoration: none;
 }
 
 nav a:hover {
-    text-decoration: underline;
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 4px;
+}
+
+nav a.active {
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 4px;
+    
 }
 .nav-page {
     display: inline-block;
@@ -33,4 +44,37 @@ nav a:hover {
     color: #000;
     border-radius: 15px;
     font-size: 35px;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-user-avatar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+.nav-user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #8a2be2;
+    background-color: #333;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-user-avatar:hover {
+    transform: scale(1.10);
+    
+}
+
+.nav-separator {
+    margin: 0 10px;
+    color: rgba(255, 255, 255, 0.5);
 }

@@ -48,6 +48,14 @@
         background 0.22s ease;
 }
 
+.login-input:-webkit-autofill,
+.login-input:-webkit-autofill:hover, 
+.login-input:-webkit-autofill:focus, 
+.login-input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: white !important;
+}
+
 .login-input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
@@ -112,6 +120,13 @@ button.login-btn:hover {
     font-size: 0.9rem;
     text-align: center;
     margin: 0;
+}
+
+.reset-info-text {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.95rem;
 }
 
 @media (max-width: 600px) {

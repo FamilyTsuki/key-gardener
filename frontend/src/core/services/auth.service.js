@@ -71,4 +71,116 @@ export class AuthService {
 
         return data.user;
     }
+
+    static async uploadAvatar(file) {
+        const token = this.getToken();
+        if (!token) {
+            throw new Error("No authentication token found");
+        }
+
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        const response = await fetch(`${this.API_URL}/upload-avatar`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to upload avatar");
+        }
+
+        return data;
+    }
+
+    static async updateUsername(newUsername) {
+        const token = this.getToken();
+        if (!token) {
+            throw new Error("No authentication token found");
+        }
+
+        const response = await fetch(`${this.API_URL}/update-username`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ newUsername }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to update username");
+        }
+
+        return data;
+    }
+
+    static async updateEmail(newEmail) {
+        const token = this.getToken();
+        if (!token) {
+            throw new Error("No authentication token found");
+        }
+
+        const response = await fetch(`${this.API_URL}/update-email`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ newEmail }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to update email");
+        }
+
+        return data;
+    }
+    static async requestPasswordReset(email) {
+        const response = await fetch(`${this.API_URL}/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to request reset");
+        return data;
+    }
+
+    static async resetPassword(email, code, newPassword) {
+        const response = await fetch(`${this.API_URL}/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, code, newPassword }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to reset password");
+        return data;
+    }
+
+    static async changePassword(currentPassword, newPassword) {
+        const token = this.getToken();
+        if (!token) throw new Error("No authentication token found");
+
+        const response = await fetch(`${this.API_URL}/change-password`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ currentPassword, newPassword }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to change password");
+        return data;
+    }
 }

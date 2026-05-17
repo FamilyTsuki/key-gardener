@@ -4,6 +4,7 @@ import LoginView from "../website/views/LoginView.js";
 import RegisterView from "../website/views/RegisterView.js";
 import SaveView from "../website/views/SaveView.js";
 import GameView from "../website/views/GameView.js";
+import AccountView from "../website/views/AccountView.js";
 
 export default class Router {
     constructor() {
@@ -14,6 +15,7 @@ export default class Router {
             { path: "/register", view: RegisterView },
             { path: "/save", view: SaveView },
             { path: "/game", view: GameView },
+            { path: "/account", view: AccountView },
         ];
 
         window.addEventListener("popstate", () => {
@@ -81,6 +83,15 @@ export default class Router {
             const node = await view.render();
             appContainer.appendChild(node);
             oldLinks.forEach((link) => link.remove());
+
+            document.querySelectorAll("#nav-container a[data-link]").forEach(link => {
+                if (link.getAttribute("href") === location.pathname) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+
             if (typeof view.init === "function") {
                 await view.init();
             }

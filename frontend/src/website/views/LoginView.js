@@ -7,15 +7,34 @@ export default class LoginView extends AbstractView {
     constructor(params) {
         super(params);
         this.setTitle("Login - Keyboard Survivor");
+        this.state = "login";
+        this.resetEmail = "";
     }
 
     async render() {
+        this.container = el("div", { className: "login-container" });
+        this.renderState();
+        return this.container;
+    }
+
+    renderState() {
+        this.container.innerHTML = "";
+        
+        if (this.state === "login") {
+            this.container.appendChild(this.createLoginForm());
+        } else if (this.state === "forgot") {
+            this.container.appendChild(this.createForgotForm());
+        } else if (this.state === "reset") {
+            this.container.appendChild(this.createResetForm());
+        }
+    }
+
+    createLoginForm() {
         const emailInput = el("input", { type: "email", placeholder: "Email", required: true, className: "login-input", id: "email" });
         const passwordInput = el("input", { type: "password", placeholder: "Password", required: true, className: "login-input", id: "password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
-
             const email = emailInput.value.trim();
             const password = passwordInput.value.trim();
 
@@ -25,7 +44,6 @@ export default class LoginView extends AbstractView {
                 Navbar.render();
                 history.pushState(null, null, "/");
                 window.dispatchEvent(new Event("popstate"));
-                
                 FlashMessageManager.show("Login successful!", "success");
             } catch (error) {
                 FlashMessageManager.show(error.message || "Login failed", "error");
@@ -38,12 +56,105 @@ export default class LoginView extends AbstractView {
             el("button", { type: "submit", className: "login-btn" }, "Login")
         );
 
-        return el("div", { className: "login-container" },
+        const forgotLink = el("a", { 
+            href: "#", 
+            className: "forgot-link",
+            onclick: (e) => {
+                e.preventDefault();
+                this.state = "forgot";
+                this.renderState();
+            }
+        }, "Forgot Password?");
+
+        return el("div", {},
             el("h2", {}, "Login"),
             form,
+            el("p", { className: "register-link" }, forgotLink),
             el("p", { className: "register-link" },
                 "Don't have an account? ",
                 el("a", { href: "/register", dataset: { link: true } }, "Sign up")
+            )
+        );
+    }
+
+    createForgotForm() {
+        const emailInput = el("input", { type: "email", placeholder: "Email", required: true, className: "login-input" });
+
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+
+            try {
+                await AuthService.requestPasswordReset(email);
+                this.resetEmail = email;
+                this.state = "reset";
+                this.renderState();
+                FlashMessageManager.show("If an account exists, a reset code was sent.", "success");
+            } catch (error) {
+                FlashMessageManager.show(error.message || "Request failed", "error");
+            }
+        };
+
+        const form = el("form", { id: "forgot-form", onsubmit: handleSubmit },
+            emailInput,
+            el("button", { type: "submit", className: "login-btn" }, "Send Reset Code")
+        );
+
+        return el("div", {},
+            el("h2", {}, "Reset Password"),
+            el("p", { className: "reset-info-text" }, "Enter your email to receive a 6-digit code."),
+            form,
+            el("p", { className: "register-link" },
+                el("a", { 
+                    href: "#", 
+                    onclick: (e) => {
+                        e.preventDefault();
+                        this.state = "login";
+                        this.renderState();
+                    } 
+                }, "Back to Login")
+            )
+        );
+    }
+
+    createResetForm() {
+        const codeInput = el("input", { type: "text", placeholder: "6-digit Code", required: true, className: "login-input", maxLength: 6 });
+        const newPasswordInput = el("input", { type: "password", placeholder: "New Password", required: true, className: "login-input" });
+
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            const code = codeInput.value.trim();
+            const newPassword = newPasswordInput.value.trim();
+
+            try {
+                await AuthService.resetPassword(this.resetEmail, code, newPassword);
+                this.state = "login";
+                this.renderState();
+                FlashMessageManager.show("Password reset successful! Please login.", "success");
+            } catch (error) {
+                FlashMessageManager.show(error.message || "Reset failed", "error");
+            }
+        };
+
+        const form = el("form", { id: "reset-form", onsubmit: handleSubmit },
+            codeInput,
+            newPasswordInput,
+            el("button", { type: "submit", className: "login-btn" }, "Update Password")
+        );
+
+        return el("div", {},
+            el("h2", {}, "Enter Code"),
+            el("p", { className: "reset-info-text" }, `Code sent to ${this.resetEmail}`),
+            form,
+            el("p", { className: "register-link" },
+                el("a", { 
+                    href: "#", 
+                    onclick: (e) => {
+                        e.preventDefault();
+                        this.state = "login";
+                        this.renderState();
+                    } 
+                }, "Back to Login")
             )
         );
     }
@@ -52,4 +163,3 @@ export default class LoginView extends AbstractView {
         return ["/asset/css/login.css"];
     }
 }
-

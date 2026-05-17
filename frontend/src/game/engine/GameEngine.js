@@ -38,7 +38,6 @@ export class GameEngine {
     }
 
     async init() {
-        // Start the game with WorldPhase
         await this.setPhase(new WorldPhase(this));
     }
 
