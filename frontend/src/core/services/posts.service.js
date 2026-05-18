@@ -36,20 +36,25 @@ export class PostsService {
         return data;
     }
 
-    static async createPost(content) {
+    static async createPost(content, file = null) {
         const token = AuthService.getToken();
 
         if (!token) {
             throw new Error("Not authenticated");
         }
 
+        const formData = new FormData();
+        formData.append("content", content);
+        if (file) {
+            formData.append("media", file);
+        }
+
         const response = await fetch(`${this.API_URL}/`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ content }),
+            body: formData,
         });
 
         const data = await response.json();

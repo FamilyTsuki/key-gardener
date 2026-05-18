@@ -16,7 +16,7 @@ export default class AccountView extends AbstractView {
         this.fileInput = el("input", { 
             type: "file", 
             accept: "image/*", 
-            style: "display: none;",
+            className: "hidden",
             onchange: async (e) => {
                 if (e.target.files && e.target.files[0]) {
                     try {

@@ -96,3 +96,7 @@
         transform: translateX(100%);
     }
 }
+
+.flash-clickable {
+    cursor: pointer;
+}

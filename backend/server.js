@@ -20,6 +20,10 @@ app.use(
             directives: {
                 "script-src": ["'self'", "'unsafe-inline'"],
                 "connect-src": ["'self'", "blob:"],
+                "worker-src": ["'self'", "blob:"],
+                "child-src": ["'self'", "blob:"],
+                "img-src": ["'self'", "data:", "blob:"],
+                "media-src": ["'self'", "blob:"],
             },
         },
     })
@@ -55,6 +59,9 @@ const startServer = async () => {
     try {
         await db.testConnection();
         console.log("🐘 [DB] PostgreSQL connection successful.");
+
+        await db.query("ALTER TABLE posts ADD COLUMN IF NOT EXISTS image_url VARCHAR(255) DEFAULT NULL");
+        await db.query("ALTER TABLE posts ADD COLUMN IF NOT EXISTS downvotes INTEGER DEFAULT 0");
 
         app.listen(port, () => {
             console.log(

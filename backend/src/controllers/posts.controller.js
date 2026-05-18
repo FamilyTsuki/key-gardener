@@ -42,13 +42,18 @@ exports.createPost = async (req, res, next) => {
         const { content } = req.body;
         const userId = req.user.id;
 
+        let imageUrl = null;
+        if (req.file) {
+            imageUrl = `/asset/uploads/posts/${req.file.filename}`;
+        }
+
         if (!content || content.trim().length === 0) {
             return res
                 .status(400)
                 .json({ success: false, message: "Content is required" });
         }
 
-        const post = await Post.create(userId, content);
+        const post = await Post.create(userId, content, imageUrl);
         res.status(201).json({ success: true, post });
     } catch (err) {
         next(err);
