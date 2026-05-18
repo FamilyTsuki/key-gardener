@@ -39,4 +39,36 @@ const verifyToken = async (req, res, next) => {
     );
 };
 
+const optionalVerifyToken = async (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+        req.user = null;
+        return next();
+    }
+
+    jwt.verify(
+        token,
+        process.env.JWT_SECRET || "super_secret_key",
+        async (err, decoded) => {
+            if (err) {
+                req.user = null;
+                return next();
+            }
+
+            try {
+                const user = await User.findById(decoded.id);
+                req.user = user || null;
+                next();
+            } catch (error) {
+                req.user = null;
+                next();
+            }
+        }
+    );
+};
+
+verifyToken.optional = optionalVerifyToken;
+
 module.exports = verifyToken;

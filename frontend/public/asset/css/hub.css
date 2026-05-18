@@ -208,9 +208,12 @@
 .hub-post {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-left: 4px solid var(--primary-color);
     border-radius: 0 12px 12px 0;
     padding: 20px;
+}
+
+.self-post {
+    border-left: 4px solid var(--primary-color);
 }
 
 .hub-post strong {
@@ -226,13 +229,62 @@
     line-height: 1.5;
     color: #e0e0e0;
     margin: 0 0 15px 0;
-    word-break: break-word;
 }
 
 .post-media {
     max-width: 100%;
-    max-height: 450px;
+    max-height: 350px;
     border-radius: 8px;
     display: block;
     margin-top: 15px;
+}
+
+.post-votes {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 15px;
+}
+
+.vote-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cccccc;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.upvote-btn:hover {
+    background: rgba(63, 243, 18, 0.08);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.upvote-btn.active {
+    background: rgba(63, 243, 18, 0.15);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 800;
+}
+
+.downvote-btn:hover {
+    background: rgba(255, 87, 34, 0.08);
+    border-color: #ff5722;
+    color: #ff5722;
+    transform: translateY(-1px);
+}
+
+.downvote-btn.active {
+    background: rgba(255, 87, 34, 0.15);
+    border-color: #ff5722;
+    color: #ff5722;
 }

@@ -2,6 +2,7 @@ import AbstractView from "../../core/views/AbstractView.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { PostsService } from "../../core/services/posts.service.js";
+import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 
 export default class HubView extends AbstractView {
     constructor(params) {
@@ -121,6 +122,16 @@ export default class HubView extends AbstractView {
         if (!this.postsContainer) return;
 
         try {
+            let currentUserId = null;
+            if (AuthService.isAuthenticated()) {
+                try {
+                    const user = await AuthService.getCurrentUser();
+                    currentUserId = user ? user.id : null;
+                } catch (err) {
+                    console.error("Error retrieving user for post highlighting:", err);
+                }
+            }
+
             const data = await PostsService.getAllPosts();
 
             this.postsContainer.innerHTML = "";
@@ -148,11 +159,29 @@ export default class HubView extends AbstractView {
                     }
                 }
 
+                const upvoteBtn = el("button", {
+                    className: `vote-btn upvote-btn${post.user_vote === 1 ? " active" : ""}`,
+                    onclick: async () => this.handleVote(post.id, "upvote")
+                }, `▲ ${post.upvotes || 0}`);
+
+                const downvoteBtn = el("button", {
+                    className: `vote-btn downvote-btn${post.user_vote === -1 ? " active" : ""}`,
+                    onclick: async () => this.handleVote(post.id, "downvote")
+                }, `▼ ${post.downvotes || 0}`);
+
+                const voteContainer = el("div", { className: "post-votes" },
+                    upvoteBtn,
+                    downvoteBtn
+                );
+
+                const isSelfPost = currentUserId && post.user_id === currentUserId;
+
                 this.postsContainer.appendChild(
-                    el("div", { className: "hub-post" },
+                    el("div", { className: `hub-post${isSelfPost ? " self-post" : ""}` },
                         el("strong", {}, post.username + ": "),
                         el("p", { className: "post-content" }, post.content),
-                        mediaElement
+                        mediaElement,
+                        voteContainer
                     )
                 );
             });
@@ -161,6 +190,24 @@ export default class HubView extends AbstractView {
             console.error("Error loading posts:", error);
             this.postsContainer.innerHTML = "";
             this.postsContainer.appendChild(el("p", {}, "Error loading community messages."));
+        }
+    }
+
+    async handleVote(postId, type) {
+        if (!AuthService.isAuthenticated()) {
+            FlashMessageManager.show("You must be logged in to vote!", "error");
+            return;
+        }
+        try {
+            if (type === "upvote") {
+                await PostsService.upvotePost(postId);
+            } else {
+                await PostsService.downvotePost(postId);
+            }
+            await this.init();
+        } catch (error) {
+            console.error(`Error casting ${type}:`, error);
+            FlashMessageManager.show(error.message || `Failed to cast ${type}.`, "error");
         }
     }
 

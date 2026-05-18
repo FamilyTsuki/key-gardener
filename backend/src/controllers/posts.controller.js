@@ -1,9 +1,11 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
+const Vote = require("../models/Votes");
 
 exports.getAllPosts = async (req, res, next) => {
     try {
-        const posts = await Post.getAllPosts();
+        const currentUserId = req.user ? req.user.id : null;
+        const posts = await Post.getAllPosts(currentUserId);
         res.status(200).json({ success: true, posts });
     } catch (err) {
         next(err);
@@ -13,7 +15,8 @@ exports.getAllPosts = async (req, res, next) => {
 exports.getPostById = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const post = await Post.findById(id);
+        const currentUserId = req.user ? req.user.id : null;
+        const post = await Post.findById(id, currentUserId);
 
         if (!post) {
             return res
@@ -30,7 +33,8 @@ exports.getPostById = async (req, res, next) => {
 exports.getUserPosts = async (req, res, next) => {
     try {
         const { userId } = req.params;
-        const posts = await Post.getPostsByUserId(userId);
+        const currentUserId = req.user ? req.user.id : null;
+        const posts = await Post.getPostsByUserId(userId, currentUserId);
         res.status(200).json({ success: true, posts });
     } catch (err) {
         next(err);
@@ -105,16 +109,33 @@ exports.deletePost = async (req, res, next) => {
 
 exports.upvotePost = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const post = await Post.upvote(id);
+        const { id: postId } = req.params;
+        const userId = req.user.id;
 
+        const post = await Post.findById(postId);
         if (!post) {
             return res
                 .status(404)
                 .json({ success: false, message: "Post not found" });
         }
 
-        res.status(200).json({ success: true, post });
+        const existingVote = await Vote.findByPostAndUser(postId, userId);
+
+        if (!existingVote) {
+            await Vote.create(postId, userId, 1);
+            await Post.incrementUpvotes(postId);
+        } else if (existingVote.vote_type === 1) {
+            await Vote.delete(postId, userId);
+            await Post.decrementUpvotes(postId);
+        } else if (existingVote.vote_type === -1) {
+            await Vote.delete(postId, userId);
+            await Post.decrementDownvotes(postId);
+            await Vote.create(postId, userId, 1);
+            await Post.incrementUpvotes(postId);
+        }
+
+        const updatedPost = await Post.findById(postId);
+        res.status(200).json({ success: true, post: updatedPost });
     } catch (err) {
         next(err);
     }
@@ -122,16 +143,33 @@ exports.upvotePost = async (req, res, next) => {
 
 exports.downvotePost = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const post = await Post.downvote(id);
+        const { id: postId } = req.params;
+        const userId = req.user.id;
 
+        const post = await Post.findById(postId);
         if (!post) {
             return res
                 .status(404)
                 .json({ success: false, message: "Post not found" });
         }
 
-        res.status(200).json({ success: true, post });
+        const existingVote = await Vote.findByPostAndUser(postId, userId);
+
+        if (!existingVote) {
+            await Vote.create(postId, userId, -1);
+            await Post.incrementDownvotes(postId);
+        } else if (existingVote.vote_type === -1) {
+            await Vote.delete(postId, userId);
+            await Post.decrementDownvotes(postId);
+        } else if (existingVote.vote_type === 1) {
+            await Vote.delete(postId, userId);
+            await Post.decrementUpvotes(postId);
+            await Vote.create(postId, userId, -1);
+            await Post.incrementDownvotes(postId);
+        }
+
+        const updatedPost = await Post.findById(postId);
+        res.status(200).json({ success: true, post: updatedPost });
     } catch (err) {
         next(err);
     }

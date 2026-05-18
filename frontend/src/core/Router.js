@@ -5,6 +5,8 @@ import RegisterView from "../website/views/RegisterView.js";
 import SaveView from "../website/views/SaveView.js";
 import GameView from "../website/views/GameView.js";
 import AccountView from "../website/views/AccountView.js";
+import { AuthService } from "./services/auth.service.js";
+import { FlashMessageManager } from "./utils/FlashMessageManager.js";
 
 export default class Router {
     constructor() {
@@ -13,9 +15,9 @@ export default class Router {
             { path: "/hub", view: HubView },
             { path: "/login", view: LoginView },
             { path: "/register", view: RegisterView },
-            { path: "/save", view: SaveView },
-            { path: "/game", view: GameView },
-            { path: "/account", view: AccountView },
+            { path: "/save", view: SaveView, requiresAuth: true },
+            { path: "/game", view: GameView, requiresAuth: true },
+            { path: "/account", view: AccountView, requiresAuth: true },
         ];
 
         window.addEventListener("popstate", () => {
@@ -46,6 +48,12 @@ export default class Router {
 
         if (!match) {
             match = this.routes[0];
+        }
+
+        if (match.requiresAuth && !AuthService.isAuthenticated()) {
+            FlashMessageManager.show("You must be logged in to access this page.", "error");
+            this.navigateTo("/");
+            return;
         }
 
         const view = new match.view();

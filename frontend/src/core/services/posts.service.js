@@ -3,37 +3,52 @@ import { AuthService } from "./auth.service.js";
 export class PostsService {
     static API_URL = "/api/posts";
 
-    static async getAllPosts() {
-        const response = await fetch(`${this.API_URL}/`);
-        const data = await response.json();
+    static async handleResponse(response, defaultError) {
+        const contentType = response.headers.get("content-type");
+        let data;
+
+        if (contentType && contentType.includes("application/json")) {
+            data = await response.json();
+        } else {
+            const errorText = await response.text();
+            throw new Error(errorText || "Too many requests, please try again later.");
+        }
 
         if (!response.ok) {
-            throw new Error(data.message || "Failed to fetch posts");
+            throw new Error(data.message || defaultError);
         }
 
         return data;
+    }
+
+    static async getAllPosts() {
+        const token = AuthService.getToken();
+        const headers = {};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+        const response = await fetch(`${this.API_URL}/`, { headers });
+        return this.handleResponse(response, "Failed to fetch posts");
     }
 
     static async getPostById(id) {
-        const response = await fetch(`${this.API_URL}/${id}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to fetch post");
+        const token = AuthService.getToken();
+        const headers = {};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
         }
-
-        return data;
+        const response = await fetch(`${this.API_URL}/${id}`, { headers });
+        return this.handleResponse(response, "Failed to fetch post");
     }
 
     static async getUserPosts(userId) {
-        const response = await fetch(`${this.API_URL}/user/${userId}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to fetch user posts");
+        const token = AuthService.getToken();
+        const headers = {};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
         }
-
-        return data;
+        const response = await fetch(`${this.API_URL}/user/${userId}`, { headers });
+        return this.handleResponse(response, "Failed to fetch user posts");
     }
 
     static async createPost(content, file = null) {
@@ -57,13 +72,7 @@ export class PostsService {
             body: formData,
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to create post");
-        }
-
-        return data;
+        return this.handleResponse(response, "Failed to create post");
     }
 
     static async updatePost(id, content) {
@@ -82,13 +91,7 @@ export class PostsService {
             body: JSON.stringify({ content }),
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to update post");
-        }
-
-        return data;
+        return this.handleResponse(response, "Failed to update post");
     }
 
     static async deletePost(id) {
@@ -105,40 +108,40 @@ export class PostsService {
             },
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to delete post");
-        }
-
-        return data;
+        return this.handleResponse(response, "Failed to delete post");
     }
 
     static async upvotePost(id) {
-        const response = await fetch(`${this.API_URL}/${id}/upvote`, {
-            method: "POST",
-        });
+        const token = AuthService.getToken();
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to upvote post");
+        if (!token) {
+            throw new Error("Not authenticated");
         }
 
-        return data;
+        const response = await fetch(`${this.API_URL}/${id}/upvote`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return this.handleResponse(response, "Failed to upvote post");
     }
 
     static async downvotePost(id) {
-        const response = await fetch(`${this.API_URL}/${id}/downvote`, {
-            method: "POST",
-        });
+        const token = AuthService.getToken();
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to downvote post");
+        if (!token) {
+            throw new Error("Not authenticated");
         }
 
-        return data;
+        const response = await fetch(`${this.API_URL}/${id}/downvote`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return this.handleResponse(response, "Failed to downvote post");
     }
 }
