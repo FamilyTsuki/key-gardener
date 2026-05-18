@@ -16,10 +16,21 @@ class Post {
     static async getAllPosts(currentUserId = null) {
         const result = await db.query(
             `SELECT p.id, p.content, p.image_url, p.upvotes, p.downvotes, p.created_at, u.username, u.id as user_id,
-                    COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $1), 0) AS user_vote
+                    COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $1), 0) AS user_vote,
+                    (
+                        LOG(GREATEST(1, ABS(p.upvotes - p.downvotes))) 
+                        + 
+                        (CASE 
+                            WHEN (p.upvotes - p.downvotes) > 0 THEN 1 
+                            WHEN (p.upvotes - p.downvotes) < 0 THEN -1 
+                            ELSE 0 
+                        END) 
+                        * 
+                        (EXTRACT(EPOCH FROM p.created_at) - 1134028003) / 45000
+                    ) AS hot_score
              FROM posts p
              JOIN users u ON p.user_id = u.id
-             ORDER BY p.created_at DESC`,
+             ORDER BY hot_score DESC, p.created_at DESC`,
             [currentUserId]
         );
         return result.rows;
