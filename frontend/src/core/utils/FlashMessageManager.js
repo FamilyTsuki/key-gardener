@@ -33,7 +33,7 @@ export const FlashMessageManager = {
         );
 
         if (onClickCallback) {
-            messageEl.style.cursor = "pointer";
+            messageEl.classList.add("flash-clickable");
             messageEl.addEventListener("click", (e) => {
                 if (messageEl.dataset.isSwiping === "true") return;
                 if (!e.target.closest(".flash-close")) {

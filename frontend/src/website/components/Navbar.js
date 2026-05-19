@@ -67,6 +67,10 @@ export default class Navbar {
             }
         } catch (error) {
             console.error("Navbar failed to load user data:", error);
+            if (error.message.includes("Too many requests") || error.message.includes("rate limit")) {
+                FlashMessageManager.show("Rate limit exceeded. Please wait a moment.", "error");
+                return;
+            }
             AuthService.logout();
             Navbar.render();
             history.pushState(null, null, "/");
