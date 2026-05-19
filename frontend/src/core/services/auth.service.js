@@ -1,6 +1,24 @@
 export class AuthService {
     static API_URL = "/api/auth";
 
+    static async handleResponse(response, defaultError) {
+        const contentType = response.headers.get("content-type");
+        let data;
+
+        if (contentType && contentType.includes("application/json")) {
+            data = await response.json();
+        } else {
+            const errorText = await response.text();
+            throw new Error(errorText || "Too many requests, please try again later.");
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || defaultError);
+        }
+
+        return data;
+    }
+
     static async register(username, email, password) {
         const response = await fetch(`${this.API_URL}/register`, {
             method: "POST",
@@ -8,13 +26,7 @@ export class AuthService {
             body: JSON.stringify({ username, email, password }),
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Registration failed");
-        }
-
-        return data;
+        return this.handleResponse(response, "Registration failed");
     }
 
     static async login(email, password) {
@@ -24,11 +36,7 @@ export class AuthService {
             body: JSON.stringify({ email, password }),
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Login failed");
-        }
+        const data = await this.handleResponse(response, "Login failed");
 
         if (data.token) {
             localStorage.setItem("authToken", data.token);
@@ -63,12 +71,7 @@ export class AuthService {
             },
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to get user data");
-        }
-
+        const data = await this.handleResponse(response, "Failed to get user data");
         return data.user;
     }
 
@@ -89,13 +92,7 @@ export class AuthService {
             body: formData
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to upload avatar");
-        }
-
-        return data;
+        return this.handleResponse(response, "Failed to upload avatar");
     }
 
     static async updateUsername(newUsername) {
@@ -113,13 +110,7 @@ export class AuthService {
             body: JSON.stringify({ newUsername }),
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to update username");
-        }
-
-        return data;
+        return this.handleResponse(response, "Failed to update username");
     }
 
     static async updateEmail(newEmail) {
@@ -137,23 +128,17 @@ export class AuthService {
             body: JSON.stringify({ newEmail }),
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Failed to update email");
-        }
-
-        return data;
+        return this.handleResponse(response, "Failed to update email");
     }
+
     static async requestPasswordReset(email) {
         const response = await fetch(`${this.API_URL}/forgot-password`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email }),
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Failed to request reset");
-        return data;
+
+        return this.handleResponse(response, "Failed to request reset");
     }
 
     static async resetPassword(email, code, newPassword) {
@@ -162,14 +147,15 @@ export class AuthService {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, code, newPassword }),
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Failed to reset password");
-        return data;
+
+        return this.handleResponse(response, "Failed to reset password");
     }
 
     static async changePassword(currentPassword, newPassword) {
         const token = this.getToken();
-        if (!token) throw new Error("No authentication token found");
+        if (!token) {
+            throw new Error("No authentication token found");
+        }
 
         const response = await fetch(`${this.API_URL}/change-password`, {
             method: "POST",
@@ -179,8 +165,7 @@ export class AuthService {
             },
             body: JSON.stringify({ currentPassword, newPassword }),
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Failed to change password");
-        return data;
+
+        return this.handleResponse(response, "Failed to change password");
     }
 }
