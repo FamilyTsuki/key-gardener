@@ -33,6 +33,6 @@ export default class GameView extends AbstractView {
     }
 
     getCss() {
-        return ["/asset/css/game.css"];
+        return ["/asset/css/game.css", "/asset/css/intro.css"];
     }
 }

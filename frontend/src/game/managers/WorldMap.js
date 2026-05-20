@@ -4,27 +4,60 @@ import HexTile from "../models/HexTile.js";
 function createLetterTexture(letter, stoneImage) {
     if (!letter) return null;
     const canvas = document.createElement("canvas");
-    canvas.width = 128;
-    canvas.height = 128;
+    canvas.width = 512;
+    canvas.height = 512;
     const ctx = canvas.getContext("2d");
     
     if (stoneImage) {
-        ctx.drawImage(stoneImage, 0, 0, 128, 128);
+        ctx.drawImage(stoneImage, 0, 0, 512, 512);
     } else {
         ctx.fillStyle = "#667578";
-        ctx.fillRect(0, 0, 128, 128);
+        ctx.fillRect(0, 0, 512, 512);
     }
     
     ctx.fillStyle = "#000000ff";
-    ctx.font = "bold 60px Arial";
+    ctx.font = "bold 240px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.translate(64, 64);
+    ctx.translate(256, 256);
     ctx.rotate(-Math.PI / 2); 
     ctx.fillText(letter, 0, 0);
     
-    
-    return new THREE.CanvasTexture(canvas);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.anisotropy = 4;
+    return texture;
+}
+
+function createBeveledHexagon(sideMaterial, topMaterial) {
+    const group = new THREE.Group();
+
+    const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 3.6, 6);
+    const bodyMesh = new THREE.Mesh(bodyGeometry, sideMaterial);
+    bodyMesh.position.y = -0.2;
+
+    const bevelGeometry = new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6);
+    const bevelMesh = new THREE.Mesh(bevelGeometry, [sideMaterial, topMaterial, sideMaterial]);
+    bevelMesh.position.y = 1.8;
+
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x333333 });
+
+    const bodyEdges = new THREE.EdgesGeometry(bodyGeometry);
+    const bodyLine = new THREE.LineSegments(bodyEdges, lineMaterial);
+    bodyMesh.add(bodyLine);
+
+    const bevelEdges = new THREE.EdgesGeometry(bevelGeometry);
+    const bevelLine = new THREE.LineSegments(bevelEdges, lineMaterial);
+    bevelMesh.add(bevelLine);
+
+    group.add(bodyMesh);
+    group.add(bevelMesh);
+
+    group.material = [sideMaterial, topMaterial, sideMaterial];
+    group.lineMaterial = lineMaterial;
+
+    return group;
 }
 
 export default class WorldMap {
@@ -46,9 +79,7 @@ export default class WorldMap {
         return this.#mapLayout;
     }
 
-    createHexagons(scene) { 
-        const geometry = new THREE.CylinderGeometry(1.5, 1.5, 4, 6);
-
+    createHexagons(scene) {
         this.#mapLayout.forEach((tile) => {
             const sideMaterial = new THREE.MeshStandardMaterial({
                 map: this.stoneTexture,
@@ -68,8 +99,7 @@ export default class WorldMap {
                 });
             }
 
-            const materials = [sideMaterial, topMaterial, sideMaterial];
-            const hexMesh = new THREE.Mesh(geometry, materials);
+            const hexMesh = createBeveledHexagon(sideMaterial, topMaterial);
             let randome_z = Math.random() * 1.3;
 
             tile.baseY = randome_z;
@@ -193,6 +223,12 @@ export default class WorldMap {
                     const hex = (r << 16) | (r << 8) | r;
                     materials[0].color.setHex(hex);
                     materials[1].color.setHex(hex);
+
+                    if (tile.mesh.lineMaterial) {
+                        const lineR = Math.floor(r * 0.2);
+                        const lineHex = (lineR << 16) | (lineR << 8) | lineR;
+                        tile.mesh.lineMaterial.color.setHex(lineHex);
+                    }
                 }
             }
         });
