@@ -47,3 +47,11 @@ body {
     z-index: -1;
     pointer-events: none;
 }
+
+body.in-game #nav-container {
+    display: none !important;
+}
+
+body.in-game #app {
+    margin-top: 0 !important;
+}

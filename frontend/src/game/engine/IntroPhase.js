@@ -3,9 +3,9 @@ import { WorldPhase } from "./WorldPhase.js";
 import { AmbientBackground, GlitchEffect } from "../utilities/IntroVisuals.js";
 
 export class IntroPhase extends GamePhase {
-    static GLITCH_DELAY_MS = 30000;
-    static RIFT_OPENING_DELAY_MS = 32000;
-    static STATIC_STATE_DELAY_MS = 33000;
+    static GLITCH_DELAY_MS = 38000;
+    static RIFT_OPENING_DELAY_MS = 40000;
+    static STATIC_STATE_DELAY_MS = 41000;
     static RIFT_TRANSITION_DELAY_MS = 1000;
 
     constructor(gameEngine) {

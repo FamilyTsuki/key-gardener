@@ -87,6 +87,12 @@ export default class Router {
             }
             this.currentView = view;
 
+            if (location.pathname === "/game") {
+                document.body.classList.add("in-game");
+            } else {
+                document.body.classList.remove("in-game");
+            }
+
             appContainer.innerHTML = "";
             const node = await view.render();
             appContainer.appendChild(node);

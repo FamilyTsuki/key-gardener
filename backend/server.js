@@ -9,6 +9,7 @@ const { apiLimiter } = require("./src/middlewares/rateLimiter.middleware");
 const errorHandler = require("./src/middlewares/error.middleware");
 const authRoutes = require("./src/routes/auth.routes");
 const postsRoutes = require("./src/routes/posts.routes");
+const savesRoutes = require("./src/routes/saves.routes");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -42,6 +43,7 @@ app.use(
 app.use("/api/", apiLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postsRoutes);
+app.use("/api/saves", savesRoutes);
 
 app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "OK", message: "API is running securely" });

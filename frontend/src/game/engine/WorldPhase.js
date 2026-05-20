@@ -32,6 +32,7 @@ export class WorldPhase extends GamePhase {
         this.worldMap = await WorldMap.init(this.gameEngine.scene, WORLD_LAYOUT);
         console.log(this.worldMap)
         this.draw_bg();
+
         this.player = new Player(
                     "Héros",
                     100,

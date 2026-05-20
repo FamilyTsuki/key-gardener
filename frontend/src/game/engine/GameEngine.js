@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { WorldPhase } from "./WorldPhase.js";
 import { IntroPhase } from "./IntroPhase.js";
+import { SurvivePhase } from "./SurvivePhase.js";
 
 export class GameEngine {
     constructor() {
@@ -40,7 +41,26 @@ export class GameEngine {
     }
 
     async init() {
-        await this.setPhase(new IntroPhase(this));
+        let initialPhaseName = "init";
+        try {
+            const savedData = localStorage.getItem("activeSaveData");
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                if (parsed.phase) {
+                    initialPhaseName = parsed.phase;
+                }
+            }
+        } catch (e) {
+            console.error("Failed to parse activeSaveData", e);
+        }
+
+        if (initialPhaseName === "game") {
+            await this.setPhase(new WorldPhase(this));
+        } else if (initialPhaseName === "survive") {
+            await this.setPhase(new SurvivePhase(this));
+        } else {
+            await this.setPhase(new IntroPhase(this));
+        }
     }
 
     async setPhase(newPhase) {
