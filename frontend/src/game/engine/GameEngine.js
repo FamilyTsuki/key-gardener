@@ -67,9 +67,9 @@ export class GameEngine {
         if (this.gamePhase && this.gamePhase.cleanup) {
             this.gamePhase.cleanup();
         }
-        
+
         this.gamePhase = newPhase;
-        
+
         if (this.gamePhase.init) {
             await this.gamePhase.init();
         }
@@ -130,11 +130,14 @@ export class GameEngine {
 
     render() {
         if (!this.renderer || !this.scene) return;
-        
-        const activeCamera = (this.gamePhase && this.gamePhase.camera) ? this.gamePhase.camera : this.camera;
-        
+
+        const activeCamera =
+            this.gamePhase && this.gamePhase.camera
+                ? this.gamePhase.camera
+                : this.camera;
+
         if (!activeCamera) return;
-        
+
         this.renderer.render(this.scene, activeCamera);
     }
 }

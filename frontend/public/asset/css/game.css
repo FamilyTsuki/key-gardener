@@ -26,11 +26,30 @@
     gap: 20px;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.7);
     padding: 30px;
     border-radius: 15px;
 }
 
 @keyframes shake {
+    0% {
+        transform: translate(-50%, -50%);
+    }
+    20% {
+        transform: translate(calc(-50% - 10px), -50%);
+    }
+    40% {
+        transform: translate(calc(-50% + 10px), -50%);
+    }
+    60% {
+        transform: translate(calc(-50% - 10px), -50%);
+    }
+    80% {
+        transform: translate(calc(-50% + 10px), -50%);
+    }
+    100% {
+        transform: translate(-50%, -50%);
+    }
     0% {
         transform: translate(-50%, -50%);
     }
