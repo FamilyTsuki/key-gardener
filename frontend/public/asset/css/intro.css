@@ -1,0 +1,250 @@
+.intro-cinematic-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    z-index: 1000;
+    transition: all 1s ease-in-out;
+}
+
+.background-canvas-persistent {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+.intro-cinematic-container.transitioning {
+    filter: brightness(3) contrast(5);
+    opacity: 0;
+    transform: scale(1.1);
+}
+
+.intro-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transition: filter 0.5s ease;
+    pointer-events: none;
+    user-select: none;
+}
+
+.intro-video.glitching {
+    animation: glitchVideo 0.5s infinite;
+}
+
+.glitch-canvas-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.intro-cinematic-container:has(.intro-video.glitching)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    z-index: 2;
+    mix-blend-mode: difference;
+    animation: strobeDifference 0.3s infinite;
+    pointer-events: none;
+}
+
+.virus-element {
+    position: fixed;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    font-weight: bold;
+    color: #00ff41;
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.9);
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(0, 255, 65, 0.5);
+    padding: 3px 8px;
+    border-radius: 2px;
+    z-index: 20;
+    pointer-events: none;
+    white-space: nowrap;
+    animation: virusFadeIn 0.25s ease-out forwards;
+}
+
+.virus-element.danger {
+    color: #ff0040;
+    text-shadow: 0 0 8px rgba(255, 0, 64, 0.9);
+    border-color: rgba(255, 0, 64, 0.5);
+}
+
+.virus-element.warn {
+    color: #ff9900;
+    text-shadow: 0 0 8px rgba(255, 153, 0, 0.9);
+    border-color: rgba(255, 153, 0, 0.5);
+}
+
+.intro-video.static-broken {
+    filter: grayscale(1) contrast(4) brightness(0.8);
+}
+
+.fake-hud.static-broken {
+    opacity: 0.15;
+    filter: blur(1.5px);
+}
+
+.fake-start-button.stolen {
+    top: 65%;
+    transform: translate(-50%, -50%) rotate(-12deg) scale(0.9);
+    animation: none;
+    border-color: #00ff88;
+    color: #00ff88;
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
+}
+
+.fake-start-button.retracted {
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0) rotate(180deg);
+    opacity: 0;
+}
+
+@keyframes glitchVideo {
+    0%,
+    100% {
+        transform: translate(0);
+        filter: hue-rotate(0deg) saturate(1) brightness(1);
+    }
+    10% {
+        transform: translate(6px, 0);
+        filter: hue-rotate(100deg) saturate(3) brightness(1.12) contrast(1.2);
+    }
+    22% {
+        transform: translate(-8px, 1px);
+        filter: hue-rotate(80deg) saturate(2.5) brightness(0.95) contrast(1.3);
+    }
+    35% {
+        transform: translate(5px, -2px);
+        filter: hue-rotate(120deg) saturate(4) brightness(1.08);
+    }
+    50% {
+        transform: translate(-6px, 0);
+        filter: hue-rotate(90deg) saturate(2.8) brightness(1.15) contrast(1.15);
+    }
+    65% {
+        transform: translate(4px, 1px);
+        filter: hue-rotate(110deg) saturate(3.5) brightness(0.97);
+    }
+    80% {
+        transform: translate(-4px, -1px);
+        filter: hue-rotate(95deg) saturate(3) brightness(1.1) contrast(1.1);
+    }
+}
+
+@keyframes virusFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes staticFlicker {
+    0% {
+        opacity: 0.95;
+        filter: brightness(0.1) contrast(8) grayscale(1) invert(0);
+    }
+    20% {
+        opacity: 0.3;
+        filter: brightness(5) contrast(15) grayscale(1) invert(1);
+    }
+    40% {
+        opacity: 0.8;
+        filter: brightness(2) contrast(10) grayscale(1) invert(0);
+    }
+    60% {
+        opacity: 0.15;
+        filter: brightness(0.5) contrast(5) grayscale(1) invert(1);
+    }
+    80% {
+        opacity: 0.9;
+        filter: brightness(6) contrast(20) grayscale(1) invert(0);
+    }
+    100% {
+        opacity: 0.95;
+        filter: brightness(1.5) contrast(6) grayscale(1) invert(1);
+    }
+}
+
+@keyframes strobeDifference {
+    0%,
+    100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.15;
+    }
+}
+
+@keyframes blinkPrompt {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.intro-video.glitch-paused {
+    animation-play-state: paused !important;
+}
+
+.intro-cinematic-container.glitch-paused::after {
+    display: none !important;
+}
+
+.cinematic-rift {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 240px;
+    height: 576px;
+    z-index: 5;
+    transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    object-fit: cover;
+    filter: drop-shadow(0 0 14px rgba(0, 157, 255, 0.9));
+}
+
+.cinematic-rift.visible {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.cinematic-rift.clickable {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.cinematic-rift.clickable:hover,
+.cinematic-rift:hover {
+    filter: drop-shadow(0 0 18px rgba(255, 0, 127, 0.9));
+    transform: translate(-50%, -50%) scale(1.02);
+}

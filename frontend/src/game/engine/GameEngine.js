@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { WorldPhase } from "./WorldPhase.js";
+import { IntroPhase } from "./IntroPhase.js";
 
 export class GameEngine {
     constructor() {
@@ -20,6 +21,7 @@ export class GameEngine {
             antialias: true,
             alpha: true,
         });
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0x434343, 1);
 
@@ -38,7 +40,7 @@ export class GameEngine {
     }
 
     async init() {
-        await this.setPhase(new WorldPhase(this));
+        await this.setPhase(new IntroPhase(this));
     }
 
     async setPhase(newPhase) {

@@ -49,6 +49,9 @@ export class WorldPhase extends GamePhase {
     }
 
     update(deltaTime) {
+        if (!this.player) {
+            return;
+        }
         this.player.update();
         if (this.player && this.player.mesh) {
             const playerPos = this.player.mesh.position;
