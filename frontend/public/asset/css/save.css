@@ -1,36 +1,22 @@
-#app {
-    min-height: 90vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .save-container {
-    display: flex;
-    flex-direction: column;
-    width: 600px;
-    max-width: 90%;
-    margin: 40px auto;
-    padding: 30px;
-    background: var(--dark-overlay-dense);
-    border-radius: 16px;
-    border: 1px solid var(--card-border);
-    box-shadow: var(--shadow-glow);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
     color: var(--text-color);
 }
 
 .save-title {
-    font-size: 28px;
+    font-size: 2.5rem;
     font-weight: 800;
-    text-align: center;
-    margin-bottom: 24px;
+    text-align: left;
+    margin-bottom: 30px;
     color: var(--primary-color);
 }
 
 .save-slots {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .save-card {
@@ -38,49 +24,49 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--light-overlay);
+    background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 16px 20px;
-    transition: all 0.2s ease;
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
     z-index: 1;
 }
 
 .save-card:hover {
-    background: var(--light-overlay-hover);
     border-color: var(--primary-color);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     z-index: 10;
 }
 
 .save-card.menu-open {
-    z-index: 20;
+    z-index: 50;
+    border-color: var(--primary-color);
 }
 
 .save-info {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .save-slot-title {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: var(--primary-color);
 }
 
 .save-name {
-    font-size: 14px;
+    font-size: 1rem;
     color: var(--text-color);
 }
 
 .save-date {
-    font-size: 11px;
+    font-size: 0.85rem;
     color: var(--text-muted);
 }
 
 .save-empty {
-    font-size: 14px;
+    font-size: 0.95rem;
     color: var(--text-muted);
     font-style: italic;
 }
@@ -95,16 +81,21 @@
     background: var(--primary-color);
     color: var(--bg-color);
     border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-weight: bold;
-    font-size: 13px;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .play-btn:hover {
-    transform: scale(1.03);
+    transform: translateY(-2px);
+    background-color: var(--primary-hover);
+}
+
+.play-btn:active {
+    transform: translateY(0);
 }
 
 .menu-btn {
@@ -118,19 +109,19 @@
 }
 
 .menu-btn:hover {
-    color: var(--white);
-    background: var(--light-overlay-hover);
+    color: var(--primary-color);
+    background: var(--primary-translucent-hover);
 }
 
 .context-menu {
     position: absolute;
     right: 20px;
     top: 60px;
-    background: var(--bg-color);
-    border: 1px solid var(--card-border);
-    border-radius: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
     z-index: 100;
-    min-width: 120px;
+    min-width: 140px;
     display: none;
     flex-direction: column;
     overflow: hidden;
@@ -144,15 +135,17 @@
     background: none;
     border: none;
     color: var(--text-color);
-    padding: 8px 12px;
+    padding: 10px 16px;
     text-align: left;
-    font-size: 12px;
+    font-size: 0.9rem;
     cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .context-item:hover {
     background: var(--primary-translucent);
-    color: var(--white);
+    color: var(--primary-color);
 }
 
 .context-item.delete {
@@ -161,6 +154,7 @@
 
 .context-item.delete:hover {
     background: var(--danger-translucent);
+    color: var(--white);
 }
 
 .modal-backdrop {
@@ -169,7 +163,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: var(--dark-overlay);
+    background: rgba(10, 12, 16, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -177,48 +171,53 @@
 }
 
 .modal-content {
-    background: var(--bg-color);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 20px;
-    width: 300px;
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 24px;
+    width: 320px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .modal-title {
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
 }
 
 .modal-input {
-    background: var(--light-overlay);
+    background: var(--black);
     border: 1px solid var(--card-border);
-    border-radius: 4px;
-    padding: 6px 10px;
+    border-radius: 8px;
+    padding: 10px 14px;
     color: var(--text-color);
-    font-size: 13px;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease;
 }
 
 .modal-input:focus {
     border-color: var(--primary-color);
-    outline: none;
 }
 
 .modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
+    gap: 12px;
 }
 
 .modal-btn {
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 8px;
     border: none;
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .modal-btn.cancel {
@@ -228,7 +227,8 @@
 }
 
 .modal-btn.cancel:hover {
-    color: var(--white);
+    color: var(--text-color);
+    border-color: var(--primary-color);
 }
 
 .modal-btn.confirm {
@@ -238,4 +238,9 @@
 
 .modal-btn.confirm:hover {
     background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.modal-btn.confirm:active {
+    transform: translateY(0);
 }
