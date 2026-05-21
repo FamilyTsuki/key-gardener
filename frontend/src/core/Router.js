@@ -101,8 +101,11 @@ export default class Router {
 
         if (appContainer) {
             const isEnteringGame = location.pathname === "/game";
+            const overlayAlreadyActive = isEnteringGame &&
+                document.getElementById("page-transition")?.classList.contains("fade-in") &&
+                !this.currentView;
 
-            if (isEnteringGame) {
+            if (isEnteringGame && !overlayAlreadyActive) {
                 await this.fadeToBlack();
             }
 
