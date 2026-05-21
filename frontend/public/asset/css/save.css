@@ -12,10 +12,11 @@
     max-width: 90%;
     margin: 40px auto;
     padding: 30px;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--dark-overlay-dense);
     border-radius: 16px;
-
-    color: #fff;
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-glow);
+    color: var(--text-color);
 }
 
 .save-title {
@@ -37,8 +38,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--light-overlay);
+    border: 1px solid var(--card-border);
     border-radius: 10px;
     padding: 16px 20px;
     transition: all 0.2s ease;
@@ -46,7 +47,7 @@
 }
 
 .save-card:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--light-overlay-hover);
     border-color: var(--primary-color);
     transform: translateY(-1px);
     z-index: 10;
@@ -70,17 +71,17 @@
 
 .save-name {
     font-size: 14px;
-    color: #cbd5e1;
+    color: var(--text-color);
 }
 
 .save-date {
     font-size: 11px;
-    color: #64748b;
+    color: var(--text-muted);
 }
 
 .save-empty {
     font-size: 14px;
-    color: #475569;
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -92,7 +93,7 @@
 
 .play-btn {
     background: var(--primary-color);
-    color: white;
+    color: var(--bg-color);
     border: none;
     border-radius: 6px;
     padding: 8px 16px;
@@ -109,7 +110,7 @@
 .menu-btn {
     background: none;
     border: none;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 20px;
     cursor: pointer;
     padding: 4px 8px;
@@ -117,18 +118,18 @@
 }
 
 .menu-btn:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
+    background: var(--light-overlay-hover);
 }
 
 .context-menu {
     position: absolute;
     right: 20px;
     top: 60px;
-    background: #18181b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-color);
+    border: 1px solid var(--card-border);
     border-radius: 6px;
-    z-index: 100000;
+    z-index: 100;
     min-width: 120px;
     display: none;
     flex-direction: column;
@@ -142,7 +143,7 @@
 .context-item {
     background: none;
     border: none;
-    color: #d1d5db;
+    color: var(--text-color);
     padding: 8px 12px;
     text-align: left;
     font-size: 12px;
@@ -150,16 +151,16 @@
 }
 
 .context-item:hover {
-    background: var(--primary-color);
-    color: white;
+    background: var(--primary-translucent);
+    color: var(--white);
 }
 
 .context-item.delete {
-    color: #ef4444;
+    color: var(--danger-color);
 }
 
 .context-item.delete:hover {
-    background: rgba(239, 68, 68, 0.15);
+    background: var(--danger-translucent);
 }
 
 .modal-backdrop {
@@ -168,7 +169,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--dark-overlay);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -176,8 +177,8 @@
 }
 
 .modal-content {
-    background: #18181b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-color);
+    border: 1px solid var(--card-border);
     border-radius: 10px;
     padding: 20px;
     width: 300px;
@@ -192,11 +193,11 @@
 }
 
 .modal-input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--light-overlay);
+    border: 1px solid var(--card-border);
     border-radius: 4px;
     padding: 6px 10px;
-    color: white;
+    color: var(--text-color);
     font-size: 13px;
 }
 
@@ -222,19 +223,19 @@
 
 .modal-btn.cancel {
     background: transparent;
-    color: #64748b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    border: 1px solid var(--card-border);
 }
 
 .modal-btn.cancel:hover {
-    color: white;
+    color: var(--white);
 }
 
 .modal-btn.confirm {
     background: var(--primary-color);
-    color: white;
+    color: var(--bg-color);
 }
 
 .modal-btn.confirm:hover {
-    background: var(--primary-color);
+    background: var(--primary-hover);
 }
