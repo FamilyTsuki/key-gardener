@@ -1,9 +1,9 @@
 body {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-main, "Poppins", sans-serif);
     margin: 0;
     padding: 0;
-    background-color: #1a1a1a;
-    color: #fff;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     position: relative;
 }
 
@@ -16,17 +16,20 @@ body {
 
 .start-btn {
     padding: 10px 20px;
-    background-color: #ff5722;
-    color: #fff;
+    background-color: var(--primary-color);
+    color: var(--bg-color);
     border-radius: 16px;
     text-decoration: none;
     font-size: 28px;
     font-weight: 800;
-    transition: background-color 0.3s ease;
+    transition:
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
 .start-btn:hover {
-    background-color: #ff7043;
+    background-color: var(--primary-hover);
 }
 
 /* ===============GLOBAL =============== */
@@ -35,23 +38,21 @@ body {
     width: 40vw;
     height: 40vw;
     margin: 0;
-
     object-fit: cover;
     border-radius: 100px;
     padding: 20px;
 }
 
 .home-title {
-
     font-size: 90px;
     font-weight: 800;
     margin: 0;
+    color: var(--primary-color);
 }
 
 /* ===============HOME PAGE 1 =============== */
 
 .home-contaner-1 {
-
     display: flex;
     flex-direction: row;
     padding: 0 5vw;
@@ -63,6 +64,7 @@ body {
 .home-description {
     font-size: 22px;
     font-weight: 400;
+    color: var(--text-color);
 }
 
 .home-presantation-container {
@@ -93,13 +95,14 @@ body {
 .home-info {
     font-size: 22px;
     font-weight: 400;
+    color: var(--text-color);
 }
 
 /* ===============FOOTER =============== */
 
 .home-footer {
     height: 100dvh;
-    background-color: #00000082;
+    background-color: var(--dark-overlay);
     text-align: center;
     display: flex;
     align-items: center;

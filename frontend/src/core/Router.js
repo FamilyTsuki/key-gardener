@@ -41,6 +41,24 @@ export default class Router {
         this.route();
     }
 
+    fadeToBlack() {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById("page-transition");
+            if (!overlay) return resolve();
+            overlay.classList.add("fade-in");
+            setTimeout(resolve, 4000);
+        });
+    }
+
+    fadeFromBlack() {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById("page-transition");
+            if (!overlay) return resolve();
+            overlay.classList.remove("fade-in");
+            setTimeout(resolve, 4000);
+        });
+    }
+
     async route() {
         let match = this.routes.find(
             (route) => route.path === location.pathname
@@ -82,10 +100,25 @@ export default class Router {
         }
 
         if (appContainer) {
+            const isEnteringGame = location.pathname === "/game";
+            const overlayAlreadyActive = isEnteringGame &&
+                document.getElementById("page-transition")?.classList.contains("fade-in") &&
+                !this.currentView;
+
+            if (isEnteringGame && !overlayAlreadyActive) {
+                await this.fadeToBlack();
+            }
+
             if (this.currentView && typeof this.currentView.destroy === "function") {
                 this.currentView.destroy();
             }
             this.currentView = view;
+
+            if (isEnteringGame) {
+                document.body.classList.add("in-game");
+            } else {
+                document.body.classList.remove("in-game");
+            }
 
             appContainer.innerHTML = "";
             const node = await view.render();
@@ -102,6 +135,10 @@ export default class Router {
 
             if (typeof view.init === "function") {
                 await view.init();
+            }
+
+            if (isEnteringGame) {
+                await this.fadeFromBlack();
             }
         }
     }

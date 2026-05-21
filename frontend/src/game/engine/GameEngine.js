@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { WorldPhase } from "./WorldPhase.js";
+import { IntroPhase } from "./IntroPhase.js";
+import { SurvivePhase } from "./SurvivePhase.js";
 
 export class GameEngine {
     constructor() {
@@ -20,6 +22,7 @@ export class GameEngine {
             antialias: true,
             alpha: true,
         });
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0x434343, 1);
 
@@ -38,16 +41,35 @@ export class GameEngine {
     }
 
     async init() {
-        await this.setPhase(new WorldPhase(this));
+        let initialPhaseName = "init";
+        try {
+            const savedData = localStorage.getItem("activeSaveData");
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                if (parsed.phase) {
+                    initialPhaseName = parsed.phase;
+                }
+            }
+        } catch (e) {
+            console.error("Failed to parse activeSaveData", e);
+        }
+
+        if (initialPhaseName === "game") {
+            await this.setPhase(new WorldPhase(this));
+        } else if (initialPhaseName === "survive") {
+            await this.setPhase(new SurvivePhase(this));
+        } else {
+            await this.setPhase(new IntroPhase(this));
+        }
     }
 
     async setPhase(newPhase) {
         if (this.gamePhase && this.gamePhase.cleanup) {
             this.gamePhase.cleanup();
         }
-        
+
         this.gamePhase = newPhase;
-        
+
         if (this.gamePhase.init) {
             await this.gamePhase.init();
         }
@@ -108,11 +130,14 @@ export class GameEngine {
 
     render() {
         if (!this.renderer || !this.scene) return;
-        
-        const activeCamera = (this.gamePhase && this.gamePhase.camera) ? this.gamePhase.camera : this.camera;
-        
+
+        const activeCamera =
+            this.gamePhase && this.gamePhase.camera
+                ? this.gamePhase.camera
+                : this.camera;
+
         if (!activeCamera) return;
-        
+
         this.renderer.render(this.scene, activeCamera);
     }
 }
