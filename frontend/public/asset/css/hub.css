@@ -12,22 +12,21 @@
 }
 
 .community-hub-container p.welcome-text {
-    color: #a0a0a0;
+    color: var(--text-muted);
     margin-bottom: 30px;
     font-size: 1.1rem;
 }
 
 .add-post-form {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
     padding: 25px;
     margin-bottom: 40px;
 }
 
 .add-post-form:focus-within {
-    border-color: rgba(63, 243, 18, 0.4);
+    border-color: var(--card-hover-border);
 }
 
 .add-post-form h3 {
@@ -41,11 +40,11 @@
 .add-post-form textarea {
     width: 100%;
     min-height: 100px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--black);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 12px;
-    color: #ffffff;
+    color: var(--text-color);
     font-family: inherit;
     font-size: 1rem;
     resize: vertical;
@@ -66,9 +65,9 @@
 }
 
 .add-media-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed rgba(255, 255, 255, 0.25);
-    color: #ffffff;
+    background: var(--light-overlay);
+    border: 1px dashed var(--card-border);
+    color: var(--text-color);
     padding: 10px 16px;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -81,25 +80,27 @@
 }
 
 .add-media-btn:hover {
-    background: rgba(63, 243, 18, 0.08);
+    background: var(--primary-translucent-hover);
     border-color: var(--primary-color);
     color: var(--primary-color);
 }
 
 .add-post-form button[onclick] {
     background: var(--primary-color);
-    color: #000000;
+    color: var(--bg-color);
     border: none;
     padding: 10px 24px;
     border-radius: 8px;
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .add-post-form button[onclick]:hover {
     transform: translateY(-2px);
-    background: #4efc22;
+    background-color: var(--primary-hover);
+    box-shadow: var(--shadow-glow);
 }
 
 .add-post-form button[onclick]:active {
@@ -113,8 +114,8 @@
 .preview-wrapper {
     position: relative;
     display: inline-block;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--dark-overlay-dense);
+    border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 8px;
 }
@@ -130,8 +131,8 @@
     position: absolute;
     top: -8px;
     right: -8px;
-    background: #ff3b30;
-    color: #ffffff;
+    background: var(--danger-color);
+    color: var(--text-color);
     border: none;
     width: 24px;
     height: 24px;
@@ -142,17 +143,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
 }
 
 .remove-preview-btn:hover {
-    background: #ff453a;
+    background: var(--danger-hover);
     transform: scale(1.1);
 }
 
 .login-prompt {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px dashed rgba(255, 255, 255, 0.15);
+    background: var(--light-overlay);
+    border: 1px dashed var(--card-border);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
@@ -161,13 +161,13 @@
 
 .login-prompt p {
     margin: 0 0 12px 0;
-    color: #b0b0b0;
+    color: var(--text-muted);
     font-size: 0.95rem;
 }
 
 .login-prompt a {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--light-overlay);
+    border: 1px solid var(--card-border);
     color: var(--primary-color);
     padding: 8px 20px;
     border-radius: 6px;
@@ -179,7 +179,7 @@
 }
 
 .login-prompt a:hover {
-    background: rgba(63, 243, 18, 0.08);
+    background: var(--primary-translucent-hover);
     border-color: var(--primary-color);
 }
 
@@ -191,23 +191,25 @@
 
 .post-btn {
     background: var(--primary-color);
-    color: #000000;
+    color: var(--bg-color);
     border: none;
     padding: 10px 24px;
     border-radius: 8px;
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .post-btn:hover {
     transform: translateY(-2px);
-    background: #4efc22;
+    background-color: var(--primary-hover);
+    box-shadow: var(--shadow-glow);
 }
 
 .hub-post {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 0 12px 12px 0;
     padding: 20px;
 }
@@ -227,7 +229,7 @@
 .post-content {
     font-size: 1.02rem;
     line-height: 1.5;
-    color: #e0e0e0;
+    color: var(--text-color);
     margin: 0 0 15px 0;
 }
 
@@ -243,14 +245,14 @@
     display: flex;
     gap: 12px;
     margin-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--card-border);
     padding-top: 15px;
 }
 
 .vote-btn {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #cccccc;
+    background: var(--light-overlay);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
     padding: 6px 14px;
     border-radius: 6px;
     font-size: 0.85rem;
@@ -263,27 +265,27 @@
 }
 
 .upvote-btn:hover {
-    background: rgba(63, 243, 18, 0.08);
+    background: var(--primary-translucent-hover);
     border-color: var(--primary-color);
     color: var(--primary-color);
     transform: translateY(-1px);
 }
 
 .upvote-btn.active {
-    background: rgba(63, 243, 18, 0.15);
+    background: var(--primary-translucent);
     border-color: var(--primary-color);
     color: var(--primary-color);
 }
 
 .downvote-btn:hover {
-    background: rgba(255, 87, 34, 0.08);
-    border-color: #ff5722;
-    color: #ff5722;
+    background: var(--danger-translucent-hover);
+    border-color: var(--danger-color);
+    color: var(--danger-color);
     transform: translateY(-1px);
 }
 
 .downvote-btn.active {
-    background: rgba(255, 87, 34, 0.15);
-    border-color: #ff5722;
-    color: #ff5722;
+    background: var(--danger-translucent);
+    border-color: var(--danger-color);
+    color: var(--danger-color);
 }

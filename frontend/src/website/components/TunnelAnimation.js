@@ -51,6 +51,7 @@ export class TunnelAnimation {
             alpha: true,
             antialias: true,
         });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         const canvas = renderer.domElement;

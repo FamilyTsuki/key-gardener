@@ -12,16 +12,17 @@
     flex-direction: column;
     align-items: center;
     gap: 24px;
-    background: rgba(0, 0, 0, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--dark-overlay-dense);
+    border: 1px solid var(--card-border);
     border-radius: 28px;
+    box-shadow: var(--shadow-glow);
 }
 
 .register-container h2 {
     font-size: clamp(2rem, 4vw, 2.6rem);
     margin: 0;
     letter-spacing: 0.04em;
-    color: #fff;
+    color: var(--text-color);
 }
 
 .register-container form {
@@ -35,26 +36,23 @@
     width: 100%;
     padding: 16px 18px;
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.06);
-    color: #fff;
+    border: 1px solid var(--card-border);
+    background: var(--light-overlay);
+    color: var(--text-color);
     font-size: 1rem;
     outline: none;
     box-sizing: border-box;
-    transition:
-        border-color 0.22s ease,
-        box-shadow 0.22s ease,
-        background 0.22s ease;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
 .register-input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-muted);
 }
 
 .register-input:focus {
     border-color: var(--primary-color);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 4px rgba(243, 156, 18, 0.14);
+    background: var(--light-overlay-hover);
+    box-shadow: var(--focus-ring);
 }
 
 button.register-btn {
@@ -63,19 +61,18 @@ button.register-btn {
     border: none;
     border-radius: 16px;
     background-color: var(--primary-color);
-    color: #000;
+    color: var(--bg-color);
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
     box-sizing: border-box;
-    transition:
-        transform 0.2s ease,
-        filter 0.2s ease;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 button.register-btn:hover {
     transform: translateY(-2px);
-    filter: brightness(1.05);
+    background-color: var(--primary-hover);
+    box-shadow: var(--shadow-glow);
 }
 
 @media (max-width: 600px) {

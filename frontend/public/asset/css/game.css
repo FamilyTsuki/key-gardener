@@ -1,11 +1,10 @@
-
 .game-canvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #000;
+    background-color: var(--bg-color);
 }
 
 .game-container {
@@ -17,6 +16,7 @@
     width: 100%;
     z-index: 1;
 }
+
 .door-mini-game-overlay {
     position: absolute;
     top: 50%;
@@ -25,23 +25,36 @@
     display: flex;
     gap: 20px;
     z-index: 1000;
-    background: rgba(0,0,0,0.7);
+    background: var(--dark-overlay-dense);
+    border: 1px solid var(--card-border);
     padding: 30px;
     border-radius: 15px;
 }
 
 @keyframes shake {
-    0% { transform: translate(-50%, -50%); }
-    20% { transform: translate(calc(-50% - 10px), -50%); }
-    40% { transform: translate(calc(-50% + 10px), -50%); }
-    60% { transform: translate(calc(-50% - 10px), -50%); }
-    80% { transform: translate(calc(-50% + 10px), -50%); }
-    100% { transform: translate(-50%, -50%); }
+    0% {
+        transform: translate(-50%, -50%);
+    }
+    20% {
+        transform: translate(calc(-50% - 10px), -50%);
+    }
+    40% {
+        transform: translate(calc(-50% + 10px), -50%);
+    }
+    60% {
+        transform: translate(calc(-50% - 10px), -50%);
+    }
+    80% {
+        transform: translate(calc(-50% + 10px), -50%);
+    }
+    100% {
+        transform: translate(-50%, -50%);
+    }
 }
 
 .door-mini-game-overlay.error {
     animation: shake 0.4s ease-in-out;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    border-color: var(--danger-color);
 }
 
 .door-mini-game-letter {
@@ -53,33 +66,31 @@
     justify-content: center;
     align-items: center;
     border-radius: 8px;
-    border: 3px solid #fff;
-    
+    border: 3px solid var(--text-color);
     transition: all 0.2s ease-in-out;
 }
 
 .door-mini-game-letter.done {
-    background-color: #4caf50;
-    color: white;
-    border-color: #4caf50;
+    background-color: var(--success-color);
+    color: var(--text-color);
+    border-color: var(--success-color);
 }
 
 .door-mini-game-letter.active {
-    background-color: white;
-    color: black;
+    background-color: var(--text-color);
+    color: var(--bg-color);
 }
 
 .door-mini-game-letter.pending {
     background-color: transparent;
-    color: white;
+    color: var(--text-color);
 }
-
 
 .enter-prompt-overlay {
     flex-direction: column;
     align-items: center;
-    color: white;
-    font-family: Arial, sans-serif;
+    color: var(--text-color);
+    font-family: var(--font-main);
     font-size: 24px;
 }
 
@@ -89,12 +100,72 @@
 
 .enter-prompt-key {
     padding: 5px 20px;
-    border: 3px solid white;
+    border: 3px solid var(--text-color);
     border-radius: 8px;
     margin-top: 15px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--light-overlay-hover);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.save-quit-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    background: var(--primary-color);
+    border: none;
+    color: var(--bg-color);
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-glow);
+}
+
+.word-container {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+
+    color: var(--text-color);
+    font-size: 80px;
+    z-index: 9999;
+    min-width: 220px;
+    justify-content: center;
+    gap: 10px;
+}
+
+.currentWord {
+    font-weight: 700;
+}
+
+.clignotant {
+    animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+    0%,
+    50% {
+        opacity: 1;
+    }
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
+.save-quit-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--primary-glow-heavy);
+    transform: scale(1.05);
+}
+.none {
+    display: none;
+}

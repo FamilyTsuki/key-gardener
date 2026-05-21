@@ -4,6 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import Enemies from "../managers/Enemies.js";
 import Keyboard from "../managers/Keyboard.js";
 import Player from "../models/actors/Player.js";
+import Projectile from "../models/Projectile.js";
 import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
 
 const loader = new GLTFLoader();
@@ -16,6 +17,7 @@ export class SurvivePhase extends GamePhase {
         this.enemies = null;
         this.projectiles = [];
         this.bonks = [];
+        this.elCurrentWord = null;
     }
 
     async init() {
@@ -24,7 +26,9 @@ export class SurvivePhase extends GamePhase {
         this.keyboard = Keyboard.init(scene, KEYBOARD_LAYOUT);
 
         const enemyGltf = await loader.loadAsync("/asset/game_assets/bug.glb");
-        const fireballGltf = await loader.loadAsync("/asset/game_assets/fireball.glb");
+        const fireballGltf = await loader.loadAsync(
+            "/asset/game_assets/fireball.glb"
+        );
 
         this.enemies = new Enemies(
             this.keyboard.keyboardLayout,
@@ -42,6 +46,10 @@ export class SurvivePhase extends GamePhase {
             fireballGltf.scene,
             this.enemies
         );
+        this.elCurrentWord = document.getElementById("currentWord");
+        document
+            .getElementById("currentWord")
+            .parentElement.classList.remove("none");
 
         this.draw_bg();
     }
@@ -113,6 +121,27 @@ export class SurvivePhase extends GamePhase {
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
             });
+        }
+        let word = this.player.handleKeyPress(event.key);
+
+        if (word) {
+            const closestEnemy = this.enemies.findClosestEnemy(
+                this.player.position
+            );
+
+            const spellResult = this.player.attack(word, closestEnemy);
+
+            if (spellResult instanceof Projectile) {
+                this.projectiles.push(spellResult);
+            }
+            if (this.elCurrentWord) {
+                this.elCurrentWord.textContent = word;
+                setTimeout(() => {
+                    this.elCurrentWord.textContent = this.player.currentWord;
+                }, 100);
+            }
+        } else if (this.elCurrentWord) {
+            this.elCurrentWord.textContent = this.player.currentWord;
         }
     }
 
