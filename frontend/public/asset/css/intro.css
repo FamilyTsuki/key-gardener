@@ -231,6 +231,7 @@
     transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: none;
     object-fit: cover;
+    filter: blur(3px) drop-shadow(0 0 15px rgb(39, 131, 181));
 }
 
 .cinematic-rift.visible {
@@ -245,4 +246,54 @@
 .cinematic-rift.clickable:hover,
 .cinematic-rift:hover {
     transform: translate(-50%, -50%) scale(1.02);
+}
+
+.intro-dialogue-container {
+    position: absolute;
+    bottom: 7%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.intro-dialogue-container.visible {
+    opacity: 1;
+}
+
+.intro-dialogue-bubble {
+    position: relative;
+    background: white;
+    color: black;
+    padding: 15px 30px;
+    border-radius: 15px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    width: 600px;
+    height: 100px;
+    z-index: 2;
+}
+
+.intro-dialogue-text {
+    position: relative;
+    z-index: 10;
+    display: inline-block;
+}
+
+.intro-dialogue-tail {
+    position: absolute;
+    top: 10%;
+    left: 40%;
+    transform: translateY(-80%);
+    width: 600px;
+    height: 450px;
+    background-image: url("/asset/game_assets/bull.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    z-index: 1;
 }

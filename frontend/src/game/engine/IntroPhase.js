@@ -6,6 +6,7 @@ export class IntroPhase extends GamePhase {
     static GLITCH_DELAY_MS = 38000;
     static RIFT_OPENING_DELAY_MS = 40000;
     static STATIC_STATE_DELAY_MS = 41000;
+    static DIALOGUE_DELAY_MS = 43000;
     static RIFT_TRANSITION_DELAY_MS = 1000;
 
     constructor(gameEngine) {
@@ -18,6 +19,13 @@ export class IntroPhase extends GamePhase {
         this.glitchEffect = null;
         this.timeouts = [];
         this.onRiftClick = this.handleRiftClick.bind(this);
+
+        this.dialogueContainer = null;
+        this.dialogueText = null;
+        this.dialogueStep = 0;
+        this.dialogues = ["...", "Is anyone there?"];
+        this.dialogueTimeout = null;
+        this.typewriterInterval = null;
     }
 
     async init() {
@@ -49,10 +57,31 @@ export class IntroPhase extends GamePhase {
 
         this.container.appendChild(video);
         this.container.appendChild(rift);
+        this.createDialogueDOM();
         document.body.appendChild(this.container);
 
         this.video = video;
         this.rift = rift;
+    }
+
+    createDialogueDOM() {
+        this.dialogueContainer = document.createElement("div");
+        this.dialogueContainer.className = "intro-dialogue-container";
+
+        const bubble = document.createElement("div");
+        bubble.className = "intro-dialogue-bubble";
+
+        this.dialogueText = document.createElement("span");
+        this.dialogueText.className = "intro-dialogue-text";
+
+        const tail = document.createElement("div");
+        tail.className = "intro-dialogue-tail";
+
+        bubble.appendChild(this.dialogueText);
+        this.dialogueContainer.appendChild(tail);
+        this.dialogueContainer.appendChild(bubble);
+
+        this.container.appendChild(this.dialogueContainer);
     }
 
     startCinematicTimeline() {
@@ -72,6 +101,12 @@ export class IntroPhase extends GamePhase {
             setTimeout(() => {
                 this.triggerStaticState();
             }, IntroPhase.STATIC_STATE_DELAY_MS)
+        );
+
+        this.timeouts.push(
+            setTimeout(() => {
+                this.triggerDialogue();
+            }, IntroPhase.DIALOGUE_DELAY_MS)
         );
     }
 
@@ -101,11 +136,73 @@ export class IntroPhase extends GamePhase {
             this.video.classList.remove("glitching");
             this.video.classList.remove("glitch-paused");
             this.video.classList.add("static-broken");
-            this.rift.classList.add("clickable");
-            this.rift.addEventListener("click", this.onRiftClick);
         }
         if (this.container) {
             this.container.classList.remove("glitch-paused");
+        }
+    }
+
+    triggerDialogue() {
+        if (!this.dialogueContainer) return;
+        this.dialogueContainer.classList.add("visible");
+        this.showNextDialogue();
+    }
+
+    showNextDialogue() {
+        if (this.dialogueTimeout) {
+            clearTimeout(this.dialogueTimeout);
+            this.dialogueTimeout = null;
+        }
+        if (this.typewriterInterval) {
+            clearInterval(this.typewriterInterval);
+            this.typewriterInterval = null;
+        }
+
+        if (this.dialogueStep < this.dialogues.length) {
+            const fullText = this.dialogues[this.dialogueStep];
+            this.dialogueText.textContent = "";
+            this.dialogueStep++;
+            let charIndex = 0;
+
+            this.typewriterInterval = setInterval(() => {
+                this.dialogueText.textContent += fullText[charIndex];
+                charIndex++;
+                if (charIndex >= fullText.length) {
+                    clearInterval(this.typewriterInterval);
+                    this.typewriterInterval = null;
+                    this.dialogueTimeout = setTimeout(() => {
+                        this.advanceDialogue();
+                    }, 8000);
+                }
+            }, 50);
+        } else {
+            this.endDialogue();
+        }
+    }
+
+    advanceDialogue() {
+        if (this.typewriterInterval) {
+            clearInterval(this.typewriterInterval);
+            this.typewriterInterval = null;
+            this.dialogueText.textContent =
+                this.dialogues[this.dialogueStep - 1];
+
+            if (this.dialogueTimeout) clearTimeout(this.dialogueTimeout);
+            this.dialogueTimeout = setTimeout(() => {
+                this.advanceDialogue();
+            }, 8000);
+        } else {
+            this.showNextDialogue();
+        }
+    }
+
+    endDialogue() {
+        if (this.dialogueContainer) {
+            this.dialogueContainer.classList.remove("visible");
+        }
+        if (this.rift) {
+            this.rift.classList.add("clickable");
+            this.rift.addEventListener("click", this.onRiftClick);
         }
     }
 
@@ -121,7 +218,14 @@ export class IntroPhase extends GamePhase {
 
     draw() {}
 
-    handleKeyDown(_event) {}
+    handleKeyDown(_event) {
+        if (
+            this.dialogueContainer &&
+            this.dialogueContainer.classList.contains("visible")
+        ) {
+            this.advanceDialogue();
+        }
+    }
 
     cleanup() {
         if (this.glitchEffect) {
@@ -134,6 +238,14 @@ export class IntroPhase extends GamePhase {
         }
         this.timeouts.forEach((id) => clearTimeout(id));
         this.timeouts = [];
+        if (this.dialogueTimeout) {
+            clearTimeout(this.dialogueTimeout);
+            this.dialogueTimeout = null;
+        }
+        if (this.typewriterInterval) {
+            clearInterval(this.typewriterInterval);
+            this.typewriterInterval = null;
+        }
         if (this.rift) {
             this.rift.removeEventListener("click", this.onRiftClick);
         }
