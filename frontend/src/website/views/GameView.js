@@ -17,13 +17,25 @@ export default class GameView extends AbstractView {
             id: "game-canvas",
             className: "game-canvas",
         });
-        this.saveQuitBtn = el("button", {
-            className: "save-quit-btn",
-            onclick: () => this.saveAndQuit()
-        }, "Save & Quit");
-        return el("div", { className: "game-container" },
+        this.saveQuitBtn = el(
+            "button",
+            {
+                className: "save-quit-btn",
+                onclick: () => this.saveAndQuit(),
+            },
+            "Save & Quit"
+        );
+        return el(
+            "div",
+            { className: "game-container" },
             this.canvas,
-            this.saveQuitBtn
+            this.saveQuitBtn,
+            el(
+                "div",
+                { className: "word-container none" },
+                el("span", { id: "currentWord" }),
+                el("span", { className: "clignotant" }, "_")
+            )
         );
     }
 
@@ -38,7 +50,7 @@ export default class GameView extends AbstractView {
     async saveAndQuit() {
         const token = AuthService.getToken();
         const activeSlot = localStorage.getItem("activeSaveSlot") || "1";
-        
+
         let phase = "init";
         if (this.engine && this.engine.gamePhase) {
             const phaseName = this.engine.gamePhase.constructor.name;
@@ -51,7 +63,7 @@ export default class GameView extends AbstractView {
 
         const currentGameState = {
             phase: phase,
-            score: 0
+            score: 0,
         };
 
         if (token) {
@@ -60,13 +72,19 @@ export default class GameView extends AbstractView {
                 FlashMessageManager.show("Game saved successfully!", "success");
             } catch (err) {
                 console.error("Failed to save game:", err);
-                FlashMessageManager.show("Failed to save game to server.", "error");
+                FlashMessageManager.show(
+                    "Failed to save game to server.",
+                    "error"
+                );
             }
         } else {
             FlashMessageManager.show("Saved locally (not logged in).", "info");
         }
 
-        localStorage.setItem("activeSaveData", JSON.stringify(currentGameState));
+        localStorage.setItem(
+            "activeSaveData",
+            JSON.stringify(currentGameState)
+        );
 
         document.body.classList.remove("in-game");
 

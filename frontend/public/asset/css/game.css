@@ -126,8 +126,46 @@
     box-shadow: var(--shadow-glow);
 }
 
+.word-container {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+
+    color: var(--text-color);
+    font-size: 80px;
+    z-index: 9999;
+    min-width: 220px;
+    justify-content: center;
+    gap: 10px;
+}
+
+.currentWord {
+    font-weight: 700;
+}
+
+.clignotant {
+    animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+    0%,
+    50% {
+        opacity: 1;
+    }
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
 .save-quit-btn:hover {
     background: var(--primary-hover);
     box-shadow: var(--primary-glow-heavy);
     transform: scale(1.05);
+}
+.none {
+    display: none;
 }
