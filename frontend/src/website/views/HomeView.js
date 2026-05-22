@@ -2,6 +2,7 @@ import AbstractView from "../../core/views/AbstractView.js";
 import { TunnelAnimation } from "../components/TunnelAnimation.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
+import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
 
 export default class HomeView extends AbstractView {
     constructor(params) {
@@ -142,6 +143,8 @@ export default class HomeView extends AbstractView {
         if (this.tunnelContainer) {
             TunnelAnimation.init(this.tunnelContainer);
         }
+        const deviceDetector = new DeviceCapabilitiesDetector("start-btn");
+        deviceDetector.initialize();
     }
 
     getCss() {

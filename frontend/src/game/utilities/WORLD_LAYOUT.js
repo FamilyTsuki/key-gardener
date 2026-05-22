@@ -2,7 +2,34 @@ export function createWordlLayout() {
     const height = 30;
     let worldLayout = [];
     let tab_width = [];
-    let tab_lettre = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+    let tab_lettre = [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+    ];
     for (let i = 0; i < height; i++) {
         let number = Math.random();
         if (number < 0.1) tab_width.push(2);
@@ -12,7 +39,7 @@ export function createWordlLayout() {
     let tab_decalage = [];
     for (let i = 0; i < tab_width.length; i++) {
         if (tab_width[i] > 2) {
-            let temp1 = -Math.floor(Math.random() * (tab_width[i] - 1))
+            let temp1 = -Math.floor(Math.random() * (tab_width[i] - 1));
             tab_decalage.push(temp1);
         } else {
             tab_decalage.push(0);
@@ -20,17 +47,17 @@ export function createWordlLayout() {
     }
 
     let test = 0;
-    let lastCenterX = 0;
+    let lastCenterIndex = 0;
     for (let y = 0; y < tab_width.length; y++) {
         if (y % 2 === 0) test += 1;
         for (let x = 0; x < tab_width[y]; x++) {
-            let min_decal= 0;
+            let min_decal = 0;
             let genere_leter = tab_lettre[Math.floor(Math.random() * 26)];
             if (y % 2 === 1) min_decal = 0.5;
-            
+
             let posX = x + min_decal + test + tab_decalage[y];
             if (x === Math.floor(tab_width[y] / 2)) {
-                lastCenterX = posX;
+                lastCenterIndex = x + tab_decalage[y];
             }
 
             worldLayout.push({
@@ -44,21 +71,21 @@ export function createWordlLayout() {
     }
 
     let y_start = height;
-    let island_widths = [2, 3, 5, 7, 7, 5, 3]; 
+    let island_widths = [2, 3, 5, 7, 7, 5, 3];
     for (let i = 0; i < island_widths.length; i++) {
         let y = y_start + i;
         if (y % 2 === 0) test += 1;
         let w = island_widths[i];
-        
-        let min_decal = (y % 2 === 1) ? 0.5 : 0;
-        let decalage = Math.round(lastCenterX - ((w - 1) / 2 + min_decal + test));
-        
+
+        let min_decal = y % 2 === 1 ? 0.5 : 0;
+        let decalage = lastCenterIndex - Math.floor(w / 2);
+
         for (let x = 0; x < w; x++) {
             let posX = x + min_decal + test + decalage;
-            let isDoorCenter = (i === 4 && x === Math.floor(w/2)); 
-            
+            let isDoorCenter = i === 4 && x === Math.floor(w / 2);
+
             let letterValue = null;
-            if (x === Math.floor(w/2) && i <= 4) {
+            if (x === Math.floor(w / 2) && i <= 4) {
                 letterValue = (i + 1).toString();
             }
 
@@ -66,9 +93,9 @@ export function createWordlLayout() {
                 id: `island-${posX}-${-y}`,
                 x: posX,
                 y: -y,
-                letter: letterValue, 
+                letter: letterValue,
                 isPressed: false,
-                isDoorTile: isDoorCenter
+                isDoorTile: isDoorCenter,
             });
         }
     }

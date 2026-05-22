@@ -107,3 +107,6 @@ body.in-game #app {
     opacity: 1;
     pointer-events: all;
 }
+.hidden {
+    display: none;
+}
