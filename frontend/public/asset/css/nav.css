@@ -10,7 +10,7 @@ nav {
     text-align: center;
     align-items: center;
     justify-content: space-around;
-    font-size: 25px;
+    font-size: clamp(16px, 2.5vw, 25px);
     font-family: var(--font-main, sans-serif);
     box-sizing: border-box;
 }
@@ -18,7 +18,7 @@ nav {
 nav a {
     color: var(--primary-color);
     text-decoration: none;
-    margin: 0 15px;
+    margin: 0 clamp(5px, 1.5vw, 15px);
     font-weight: bold;
     border-bottom: 3px solid transparent;
     padding-bottom: 4px;
@@ -43,7 +43,7 @@ nav a.active {
     background-color: var(--primary-color);
     color: var(--bg-color);
     border-radius: 15px;
-    font-size: 35px;
+    font-size: clamp(18px, 3.5vw, 35px);
     font-weight: bold;
     transition: background-color 0.2s ease;
 }
@@ -70,12 +70,13 @@ nav a.active {
     height: 50px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid var(--primary-color);
+
     background-color: var(--card-bg);
     cursor: pointer;
     transition:
         transform 0.3s ease,
         box-shadow 0.3s ease;
+    box-shadow: 0 0 10px var(--primary-color);
 }
 
 .nav-user-avatar:hover {
@@ -85,4 +86,27 @@ nav a.active {
 .nav-separator {
     margin: 0 10px;
     color: var(--text-muted);
+}
+
+/* =============== RESPONSIVE =============== */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 0;
+        gap: 10px;
+    }
+
+    .login {
+        padding: 4px 15px;
+    }
+
+    .nav-user-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .nav-separator {
+        margin: 0 5px;
+    }
 }
