@@ -20,7 +20,7 @@ body {
     color: var(--bg-color);
     border-radius: 16px;
     text-decoration: none;
-    font-size: 28px;
+    font-size: clamp(20px, 3vw, 28px);
     font-weight: 800;
     transition:
         background-color 0.3s ease,
@@ -39,12 +39,11 @@ body {
     height: 40vw;
     margin: 0;
     object-fit: cover;
-    border-radius: 100px;
-    padding: 20px;
+    border-radius: 2vw;
 }
 
 .home-title {
-    font-size: 90px;
+    font-size: clamp(40px, 8vw, 90px);
     font-weight: 800;
     margin: 0;
     color: var(--primary-color);
@@ -59,10 +58,11 @@ body {
     height: 90dvh;
     align-items: center;
     margin-top: 10dvh;
+    justify-content: space-between;
 }
 
 .home-description {
-    font-size: 22px;
+    font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 400;
     color: var(--text-color);
 }
@@ -82,6 +82,7 @@ body {
     padding: 0 5vw;
     height: 100dvh;
     align-items: center;
+    justify-content: space-between;
 }
 
 .home-info-container {
@@ -93,7 +94,7 @@ body {
 }
 
 .home-info {
-    font-size: 22px;
+    font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 400;
     color: var(--text-color);
 }
@@ -110,4 +111,43 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+/* =============== RESPONSIVE =============== */
+@media (max-width: 768px) {
+    .home-contaner-1,
+    .home-contaner-2 {
+        flex-direction: column;
+        height: auto;
+        padding: 5vh 5vw;
+        gap: 2rem;
+    }
+
+    .home-contaner-1 {
+        margin-top: 15dvh;
+    }
+
+    .home-presantation-container,
+    .home-info-container {
+        width: 100%;
+        text-align: center;
+        align-items: center;
+    }
+
+    .first-home-img {
+        width: 80vw;
+        height: 80vw;
+        border-radius: 4vw;
+        padding: 0;
+    }
+
+    .start-btn {
+        padding: 8px 16px;
+    }
+
+    .home-footer {
+        padding: 2rem 1rem;
+        height: auto;
+        gap: 1rem;
+    }
 }

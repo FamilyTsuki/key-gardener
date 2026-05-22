@@ -188,12 +188,14 @@ export default class WorldMap {
 
         floorGeometry.computeVertexNormals();
 
-        const floorTexture = this.stoneTexture;
+        let floorTexture = null;
 
-        if (floorTexture) {
+        if (this.stoneTexture) {
+            floorTexture = this.stoneTexture.clone();
             floorTexture.wrapS = THREE.RepeatWrapping;
             floorTexture.wrapT = THREE.RepeatWrapping;
             floorTexture.repeat.set(4, 30);
+            floorTexture.needsUpdate = true;
         }
 
         const floorMaterial = new THREE.MeshStandardMaterial({
