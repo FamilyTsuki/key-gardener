@@ -11,6 +11,7 @@ export class GameEngine {
         }
 
         this.scene = new THREE.Scene();
+        this.scene.fog = new THREE.Fog(0x0a0c10, 40, 90);
         this.camera = new THREE.PerspectiveCamera(
             75,
             window.innerWidth / window.innerHeight,
@@ -24,7 +25,7 @@ export class GameEngine {
         });
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setClearColor(0x434343, 1);
+        this.renderer.setClearColor(0x0a0c10, 1);
 
         this.isRunning = false;
         this.lastTime = 0;

@@ -107,7 +107,7 @@ export default class WorldMap {
         const rightArchEnd = 25;
         const rightArchWidth = Math.abs(rightArchEnd - rightArchStart);
 
-        const archRadius = 12;
+        const archRadius = 14;
         const maxLeftFoldAngle = Math.PI * 0.85;
 
         const maxRightFoldAngle = Math.PI * 0.55;
@@ -219,7 +219,7 @@ export default class WorldMap {
         const floorEdges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
         floorMesh.add(floorEdges);
 
-        floorMesh.position.z = 40;
+        floorMesh.position.z = 35;
         floorMesh.rotateY(-Math.PI / 6);
 
         this.group.add(floorMesh);
