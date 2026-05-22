@@ -12,14 +12,14 @@ export class WorldPhase extends GamePhase {
         this.player = null;
         this.camera = this.gameEngine.camera;
         this.camera = new THREE.PerspectiveCamera(
-                    50,
-                    window.innerWidth / window.innerHeight,
-                    0.1,
-                    1000
-                );
-        
+            50,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+
         this.isDoorSequenceActive = false;
-        this.doorSequence = ['O', 'P', 'E', 'N'];
+        this.doorSequence = ["O", "P", "E", "N"];
         this.doorSequenceIndex = 0;
         this.isTransitioning = false;
         this.isDoorOpen = false;
@@ -29,24 +29,30 @@ export class WorldPhase extends GamePhase {
 
     async init() {
         const scene = this.gameEngine.scene;
-        this.worldMap = await WorldMap.init(this.gameEngine.scene, WORLD_LAYOUT);
-        console.log(this.worldMap)
+        this.worldMap = await WorldMap.init(
+            this.gameEngine.scene,
+            WORLD_LAYOUT
+        );
+        console.log(this.worldMap);
         this.draw_bg();
 
         this.player = new Player(
-                    "Héros",
-                    100,
-                    100,
-                    { x: this.worldMap.mapLayout[0].rawPosition.x, y: this.worldMap.mapLayout[0].rawPosition.y, z: 5 },
-                    { width: 0.4, height: 0.4 },
-                    scene,
-                );
+            "Héros",
+            100,
+            100,
+            {
+                x: this.worldMap.mapLayout[0].rawPosition.x,
+                y: this.worldMap.mapLayout[0].rawPosition.y,
+                z: 5,
+            },
+            { width: 0.4, height: 0.4 },
+            scene
+        );
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
         this.player.offsetY = 3.5;
         this.player.offsetZ = 0;
-        
     }
 
     update(deltaTime) {
@@ -56,22 +62,24 @@ export class WorldPhase extends GamePhase {
         this.player.update();
         if (this.player && this.player.mesh) {
             const playerPos = this.player.mesh.position;
-            
+
             this.camera.position.set(
-                playerPos.x+5,
-                playerPos.y + 23    ,
-                playerPos.z + 17
+                playerPos.x + 5,
+                playerPos.y + 21,
+                playerPos.z + 14
             );
-            
+
             this.camera.lookAt(playerPos.x, playerPos.y, playerPos.z);
 
             if (!this.isTransitioning && this.worldMap) {
-                const doorTile = this.worldMap.mapLayout.find(t => t.isDoorTile);
+                const doorTile = this.worldMap.mapLayout.find(
+                    (t) => t.isDoorTile
+                );
                 if (doorTile) {
                     const dx = doorTile.rawPosition.x - this.player.x;
                     const dy = doorTile.rawPosition.y - this.player.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
                     if (!this.isDoorOpen && !this.isOpeningDoor) {
                         if (dist < 2.5 && !this.isDoorSequenceActive) {
                             this.startDoorSequence();
@@ -91,7 +99,7 @@ export class WorldPhase extends GamePhase {
     startDoorSequence() {
         this.isDoorSequenceActive = true;
         this.doorSequenceIndex = 0;
-        
+
         this.uiOverlay = document.createElement("div");
         this.uiOverlay.classList.add("door-mini-game-overlay");
 
@@ -102,12 +110,12 @@ export class WorldPhase extends GamePhase {
     updateDoorUI() {
         if (!this.uiOverlay) return;
         this.uiOverlay.innerHTML = "";
-        
+
         this.doorSequence.forEach((letter, index) => {
             const letterBox = document.createElement("div");
             letterBox.innerText = letter;
             letterBox.classList.add("door-mini-game-letter");
-            
+
             if (index < this.doorSequenceIndex) {
                 letterBox.classList.add("done");
             } else if (index === this.doorSequenceIndex) {
@@ -122,7 +130,7 @@ export class WorldPhase extends GamePhase {
     async completeDoorSequence() {
         this.isDoorSequenceActive = false;
         this.isOpeningDoor = true;
-        
+
         if (this.uiOverlay) {
             this.uiOverlay.remove();
             this.uiOverlay = null;
@@ -138,10 +146,13 @@ export class WorldPhase extends GamePhase {
 
     showEnterPrompt() {
         if (this.enterPromptOverlay) return;
-        
+
         this.enterPromptOverlay = document.createElement("div");
-        this.enterPromptOverlay.classList.add("door-mini-game-overlay", "enter-prompt-overlay");
-        
+        this.enterPromptOverlay.classList.add(
+            "door-mini-game-overlay",
+            "enter-prompt-overlay"
+        );
+
         const enterKey = document.createElement("div");
         enterKey.classList.add("enter-prompt-key");
         enterKey.innerHTML = `
@@ -150,14 +161,14 @@ export class WorldPhase extends GamePhase {
                 <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
             </svg>
         `;
-        
+
         const titleDiv = document.createElement("div");
         titleDiv.classList.add("enter-prompt-title");
         titleDiv.innerText = "Entrer dans le portail";
-        
+
         this.enterPromptOverlay.appendChild(titleDiv);
         this.enterPromptOverlay.appendChild(enterKey);
-        
+
         document.body.appendChild(this.enterPromptOverlay);
     }
 
@@ -170,19 +181,24 @@ export class WorldPhase extends GamePhase {
 
     draw() {
         if (this.worldMap) {
-            this.worldMap.update(this.player ? { x: this.player.x, y: this.player.y } : null);
+            this.worldMap.update(
+                this.player ? { x: this.player.x, y: this.player.y } : null
+            );
         }
     }
 
     draw_bg() {
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        this.gameEngine.scene.background = new THREE.Color(0x222233);
+        this.gameEngine.scene.fog = new THREE.FogExp2(0x222233, 0.015);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         this.gameEngine.scene.add(ambientLight);
-        
+
         const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
         sunLight.position.set(10, 20, 10);
         this.gameEngine.scene.add(sunLight);
-        
-        const fillLight = new THREE.PointLight(0x0088ff, 0.5);
+
+        const fillLight = new THREE.PointLight(0xaaaaff, 0.8);
         fillLight.position.set(-10, 10, -10);
         this.gameEngine.scene.add(fillLight);
     }
@@ -203,10 +219,11 @@ export class WorldPhase extends GamePhase {
                     this.uiOverlay.classList.remove("error");
                     void this.uiOverlay.offsetWidth;
                     this.uiOverlay.classList.add("error");
-                    
+
                     if (this.errorTimeout) clearTimeout(this.errorTimeout);
                     this.errorTimeout = setTimeout(() => {
-                        if (this.uiOverlay) this.uiOverlay.classList.remove("error");
+                        if (this.uiOverlay)
+                            this.uiOverlay.classList.remove("error");
                     }, 400);
                 }
             }
@@ -216,13 +233,13 @@ export class WorldPhase extends GamePhase {
         if (this.isTransitioning) return;
 
         const keyName = event.key.toUpperCase();
-        
+
         if (this.isDoorOpen && keyName === "ENTER") {
-            const doorTile = this.worldMap.mapLayout.find(t => t.isDoorTile);
+            const doorTile = this.worldMap.mapLayout.find((t) => t.isDoorTile);
             if (doorTile) {
                 const dx = doorTile.rawPosition.x - this.player.x;
                 const dy = doorTile.rawPosition.y - this.player.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
+                const dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 2.5) {
                     this.isTransitioning = true;
                     this.hideEnterPrompt();
@@ -231,10 +248,10 @@ export class WorldPhase extends GamePhase {
                 }
             }
         }
-        
+
         let target = null;
         if (this.worldMap) {
-            target = this.worldMap.find(keyName , this.player.position.y);
+            target = this.worldMap.find(keyName, this.player.position.y);
         }
         if (!target) {
             return;
