@@ -1,6 +1,18 @@
 export class DeviceCapabilitiesDetector {
-    constructor(targetElementId) {
-        this.targetElement = document.getElementById(targetElementId);
+    constructor(targetElementIdOrSelector) {
+        this.targetElements = [];
+        const elById = document.getElementById(targetElementIdOrSelector);
+        if (elById) {
+            this.targetElements.push(elById);
+        } else {
+            try {
+                const els = document.querySelectorAll(targetElementIdOrSelector);
+                this.targetElements = Array.from(els);
+            } catch (e) {
+                // ignore
+            }
+        }
+
         this.mediaQuery = window.matchMedia(
             "(hover: hover) and (pointer: fine)"
         );
@@ -10,7 +22,7 @@ export class DeviceCapabilitiesDetector {
     }
 
     initialize() {
-        if (!this.targetElement) return;
+        if (this.targetElements.length === 0) return;
 
         this.updateInterfaceVisibility();
         this.mediaQuery.addEventListener("change", this.handleDeviceChange);
@@ -27,10 +39,12 @@ export class DeviceCapabilitiesDetector {
     }
 
     updateInterfaceVisibility() {
-        if (this.mediaQuery.matches || this.hasKeyboardDetected) {
-            this.targetElement.classList.remove("hidden");
-        } else {
-            this.targetElement.classList.add("hidden");
-        }
+        this.targetElements.forEach(el => {
+            if (this.mediaQuery.matches || this.hasKeyboardDetected) {
+                el.classList.remove("hidden");
+            } else {
+                el.classList.add("hidden");
+            }
+        });
     }
 }
