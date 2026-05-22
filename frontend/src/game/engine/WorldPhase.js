@@ -180,6 +180,11 @@ export class WorldPhase extends GamePhase {
     }
 
     draw() {
+        if (this.player && this.player.mesh && this.playerLight) {
+            const pos = this.player.mesh.position;
+            this.playerLight.position.set(pos.x, pos.y + 7, pos.z);
+        }
+
         if (this.worldMap) {
             this.worldMap.update(
                 this.player ? { x: this.player.x, y: this.player.y } : null
@@ -188,19 +193,15 @@ export class WorldPhase extends GamePhase {
     }
 
     draw_bg() {
-        this.gameEngine.scene.background = new THREE.Color(0x222233);
-        this.gameEngine.scene.fog = new THREE.FogExp2(0x222233, 0.015);
+        this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
+        this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.02);
         this.gameEngine.scene.add(ambientLight);
 
-        const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
-        sunLight.position.set(10, 20, 10);
-        this.gameEngine.scene.add(sunLight);
-
-        const fillLight = new THREE.PointLight(0xaaaaff, 0.8);
-        fillLight.position.set(-10, 10, -10);
-        this.gameEngine.scene.add(fillLight);
+        this.playerLight = new THREE.PointLight(0xffddaa, 500, 120);
+        this.playerLight.position.set(0, 7, 0);
+        this.gameEngine.scene.add(this.playerLight);
     }
 
     handleKeyDown(event) {
