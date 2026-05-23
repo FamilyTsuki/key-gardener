@@ -3,12 +3,25 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 
+/**
+ * View for registering a new user account.
+ */
 export default class RegisterView extends AbstractView {
+    /**
+     * Creates an instance of RegisterView.
+     *
+     * @param {Object} params - The route parameters.
+     */
     constructor(params) {
         super(params);
         this.setTitle("Register - Keyboard Survivor");
     }
 
+    /**
+     * Renders the registration view content and form.
+     *
+     * @returns {Promise<HTMLElement>} The register view container element.
+     */
     async render() {
         const usernameInput = el("input", { type: "text", placeholder: "Username", required: true, className: "register-input", id: "username" });
         const emailInput = el("input", { type: "email", placeholder: "Email", required: true, className: "register-input", id: "reg-email" });
@@ -63,6 +76,11 @@ export default class RegisterView extends AbstractView {
         );
     }
 
+    /**
+     * Retrieves the CSS files specific to this view.
+     *
+     * @returns {Array<string>} List of CSS file paths.
+     */
     getCss() {
         return ["/asset/css/register.css"];
     }

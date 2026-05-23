@@ -1,3 +1,6 @@
+/**
+ * Represents a base game object.
+ */
 export default class GameObject {
   rawPosition;
   position;
@@ -35,6 +38,9 @@ export default class GameObject {
     this.position.y = Y;
   }
 
+  /**
+   * Draws the game object.
+   */
   draw() {
     console.log("Drawing");
   }

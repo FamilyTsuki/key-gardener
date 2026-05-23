@@ -6,10 +6,27 @@ import ProjectileLuncher from "../spells/ProjectileLuncher.js";
 import HealSpell from "../spells/HealSpells.js";
 import FireCircle from "../spells/FireCircle.js";
 
+/**
+ * Player class representing the main character in the game.
+ * Inherits from Actor.
+ */
 export default class Player extends Actor {
+    /** @type {Array<Spell>} */
     #wordSpells;
+    /** @type {string} */
     #currentWord = "";
 
+    /**
+     * Constructs a Player instance.
+     * @param {string} [playerName="Unknown"] - The name of the player.
+     * @param {number} [hp=100] - The health points of the player.
+     * @param {number} [hpMax=100] - The maximum health points of the player.
+     * @param {Object} rawPosition - The raw initial position {x, y, z}.
+     * @param {Object} size - The size of the player {width, height}.
+     * @param {THREE.Scene} scene - The scene where the player will be added.
+     * @param {THREE.Group} fireballModel - The 3D model for fireballs.
+     * @param {Object} enemiesManager - The manager handling enemies.
+     */
     constructor(
         playerName = "Unknown",
         hp = 100,
@@ -74,14 +91,29 @@ export default class Player extends Actor {
         this.elVignette = document.getElementById("damage-vignette");
     }
 
+    /**
+     * Gets the list of trigger words for the player's spells.
+     * @returns {Array<string>} The array of trigger words.
+     */
     get wordSpells() {
         return this.#wordSpells.map((wordSpell) => wordSpell.word);
     }
 
+    /**
+     * Gets the current word being typed by the player.
+     * @returns {string} The current word.
+     */
     get currentWord() {
         return this.#currentWord;
     }
 
+    /**
+     * Attacks by casting a spell corresponding to the provided word.
+     * @param {string} word - The trigger word of the spell.
+     * @param {Enemy|null} [closestEnemy=null] - The closest enemy targeted.
+     * @returns {any} The effect result of the spell.
+     * @throws {Error} If no spell corresponds to the word.
+     */
     attack(word, closestEnemy = null) {
         const spell = this.#wordSpells.find(
             (wordSpell) => wordSpell.word === word
@@ -94,6 +126,10 @@ export default class Player extends Actor {
         return spell.effect(closestEnemy, this, this.scene);
     }
 
+    /**
+     * Initiates movement towards a new position.
+     * @param {Object} newPosition - The target position {x, y, z}.
+     */
     move(newPosition) {
         if (
             this.targetPosition.x !== newPosition.x ||
@@ -110,6 +146,9 @@ export default class Player extends Actor {
         }
     }
 
+    /**
+     * Updates the player's state, spells, and position each frame.
+     */
     update() {
         this.#wordSpells.forEach((spell) => {
             if (spell.update) {
@@ -162,6 +201,10 @@ export default class Player extends Actor {
         }
     }
 
+    /**
+     * Applies damage to the player.
+     * @param {number} amount - The amount of damage to apply.
+     */
     damage(amount) {
         this.hp -= amount;
         this.damageSound.play();
@@ -175,6 +218,12 @@ export default class Player extends Actor {
         }
     }
 
+    /**
+     * Handles key press events for typing spell words.
+     * @param {string} key - The key pressed.
+     * @param {Function} findClosestEnemy - Function to find the closest enemy.
+     * @returns {string|boolean} The completed spell word or false.
+     */
     handleKeyPress(key, findClosestEnemy) {
         if (key.length === 1 && key.match(/[a-z]/i)) {
             this.#currentWord += key.toLowerCase();
@@ -201,6 +250,10 @@ export default class Player extends Actor {
         return false;
     }
 
+    /**
+     * Gets the instances of the player's spells.
+     * @returns {Array<Spell>} The array of spell instances.
+     */
     get wordSpellsInstances() {
         return this.#wordSpells;
     }

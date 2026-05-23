@@ -4,12 +4,25 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import Navbar from "../components/Navbar.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 
+/**
+ * View for displaying and managing user account information.
+ */
 export default class AccountView extends AbstractView {
+    /**
+     * Creates an instance of AccountView.
+     *
+     * @param {Object} params - The route parameters.
+     */
     constructor(params) {
         super(params);
         this.setTitle("Account - Keyboard Survivor");
     }
 
+    /**
+     * Renders the account view content.
+     *
+     * @returns {Promise<HTMLElement>} The account view container element.
+     */
     async render() {
         this.usernameSpan = el("p", { className: "account-info name" });
         this.usermail = el("p", { className: "account-info" });
@@ -103,6 +116,11 @@ export default class AccountView extends AbstractView {
         return container;
     }
 
+    /**
+     * Fetches and updates the user information on the screen.
+     *
+     * @returns {Promise<void>}
+     */
     async updateUserInfo() {
         if (!this.usernameSpan || !this.usermail) return;
 
@@ -123,6 +141,10 @@ export default class AccountView extends AbstractView {
         }
     }
 
+    /**
+     * Handles the click event to edit the username.
+     * Replaces the username text with an input field.
+     */
     editUsernameClick() {
         const input = el("input", { type: "text", value: this.usernameSpan.textContent, className: "account-info-input name" });
         this.usernameSpan.replaceWith(input);
@@ -140,12 +162,23 @@ export default class AccountView extends AbstractView {
         };
     }
 
+    /**
+     * Cancels the username editing and restores the text span.
+     *
+     * @param {HTMLInputElement} input - The input field for the username.
+     */
     cancelEditUsername(input) {
         input.replaceWith(this.usernameSpan);
         this.editUsername.textContent = "✐";
         this.editUsername.onclick = () => this.editUsernameClick();
     }
 
+    /**
+     * Saves the new username if it has changed and updates the display.
+     *
+     * @param {HTMLInputElement} input - The input field containing the new username.
+     * @returns {Promise<void>}
+     */
     async saveUsername(input) {
         const newUsername = input.value.trim();
         if (!newUsername || newUsername === this.usernameSpan.textContent) {
@@ -165,6 +198,10 @@ export default class AccountView extends AbstractView {
         this.cancelEditUsername(input);
     }
 
+    /**
+     * Handles the click event to edit the user email.
+     * Replaces the email text with an input field.
+     */
     editUsermailClick() {
         const input = el("input", { type: "email", value: this.usermail.textContent, className: "account-info-input" });
         this.usermail.replaceWith(input);
@@ -182,12 +219,23 @@ export default class AccountView extends AbstractView {
         };
     }
 
+    /**
+     * Cancels the email editing and restores the text span.
+     *
+     * @param {HTMLInputElement} input - The input field for the email.
+     */
     cancelEditUsermail(input) {
         input.replaceWith(this.usermail);
         this.editUsermail.textContent = "✐";
         this.editUsermail.onclick = () => this.editUsermailClick();
     }
 
+    /**
+     * Saves the new email if it has changed and updates the display.
+     *
+     * @param {HTMLInputElement} input - The input field containing the new email.
+     * @returns {Promise<void>}
+     */
     async saveUsermail(input) {
         const newUsermail = input.value.trim();
         if (!newUsermail || newUsermail === this.usermail.textContent) {
@@ -206,6 +254,11 @@ export default class AccountView extends AbstractView {
         this.cancelEditUsermail(input);
     }
 
+    /**
+     * Retrieves the CSS files specific to this view.
+     *
+     * @returns {Array<string>} List of CSS file paths.
+     */
     getCss() {
         return ["/asset/css/account.css"];
     }

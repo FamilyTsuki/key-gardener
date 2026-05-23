@@ -6,6 +6,9 @@ import findBestPath from "../utilities/aStar.js";
 
 const loader = new GLTFLoader();
 
+/**
+ * Manages the collection of enemies, their pathfinding, and behavior.
+ */
 export default class Enemies {
     #aStarGrid;
     #container;
@@ -14,6 +17,12 @@ export default class Enemies {
     #fireBallModel;
     bosnus = 0;
 
+    /**
+     * Creates an instance of Enemies manager.
+     * @param {Array<Object>} keyboardLayout - The layout of keys on the keyboard.
+     * @param {THREE.Group} enemyModel - The 3D model for basic enemies.
+     * @param {THREE.Group} fireballModel - The 3D model for the fireball projectile.
+     */
     constructor(keyboardLayout, enemyModel, fireballModel) {
         this.#aStarGrid = new Map();
         this.#container = [];
@@ -41,23 +50,42 @@ export default class Enemies {
         }
     }
 
+    /**
+     * Gets the A* pathfinding grid.
+     * @returns {Map<string, NodeAStar>} The grid map.
+     */
     get grid() {
         return this.#aStarGrid;
     }
+    /**
+     * Gets the list of active enemies.
+     * @returns {Array<Enemy>} The array of enemies.
+     */
     get container() {
         return this.#container;
     }
+    /**
+     * Gets the boss instance, if any.
+     * @returns {Boss} The boss enemy.
+     */
     get boss() {
         return this.#boss;
     }
 
+    /**
+     * Adds an enemy at the given position.
+     * @param {Object} position - The position to spawn the enemy.
+     */
     add(position) {
         console.error("here");
         this.#container.push(new Enemy(position, 50, 50, this.#enemyModel));
         enemy_alive += 1;
     }
+    /**
+     * Removes dead enemies from the container and grants bonuses.
+     * @returns {number} The bonus awarded.
+     */
     clearDead() {
-        // On compte combien d'ennemis sont morts
         for (const enemy of this.#container) {
             if (enemy.isDead) {
                 this.bonus = 100;
@@ -65,18 +93,17 @@ export default class Enemies {
             }
         }
 
-        // On filtre le container pour ne garder que les vivants
         this.#container = this.#container.filter((enemy) => !enemy.isDead);
 
-        // On renvoie le total à ajouter au score global
         return this.bonus;
     }
 
     /**
-     *
-     * @param {Object} playerPos = {x: Number, y: Number}
-     * @param {Array} projectiles
-     * @param {Array} bonks
+     * Updates all enemies and the boss.
+     * @param {Object} playerPos - The player's current position.
+     * @param {Array<Projectile>} projectiles - The active projectiles in the scene.
+     * @param {Array<Object>} bonks - Active bonks or hit effects.
+     * @param {Player} player - The player instance.
      */
     update(playerPos, projectiles, bonks, player) {
         for (const enemy of this.#container) {
@@ -89,6 +116,9 @@ export default class Enemies {
         }
     }
 
+    /**
+     * Triggers movement for all enemies.
+     */
     move() {
         for (const enemy of this.#container) {
             enemy.move();
@@ -96,9 +126,9 @@ export default class Enemies {
     }
 
     /**
-     *
-     * @param {String} playerKey
-     * @param {Keyboard} keyboard
+     * Updates pathfinding for enemies to reach the target key.
+     * @param {string} playerKey - The key the player is currently on.
+     * @param {Keyboard} keyboard - The keyboard manager instance.
      */
     updatePath(playerKey, keyboard) {
         for (const enemy of this.#container) {
@@ -115,8 +145,9 @@ export default class Enemies {
     }
 
     /**
-     *
-     * @param {Object} playerPos = {x: Number, y: Number}
+     * Finds the closest enemy to the player.
+     * @param {Object} playerPos - The player's position.
+     * @returns {Object|boolean} An object with the closest enemy and distance, or false if no enemies.
      */
     findClosestEnemy(playerPos) {
         if (this.#container.length > 0) {
@@ -145,6 +176,13 @@ export default class Enemies {
         return false;
     }
 
+    /**
+     * Spawns an enemy at a specific key.
+     * @param {Object} keyObject - The key on which to spawn the enemy.
+     * @param {THREE.Scene} scene - The main three.js scene.
+     * @param {string} [type="basic"] - The type of enemy to spawn.
+     * @returns {Enemy} The spawned enemy instance.
+     */
     spawnAt(keyObject, scene, type = "basic") {
         if (!keyObject || !keyObject.rawPosition) {
             console.error(
@@ -175,6 +213,11 @@ export default class Enemies {
         return enemy;
     }
 
+    /**
+     * Loads and spawns the boss.
+     * @param {THREE.Scene} scene - The main three.js scene.
+     * @returns {Promise<void>}
+     */
     async spawnBoss(scene) {
         const bossRawPosition = { x: 5, y: -2 };
 
@@ -199,11 +242,17 @@ export default class Enemies {
         );
         this.#container.push(this.#boss);
 
-        //? set the mesh position
         this.boss.mesh.position.set(this.boss.x, 0, this.boss.y);
     }
 }
 
+/**
+ * Finds valid neighbour keys for pathfinding.
+ * @param {string} keyTargetedName - The key's identifier.
+ * @param {Object} position - The key's raw grid position.
+ * @param {Array<Object>} keyboardLayout - The keyboard layout definition.
+ * @returns {Array<string>} An array of neighbour key identifiers.
+ */
 function findNeighbours(keyTargetedName, position, keyboardLayout) {
     const neighbours = [];
 

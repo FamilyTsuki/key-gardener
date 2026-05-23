@@ -1,14 +1,19 @@
 import Spell from "../Spell.js";
 import * as THREE from "three";
 
+/**
+ * HealSpell that restores the player's health points.
+ * Inherits from Spell.
+ */
 export default class HealSpell extends Spell {
+    /** @type {number} */
     #healAmount;
 
     /**
-     *
-     * @param {String} word
-     * @param {Number} healAmount
-     * @param {Number} range
+     * Constructs a HealSpell.
+     * @param {string} word - The trigger word for the spell.
+     * @param {number} healAmount - The amount of health to restore.
+     * @param {number} [range=Infinity] - The range of the spell.
      */
     constructor(word, healAmount, range = Infinity) {
         super(word, healAmount, range);
@@ -16,10 +21,11 @@ export default class HealSpell extends Spell {
     }
 
     /**
-     *
-     * @param {Enemy} closestEnemy
-     * @param {Player} player
-     * @param {Scene} scene
+     * Activates the healing effect on the player.
+     * @param {Enemy} closestEnemy - The closest enemy (unused for heal).
+     * @param {Player} player - The player to be healed.
+     * @param {THREE.Scene} scene - The scene to render visual effects in.
+     * @returns {boolean} True if healed, false otherwise.
      */
     effect(closestEnemy, player, scene) {
         if (player) {
@@ -39,9 +45,9 @@ export default class HealSpell extends Spell {
     }
 
     /**
-     *
-     * @param {Object} playerPos = {x: Number, y: Number}
-     * @param {Scene} scene
+     * Triggers the visual healing effect around the player.
+     * @param {Object} playerPos - The player's position {x, y}.
+     * @param {THREE.Scene} scene - The scene to add the visual effect to.
      */
     triggerVisualEffect(playerPos, scene) {
         const geometry = new THREE.SphereGeometry(1.5, 32, 32);

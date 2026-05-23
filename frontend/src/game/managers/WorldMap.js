@@ -1,6 +1,11 @@
 import * as THREE from "three";
 import HexTile from "../models/HexTile.js";
-
+/**
+ * Creates a texture with a letter on it.
+ * @param {string} letter - The letter to draw.
+ * @param {HTMLImageElement} [stoneImage] - Optional background image.
+ * @returns {THREE.CanvasTexture|null} The generated texture or null.
+ */
 function createLetterTexture(letter, stoneImage) {
     if (!letter) return null;
     const canvas = document.createElement("canvas");
@@ -30,6 +35,12 @@ function createLetterTexture(letter, stoneImage) {
     return texture;
 }
 
+/**
+ * Creates a beveled hexagon group.
+ * @param {THREE.Material|THREE.Material[]} sideMaterial - The material for the sides.
+ * @param {THREE.Material|THREE.Material[]} topMaterial - The material for the top.
+ * @returns {THREE.Group} The constructed 3D group.
+ */
 function createBeveledHexagon(sideMaterial, topMaterial) {
     const group = new THREE.Group();
 
@@ -64,11 +75,21 @@ function createBeveledHexagon(sideMaterial, topMaterial) {
     return group;
 }
 
+/**
+ * Manages the generation and updating of the world map.
+ */
 export default class WorldMap {
     #mapLayout;
     tileSize;
     group;
 
+    /**
+     * Creates a new world map instance.
+     * @param {Array} mapLayout - The layout configuration of the map.
+     * @param {number} tileSize - The size of each tile.
+     * @param {THREE.Scene} scene - The main 3D scene.
+     * @param {THREE.Texture} [stoneTexture] - The texture for the tiles.
+     */
     constructor(mapLayout, tileSize, scene, stoneTexture) {
         this.#mapLayout = mapLayout;
         this.tileSize = tileSize;
@@ -82,6 +103,9 @@ export default class WorldMap {
         this.createHexagons(scene);
     }
 
+    /**
+     * Generates the environment such as floor and walls.
+     */
     createEnvironment() {
         const environmentWidth = 50;
         const environmentLength = 500;
@@ -229,6 +253,10 @@ export default class WorldMap {
         return this.#mapLayout;
     }
 
+    /**
+     * Constructs the hexagon meshes for the map layout.
+     * @param {THREE.Scene} scene - The main 3D scene.
+     */
     createHexagons(scene) {
         this.#mapLayout.forEach((tile) => {
             const sideMaterial = new THREE.MeshStandardMaterial({
@@ -270,6 +298,10 @@ export default class WorldMap {
         });
     }
 
+    /**
+     * Creates a decorative door on a given tile mesh.
+     * @param {THREE.Object3D} parentMesh - The parent mesh for the door.
+     */
     createDoor(parentMesh) {
         const doorGroup = new THREE.Group();
 
@@ -324,6 +356,10 @@ export default class WorldMap {
         parentMesh.add(doorGroup);
     }
 
+    /**
+     * Animates the door opening.
+     * @returns {Promise<void>} Resolves when the animation finishes.
+     */
     openDoor() {
         return new Promise((resolve) => {
             if (!this.leftDoorPivot || !this.rightDoorPivot) {
@@ -351,6 +387,10 @@ export default class WorldMap {
         });
     }
 
+    /**
+     * Updates map tiles based on the player's position.
+     * @param {Object} playerPosition - The current position of the player.
+     */
     update(playerPosition) {
         this.#mapLayout.forEach((tile) => {
             if (tile.mesh) {
@@ -388,6 +428,12 @@ export default class WorldMap {
         });
     }
 
+    /**
+     * Finds a specific tile by its associated letter.
+     * @param {string} letterToFind - The letter to search for.
+     * @param {number} position_y_player - The Y position of the player to filter tiles.
+     * @returns {Object|null} The found tile object or null.
+     */
     find(letterToFind, position_y_player) {
         let tile = null;
         const min_y = position_y_player - 3.5;
@@ -405,6 +451,12 @@ export default class WorldMap {
         return tile;
     }
 
+    /**
+     * Initializes the world map asynchronously.
+     * @param {THREE.Scene} scene - The main 3D scene.
+     * @param {Array} worldLayout - The initial layout data for the world.
+     * @returns {Promise<WorldMap>} The instantiated world map.
+     */
     static async init(scene, worldLayout) {
         const initialSize = 1;
         const layout = worldLayout.map((tileRaw) => {

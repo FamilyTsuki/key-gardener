@@ -2,7 +2,15 @@ import * as THREE from "/node_modules/three/build/three.module.js";
 import { gsap } from "/node_modules/gsap/index.js";
 import { ScrollTrigger } from "/node_modules/gsap/ScrollTrigger.js";
 
+/**
+ * Handles the background tunnel animation using Three.js and GSAP.
+ */
 export class TunnelAnimation {
+    /**
+     * Initializes the tunnel animation within the provided container.
+     *
+     * @param {HTMLElement} [containerElement] - The DOM element where the canvas will be appended. If not provided, appends to document.body.
+     */
     static init(containerElement) {
         gsap.registerPlugin(ScrollTrigger);
 

@@ -5,13 +5,26 @@ import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { GameEngine } from "../../game/engine/GameEngine.js";
 import { SaveService } from "../../core/services/save.service.js";
 
+/**
+ * View for the main game interface.
+ */
 export default class GameView extends AbstractView {
+    /**
+     * Creates an instance of GameView.
+     *
+     * @param {Object} params - The route parameters.
+     */
     constructor(params) {
         super(params);
         this.setTitle("Game - Keyboard Survivor");
         this.engine = null;
     }
 
+    /**
+     * Renders the game view content including the canvas.
+     *
+     * @returns {Promise<HTMLElement>} The game view container element.
+     */
     async render() {
         this.canvas = el("canvas", {
             id: "game-canvas",
@@ -39,6 +52,11 @@ export default class GameView extends AbstractView {
         );
     }
 
+    /**
+     * Initializes the game engine and starts the game loop.
+     *
+     * @returns {Promise<void>}
+     */
     async init() {
         document.body.classList.add("in-game");
         this.engine = new GameEngine();
@@ -47,6 +65,11 @@ export default class GameView extends AbstractView {
         this.engine.start();
     }
 
+    /**
+     * Saves the current game state and exits to the save menu.
+     *
+     * @returns {Promise<void>}
+     */
     async saveAndQuit() {
         const token = AuthService.getToken();
         const activeSlot = localStorage.getItem("activeSaveSlot") || "1";
@@ -96,6 +119,9 @@ export default class GameView extends AbstractView {
         window.dispatchEvent(new Event("popstate"));
     }
 
+    /**
+     * Cleans up the game view and stops the engine.
+     */
     destroy() {
         document.body.classList.remove("in-game");
         if (this.engine) {
@@ -103,7 +129,17 @@ export default class GameView extends AbstractView {
         }
     }
 
+    /**
+     * Retrieves the CSS files specific to this view.
+     *
+     * @returns {Array<string>} List of CSS file paths.
+     */
     getCss() {
-        return ["/asset/css/game.css", "/asset/css/intro.css"];
+        return [
+            "/asset/css/game.css",
+            "/asset/css/intro.css",
+            "/asset/css/tempo.css",
+            "/asset/css/flame-wall.css"
+        ];
     }
 }

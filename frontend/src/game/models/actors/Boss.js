@@ -3,7 +3,21 @@ import Projectile from "../Projectile.js";
 import Bonk from "../Bonk.js";
 import * as THREE from "three";
 
+/**
+ * Represents the Boss enemy in the game.
+ */
 export default class Boss extends Actor {
+  /**
+   * Creates a new Boss instance.
+   * @param {string} name - The name of the boss.
+   * @param {number} hp - The boss's hit points.
+   * @param {{x: number, y: number}} rawPosition - The raw grid position.
+   * @param {{x: number, y: number}} position - The world position.
+   * @param {{width: number, height: number}} size - The size of the boss.
+   * @param {THREE.Scene} scene - The main 3D scene.
+   * @param {THREE.Object3D} fireballModel - The model used for fireball attacks.
+   * @param {Object} bossModel - The 3D model for the boss.
+   */
   constructor(
     name,
     hp,
@@ -60,13 +74,18 @@ export default class Boss extends Actor {
     this.updateHpBar();
   }
 
+  /**
+   * Checks if the boss is dead.
+   * @returns {boolean} True if dead, false otherwise.
+   */
   get isDead() {
     return this.hp <= 0 || this.hp === undefined;
   }
+  /**
+   * Updates the visual representation of the boss's HP bar.
+   */
   updateHpBar() {
-    const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
-
-    // Mise à jour de la barre visuelle
+    const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
     const fill = document.getElementById("boss-hp-fill");
     const currentTxt = document.getElementById("boss-hp-current");
     const maxTxt = document.getElementById("boss-hp-max");
@@ -76,11 +95,11 @@ export default class Boss extends Actor {
     if (maxTxt) maxTxt.innerText = this.hpMax;
   }
   /**
-   *
-   * @param {Number} deltaTime
-   * @param {Object} playerPos = {x: Number, y: Number}
-   * @param {Array} projectiles
-   * @param {Array} bonks
+   * Updates the boss's logic each frame.
+   * @param {number} deltaTime - Time since the last update.
+   * @param {Object} playerPos - The player's position {x, y}.
+   * @param {Array} projectiles - Array of active projectiles.
+   * @param {Array} bonks - Array of active bonk attacks.
    */
   update(deltaTime, playerPos, projectiles, bonks) {
     if (this.isDead) return;
@@ -154,6 +173,11 @@ export default class Boss extends Actor {
       else this.attackInkRain(playerPos, projectiles);
     }
   }
+  /**
+   * Checks if the boss collides with another object.
+   * @param {Object} other - The other object to check.
+   * @returns {boolean} True if they collide.
+   */
   checkCollision(other) {
     return (
       this.rawPosition.x < other.position.x + other.size.width &&
@@ -163,6 +187,11 @@ export default class Boss extends Actor {
     );
   }
 
+  /**
+   * Performs the Ink Rain attack.
+   * @param {Object} playerPos - The player's position.
+   * @param {Array} projectiles - The array to add new projectiles into.
+   */
   attackInkRain(playerPos, projectiles) {
     const nbProjectiles = 5;
 
@@ -195,6 +224,11 @@ export default class Boss extends Actor {
       );
     }
   }
+  /**
+   * Performs the Tentacle (Bonk) attack.
+   * @param {Object} playerPos - The player's position.
+   * @param {Array} bonks - The array to add new bonk attacks into.
+   */
   attackTentacle(playerPos, bonks) {
     this.targetX = playerPos.x;
     this.attackStartTime = this.totalTime;
@@ -210,6 +244,9 @@ export default class Boss extends Actor {
       ),
     );
   }
+  /**
+   * Handles the death of the boss.
+   */
   die() {
     const bossUI = document.getElementById("boss-ui");
     if (bossUI) bossUI.classList.add("hidden");

@@ -1,3 +1,9 @@
+/**
+ * Creates and returns the layout of the world map.
+ * Generates an array of tile objects with coordinates, letters, and properties.
+ *
+ * @returns {Array<Object>} An array of tile objects representing the world layout.
+ */
 export function createWordlLayout() {
     const height = 30;
     let worldLayout = [];

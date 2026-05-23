@@ -1,7 +1,18 @@
 import * as THREE from "three";
 import DamageObject from "./DamageObject.js";
 
+/**
+ * Represents a Bonk attack in the game.
+ */
 export default class Bonk extends DamageObject {
+    /**
+     * Creates a new Bonk attack.
+     * @param {{x: number, y: number}} position - The position of the attack.
+     * @param {{width: number, height: number}} size - The size of the attack area.
+     * @param {number} damage - The amount of damage dealt.
+     * @param {THREE.Scene} scene - The THREE.js scene.
+     * @param {number} spacing - The spacing multiplier for the position.
+     */
     constructor(position, size, damage, scene, spacing) {
         super(position, size, damage);
 
@@ -30,6 +41,11 @@ export default class Bonk extends DamageObject {
         scene.add(this.mesh);
     }
 
+    /**
+     * Updates the Bonk attack state.
+     * @param {number} deltaTime - The time elapsed since the last update.
+     * @param {Object} player - The player object to check for collisions.
+     */
     update(deltaTime, player) {
         this.timer += deltaTime;
 
@@ -64,6 +80,10 @@ export default class Bonk extends DamageObject {
         }
     }
 
+    /**
+     * Draws the Bonk attack area on the 2D canvas.
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+     */
     draw(ctx) {
         ctx.save();
         if (!this.isAttacking) {

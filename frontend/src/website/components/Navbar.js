@@ -2,7 +2,16 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 
+/**
+ * Component representing the navigation bar.
+ */
 export default class Navbar {
+    /**
+     * Renders the navigation bar in the DOM.
+     * Updates links and user information based on authentication status.
+     *
+     * @returns {Promise<void>}
+     */
     static async render() {
         const container = document.getElementById("nav-container");
         if (!container) return;
@@ -54,6 +63,12 @@ export default class Navbar {
         }
     }
 
+    /**
+     * Updates the user information displayed in the navbar.
+     * Fetches current user data and sets the username and avatar image.
+     *
+     * @returns {Promise<void>}
+     */
     static async updateUserInfo() {
         if (!this.usernameSpan) return;
 
