@@ -5,6 +5,7 @@ import { SurvivePhase } from "./SurvivePhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
 import { TempoEvent } from "../events/TempoEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
+import { BridgeWordEvent } from "../events/BridgeWordEvent.js";
 
 /**
  * Represents the main game engine that manages scenes, phases, and the render loop.
@@ -90,7 +91,7 @@ export class GameEngine {
         this.currentLevel = level;
         
         if (level === 1) {
-            await this.setPhase(new WorldPhase(this, [new DoorEvent()]));
+            await this.setPhase(new WorldPhase(this, [new BridgeWordEvent()]));
         } else if (level === 2) {
             await this.setPhase(new WorldPhase(this, [new TempoEvent(), new DoorEvent()]));
         } else if (level === 3) {

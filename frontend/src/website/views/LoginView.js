@@ -70,13 +70,6 @@ export default class LoginView extends AbstractView {
                 FlashMessageManager.show(error.message || "Login failed", "error");
             }
         };
-
-        const form = el("form", { id: "login-form", onsubmit: handleSubmit },
-            emailInput,
-            passwordInput,
-            el("button", { type: "submit", className: "login-btn" }, "Login")
-        );
-
         const forgotLink = el("a", { 
             href: "#", 
             className: "forgot-link",
@@ -86,11 +79,19 @@ export default class LoginView extends AbstractView {
                 this.renderState();
             }
         }, "Forgot Password?");
+        const form = el("form", { id: "login-form", onsubmit: handleSubmit },
+            emailInput,
+            passwordInput,
+            el("p", { className: "register-link" }, forgotLink),
+            el("button", { type: "submit", className: "login-btn" }, "Login")
+        );
+
+        
 
         return el("div", {},
             el("h2", {}, "Login"),
             form,
-            el("p", { className: "register-link" }, forgotLink),
+            
             el("p", { className: "register-link" },
                 "Don't have an account? ",
                 el("a", { href: "/register", dataset: { link: true } }, "Sign up")

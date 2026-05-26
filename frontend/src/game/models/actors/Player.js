@@ -66,6 +66,8 @@ export default class Player extends Actor {
         this.offsetX = 0;
         this.offsetY = 0;
         this.offsetZ = 0;
+        this.startOffsetY = 0;
+        this.targetOffsetY = 0;
 
         this.mesh = new THREE.Group();
         this.scene = scene;
@@ -128,7 +130,7 @@ export default class Player extends Actor {
 
     /**
      * Initiates movement towards a new position.
-     * @param {Object} newPosition - The target position {x, y, z}.
+     * @param {Object} newPosition - The target position {x, y, z, offsetY}.
      */
     move(newPosition) {
         if (
@@ -137,6 +139,13 @@ export default class Player extends Actor {
         ) {
             this.startPosition = { x: this.x, y: this.y };
             this.targetPosition = newPosition;
+
+            this.startOffsetY = this.offsetY;
+            if (newPosition.offsetY !== undefined) {
+                this.targetOffsetY = newPosition.offsetY;
+            } else {
+                this.targetOffsetY = this.offsetY;
+            }
 
             this.isMoving = true;
             this.currentMovementTime = 0;
@@ -173,6 +182,11 @@ export default class Player extends Actor {
             this.y =
                 this.startPosition.y +
                 (this.targetPosition.y - this.startPosition.y) *
+                    this.movementProgress;
+            
+            this.offsetY = 
+                this.startOffsetY + 
+                (this.targetOffsetY - this.startOffsetY) * 
                     this.movementProgress;
         }
 

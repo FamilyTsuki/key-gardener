@@ -259,6 +259,8 @@ export default class WorldMap {
      */
     createHexagons(scene) {
         this.#mapLayout.forEach((tile) => {
+            if (tile.isRavine) return; // Skip rendering the ravine gap
+
             const sideMaterial = new THREE.MeshStandardMaterial({
                 map: this.stoneTexture,
                 color: 0xffffff,
@@ -442,7 +444,8 @@ export default class WorldMap {
             if (
                 this.#mapLayout[i].letter === letterToFind &&
                 this.#mapLayout[i].rawPosition.y <= max_y &&
-                this.#mapLayout[i].rawPosition.y >= min_y
+                this.#mapLayout[i].rawPosition.y >= min_y &&
+                !this.#mapLayout[i].isRavine
             ) {
                 tile = this.#mapLayout[i];
                 break;
@@ -469,6 +472,8 @@ export default class WorldMap {
                 tileRaw.letter
             );
             hex.isDoorTile = tileRaw.isDoorTile;
+            hex.isBridgeTrigger = tileRaw.isBridgeTrigger;
+            hex.isRavine = tileRaw.isRavine;
             return hex;
         });
 

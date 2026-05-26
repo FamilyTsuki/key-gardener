@@ -57,7 +57,7 @@ export class WorldPhase extends GamePhase {
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
-        this.player.offsetY = 3.5;
+        this.player.offsetY = 3.5 + (this.worldMap.mapLayout[0].baseY || 0);
         this.player.offsetZ = 0;
 
         for (const event of this.events) {
@@ -79,15 +79,16 @@ export class WorldPhase extends GamePhase {
         if (this.player && this.player.mesh) {
             const playerPos = this.player.mesh.position;
 
-            this.camera.position.set(
-                playerPos.x + 5,
-                playerPos.y + 21,
-                playerPos.z + 14
-            );
+            if (!this.isTransitioning) {
+                this.camera.position.set(
+                    playerPos.x + 5,
+                    playerPos.y + 21,
+                    playerPos.z + 14
+                );
+                this.camera.lookAt(playerPos.x, playerPos.y, playerPos.z);
+            }
 
-            this.camera.lookAt(playerPos.x, playerPos.y, playerPos.z);
-
-            if (!this.isTransitioning && this.worldMap) {
+            if (this.worldMap) {
                 for (const event of this.events) {
                     if (event.update) {
                         event.update(this, deltaTime);
@@ -158,6 +159,7 @@ export class WorldPhase extends GamePhase {
             this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
+                offsetY: 3.5 + (target.baseY || 0),
             });
         }
     }
