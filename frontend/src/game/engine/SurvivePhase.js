@@ -9,7 +9,14 @@ import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
 
 const loader = new GLTFLoader();
 
+/**
+ * Represents the survive phase of the game where the player defends against enemies.
+ */
 export class SurvivePhase extends GamePhase {
+    /**
+     * Creates an instance of SurvivePhase.
+     * @param {GameEngine} gameEngine - The game engine instance.
+     */
     constructor(gameEngine) {
         super(gameEngine);
         this.keyboard = null;
@@ -20,6 +27,10 @@ export class SurvivePhase extends GamePhase {
         this.elCurrentWord = null;
     }
 
+    /**
+     * Initializes the survive phase, including the player, enemies, and keyboard.
+     * @returns {Promise<void>}
+     */
     async init() {
         const scene = this.gameEngine.scene;
 
@@ -54,6 +65,10 @@ export class SurvivePhase extends GamePhase {
         this.draw_bg();
     }
 
+    /**
+     * Updates the game state for the survive phase.
+     * @param {number} deltaTime - The time elapsed since the last update.
+     */
     update(deltaTime) {
         if (this.enemies && this.player) {
             this.enemies.clearDead();
@@ -69,6 +84,9 @@ export class SurvivePhase extends GamePhase {
         }
     }
 
+    /**
+     * Draws the elements of the survive phase, updating positions and states.
+     */
     draw() {
         if (this.keyboard && this.player) {
             this.keyboard.keyboardLayout.forEach((tile) => {
@@ -99,6 +117,9 @@ export class SurvivePhase extends GamePhase {
         }
     }
 
+    /**
+     * Sets up the background and lighting for the scene.
+     */
     draw_bg() {
         this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
         this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
@@ -111,6 +132,10 @@ export class SurvivePhase extends GamePhase {
         this.gameEngine.scene.add(this.playerLight);
     }
 
+    /**
+     * Handles keyboard events for movement and attacking.
+     * @param {KeyboardEvent} event - The keyboard event.
+     */
     handleKeyDown(event) {
         const keyName = event.key.toUpperCase();
         const target = this.keyboard?.find(keyName);
@@ -150,6 +175,9 @@ export class SurvivePhase extends GamePhase {
         }
     }
 
+    /**
+     * Cleans up resources used by the survive phase.
+     */
     cleanup() {
         if (this.keyboard) {
             this.gameEngine.scene.remove(this.keyboard.group);

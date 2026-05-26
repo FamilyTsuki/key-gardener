@@ -1,3 +1,7 @@
+/**
+ * Configuration for the keyboard layout, representing keys and their coordinates.
+ * @constant {Array<Object>}
+ */
 export const KEYBOARD_LAYOUT = [
   { key: "A", x: 0, y: 0, isPressed: false },
   { key: "Z", x: 1, y: 0, isPressed: false },

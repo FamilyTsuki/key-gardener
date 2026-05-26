@@ -2,7 +2,21 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import DamageObject from "./DamageObject.js";
 
+/**
+ * Represents a projectile in the game.
+ */
 export default class Projectile extends DamageObject {
+    /**
+     * Creates a new Projectile.
+     * @param {{x: number, y: number}} position - The starting position.
+     * @param {{width: number, height: number}} size - The size of the projectile.
+     * @param {number} damage - The amount of damage dealt.
+     * @param {{x: number, y: number}} velocity - The movement velocity.
+     * @param {THREE.Scene} scene - The THREE.js scene.
+     * @param {string} [team="player"] - The team this projectile belongs to.
+     * @param {number} [spacing=3.2] - The spacing multiplier.
+     * @param {THREE.Object3D} modelSource - The 3D model source to clone.
+     */
     constructor(
         position,
         size,
@@ -74,8 +88,7 @@ export default class Projectile extends DamageObject {
 
         this.fireSound = new Audio("/asset/game_assets/sounds/fire.wav");
         this.fireSound.volume = 0.5;
-        this.fireSound.play();
-        // À la fin de ton constructeur Projectile.js
+        this.fireSound.play();
         if (this.mesh) {
             const hitBoxGeo = new THREE.BoxGeometry(
                 this.size.width * this.spacing,
@@ -92,6 +105,11 @@ export default class Projectile extends DamageObject {
         }
     }
 
+    /**
+     * Updates the projectile's position and state.
+     * @param {Object} cible - The target object.
+     * @param {number} deltaTime - The time elapsed since the last update.
+     */
     update(cible, deltaTime) {
         this.timer += deltaTime;
         if (this.team !== "player") {
@@ -143,6 +161,9 @@ export default class Projectile extends DamageObject {
         }
     }
 
+    /**
+     * Destroys the projectile and removes it from the scene.
+     */
     die() {
         this.isDead = true;
         if (this.mesh && this.mesh.parent) {
@@ -151,5 +172,9 @@ export default class Projectile extends DamageObject {
         }
     }
 
+    /**
+     * Draws the projectile on a 2D canvas (not implemented).
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+     */
     draw(ctx) {}
 }

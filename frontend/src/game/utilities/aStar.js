@@ -1,11 +1,10 @@
 /**
-@param {Map} gridRaw = Map {
-    key -> NodeAstar,
-    ...
-}
-@param {String} startKey
-@param {String} goalKey
-*/
+ * Finds the best path from a start node to a goal node using the A* algorithm.
+ * @param {string} startKey - The key of the starting node.
+ * @param {string} goalKey - The key of the goal node.
+ * @param {Map<string, NodeAStar>} gridRaw - A map representing the grid of nodes.
+ * @returns {Array<string>} An array of node keys representing the shortest path.
+ */
 export default function findBestPath(startKey, goalKey, gridRaw) {
   const grid = new Map();
   for (const entries of gridRaw.entries()) {
@@ -26,7 +25,7 @@ export default function findBestPath(startKey, goalKey, gridRaw) {
 
   do {
     current = findLowestCost(open);
-    open = open.filter((node) => node.key !== current.key); //? remove current from open
+    open = open.filter((node) => node.key !== current.key);
     close.push(current);
 
     if (current.key === goalKey) {
@@ -57,8 +56,10 @@ export default function findBestPath(startKey, goalKey, gridRaw) {
 }
 
 /**
- *
- * @param {Array} open
+ * Finds the node with the lowest f-cost in the open list.
+ * @param {Array<NodeAStar>} open - The array of open nodes.
+ * @returns {NodeAStar} The node with the lowest cost.
+ * @throws {Error} If the open list is empty.
  */
 function findLowestCost(open) {
   if (open.length <= 0) {
@@ -77,9 +78,10 @@ function findLowestCost(open) {
 }
 
 /**
- *
- * @param {NodeAStar} current
- * @param {Array} path = [String, ...]
+ * Recursively reconstructs the path from the goal node back to the start node.
+ * @param {NodeAStar} current - The current node.
+ * @param {Array<string>} [path=[]] - The accumulated path.
+ * @returns {Array<string>} The reconstructed path of node keys.
  */
 function findPath(current, path = []) {
   if (!current) {
@@ -91,9 +93,10 @@ function findPath(current, path = []) {
 }
 
 /**
- *
- * @param {NodeAStar} node
- * @param {NodeAStar} goalNode
+ * Calculates and updates the pathfinding cost (g, h, f) of a node.
+ * @param {NodeAStar} node - The node to calculate the cost for.
+ * @param {NodeAStar} goalNode - The goal node to compute the heuristic against.
+ * @returns {Object} The calculated cost object {g, h, f}.
  */
 function findCost(node, goalNode) {
   if (node.parent) {

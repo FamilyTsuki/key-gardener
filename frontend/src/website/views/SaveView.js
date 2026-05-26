@@ -4,13 +4,26 @@ import { SaveService } from "../../core/services/save.service.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
 
+/**
+ * View for managing game save slots.
+ */
 export default class SaveView extends AbstractView {
+    /**
+     * Creates an instance of SaveView.
+     *
+     * @param {Object} params - The route parameters.
+     */
     constructor(params) {
         super(params);
         this.setTitle("Save - Keyboard Survivor");
         this.saves = [];
     }
 
+    /**
+     * Renders the save view content.
+     *
+     * @returns {Promise<HTMLElement>} The save view container element.
+     */
     async render() {
         this.container = el(
             "div",
@@ -25,6 +38,11 @@ export default class SaveView extends AbstractView {
         return this.container;
     }
 
+    /**
+     * Initializes the view by loading save slots if the user is authenticated.
+     *
+     * @returns {Promise<void>}
+     */
     async init() {
         if (!AuthService.isAuthenticated()) {
             const list = document.getElementById("save-slots-list");
@@ -61,6 +79,11 @@ export default class SaveView extends AbstractView {
         deviceDetector.initialize();
     }
 
+    /**
+     * Fetches the user's game saves from the server.
+     *
+     * @returns {Promise<void>}
+     */
     async loadSaves() {
         try {
             const res = await SaveService.getSaves();
@@ -71,6 +94,9 @@ export default class SaveView extends AbstractView {
         }
     }
 
+    /**
+     * Renders the individual save slot cards into the list.
+     */
     renderSlots() {
         const list = document.getElementById("save-slots-list");
         if (!list) return;
@@ -83,6 +109,13 @@ export default class SaveView extends AbstractView {
         }
     }
 
+    /**
+     * Creates the DOM elements for a specific save slot card.
+     *
+     * @param {number} slot - The slot number (1-3).
+     * @param {Object} save - The save data for this slot.
+     * @returns {HTMLElement} The save slot card element.
+     */
     buildSlotCard(slot, save) {
         let saveInfoElement;
         let actionButtons;
@@ -202,6 +235,11 @@ export default class SaveView extends AbstractView {
         return card;
     }
 
+    /**
+     * Toggles the visibility of the context menu for a specific slot.
+     *
+     * @param {number} slot - The slot number.
+     */
     toggleContextMenu(slot) {
         document.querySelectorAll(".context-menu").forEach((menu) => {
             if (menu.id !== `menu-${slot}`) {
@@ -239,6 +277,12 @@ export default class SaveView extends AbstractView {
         setTimeout(() => document.addEventListener("click", closeMenu), 0);
     }
 
+    /**
+     * Starts the game using the provided save slot and game state.
+     *
+     * @param {number} slot - The slot number to use.
+     * @param {Object} gameState - The initial or loaded state for the game.
+     */
     startGame(slot, gameState) {
         localStorage.setItem("activeSaveSlot", slot);
         localStorage.setItem("activeSaveData", JSON.stringify(gameState));
@@ -246,6 +290,12 @@ export default class SaveView extends AbstractView {
         window.dispatchEvent(new Event("popstate"));
     }
 
+    /**
+     * Opens a modal to rename a specific save slot.
+     *
+     * @param {number} slot - The slot number to rename.
+     * @param {Object} gameState - The current game state of the slot.
+     */
     openRenameModal(slot, gameState) {
         const input = el("input", {
             className: "modal-input",
@@ -295,6 +345,12 @@ export default class SaveView extends AbstractView {
         input.focus();
     }
 
+    /**
+     * Exports the save game data as a JSON file for download.
+     *
+     * @param {number} slot - The slot number being exported.
+     * @param {Object} gameState - The game state data to export.
+     */
     exportSave(slot, gameState) {
         const dataStr =
             "data:text/json;charset=utf-8," +
@@ -308,6 +364,11 @@ export default class SaveView extends AbstractView {
         downloadAnchor.remove();
     }
 
+    /**
+     * Opens a confirmation modal before deleting a save slot.
+     *
+     * @param {number} slot - The slot number to delete.
+     */
     confirmDelete(slot) {
         const confirmBtn = el(
             "button",
@@ -350,6 +411,11 @@ export default class SaveView extends AbstractView {
         document.body.appendChild(modal);
     }
 
+    /**
+     * Retrieves the CSS files specific to this view.
+     *
+     * @returns {Array<string>} List of CSS file paths.
+     */
     getCss() {
         return ["/asset/css/save.css"];
     }
