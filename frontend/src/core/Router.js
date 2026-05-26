@@ -8,7 +8,13 @@ import AccountView from "../website/views/AccountView.js";
 import { AuthService } from "./services/auth.service.js";
 import { FlashMessageManager } from "./utils/FlashMessageManager.js";
 
+/**
+ * Handles application routing and view transitions.
+ */
 export default class Router {
+    /**
+     * Initializes the router and sets up event listeners.
+     */
     constructor() {
         this.routes = [
             { path: "/", view: HomeView },
@@ -36,11 +42,19 @@ export default class Router {
         });
     }
 
+    /**
+     * Navigates to a specific URL without reloading the page.
+     * @param {string} url - The target URL.
+     */
     navigateTo(url) {
         history.pushState(null, null, url);
         this.route();
     }
 
+    /**
+     * Triggers a fade-to-black screen transition.
+     * @returns {Promise<void>} Resolves when the transition animation is complete.
+     */
     fadeToBlack() {
         return new Promise((resolve) => {
             const overlay = document.getElementById("page-transition");
@@ -50,6 +64,10 @@ export default class Router {
         });
     }
 
+    /**
+     * Triggers a fade-from-black screen transition.
+     * @returns {Promise<void>} Resolves when the transition animation is complete.
+     */
     fadeFromBlack() {
         return new Promise((resolve) => {
             const overlay = document.getElementById("page-transition");
@@ -59,6 +77,10 @@ export default class Router {
         });
     }
 
+    /**
+     * Processes the current route, loads the corresponding view and handles transitions.
+     * @returns {Promise<void>} Resolves when the view has been rendered.
+     */
     async route() {
         let match = this.routes.find(
             (route) => route.path === location.pathname

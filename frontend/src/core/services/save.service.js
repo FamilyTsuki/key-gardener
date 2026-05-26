@@ -1,8 +1,15 @@
 import { AuthService } from "./auth.service.js";
 
+/**
+ * Service to manage game saves.
+ */
 export class SaveService {
     static API_URL = "/api/saves";
 
+    /**
+     * Retrieves all saved games for the current user.
+     * @returns {Promise<Object>} An object containing the list of saves.
+     */
     static async getSaves() {
         const token = AuthService.getToken();
         if (!token) return { success: false, saves: [] };
@@ -22,6 +29,12 @@ export class SaveService {
         return data;
     }
 
+    /**
+     * Retrieves a specific save by its slot number.
+     * @param {number} slot - The slot number of the save.
+     * @returns {Promise<Object>} The save data.
+     * @throws {Error} If the user is not authenticated or the retrieval fails.
+     */
     static async getSaveBySlot(slot) {
         const token = AuthService.getToken();
         if (!token) throw new Error("User not authenticated");
@@ -41,6 +54,13 @@ export class SaveService {
         return data;
     }
 
+    /**
+     * Saves the current game state to a specific slot.
+     * @param {number} slotNumber - The slot number to save to.
+     * @param {Object} gameState - The current game state to save.
+     * @returns {Promise<Object>} The response data.
+     * @throws {Error} If the user is not authenticated or the save fails.
+     */
     static async saveGame(slotNumber, gameState) {
         const token = AuthService.getToken();
         if (!token) throw new Error("User not authenticated");
@@ -61,6 +81,12 @@ export class SaveService {
         return data;
     }
 
+    /**
+     * Deletes a specific game save by its slot number.
+     * @param {number} slot - The slot number of the save to delete.
+     * @returns {Promise<Object>} The response data.
+     * @throws {Error} If the user is not authenticated or the deletion fails.
+     */
     static async deleteSave(slot) {
         const token = AuthService.getToken();
         if (!token) throw new Error("User not authenticated");

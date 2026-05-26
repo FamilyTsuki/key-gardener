@@ -1,4 +1,11 @@
+/**
+ * Utility to detect device capabilities and adjust UI accordingly.
+ */
 export class DeviceCapabilitiesDetector {
+    /**
+     * Initializes the detector for a set of target elements.
+     * @param {string} targetElementIdOrSelector - The ID or CSS selector of the target elements to toggle visibility.
+     */
     constructor(targetElementIdOrSelector) {
         this.targetElements = [];
         const elById = document.getElementById(targetElementIdOrSelector);
@@ -21,6 +28,9 @@ export class DeviceCapabilitiesDetector {
         this.hasKeyboardDetected = false;
     }
 
+    /**
+     * Sets up event listeners and applies the initial visibility state.
+     */
     initialize() {
         if (this.targetElements.length === 0) return;
 
@@ -29,15 +39,24 @@ export class DeviceCapabilitiesDetector {
         window.addEventListener("keydown", this.handleKeyDown, { once: true });
     }
 
+    /**
+     * Handles changes in device input capabilities (e.g., hover support).
+     */
     handleDeviceChange() {
         this.updateInterfaceVisibility();
     }
 
+    /**
+     * Handles keyboard events to detect keyboard presence.
+     */
     handleKeyDown() {
         this.hasKeyboardDetected = true;
         this.updateInterfaceVisibility();
     }
 
+    /**
+     * Updates the visibility of the target elements based on detected capabilities.
+     */
     updateInterfaceVisibility() {
         this.targetElements.forEach(el => {
             if (this.mediaQuery.matches || this.hasKeyboardDetected) {

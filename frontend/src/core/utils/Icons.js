@@ -1,6 +1,14 @@
 import { el } from "./DOMBuilder.js";
 
+/**
+ * Object containing reusable SVG icons.
+ */
 export const Icons = {
+    /**
+     * Creates an SVG close (X) icon.
+     * @param {string} [className=""] - Additional CSS class for the icon.
+     * @returns {Element} The SVG element for the icon.
+     */
     close(className = "") {
         return el("svg", {
             xmlns: "http://www.w3.org/2000/svg",

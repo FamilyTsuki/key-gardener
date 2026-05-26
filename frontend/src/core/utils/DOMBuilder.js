@@ -1,3 +1,10 @@
+/**
+ * Creates an HTML or SVG element with given attributes and children.
+ * @param {string} tag - The tag name of the element to create.
+ * @param {Object} [attributes={}] - An object containing attributes and event listeners to apply.
+ * @param {...(Node|string|number|Array)} children - Child elements, text nodes, or arrays of children.
+ * @returns {Element} The created DOM element.
+ */
 export function el(tag, attributes = {}, ...children) {
     const isSVG = ["svg", "path", "circle", "line", "polyline", "rect", "ellipse", "polygon", "g"].includes(tag);
     const element = isSVG 
