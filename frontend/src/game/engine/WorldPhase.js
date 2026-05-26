@@ -35,9 +35,11 @@ export class WorldPhase extends GamePhase {
      */
     async init() {
         const scene = this.gameEngine.scene;
+        const hasDoorEvent = this.events.some(e => e.constructor.name === "DoorEvent");
         this.worldMap = await WorldMap.init(
             this.gameEngine.scene,
-            WORLD_LAYOUT
+            WORLD_LAYOUT,
+            hasDoorEvent
         );
         console.log(this.worldMap);
         this.draw_bg();

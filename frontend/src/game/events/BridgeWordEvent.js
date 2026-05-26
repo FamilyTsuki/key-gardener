@@ -14,25 +14,24 @@ export class BridgeWordEvent extends WorldEvent {
         this.isActive = false;
         this.isCompleted = false;
         
-        // Words related to construction
         const words = [
             "PONT", "BOIS", "CORDE", "CLOU", "POUTRE", "PLANCHE", "PIERRE", "MARTEAU", "SCIE", 
             "FER", "ACIER", "BETON", "PILIER", "ARCHE", "FONDATION", "CABLE", "RIVET", "POULIE", 
-            "TENDEUR", "CHAINE", "CIMENT", "SABLE", "GRAVIER", "BRIQUE", "MOELLON", "CHARPENTE"
+            "TENDEUR", "CHAINE", "CIMENT", "SABLE", "GRAVIER", "BRIQUE", "MOELLON", "CHARPENTE",
+            "CONSTRUIRE", "BATIR", "ASSEMBLER", "CLOUER", "SCIER", "FORGER", "SOUDER", "MONTER", 
+            "PERCER", "COULER", "HISSER", "FIXER", "LEVER", "TIRER", "POUSSER", "REPARER"
         ];
+        this.wordDictionary = words;
+        this.activeWords = [];
+        this.baseSpawnDelay = 3.0; 
+        this.wordSpawnTimer = 0;
+        this.nextWordId = 0;
         
-        this.targetCompletedCount = 5; // We only need 5 words to finish
+        this.targetCompletedCount = 10; 
         this.completedCount = 0;
-        this.wordStates = [];
-
-        // Pick 20 words for the cloud
-        const shuffled = words.sort(() => 0.5 - Math.random());
-        for (let i = 0; i < 20; i++) {
-            this.wordStates.push({ word: shuffled[i], completed: false });
-        }
-        this.totalWords = this.wordStates.length;
-        this.completedCount = 0;
+        this.piecesBuilt = 0;
         this.currentTyped = "";
+        this.currentWordId = null;
         
         this.startCameraPos = new THREE.Vector3();
         this.targetCameraPos = new THREE.Vector3();
@@ -67,21 +66,7 @@ export class BridgeWordEvent extends WorldEvent {
     update(worldPhase, deltaTime) {
         if (!worldPhase.player || !worldPhase.worldMap) return;
 
-        // Continuously animate purple magic particles
-        for (const mesh of this.bridgeMeshes) {
-            if (mesh.type !== "Group") continue;
-            const points = mesh.children.find(c => c.type === "Points");
-            if (points) {
-                const positions = points.geometry.attributes.position.array;
-                for (let p = 1; p < positions.length; p += 3) {
-                    positions[p] += deltaTime * 1.0; // Float upwards
-                    if (positions[p] > 0.0) {
-                        positions[p] = -2.0;
-                    }
-                }
-                points.geometry.attributes.position.needsUpdate = true;
-            }
-        }
+        this.updateBridgeParticles(deltaTime);
 
         if (this.isCompleted) return;
 
@@ -96,49 +81,141 @@ export class BridgeWordEvent extends WorldEvent {
         }
 
         if (this.isActive) {
-            // Keep camera steady during the event
             worldPhase.camera.position.copy(this.eventCameraPos);
             worldPhase.camera.lookAt(this.eventCameraLookAt);
             
-            // Animate rising tiles
-            if (this.animatingTiles.length > 0) {
-                const speed = 15.0; // Fast rise to keep pace with typing
-                for (let i = this.animatingTiles.length - 1; i >= 0; i--) {
-                    const anim = this.animatingTiles[i];
-                    anim.mesh.position.y += speed * deltaTime;
-                    if (anim.mesh.position.y >= anim.targetY) {
-                        anim.mesh.position.y = anim.targetY;
-                        this.animatingTiles.splice(i, 1);
-                        
-                        // Move player when center tile fully rises
-                        if (anim.isCenter && anim.worldPhase) {
-                            anim.worldPhase.player.move({ 
-                                x: anim.tile.rawPosition.x, 
-                                y: anim.tile.rawPosition.y,
-                                offsetY: 3.5 + anim.archHeight
-                            });
-                        }
-                    }
-                }
-            }
+            this.updateWordLifecycle(deltaTime);
+            this.updateTileAnimations(deltaTime);
             
             return;
         }
 
-        // Check if player is standing on a trigger tile
+        this.checkBridgeTrigger(worldPhase);
+    }
+    /**
+     * Updates the bridge particles.
+     * @param {number} deltaTime - The time delta.
+     */
+    updateBridgeParticles(deltaTime) {}
+    /**
+     * Updates the word lifecycle.
+     * @param {number} deltaTime - The time delta.
+     */
+    updateWordLifecycle(deltaTime) {
+        let needsFullUpdate = false;
+        this.wordSpawnTimer -= deltaTime;
+        if (this.wordSpawnTimer <= 0 && this.activeWords.length < 4) {
+            this.spawnWord();
+            this.wordSpawnTimer = this.baseSpawnDelay + Math.random() * 1.0;
+            needsFullUpdate = true;
+        }
+
+        for (let i = this.activeWords.length - 1; i >= 0; i--) {
+            const w = this.activeWords[i];
+            w.age += deltaTime;
+
+            if (w.phase === "growing") {
+                w.scale = Math.min(1, w.age / 0.5);
+                if (w.age >= 0.5) w.phase = "waiting";
+            } else if (w.phase === "waiting") {
+                if (w.age >= 8.5) w.phase = "disappearing";
+            } else if (w.phase === "disappearing") {
+                w.scale = Math.max(0, 1 - (w.age - 8.5) / 1.0);
+                if (w.age >= 9.5) {
+                    this.activeWords.splice(i, 1);
+                    needsFullUpdate = true;
+                    this.baseSpawnDelay = Math.min(5.0, this.baseSpawnDelay + 0.5); 
+                    if (this.currentWordId === w.id) {
+                        this.currentTyped = "";
+                        this.currentWordId = null;
+                        if (this.errorTimeout) {
+                            clearTimeout(this.errorTimeout);
+                            this.errorKey = null;
+                        }
+                    }
+                }
+            } else if (w.phase === "completed") {
+                w.scale = 1 + (w.age / 0.3) * 0.2;
+                w.opacity = Math.max(0, 1 - (w.age / 0.3));
+                if (w.age >= 0.3) {
+                    this.activeWords.splice(i, 1);
+                    needsFullUpdate = true;
+                }
+            }
+            
+            if (this.wordDisplay) {
+                const wordEl = document.getElementById('word-' + w.id);
+                if (wordEl) {
+                    wordEl.style.transform = `translate(-50%, -50%) scale(${w.scale})`;
+                    wordEl.style.opacity = (w.phase === "completed") ? w.opacity : w.scale;
+                }
+            }
+        }
+        
+        if (needsFullUpdate) {
+            this.updateWordDisplay();
+        }
+    }
+    /**
+     * Updates the tile animations.
+     * @param {number} deltaTime - The time delta.
+     */
+    updateTileAnimations(deltaTime) {
+        if (this.animatingTiles.length === 0) return;
+        const speed = 15.0;
+        for (let i = this.animatingTiles.length - 1; i >= 0; i--) {
+            const anim = this.animatingTiles[i];
+            anim.mesh.position.y += speed * deltaTime;
+            if (anim.mesh.position.y >= anim.targetY) {
+                anim.mesh.position.y = anim.targetY;
+                this.animatingTiles.splice(i, 1);
+                
+                if (anim.isCenter && anim.worldPhase) {
+                    anim.worldPhase.player.move({ 
+                        x: anim.tile.rawPosition.x, 
+                        y: anim.tile.rawPosition.y,
+                        offsetY: 3.5 + anim.archHeight
+                    });
+                }
+            }
+        }
+    }
+    /**
+     * Checks if the bridge trigger should be activated.
+     * @param {WorldPhase} worldPhase - The current world phase.
+     */
+    checkBridgeTrigger(worldPhase) {
         const currentTile = worldPhase.worldMap.mapLayout.find(t => 
             Math.abs(t.rawPosition.x - worldPhase.player.x) < 0.1 && 
             Math.abs(t.rawPosition.y - worldPhase.player.y) < 0.1
         );
 
         if (currentTile && currentTile.isBridgeTrigger) {
-            // Automatically trigger event
             if (!this.isActive && !this.transitioningToEvent) {
-                this.triggerX = currentTile.rawPosition.x; // Grid X
-                this.triggerY = currentTile.rawPosition.y; // Grid Y
+                this.triggerX = currentTile.rawPosition.x;
+                this.triggerY = currentTile.rawPosition.y;
                 this.startEvent(worldPhase);
             }
         }
+    }
+
+    /**
+     * Spawns a new word.
+     */
+    spawnWord() {
+        const wordStr = this.wordDictionary[Math.floor(Math.random() * this.wordDictionary.length)];
+        const x = 15 + Math.random() * 70;
+        const y = 25 + Math.random() * 55;
+        this.activeWords.push({
+            id: this.nextWordId++,
+            word: wordStr,
+            x: x,
+            y: y,
+            scale: 0,
+            age: 0,
+            phase: "growing",
+            errorFlash: false
+        });
     }
 
     /**
@@ -148,7 +225,7 @@ export class BridgeWordEvent extends WorldEvent {
      * @param {boolean} intoEvent 
      */
     handleCameraTransition(worldPhase, deltaTime, intoEvent) {
-        this.transitionProgress += deltaTime * 0.5; // 2 seconds transition
+        this.transitionProgress += deltaTime * 0.5;
         
         if (this.transitionProgress >= 1) {
             this.transitionProgress = 1;
@@ -159,7 +236,7 @@ export class BridgeWordEvent extends WorldEvent {
             } else {
                 this.transitioningToWorld = false;
                 this.isCompleted = true;
-                worldPhase.isTransitioning = false; // Give camera back
+                worldPhase.isTransitioning = false; 
             }
         }
 
@@ -181,27 +258,85 @@ export class BridgeWordEvent extends WorldEvent {
      * @param {WorldPhase} worldPhase
      */
     startEvent(worldPhase) {
-        worldPhase.isTransitioning = true; // Take over camera control
+        worldPhase.isTransitioning = true; 
         this.transitioningToEvent = true;
         this.transitionProgress = 0;
         
         const playerPos = worldPhase.player.mesh.position;
         this.startCameraPos.copy(worldPhase.camera.position);
         this.startCameraLookAt.copy(playerPos);
+        this.tilesToBuild = [];
         
-        const bridgeCenterZ = playerPos.z - (2.5 * worldPhase.player.spacingZ);
+        const triggerRow = worldPhase.worldMap.mapLayout.filter(t => t.rawPosition.y === this.triggerY);
+        const islandRow = worldPhase.worldMap.mapLayout.filter(t => t.rawPosition.y === this.triggerY - 6);
         
-        // Define where the camera sits during the event
+        let triggerCenter = 0;
+        if (triggerRow.length > 0) triggerCenter = triggerRow.reduce((sum, t) => sum + t.rawPosition.x, 0) / triggerRow.length;
+
+        let islandCenter = 0;
+        if (islandRow.length > 0) islandCenter = islandRow.reduce((sum, t) => sum + t.rawPosition.x, 0) / islandRow.length;
+
+        const startX = (triggerCenter * Math.sqrt(3) * 1.5) + 12;
+        const startZ = this.triggerY * 2.25;
+
+        const endX = (islandCenter * Math.sqrt(3) * 1.5) + 12;
+        const endZ = (this.triggerY - 6) * 2.25;
+
+        const bridgeWorldX = (startX + endX) / 2;
+        const bridgeWorldZ = (startZ + endZ) / 2;
+
+        const dirX = endX - startX;
+        const dirZ = endZ - startZ;
+        const length = Math.sqrt(dirX * dirX + dirZ * dirZ);
+
+        const perpX = -dirZ / length;
+        const perpZ = dirX / length;
+
+        const distance = 18;
         this.eventCameraPos = new THREE.Vector3(
-            playerPos.x + 18,
-            playerPos.y + 12,
-            bridgeCenterZ
+            bridgeWorldX + perpX * distance,
+            14,
+            bridgeWorldZ + perpZ * distance
         );
         this.eventCameraLookAt = new THREE.Vector3(
-            playerPos.x,
-            playerPos.y,
-            bridgeCenterZ
+            bridgeWorldX,
+            2,
+            bridgeWorldZ
         );
+
+        for (let progress = 1; progress <= 5; progress++) {
+            const targetGridY = this.triggerY - progress;
+            const rowTiles = worldPhase.worldMap.mapLayout.filter(t => t.rawPosition.y === targetGridY);
+            if (rowTiles.length === 0) continue;
+            
+            const currentCenterX = rowTiles.reduce((sum, t) => sum + t.rawPosition.x, 0) / rowTiles.length;
+            const fraction = progress / 6;
+            const expectedCenterX = triggerCenter + fraction * (islandCenter - triggerCenter);
+            const shiftX = Math.round(expectedCenterX - currentCenterX);
+            
+            let archHeight = 0;
+            if (progress === 1 || progress === 5) archHeight = 0.8;
+            else if (progress === 2 || progress === 4) archHeight = 1.8;
+            else if (progress === 3) archHeight = 2.8;
+
+            for (const tile of rowTiles) {
+                tile.rawPosition.x += shiftX;
+                tile.x = (tile.rawPosition.x * Math.sqrt(3) * 1.5) + 12;
+                
+                this.tilesToBuild.push({
+                    tile: tile,
+                    archHeight: archHeight,
+                    progress: progress
+                });
+            }
+        }
+        
+        this.tilesToBuild.sort((a, b) => {
+            if (b.tile.rawPosition.y !== a.tile.rawPosition.y) {
+                return b.tile.rawPosition.y - a.tile.rawPosition.y;
+            }
+            return Math.random() - 0.5;
+        });
     }
 
     /**
@@ -217,55 +352,96 @@ export class BridgeWordEvent extends WorldEvent {
         }
 
         if (event.key === "Backspace") {
-            if (this.errorKey) {
-                if (this.errorTimeout) clearTimeout(this.errorTimeout);
-                this.errorKey = null;
-            } else {
-                this.currentTyped = this.currentTyped.slice(0, -1);
-            }
-            this.updateWordDisplay();
+            this.handleBackspaceInput();
             return true;
         }
         
         const key = event.key.toUpperCase();
         if (key.length === 1 && key.match(/[A-Z]/)) {
-            // If they type while an error is showing, clear it immediately
-            if (this.errorKey) {
-                if (this.errorTimeout) clearTimeout(this.errorTimeout);
-                this.errorKey = null;
+            this.handleCharacterInput(key, worldPhase);
+        }
+        return true; 
+    }
+    /**
+     * Handles backspace input during the event.
+     */
+    handleBackspaceInput() {
+        if (this.errorKey) {
+            if (this.errorTimeout) clearTimeout(this.errorTimeout);
+            this.errorKey = null;
+            this.activeWords.forEach(w => w.errorFlash = false);
+        } else {
+            this.currentTyped = this.currentTyped.slice(0, -1);
+            if (this.currentTyped === "") {
+                this.currentWordId = null;
             }
+        }
+        this.updateWordDisplay();
+    }
+    /**
+     * Handles character input during the event.
+     * @param {string} key - The character to handle.
+     * @param {WorldPhase} worldPhase - The current world phase.
+     */
+    handleCharacterInput(key, worldPhase) {
+        if (this.errorKey) {
+            if (this.errorTimeout) clearTimeout(this.errorTimeout);
+            this.errorKey = null;
+            this.activeWords.forEach(w => w.errorFlash = false);
+        }
 
-            const nextTyped = this.currentTyped + key;
-            const matchIndex = this.wordStates.findIndex(ws => !ws.completed && ws.word.startsWith(nextTyped));
-            
-            if (matchIndex !== -1) {
-                this.currentTyped = nextTyped;
-                const exactMatchIndex = this.wordStates.findIndex(ws => !ws.completed && ws.word === nextTyped);
+        const nextTyped = this.currentTyped + key;
+        let match = null;
+
+        if (this.currentWordId !== null) {
+            match = this.activeWords.find(w => w.id === this.currentWordId && w.word.startsWith(nextTyped) && w.phase !== "completed");
+        }
+        if (!match) {
+            match = this.activeWords.find(w => w.word.startsWith(nextTyped) && w.phase !== "completed");
+        }
+        
+        if (match) {
+            this.currentWordId = match.id;
+            this.currentTyped = nextTyped;
+            if (match.word === nextTyped) {
+                match.phase = "completed";
+                match.age = 0;
+                match.opacity = 1;
                 
-                if (exactMatchIndex !== -1) {
-                    this.wordStates[exactMatchIndex].completed = true;
-                    this.completedCount++;
-                    this.addBridgePiece(worldPhase);
-                    this.currentTyped = "";
-                    
-                    if (this.completedCount === this.targetCompletedCount) {
-                        this.finishEvent(worldPhase);
-                    }
+                this.baseSpawnDelay = Math.max(0.5, this.baseSpawnDelay - 0.4);
+                
+                this.currentTyped = "";
+                this.currentWordId = null;
+                this.completedCount++;
+                this.piecesBuilt++;
+                this.addBridgePiece(worldPhase);
+                
+                if (this.completedCount >= this.targetCompletedCount) {
+                    this.finishEvent(worldPhase);
                 }
-                this.updateWordDisplay();
+            }
+        } else {
+            let newWordMatch = this.activeWords.find(w => w.word.startsWith(key) && w.phase !== "completed");
+            if (newWordMatch) {
+                this.currentWordId = newWordMatch.id;
+                this.currentTyped = key;
             } else {
                 this.errorKey = key;
-                this.updateWordDisplay();
+                this.baseSpawnDelay = Math.min(5.0, this.baseSpawnDelay + 0.1);
+                if (this.currentWordId !== null) {
+                    const errorWord = this.activeWords.find(w => w.id === this.currentWordId);
+                    if (errorWord) errorWord.errorFlash = true;
+                }
                 
                 if (this.errorTimeout) clearTimeout(this.errorTimeout);
                 this.errorTimeout = setTimeout(() => {
                     this.errorKey = null;
-                    // Removed: this.currentTyped = "";
+                    this.activeWords.forEach(w => w.errorFlash = false);
                     this.updateWordDisplay();
-                }, 400); // Shorter flash duration
+                }, 300);
             }
         }
-        return true; 
+        this.updateWordDisplay();
     }
 
     /**
@@ -273,100 +449,19 @@ export class BridgeWordEvent extends WorldEvent {
      * @param {WorldPhase} worldPhase
      */
     addBridgePiece(worldPhase) {
-        const progress = this.completedCount; // 1 to 5
-        const targetGridY = this.triggerY - progress; 
-
-        // Straighten the bridge by interpolating X between trigger row and island row
-        const triggerRow = worldPhase.worldMap.mapLayout.filter(t => t.rawPosition.y === this.triggerY);
-        const islandRow = worldPhase.worldMap.mapLayout.filter(t => t.rawPosition.y === this.triggerY - 6);
+        const batchesLeft = this.targetCompletedCount - this.completedCount + 1;
+        if (batchesLeft <= 0 || !this.tilesToBuild || this.tilesToBuild.length === 0) return;
         
-        const triggerCenter = triggerRow.reduce((sum, t) => sum + t.rawPosition.x, 0) / triggerRow.length;
-        const islandCenter = islandRow.reduce((sum, t) => sum + t.rawPosition.x, 0) / islandRow.length;
+        const tilesToTake = Math.ceil(this.tilesToBuild.length / batchesLeft);
+        const tilesData = this.tilesToBuild.splice(0, tilesToTake);
 
-        const fraction = progress / 6;
-        const expectedCenterX = triggerCenter + fraction * (islandCenter - triggerCenter);
+        this.ensureSharedMaterials(worldPhase);
 
-        const rowTiles = worldPhase.worldMap.mapLayout.filter(t => t.rawPosition.y === targetGridY);
-        const currentCenterX = rowTiles.reduce((sum, t) => sum + t.rawPosition.x, 0) / rowTiles.length;
-        const shiftX = expectedCenterX - currentCenterX;
-        
         let centerTile = null;
 
-        const sideMaterial = new THREE.MeshStandardMaterial({
-            map: worldPhase.worldMap.stoneTexture,
-            color: 0xffffff,
-            roughness: 0.8,
-            metalness: 0.2,
-        });
-
-        let archHeight = 0;
-        if (progress === 1 || progress === 5) archHeight = 0.8;
-        else if (progress === 2 || progress === 4) archHeight = 1.8;
-        else if (progress === 3) archHeight = 2.8;
-
-        for (const tile of rowTiles) {
-            tile.isRavine = false;
-            
-            // Apply alignment shift
-            tile.rawPosition.x += shiftX;
-            tile.x = (tile.rawPosition.x * Math.sqrt(3) * 1.5) + 12;
-            
-            const group = new THREE.Group();
-
-            // Small purple magical particles
-            const particleCount = 30;
-            const particleGeometry = new THREE.BufferGeometry();
-            const particlePositions = new Float32Array(particleCount * 3);
-            
-            for (let i = 0; i < particleCount * 3; i += 3) {
-                const angle = Math.random() * Math.PI * 2;
-                const r = Math.random() * 1.3;
-                particlePositions[i] = Math.cos(angle) * r;
-                particlePositions[i+1] = -Math.random() * 2.0; // Random depth
-                particlePositions[i+2] = Math.sin(angle) * r;
-            }
-            particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-            
-            const particleMaterial = new THREE.PointsMaterial({
-                color: 0xa855f7, // Bright purple
-                size: 0.15,
-                transparent: true,
-                opacity: 0.8,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
-            });
-            const magicMesh = new THREE.Points(particleGeometry, particleMaterial);
-            magicMesh.position.y = 1.6; // Base of the slab
-            
-            const bevelGeometry = new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6);
-            const bevelMesh = new THREE.Mesh(bevelGeometry, [
-                sideMaterial,
-                sideMaterial,
-                sideMaterial,
-            ]);
-            bevelMesh.position.y = 1.8;
-
-            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x333333 });
-            const bevelEdges = new THREE.EdgesGeometry(bevelGeometry);
-            const bevelLine = new THREE.LineSegments(bevelEdges, lineMaterial);
-            bevelMesh.add(bevelLine);
-
-            group.add(magicMesh);
-            group.add(bevelMesh);
-
-            group.material = [sideMaterial, sideMaterial, sideMaterial];
-            group.lineMaterial = lineMaterial;
-            
-            const random_z = archHeight + Math.random() * 0.4;
-            tile.baseY = random_z;
-            
-            // Start the tile deeply submerged
-            group.position.set(tile.x, -15, tile.y);
-            group.rotation.y = 0;
-
-            worldPhase.gameEngine.scene.add(group);
-            this.bridgeMeshes.push(group);
-            tile.mesh = group;
+        for (const data of tilesData) {
+            const group = this.createBridgeTileGroup(data, worldPhase);
+            const tile = data.tile;
             
             if (Math.abs(tile.rawPosition.x - (worldPhase.player.x + 0.5)) < 0.1) {
                 centerTile = tile;
@@ -374,31 +469,114 @@ export class BridgeWordEvent extends WorldEvent {
 
             this.animatingTiles.push({
                 mesh: group,
-                targetY: random_z,
-                archHeight: archHeight,
+                targetY: tile.baseY,
+                archHeight: data.archHeight,
                 isCenter: false,
                 tile: tile,
                 worldPhase: worldPhase
             });
         }
-
-        if (!centerTile && rowTiles.length > 0) {
-            centerTile = rowTiles[Math.floor(rowTiles.length / 2)];
-        }
         
-        // Assign center flag for player movement sync
         for (const anim of this.animatingTiles) {
             if (anim.tile === centerTile) {
                 anim.isCenter = true;
             }
         }
-        
-        // Add a magical light at the center of the newly built section
-        if (centerTile) {
-            const light = new THREE.PointLight(0xf1c40f, 100, 5);
-            light.position.set(0, 3, 0); 
-            centerTile.mesh.add(light);
+    }
+    /**
+     * Ensures the shared materials for the bridge tiles are created.
+     * @param {WorldPhase} worldPhase 
+     */
+    ensureSharedMaterials(worldPhase) {
+        if (!this.sharedSideMaterial) {
+            this.sharedSideMaterial = new THREE.MeshStandardMaterial({
+                map: worldPhase.worldMap.stoneTexture,
+                color: 0xffffff,
+                roughness: 0.8,
+                metalness: 0.2,
+            });
+            
+            this.sharedParticleMaterial = new THREE.PointsMaterial({
+                color: 0xa855f7,
+                size: 0.15,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            
+            this.sharedLineMaterial = new THREE.LineBasicMaterial({ color: 0x333333 });
         }
+    }
+    /**
+     * Creates a group of meshes for a bridge tile.
+     * @param {Object} data - The tile data.
+     * @param {WorldPhase} worldPhase - The current world phase.
+     * @returns {THREE.Group} The group of meshes.
+     */
+    createBridgeTileGroup(data, worldPhase) {
+        const tile = data.tile;
+        const archHeight = data.archHeight;
+        const progress = data.progress;
+        tile.isRavine = false;
+        
+        const group = new THREE.Group();
+        
+        let thickness = 1.5;
+        if (progress === 1 || progress === 5) thickness = 14.0;
+        else if (progress === 2 || progress === 4) thickness = 3.0;
+
+        const H = thickness - 0.4;
+        const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, H, 6);
+        const bodyMesh = new THREE.Mesh(bodyGeometry, this.sharedSideMaterial);
+        bodyMesh.position.y = 1.6 - (H / 2);
+        const bodyEdges = new THREE.EdgesGeometry(bodyGeometry);
+        const bodyLine = new THREE.LineSegments(bodyEdges, this.sharedLineMaterial);
+        bodyMesh.add(bodyLine);
+
+        const bevelGeometry = new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6);
+        
+        let topMaterial = this.sharedSideMaterial;
+        if (tile.letter && worldPhase.worldMap.generateLetterTexture) {
+            const tex = worldPhase.worldMap.generateLetterTexture(
+                tile.letter,
+                worldPhase.worldMap.stoneTexture ? worldPhase.worldMap.stoneTexture.image : null
+            );
+            topMaterial = new THREE.MeshStandardMaterial({
+                map: tex,
+                color: 0xffffff,
+                roughness: 0.8,
+            });
+        }
+
+        const bevelMesh = new THREE.Mesh(bevelGeometry, [
+            this.sharedSideMaterial,
+            topMaterial,
+            this.sharedSideMaterial,
+        ]);
+        bevelMesh.position.y = 1.8;
+        
+        const bevelEdges = new THREE.EdgesGeometry(bevelGeometry);
+        const bevelLine = new THREE.LineSegments(bevelEdges, this.sharedLineMaterial);
+        bevelMesh.add(bevelLine);
+
+        group.add(bodyMesh);
+        group.add(bevelMesh);
+
+        group.material = [this.sharedSideMaterial, topMaterial, this.sharedSideMaterial];
+        group.lineMaterial = this.sharedLineMaterial;
+        
+        const random_z = archHeight + Math.random() * 0.4;
+        tile.baseY = random_z;
+        
+        group.position.set(tile.x, -15, tile.y);
+        group.rotation.y = 0;
+
+        worldPhase.gameEngine.scene.add(group);
+        this.bridgeMeshes.push(group);
+        tile.mesh = group;
+
+        return group;
     }
 
     /**
@@ -417,7 +595,6 @@ export class BridgeWordEvent extends WorldEvent {
         
         const playerPos = worldPhase.player.mesh.position;
         
-        // Target camera position is WorldPhase's default follow cam
         this.endCameraPos = new THREE.Vector3(
             playerPos.x + 5,
             playerPos.y + 21,
@@ -434,81 +611,12 @@ export class BridgeWordEvent extends WorldEvent {
      * Builds the HTML UI overlay.
      */
     buildUI() {
-        // Inject styles if they don't exist
         if (!document.getElementById("bridge-event-styles")) {
-            const style = document.createElement("style");
-            style.id = "bridge-event-styles";
-            style.innerHTML = `
-                .mission-overlay {
-                    position: absolute;
-                    bottom: 30px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 90%;
-                    max-width: 900px;
-                    pointer-events: none;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    z-index: 10;
-                }
-                .mission-instruction {
-                    color: #e2e8f0;
-                    font-size: 1.1rem;
-                    font-weight: 600;
-                    letter-spacing: 3px;
-                    text-transform: uppercase;
-                    margin-bottom: 20px;
-                    font-family: 'Inter', sans-serif;
-                    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-                    padding: 12px 35px;
-                    border-radius: 20px;
-                    border: 1px solid rgba(255, 255, 255, 0.15);
-                    backdrop-filter: blur(12px);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-                }
-                .mission-word-container {
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: center;
-                    gap: 12px;
-                    width: 100%;
-                    background: rgba(15, 23, 42, 0.45);
-                    backdrop-filter: blur(16px);
-                    border: 1px solid rgba(255, 255, 255, 0.08);
-                    border-top: 1px solid rgba(255, 255, 255, 0.15);
-                    border-radius: 24px;
-                    padding: 25px 30px;
-                    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-                }
-                .mission-word {
-                    font-size: 1.05rem;
-                    font-weight: 600;
-                    letter-spacing: 1.5px;
-                    color: rgba(255, 255, 255, 0.4);
-                    background: rgba(255, 255, 255, 0.04);
-                    padding: 8px 18px;
-                    border-radius: 12px;
-                    border: 1px solid rgba(255, 255, 255, 0.03);
-                    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-                    font-family: 'Inter', sans-serif;
-                }
-                .mission-word.completed {
-                    opacity: 0.15;
-                    transform: scale(0.95);
-                    background: rgba(46, 204, 113, 0.1);
-                    border-color: rgba(46, 204, 113, 0.1);
-                }
-                .mission-word span.typed {
-                    color: #f1c40f;
-                    text-shadow: 0 0 10px rgba(241, 196, 15, 0.6), 0 0 20px rgba(241, 196, 15, 0.3);
-                }
-                .mission-word span.error-typed {
-                    color: #ff4757;
-                    text-shadow: 0 0 10px rgba(255, 71, 87, 0.8);
-                }
-            `;
-            document.head.appendChild(style);
+            const link = document.createElement("link");
+            link.id = "bridge-event-styles";
+            link.rel = "stylesheet";
+            link.href = "/asset/css/bridgeEvent.css";
+            document.head.appendChild(link);
         }
 
         this.uiOverlay = document.createElement("div");
@@ -516,7 +624,7 @@ export class BridgeWordEvent extends WorldEvent {
 
         const instructionDisplay = document.createElement("div");
         instructionDisplay.classList.add("mission-instruction");
-        instructionDisplay.innerText = "TYPE ANY WORD TO BUILD THE BRIDGE!";
+        instructionDisplay.innerText = "FRAPPEZ LES MOTS POUR CONSTRUIRE LE PONT !";
 
         this.wordDisplay = document.createElement("div");
         this.wordDisplay.classList.add("mission-word-container");
@@ -533,45 +641,74 @@ export class BridgeWordEvent extends WorldEvent {
      */
     updateWordDisplay() {
         if (!this.wordDisplay) return;
-        this.wordDisplay.innerHTML = "";
         
-        this.wordStates.forEach(ws => {
-            const wordEl = document.createElement("div");
-            wordEl.classList.add("mission-word");
+        const existingIds = new Set(this.activeWords.map(w => 'word-' + w.id));
+        Array.from(this.wordDisplay.children).forEach(child => {
+            if (!existingIds.has(child.id)) {
+                child.remove();
+            }
+        });
+        
+        this.activeWords.forEach(ws => {
+            let wordEl = document.getElementById('word-' + ws.id);
+            if (!wordEl) {
+                wordEl = document.createElement("div");
+                wordEl.id = 'word-' + ws.id;
+                wordEl.classList.add("mission-word");
+                this.wordDisplay.appendChild(wordEl);
+            }
             
-            if (ws.completed) {
-                wordEl.innerText = ws.word;
-                wordEl.classList.add("completed");
-            } else if (ws.word.startsWith(this.currentTyped) && (this.currentTyped.length > 0 || this.errorKey)) {
-                // Also match if currentTyped is empty but there's an errorKey
-                
-                const typedSpan = document.createElement("span");
-                typedSpan.classList.add("typed");
-                typedSpan.innerText = this.currentTyped;
-                wordEl.appendChild(typedSpan);
-                
-                let remainingWord = ws.word.substring(this.currentTyped.length);
-                
-                if (this.errorKey) {
-                    const errorSpan = document.createElement("span");
-                    errorSpan.classList.add("error-typed");
-                    errorSpan.innerText = this.errorKey;
-                    wordEl.appendChild(errorSpan);
-                    
-                    if (remainingWord.length > 0) {
-                        remainingWord = remainingWord.substring(1);
-                    }
-                }
-                
+            wordEl.style.left = ws.x + '%';
+            wordEl.style.top = ws.y + '%';
+            wordEl.style.transform = `translate(-50%, -50%) scale(${ws.scale})`;
+            wordEl.style.opacity = (ws.phase === "completed") ? ws.opacity : ws.scale;
+            
+            this.renderWordSpans(ws, wordEl);
+        });
+    }
+    /**
+     * Renders the spans for a word.
+     * @param {Object} ws - The word state.
+     * @param {HTMLElement} wordEl - The word element.
+     */
+    renderWordSpans(ws, wordEl) {
+        if (ws.phase === "completed") {
+            const typedSpan = document.createElement("span");
+            typedSpan.classList.add("typed");
+            typedSpan.innerText = ws.word;
+            wordEl.innerHTML = "";
+            wordEl.appendChild(typedSpan);
+        } else if (this.currentWordId === ws.id) {
+            const typedSpan = document.createElement("span");
+            typedSpan.classList.add("typed");
+            typedSpan.innerText = this.currentTyped;
+            
+            wordEl.innerHTML = "";
+            wordEl.appendChild(typedSpan);
+            
+            let remainingWord = ws.word.substring(this.currentTyped.length);
+            
+            if (ws.errorFlash && remainingWord.length > 0) {
+                const errorSpan = document.createElement("span");
+                errorSpan.classList.add("next-error");
+                errorSpan.innerText = remainingWord[0];
+                wordEl.appendChild(errorSpan);
+                remainingWord = remainingWord.substring(1);
+            }
+            
+            if (remainingWord.length > 0) {
                 const restSpan = document.createElement("span");
                 restSpan.innerText = remainingWord;
                 wordEl.appendChild(restSpan);
-            } else {
-                wordEl.innerText = ws.word;
             }
             
-            this.wordDisplay.appendChild(wordEl);
-        });
+            wordEl.style.opacity = ws.scale; 
+        } else {
+            wordEl.innerHTML = "";
+            const span = document.createElement("span");
+            span.innerText = ws.word;
+            wordEl.appendChild(span);
+        }
     }
 
     /**

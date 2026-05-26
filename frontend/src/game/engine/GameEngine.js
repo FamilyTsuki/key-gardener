@@ -91,7 +91,7 @@ export class GameEngine {
         this.currentLevel = level;
         
         if (level === 1) {
-            await this.setPhase(new WorldPhase(this, [new BridgeWordEvent()]));
+            await this.setPhase(new WorldPhase(this, [new BridgeWordEvent(), new DoorEvent()]));
         } else if (level === 2) {
             await this.setPhase(new WorldPhase(this, [new TempoEvent(), new DoorEvent()]));
         } else if (level === 3) {

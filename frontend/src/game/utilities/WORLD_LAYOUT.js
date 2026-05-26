@@ -65,7 +65,6 @@ export function createWordlLayout() {
     for (let y = 0; y < tab_width.length; y++) {
         if (y % 2 === 0) test += 1;
         
-        // Skip rows to create a ravine
         let isRavine = false;
         if (y >= 15 && y < 20) {
             isRavine = true;
@@ -73,7 +72,7 @@ export function createWordlLayout() {
 
         for (let x = 0; x < tab_width[y]; x++) {
             let min_decal = 0;
-            let genere_leter = tab_lettre[Math.floor(Math.random() * 26)];
+            let genere_leter = isRavine ? null : tab_lettre[Math.floor(Math.random() * 26)];
             if (y % 2 === 1) min_decal = 0.5;
 
             let posX = x + min_decal + test + tab_decalage[y];
@@ -82,7 +81,6 @@ export function createWordlLayout() {
                 lastCenterIndex = x + tab_decalage[y];
             }
 
-            // Mark the trigger tile right before the gap
             let isTrigger = false;
             if (y === 14) {
                 isTrigger = true;

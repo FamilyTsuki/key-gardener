@@ -259,7 +259,7 @@ export default class WorldMap {
      */
     createHexagons(scene) {
         this.#mapLayout.forEach((tile) => {
-            if (tile.isRavine) return; // Skip rendering the ravine gap
+            if (tile.isRavine) return;
 
             const sideMaterial = new THREE.MeshStandardMaterial({
                 map: this.stoneTexture,
@@ -460,7 +460,7 @@ export default class WorldMap {
      * @param {Array} worldLayout - The initial layout data for the world.
      * @returns {Promise<WorldMap>} The instantiated world map.
      */
-    static async init(scene, worldLayout) {
+    static async init(scene, worldLayout, hasDoorEvent = false) {
         const initialSize = 1;
         const layout = worldLayout.map((tileRaw) => {
             const hex = new HexTile(
@@ -471,7 +471,7 @@ export default class WorldMap {
                 initialSize,
                 tileRaw.letter
             );
-            hex.isDoorTile = tileRaw.isDoorTile;
+            hex.isDoorTile = hasDoorEvent ? tileRaw.isDoorTile : false;
             hex.isBridgeTrigger = tileRaw.isBridgeTrigger;
             hex.isRavine = tileRaw.isRavine;
             return hex;
