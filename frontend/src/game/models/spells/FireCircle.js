@@ -1,27 +1,41 @@
 import Spell from "../Spell.js";
 import * as THREE from "three";
 
+/**
+ * FireCircle spell that damages enemies within a radius over time.
+ * Inherits from Spell.
+ */
 export default class FireCircle extends Spell {
+  /** @type {number} */
   #duration;
+  /** @type {THREE.Scene} */
   #scene;
+  /** @type {Player} */
   #player;
+  /** @type {Object} */
   #enemies;
 
+  /** @type {number} */
   #loopId;
+  /** @type {number} */
   #attackSpeed;
 
+  /** @type {THREE.Mesh|null} */
   #mesh;
+  /** @type {number} */
   #timer;
+  /** @type {boolean} */
   #isActive;
 
   /**
-   *
-   * @param {String} word
-   * @param {Number} damage
-   * @param {Number} duration
-   * @param {Scene} scene
-   * @param {Player} player
-   * @param {Enemies} enemies
+   * Constructs a FireCircle spell.
+   * @param {string} word - The trigger word for the spell.
+   * @param {number} damage - The damage dealt per tick.
+   * @param {number} range - The radius of the fire circle.
+   * @param {number} duration - The duration the spell remains active.
+   * @param {THREE.Scene} scene - The scene to render the spell in.
+   * @param {Player} player - The player casting the spell.
+   * @param {Object} enemies - The enemies manager containing targetable enemies.
    */
   constructor(word, damage, range, duration, scene, player, enemies) {
     super(word, damage, range);
@@ -39,6 +53,10 @@ export default class FireCircle extends Spell {
     this.#mesh = null;
   }
 
+  /**
+   * Activates the spell's effect.
+   * @returns {boolean} True if activated, false if already active.
+   */
   effect() {
     if (this.#isActive) return false;
 
@@ -93,18 +111,15 @@ export default class FireCircle extends Spell {
   }
 
   /**
-   *
-   * @param {Number} deltaTime
+   * Updates the spell's visual effect and state over time.
+   * @param {number} deltaTime - The time elapsed since the last frame.
    */
   update(deltaTime) {
     if (this.#isActive && this.#mesh) {
       this.#timer += deltaTime;
 
-      // --- FIXATION DE LA TAILLE ---
-      // On s'assure que le scale reste à 1, peu importe le timer
       this.#mesh.scale.set(1, 1, 1);
 
-      // Animation visuelle (Opacité et Couleur)
       this.#mesh.material.opacity = 0.5 + Math.sin(this.#timer * 0.01) * 0.2;
 
       this.#mesh.material.color.setHSL(
@@ -113,10 +128,9 @@ export default class FireCircle extends Spell {
         0.6 + Math.sin(this.#timer * 0.003) * 0.1,
       );
 
-      // Suivre le joueur
       const playerPosWorld = {
         x: this.#player.position.x * 3.2,
-        z: this.#player.position.y * 3.2, // Attention: utilise Z pour la profondeur en 3D
+        z: this.#player.position.y * 3.2,
       };
       this.#mesh.position.set(playerPosWorld.x, 0.1, playerPosWorld.z);
 
@@ -126,6 +140,9 @@ export default class FireCircle extends Spell {
     }
   }
 
+  /**
+   * Deactivates the spell and removes its visual effects.
+   */
   desactivate() {
     if (this.#mesh) {
       this.#scene.remove(this.#mesh);

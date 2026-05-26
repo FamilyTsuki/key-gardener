@@ -4,13 +4,26 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { PostsService } from "../../core/services/posts.service.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 
+/**
+ * View for the community hub displaying posts and interactions.
+ */
 export default class HubView extends AbstractView {
+    /**
+     * Creates an instance of HubView.
+     *
+     * @param {Object} params - The route parameters.
+     */
     constructor(params) {
         super(params);
         this.setTitle("Community Hub - Keyboard Survivor");
         this.selectedMediaFile = null;
     }
 
+    /**
+     * Renders the community hub view content.
+     *
+     * @returns {Promise<HTMLElement>} The hub view container element.
+     */
     async render() {
         this.postsContainer = el("div", { id: "posts-container" },
             el("p", {}, "Loading posts...")
@@ -29,6 +42,11 @@ export default class HubView extends AbstractView {
         );
     }
 
+    /**
+     * Generates and returns the form for adding a new post.
+     *
+     * @returns {HTMLElement} The form container element.
+     */
     displayAddPostForm() {
         const fileInput = el("input", {
             type: "file",
@@ -56,6 +74,11 @@ export default class HubView extends AbstractView {
         );
     }
 
+    /**
+     * Handles the selection of a media file (image or video) for a post.
+     *
+     * @param {Event} e - The change event from the file input.
+     */
     handleMediaSelection(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -89,6 +112,9 @@ export default class HubView extends AbstractView {
         this.previewContainer.appendChild(previewWrapper);
     }
 
+    /**
+     * Clears the currently selected media file and its preview.
+     */
     clearSelectedMedia() {
         this.selectedMediaFile = null;
         if (this.previewContainer) {
@@ -100,6 +126,11 @@ export default class HubView extends AbstractView {
         }
     }
 
+    /**
+     * Submits the new post containing text and/or media to the server.
+     *
+     * @returns {Promise<void>}
+     */
     async addPost() {
         const postTextarea = document.getElementById("post-content");
         if (!postTextarea) return;
@@ -118,6 +149,11 @@ export default class HubView extends AbstractView {
         }
     }
 
+    /**
+     * Initializes the hub view by fetching and rendering all posts.
+     *
+     * @returns {Promise<void>}
+     */
     async init() {
         if (!this.postsContainer) return;
 
@@ -193,6 +229,13 @@ export default class HubView extends AbstractView {
         }
     }
 
+    /**
+     * Handles casting an upvote or downvote on a post.
+     *
+     * @param {number} postId - The ID of the post.
+     * @param {string} type - The type of vote ('upvote' or 'downvote').
+     * @returns {Promise<void>}
+     */
     async handleVote(postId, type) {
         if (!AuthService.isAuthenticated()) {
             FlashMessageManager.show("You must be logged in to vote!", "error");
@@ -211,12 +254,23 @@ export default class HubView extends AbstractView {
         }
     }
 
+    /**
+     * Determines if a given URL points to a video file.
+     *
+     * @param {string} url - The URL to check.
+     * @returns {boolean} True if the URL is a video, false otherwise.
+     */
     isVideo(url) {
         if (!url) return false;
         const extension = url.split(".").pop().toLowerCase();
         return ["mp4", "webm", "ogg", "mov"].includes(extension);
     }
 
+    /**
+     * Retrieves the CSS files specific to this view.
+     *
+     * @returns {Array<string>} List of CSS file paths.
+     */
     getCss() {
         return ["/asset/css/hub.css"];
     }

@@ -3,7 +3,15 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 
+/**
+ * View for user authentication (login, forgot password, reset password).
+ */
 export default class LoginView extends AbstractView {
+    /**
+     * Creates an instance of LoginView.
+     *
+     * @param {Object} params - The route parameters.
+     */
     constructor(params) {
         super(params);
         this.setTitle("Login - Keyboard Survivor");
@@ -11,12 +19,20 @@ export default class LoginView extends AbstractView {
         this.resetEmail = "";
     }
 
+    /**
+     * Renders the initial login view container.
+     *
+     * @returns {Promise<HTMLElement>} The login container element.
+     */
     async render() {
         this.container = el("div", { className: "login-container" });
         this.renderState();
         return this.container;
     }
 
+    /**
+     * Updates the form displayed based on the current state (login, forgot, reset).
+     */
     renderState() {
         this.container.innerHTML = "";
         
@@ -29,6 +45,11 @@ export default class LoginView extends AbstractView {
         }
     }
 
+    /**
+     * Creates the form elements for logging in.
+     *
+     * @returns {HTMLElement} The login form element.
+     */
     createLoginForm() {
         const emailInput = el("input", { type: "email", placeholder: "Email", required: true, className: "login-input", id: "email" });
         const passwordInput = el("input", { type: "password", placeholder: "Password", required: true, className: "login-input", id: "password" });
@@ -49,13 +70,6 @@ export default class LoginView extends AbstractView {
                 FlashMessageManager.show(error.message || "Login failed", "error");
             }
         };
-
-        const form = el("form", { id: "login-form", onsubmit: handleSubmit },
-            emailInput,
-            passwordInput,
-            el("button", { type: "submit", className: "login-btn" }, "Login")
-        );
-
         const forgotLink = el("a", { 
             href: "#", 
             className: "forgot-link",
@@ -65,11 +79,19 @@ export default class LoginView extends AbstractView {
                 this.renderState();
             }
         }, "Forgot Password?");
+        const form = el("form", { id: "login-form", onsubmit: handleSubmit },
+            emailInput,
+            passwordInput,
+            el("p", { className: "register-link" }, forgotLink),
+            el("button", { type: "submit", className: "login-btn" }, "Login")
+        );
+
+        
 
         return el("div", {},
             el("h2", {}, "Login"),
             form,
-            el("p", { className: "register-link" }, forgotLink),
+            
             el("p", { className: "register-link" },
                 "Don't have an account? ",
                 el("a", { href: "/register", dataset: { link: true } }, "Sign up")
@@ -77,6 +99,11 @@ export default class LoginView extends AbstractView {
         );
     }
 
+    /**
+     * Creates the form elements for requesting a password reset.
+     *
+     * @returns {HTMLElement} The forgot password form element.
+     */
     createForgotForm() {
         const emailInput = el("input", { type: "email", placeholder: "Email", required: true, className: "login-input" });
 
@@ -117,6 +144,11 @@ export default class LoginView extends AbstractView {
         );
     }
 
+    /**
+     * Creates the form elements for entering the reset code and new password.
+     *
+     * @returns {HTMLElement} The reset password form element.
+     */
     createResetForm() {
         const codeInput = el("input", { type: "text", placeholder: "6-digit Code", required: true, className: "login-input", maxLength: 6 });
         const newPasswordInput = el("input", { type: "password", placeholder: "New Password", required: true, className: "login-input" });
@@ -159,6 +191,11 @@ export default class LoginView extends AbstractView {
         );
     }
 
+    /**
+     * Retrieves the CSS files specific to this view.
+     *
+     * @returns {Array<string>} List of CSS file paths.
+     */
     getCss() {
         return ["/asset/css/login.css"];
     }

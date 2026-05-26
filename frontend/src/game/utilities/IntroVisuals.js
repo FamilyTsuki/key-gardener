@@ -1,4 +1,11 @@
+/**
+ * AmbientBackground class that handles rendering a persistent background animation.
+ */
 export class AmbientBackground {
+    /**
+     * Constructs an AmbientBackground instance.
+     * @param {HTMLElement} parentContainer - The DOM element to attach the canvas to.
+     */
     constructor(parentContainer) {
         this.canvas = document.createElement("canvas");
         this.canvas.className = "background-canvas-persistent";
@@ -10,10 +17,16 @@ export class AmbientBackground {
         this.runFrame = this.runFrame.bind(this);
     }
 
+    /**
+     * Starts the background animation loop.
+     */
     start() {
         this.animationId = requestAnimationFrame(this.runFrame);
     }
 
+    /**
+     * Executes a single animation frame.
+     */
     runFrame() {
         const ctx = this.context;
         const w = this.canvas.width;
@@ -52,6 +65,9 @@ export class AmbientBackground {
         this.animationId = requestAnimationFrame(this.runFrame);
     }
 
+    /**
+     * Destroys the canvas and stops the animation.
+     */
     destroy() {
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
@@ -65,7 +81,14 @@ export class AmbientBackground {
     }
 }
 
+/**
+ * GlitchEffect class that handles rendering a glitch visual overlay.
+ */
 export class GlitchEffect {
+    /**
+     * Constructs a GlitchEffect instance.
+     * @param {HTMLElement} parentContainer - The DOM element to attach the canvas to.
+     */
     constructor(parentContainer) {
         this.canvas = document.createElement("canvas");
         this.canvas.className = "glitch-canvas-overlay";
@@ -77,10 +100,16 @@ export class GlitchEffect {
         this.runFrame = this.runFrame.bind(this);
     }
 
+    /**
+     * Starts the glitch animation loop.
+     */
     start() {
         this.animationId = requestAnimationFrame(this.runFrame);
     }
 
+    /**
+     * Executes a single animation frame for the glitch effect.
+     */
     runFrame() {
         const ctx = this.context;
         const w = this.canvas.width;
@@ -134,6 +163,9 @@ export class GlitchEffect {
         this.animationId = requestAnimationFrame(this.runFrame);
     }
 
+    /**
+     * Destroys the canvas and stops the glitch animation.
+     */
     destroy() {
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);

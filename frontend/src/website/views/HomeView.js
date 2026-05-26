@@ -4,12 +4,25 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
 
+/**
+ * View for the home landing page.
+ */
 export default class HomeView extends AbstractView {
+    /**
+     * Creates an instance of HomeView.
+     *
+     * @param {Object} params - The route parameters.
+     */
     constructor(params) {
         super(params);
         this.setTitle("Home - Keyboard Survivor");
     }
 
+    /**
+     * Renders the home view content including animations and descriptions.
+     *
+     * @returns {Promise<HTMLElement>} The home view container element.
+     */
     async render() {
         const tunnelContainer = el("div", { id: "tunnel-container" });
 
@@ -139,6 +152,11 @@ export default class HomeView extends AbstractView {
         return container;
     }
 
+    /**
+     * Initializes the home view, starting tunnel animation and checking device capabilities.
+     *
+     * @returns {Promise<void>}
+     */
     async init() {
         if (this.tunnelContainer) {
             TunnelAnimation.init(this.tunnelContainer);
@@ -147,6 +165,11 @@ export default class HomeView extends AbstractView {
         deviceDetector.initialize();
     }
 
+    /**
+     * Retrieves the CSS files specific to this view.
+     *
+     * @returns {Array<string>} List of CSS file paths.
+     */
     getCss() {
         return ["/asset/css/home.css"];
     }

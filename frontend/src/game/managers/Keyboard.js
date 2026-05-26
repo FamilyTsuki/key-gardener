@@ -2,11 +2,20 @@ import * as THREE from "three";
 import Key from "../models/Key.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
+/**
+ * Manages the virtual keyboard rendering and logic.
+ */
 export default class Keyboard {
     #keyboardLayout;
     tileSize;
     group;
 
+    /**
+     * Creates an instance of Keyboard.
+     * @param {Array<Key>} keyboardLayout - Array of instantiated Key objects.
+     * @param {number} tileSize - The size of each tile/key.
+     * @param {THREE.Scene} scene - The main three.js scene.
+     */
     constructor(keyboardLayout, tileSize, scene) {
         this.#keyboardLayout = keyboardLayout;
         this.tileSize = tileSize;
@@ -16,10 +25,18 @@ export default class Keyboard {
         this.loadAndCreateKeys(scene);
     }
 
+    /**
+     * Gets the keyboard layout.
+     * @returns {Array<Key>} The array of key objects.
+     */
     get keyboardLayout() {
         return this.#keyboardLayout;
     }
 
+    /**
+     * Loads the key models and creates instances for each key in the layout.
+     * @param {THREE.Scene} scene - The main three.js scene.
+     */
     loadAndCreateKeys(scene) {
         const loader = new GLTFLoader();
 
@@ -76,6 +93,9 @@ export default class Keyboard {
         );
     }
 
+    /**
+     * Updates the visuals of the keys based on their state (e.g., pressed).
+     */
     update() {
         this.#keyboardLayout.forEach((keyObj) => {
             if (keyObj.mesh) {
@@ -88,10 +108,21 @@ export default class Keyboard {
         });
     }
 
+    /**
+     * Finds a key by its character or identifier.
+     * @param {string} keyToFind - The key identifier to find.
+     * @returns {Key|undefined} The matched Key object, or undefined.
+     */
     find(keyToFind) {
         return this.#keyboardLayout.find((key) => key.key === keyToFind);
     }
 
+    /**
+     * Factory method to initialize the keyboard.
+     * @param {THREE.Scene} scene - The main three.js scene.
+     * @param {Array<Object>} keyboardLayout - The raw layout definition.
+     * @returns {Keyboard} A new Keyboard instance.
+     */
     static init(scene, keyboardLayout) {
         const initialSize = 1;
         const keys = keyboardLayout.map(
@@ -108,6 +139,14 @@ export default class Keyboard {
     }
 }
 
+/**
+ * Creates a canvas-based texture displaying text.
+ * @param {string} text - The text to display.
+ * @param {string} [color="black"] - The text color.
+ * @param {string} [bgColor="rgba(0,0,0,0)"] - The background color.
+ * @param {number} [fontSize=90] - The font size.
+ * @returns {THREE.CanvasTexture} The generated texture.
+ */
 function createTextTexture(
     text,
     color = "black",

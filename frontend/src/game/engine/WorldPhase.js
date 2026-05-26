@@ -3,10 +3,17 @@ import * as THREE from "three";
 import WorldMap from "../managers/WorldMap.js";
 import { WORLD_LAYOUT } from "../utilities/WORLD_LAYOUT.js";
 import Player from "../models/actors/Player.js";
-import { SurvivePhase } from "./SurvivePhase.js";
 
+/**
+ * Represents the world exploration phase of the game.
+ */
 export class WorldPhase extends GamePhase {
-    constructor(gameEngine) {
+    /**
+     * Creates an instance of WorldPhase.
+     * @param {GameEngine} gameEngine - The game engine instance.
+     * @param {Array<Object>} [events=[]] - Array of events to handle in this phase.
+     */
+    constructor(gameEngine, events = []) {
         super(gameEngine);
         this.worldMap = null;
         this.player = null;
@@ -18,15 +25,14 @@ export class WorldPhase extends GamePhase {
             1000
         );
 
-        this.isDoorSequenceActive = false;
-        this.doorSequence = ["O", "P", "E", "N"];
-        this.doorSequenceIndex = 0;
         this.isTransitioning = false;
-        this.isDoorOpen = false;
-        this.isOpeningDoor = false;
-        this.enterPromptOverlay = null;
+        this.events = events || []; 
     }
 
+    /**
+     * Initializes the world phase, setting up the map, player, and events.
+     * @returns {Promise<void>}
+     */
     async init() {
         const scene = this.gameEngine.scene;
         this.worldMap = await WorldMap.init(
@@ -51,10 +57,20 @@ export class WorldPhase extends GamePhase {
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
-        this.player.offsetY = 3.5;
+        this.player.offsetY = 3.5 + (this.worldMap.mapLayout[0].baseY || 0);
         this.player.offsetZ = 0;
+
+        for (const event of this.events) {
+            if (event.init) {
+                await event.init(this, scene);
+            }
+        }
     }
 
+    /**
+     * Updates the game state for the world phase.
+     * @param {number} deltaTime - The time elapsed since the last update.
+     */
     update(deltaTime) {
         if (!this.player) {
             return;
@@ -63,122 +79,28 @@ export class WorldPhase extends GamePhase {
         if (this.player && this.player.mesh) {
             const playerPos = this.player.mesh.position;
 
-            this.camera.position.set(
-                playerPos.x + 5,
-                playerPos.y + 21,
-                playerPos.z + 14
-            );
-
-            this.camera.lookAt(playerPos.x, playerPos.y, playerPos.z);
-
-            if (!this.isTransitioning && this.worldMap) {
-                const doorTile = this.worldMap.mapLayout.find(
-                    (t) => t.isDoorTile
+            if (!this.isTransitioning) {
+                this.camera.position.set(
+                    playerPos.x + 5,
+                    playerPos.y + 21,
+                    playerPos.z + 14
                 );
-                if (doorTile) {
-                    const dx = doorTile.rawPosition.x - this.player.x;
-                    const dy = doorTile.rawPosition.y - this.player.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
+                this.camera.lookAt(playerPos.x, playerPos.y, playerPos.z);
+            }
 
-                    if (!this.isDoorOpen && !this.isOpeningDoor) {
-                        if (dist < 2.5 && !this.isDoorSequenceActive) {
-                            this.startDoorSequence();
-                        }
-                    } else if (this.isDoorOpen) {
-                        if (dist < 0.5) {
-                            this.showEnterPrompt();
-                        } else {
-                            this.hideEnterPrompt();
-                        }
+            if (this.worldMap) {
+                for (const event of this.events) {
+                    if (event.update) {
+                        event.update(this, deltaTime);
                     }
                 }
             }
         }
     }
 
-    startDoorSequence() {
-        this.isDoorSequenceActive = true;
-        this.doorSequenceIndex = 0;
-
-        this.uiOverlay = document.createElement("div");
-        this.uiOverlay.classList.add("door-mini-game-overlay");
-
-        document.body.appendChild(this.uiOverlay);
-        this.updateDoorUI();
-    }
-
-    updateDoorUI() {
-        if (!this.uiOverlay) return;
-        this.uiOverlay.innerHTML = "";
-
-        this.doorSequence.forEach((letter, index) => {
-            const letterBox = document.createElement("div");
-            letterBox.innerText = letter;
-            letterBox.classList.add("door-mini-game-letter");
-
-            if (index < this.doorSequenceIndex) {
-                letterBox.classList.add("done");
-            } else if (index === this.doorSequenceIndex) {
-                letterBox.classList.add("active");
-            } else {
-                letterBox.classList.add("pending");
-            }
-            this.uiOverlay.appendChild(letterBox);
-        });
-    }
-
-    async completeDoorSequence() {
-        this.isDoorSequenceActive = false;
-        this.isOpeningDoor = true;
-
-        if (this.uiOverlay) {
-            this.uiOverlay.remove();
-            this.uiOverlay = null;
-        }
-
-        if (this.worldMap) {
-            await this.worldMap.openDoor();
-        }
-
-        this.isOpeningDoor = false;
-        this.isDoorOpen = true;
-    }
-
-    showEnterPrompt() {
-        if (this.enterPromptOverlay) return;
-
-        this.enterPromptOverlay = document.createElement("div");
-        this.enterPromptOverlay.classList.add(
-            "door-mini-game-overlay",
-            "enter-prompt-overlay"
-        );
-
-        const enterKey = document.createElement("div");
-        enterKey.classList.add("enter-prompt-key");
-        enterKey.innerHTML = `
-            <svg width="40" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 10 4 15 9 20"></polyline>
-                <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
-            </svg>
-        `;
-
-        const titleDiv = document.createElement("div");
-        titleDiv.classList.add("enter-prompt-title");
-        titleDiv.innerText = "Entrer dans le portail";
-
-        this.enterPromptOverlay.appendChild(titleDiv);
-        this.enterPromptOverlay.appendChild(enterKey);
-
-        document.body.appendChild(this.enterPromptOverlay);
-    }
-
-    hideEnterPrompt() {
-        if (this.enterPromptOverlay) {
-            this.enterPromptOverlay.remove();
-            this.enterPromptOverlay = null;
-        }
-    }
-
+    /**
+     * Draws the elements of the world phase.
+     */
     draw() {
         if (this.player && this.player.mesh && this.playerLight) {
             const pos = this.player.mesh.position;
@@ -192,6 +114,9 @@ export class WorldPhase extends GamePhase {
         }
     }
 
+    /**
+     * Sets up the background and lighting for the scene.
+     */
     draw_bg() {
         this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
         this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
@@ -204,51 +129,21 @@ export class WorldPhase extends GamePhase {
         this.gameEngine.scene.add(this.playerLight);
     }
 
+    /**
+     * Handles keyboard events for movement and interaction.
+     * @param {KeyboardEvent} event - The keyboard event.
+     */
     handleKeyDown(event) {
-        if (this.isDoorSequenceActive) {
-            const keyName = event.key.toUpperCase();
-            if (keyName === this.doorSequence[this.doorSequenceIndex]) {
-                this.doorSequenceIndex++;
-                this.updateDoorUI();
-                if (this.doorSequenceIndex >= this.doorSequence.length) {
-                    this.completeDoorSequence();
-                }
-            } else {
-                if (this.uiOverlay) {
-                    this.doorSequenceIndex = 0;
-                    this.updateDoorUI();
-                    this.uiOverlay.classList.remove("error");
-                    void this.uiOverlay.offsetWidth;
-                    this.uiOverlay.classList.add("error");
-
-                    if (this.errorTimeout) clearTimeout(this.errorTimeout);
-                    this.errorTimeout = setTimeout(() => {
-                        if (this.uiOverlay)
-                            this.uiOverlay.classList.remove("error");
-                    }, 400);
-                }
+        for (const evt of this.events) {
+            if (evt.handleKeyDown) {
+                const intercepted = evt.handleKeyDown(this, event);
+                if (intercepted) return;
             }
-            return;
         }
 
         if (this.isTransitioning) return;
 
         const keyName = event.key.toUpperCase();
-
-        if (this.isDoorOpen && keyName === "ENTER") {
-            const doorTile = this.worldMap.mapLayout.find((t) => t.isDoorTile);
-            if (doorTile) {
-                const dx = doorTile.rawPosition.x - this.player.x;
-                const dy = doorTile.rawPosition.y - this.player.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 2.5) {
-                    this.isTransitioning = true;
-                    this.hideEnterPrompt();
-                    this.gameEngine.setPhase(new SurvivePhase(this.gameEngine));
-                    return;
-                }
-            }
-        }
 
         let target = null;
         if (this.worldMap) {
@@ -264,19 +159,25 @@ export class WorldPhase extends GamePhase {
             this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
+                offsetY: 3.5 + (target.baseY || 0),
             });
         }
     }
 
+    /**
+     * Cleans up resources used by the world phase.
+     */
     cleanup() {
-        if (this.uiOverlay) {
-            this.uiOverlay.remove();
-            this.uiOverlay = null;
+        for (const event of this.events) {
+            if (event.cleanup) {
+                event.cleanup(this);
+            }
         }
-        if (this.enterPromptOverlay) {
-            this.enterPromptOverlay.remove();
-            this.enterPromptOverlay = null;
+
+        if (this.player && this.player.mesh) {
+            this.gameEngine.scene.remove(this.player.mesh);
         }
+
         if (this.worldMap) {
             this.gameEngine.scene.remove(this.worldMap.group);
         }

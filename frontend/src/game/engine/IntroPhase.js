@@ -2,6 +2,9 @@ import { GamePhase } from "./GamePhase.js";
 import { WorldPhase } from "./WorldPhase.js";
 import { AmbientBackground, GlitchEffect } from "../utilities/IntroVisuals.js";
 
+/**
+ * Represents the introductory cinematic phase of the game.
+ */
 export class IntroPhase extends GamePhase {
     static GLITCH_DELAY_MS = 38000;
     static RIFT_OPENING_DELAY_MS = 40000;
@@ -9,6 +12,10 @@ export class IntroPhase extends GamePhase {
     static DIALOGUE_DELAY_MS = 43000;
     static RIFT_TRANSITION_DELAY_MS = 1000;
 
+    /**
+     * Creates an instance of IntroPhase.
+     * @param {GameEngine} gameEngine - The game engine instance.
+     */
     constructor(gameEngine) {
         super(gameEngine);
         this.camera = this.gameEngine.camera;
@@ -28,6 +35,10 @@ export class IntroPhase extends GamePhase {
         this.typewriterInterval = null;
     }
 
+    /**
+     * Initializes the intro phase, setting up DOM elements and starting the timeline.
+     * @returns {Promise<void>}
+     */
     async init() {
         this.createCinematicDOM();
         this.ambientBackground = new AmbientBackground(this.container);
@@ -35,6 +46,9 @@ export class IntroPhase extends GamePhase {
         this.startCinematicTimeline();
     }
 
+    /**
+     * Creates the main DOM elements for the cinematic video and rift.
+     */
     createCinematicDOM() {
         this.container = document.createElement("div");
         this.container.className = "intro-cinematic-container";
@@ -64,6 +78,9 @@ export class IntroPhase extends GamePhase {
         this.rift = rift;
     }
 
+    /**
+     * Creates the DOM elements for the dialogue UI.
+     */
     createDialogueDOM() {
         this.dialogueContainer = document.createElement("div");
         this.dialogueContainer.className = "intro-dialogue-container";
@@ -84,6 +101,9 @@ export class IntroPhase extends GamePhase {
         this.container.appendChild(this.dialogueContainer);
     }
 
+    /**
+     * Starts the timed sequence of cinematic events.
+     */
     startCinematicTimeline() {
         this.timeouts.push(
             setTimeout(() => {
@@ -110,6 +130,9 @@ export class IntroPhase extends GamePhase {
         );
     }
 
+    /**
+     * Triggers the glitch effects on the video and container.
+     */
     triggerGlitches() {
         if (this.video) {
             this.video.classList.add("glitching");
@@ -118,6 +141,9 @@ export class IntroPhase extends GamePhase {
         this.glitchEffect.start();
     }
 
+    /**
+     * Triggers the appearance of the rift and pauses the video.
+     */
     triggerRiftOpening() {
         if (this.rift) {
             this.rift.classList.add("visible");
@@ -131,6 +157,9 @@ export class IntroPhase extends GamePhase {
         }
     }
 
+    /**
+     * Transitions the video state to a static broken look.
+     */
     triggerStaticState() {
         if (this.video && this.rift) {
             this.video.classList.remove("glitching");
@@ -142,12 +171,18 @@ export class IntroPhase extends GamePhase {
         }
     }
 
+    /**
+     * Shows the dialogue container and starts the dialogue sequence.
+     */
     triggerDialogue() {
         if (!this.dialogueContainer) return;
         this.dialogueContainer.classList.add("visible");
         this.showNextDialogue();
     }
 
+    /**
+     * Displays the next piece of dialogue with a typewriter effect.
+     */
     showNextDialogue() {
         if (this.dialogueTimeout) {
             clearTimeout(this.dialogueTimeout);
@@ -180,6 +215,9 @@ export class IntroPhase extends GamePhase {
         }
     }
 
+    /**
+     * Advances the dialogue instantly if it's currently typing out.
+     */
     advanceDialogue() {
         if (this.typewriterInterval) {
             clearInterval(this.typewriterInterval);
@@ -196,6 +234,9 @@ export class IntroPhase extends GamePhase {
         }
     }
 
+    /**
+     * Ends the dialogue sequence and makes the rift clickable.
+     */
     endDialogue() {
         if (this.dialogueContainer) {
             this.dialogueContainer.classList.remove("visible");
@@ -206,6 +247,9 @@ export class IntroPhase extends GamePhase {
         }
     }
 
+    /**
+     * Handles clicking on the rift, transitioning to the next phase.
+     */
     handleRiftClick() {
         this.rift.removeEventListener("click", this.onRiftClick);
         this.container.classList.add("transitioning");
@@ -214,10 +258,21 @@ export class IntroPhase extends GamePhase {
         }, IntroPhase.RIFT_TRANSITION_DELAY_MS);
     }
 
+    /**
+     * Updates the logic for this phase.
+     * @param {number} _deltaTime - The time elapsed since the last update.
+     */
     update(_deltaTime) {}
 
+    /**
+     * Draws the elements of this phase.
+     */
     draw() {}
 
+    /**
+     * Handles keyboard interactions during the intro.
+     * @param {KeyboardEvent} _event - The keyboard event.
+     */
     handleKeyDown(_event) {
         if (
             this.dialogueContainer &&
@@ -227,6 +282,9 @@ export class IntroPhase extends GamePhase {
         }
     }
 
+    /**
+     * Cleans up all DOM elements and timeouts.
+     */
     cleanup() {
         if (this.glitchEffect) {
             this.glitchEffect.destroy();

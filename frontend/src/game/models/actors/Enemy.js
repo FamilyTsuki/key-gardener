@@ -1,12 +1,32 @@
 import Actor from "../Actor.js";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+/**
+ * Enemy class representing an adversary in the game.
+ * Inherits from Actor.
+ */
 export default class Enemy extends Actor {
+    /** @type {number} */
     #damage;
-    #actualKey; //? String
-    #targetedPosition; //? { x: Number, y: Number }
-    #path; //? [Key, Key, ...]
+    /** @type {string} */
+    #actualKey;
+    /** @type {Object} */
+    #targetedPosition;
+    /** @type {Array<Object>} */
+    #path;
 
+    /**
+     * Constructs an Enemy instance.
+     * @param {string} type - The type of the enemy ('basic', 'speedy', 'tank').
+     * @param {string} actualKey - The current key associated with the enemy.
+     * @param {THREE.Scene} scene - The scene where the enemy will be added.
+     * @param {Object} position - The initial position of the enemy {x, y}.
+     * @param {number} [hp=100] - The health points of the enemy.
+     * @param {number} [hpMax=100] - The maximum health points of the enemy.
+     * @param {THREE.Group|undefined} [model=undefined] - The 3D model of the enemy.
+     * @param {Object} [size={width: 1, height: 1}] - The size of the enemy.
+     * @param {string} [id=crypto.randomUUID()] - The unique identifier of the enemy.
+     */
     constructor(
         type,
         actualKey,
@@ -86,21 +106,44 @@ export default class Enemy extends Actor {
         this.jumpSound = new Audio("/asset/game_assets/sounds/jump.wav");
         this.jumpSound.volume = 0.1;
         this.updateHpBar();
-        // À la fin de ton constructeur Enemy.js
     }
 
+    /**
+     * Checks if the enemy is dead.
+     * @returns {boolean} True if dead, false otherwise.
+     */
     get isDead() {
         return this.hp <= 0 || this.hp === undefined;
     }
+
+    /**
+     * Gets the actual key of the enemy.
+     * @returns {string} The actual key.
+     */
     get actualKey() {
         return this.#actualKey;
     }
+
+    /**
+     * Gets the path the enemy is following.
+     * @returns {Array<Object>} The path array.
+     */
     get path() {
         return this.#path;
     }
+
+    /**
+     * Sets the path the enemy should follow.
+     * @param {Array<Object>} path - The new path array.
+     */
     set path(path) {
         this.#path = path;
     }
+
+    /**
+     * Reduces the enemy's health by the specified damage.
+     * @param {number} nb - The amount of damage to take.
+     */
     takeDamage(nb) {
         this.hp -= nb;
         if (this.hp <= 0) {
@@ -111,6 +154,11 @@ export default class Enemy extends Actor {
 
         this.updateHpBar();
     }
+    /**
+     * Attacks the given player.
+     * @param {Player} player - The player to attack.
+     * @throws {Error} If no player is provided.
+     */
     attack(player) {
         if (!player) {
             throw new Error("No player !");
@@ -118,6 +166,9 @@ export default class Enemy extends Actor {
         player.hp -= this.#damage;
     }
 
+    /**
+     * Moves the enemy along its path.
+     */
     move() {
         if (this.isJumping) return;
 
@@ -133,12 +184,8 @@ export default class Enemy extends Actor {
             const dy = this.#targetedPosition.y - this.startJumpPos.y;
             this.totalJumpDist = Math.sqrt(dx * dx + dy * dy);
 
-            // --- CORRECTION SON ---
             if (this.jumpSound) {
-                // On remet à zéro pour que le "clic" soit audible à chaque saut
                 this.jumpSound.currentTime = 0;
-
-                // On baisse un peu le volume pour les ennemis (optionnel)
                 this.jumpSound.volume = 0.2;
 
                 this.jumpSound
@@ -147,6 +194,9 @@ export default class Enemy extends Actor {
             }
         }
     }
+    /**
+     * Updates the health bar visual representation.
+     */
     updateHpBar() {
         const ctx = this.hpContext;
         const width = this.hpCanvas.width;
@@ -170,6 +220,10 @@ export default class Enemy extends Actor {
 
         this.hpSprite.material.map.needsUpdate = true;
     }
+    /**
+     * Updates the enemy's state and position each frame.
+     * @param {Player} player - The player instance to check for collisions.
+     */
     update(player) {
         if (!this.#targetedPosition) return;
 
@@ -233,6 +287,9 @@ export default class Enemy extends Actor {
             this.die();
         }
     }
+    /**
+     * Handles the enemy's death logic, removing it from the scene.
+     */
     die() {
         if (this.mesh && this.mesh.parent) {
             this.mesh.parent.remove(this.mesh);
