@@ -81,8 +81,12 @@ export default class LoginView extends AbstractView {
         }, "Forgot Password?");
         const form = el("form", { id: "login-form", onsubmit: handleSubmit },
             emailInput,
+            el("div" , {className: "input-wrapper" },
             passwordInput,
-            el("p", { className: "register-link" }, forgotLink),
+            
+            el("p", { className: "forgot-link" }, forgotLink)
+        ),
+            
             el("button", { type: "submit", className: "login-btn" }, "Login")
         );
 
