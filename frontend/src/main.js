@@ -1,3 +1,7 @@
+/**
+ * Main application entry point.
+ * Initializes the UI and sets up the router.
+ */
 import Router from "./core/Router.js";
 import Navbar from "./website/components/Navbar.js";
 

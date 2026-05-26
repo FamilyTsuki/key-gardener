@@ -1,7 +1,17 @@
 import { el } from "./DOMBuilder.js";
 import { Icons } from "./Icons.js";
 
+/**
+ * Manager to handle flash message notifications in the UI.
+ */
 export const FlashMessageManager = {
+    /**
+     * Shows a flash message.
+     * @param {string} message - The message content.
+     * @param {string} [type="success"] - The type of flash message (e.g., success, error, info).
+     * @param {boolean} [persistent=false] - Whether the message should stay until explicitly closed.
+     * @param {Function|null} [onClickCallback=null] - Optional callback function triggered when the message is clicked.
+     */
     show(
         message,
         type = "success",
@@ -102,6 +112,11 @@ export const FlashMessageManager = {
         }
     },
 
+    /**
+     * Removes a flash message element from the DOM with an animation.
+     * @param {Element} element - The DOM element of the flash message to remove.
+     * @private
+     */
     _remove(element) {
         if (
             !element ||
@@ -126,6 +141,11 @@ export const FlashMessageManager = {
         }, 400);
     },
 
+    /**
+     * Gets or creates the container element for flash messages.
+     * @returns {Element} The flash messages container.
+     * @private
+     */
     _getOrCreateContainer() {
         let container = document.getElementById("flash-container");
         if (!container) {
