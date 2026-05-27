@@ -772,10 +772,32 @@ export class BridgeWordEvent extends WorldEvent {
         const style = document.getElementById("bridge-event-styles");
         if (style) style.remove();
 
-        for (const mesh of this.bridgeMeshes) {
-            worldPhase.gameEngine.scene.remove(mesh);
-            if (mesh.geometry) mesh.geometry.dispose();
-            if (mesh.material) mesh.material.dispose();
+        for (const group of this.bridgeMeshes) {
+            worldPhase.gameEngine.scene.remove(group);
+            group.traverse((child) => {
+                if (child.geometry) child.geometry.dispose();
+                if (child.material) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach(m => {
+                            if (m && m.dispose) m.dispose();
+                        });
+                    } else if (child.material.dispose) {
+                        child.material.dispose();
+                    }
+                }
+            });
+            
+            if (group.material && Array.isArray(group.material)) {
+                group.material.forEach(m => {
+                    if (m && m.dispose) m.dispose();
+                });
+            } else if (group.material && group.material.dispose) {
+                group.material.dispose();
+            }
+            
+            if (group.lineMaterial && group.lineMaterial.dispose) {
+                group.lineMaterial.dispose();
+            }
         }
         this.bridgeMeshes = [];
     }
