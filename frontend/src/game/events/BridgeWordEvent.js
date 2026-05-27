@@ -162,12 +162,34 @@ export class BridgeWordEvent extends WorldEvent {
      */
     updateTileAnimations(deltaTime) {
         if (this.animatingTiles.length === 0) return;
-        const speed = 15.0;
+        
         for (let i = this.animatingTiles.length - 1; i >= 0; i--) {
             const anim = this.animatingTiles[i];
-            anim.mesh.position.y += speed * deltaTime;
-            if (anim.mesh.position.y >= anim.targetY) {
+            
+            if (anim.progress === undefined) {
+                anim.progress = 0;
+                anim.startY = anim.currentY;
+                anim.duration = 0.5 + Math.random() * 0.2;
+            }
+            
+            anim.progress += deltaTime / anim.duration;
+            let finished = false;
+            if (anim.progress >= 1) {
+                anim.progress = 1;
+                finished = true;
+            }
+
+            const t = anim.progress;
+            const c1 = 1.70158;
+            const c3 = c1 + 1;
+            const ease = 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+
+            anim.currentY = anim.startY + (anim.targetY - anim.startY) * ease;
+            anim.mesh.position.y = anim.currentY;
+
+            if (finished) {
                 anim.mesh.position.y = anim.targetY;
+                anim.tile.mesh = anim.mesh; 
                 this.animatingTiles.splice(i, 1);
                 
                 if (anim.isCenter && anim.worldPhase) {
@@ -498,6 +520,7 @@ export class BridgeWordEvent extends WorldEvent {
             this.animatingTiles.push({
                 mesh: group,
                 targetY: tile.baseY,
+                currentY: tile.baseY - 15,
                 archHeight: data.archHeight,
                 isCenter: false,
                 tile: tile,
@@ -597,12 +620,11 @@ export class BridgeWordEvent extends WorldEvent {
         const random_z = archHeight + Math.random() * 0.4;
         tile.baseY = random_z;
         
-        group.position.set(tile.x, -15, tile.y);
+        group.position.set(tile.x, tile.baseY - 15, tile.y);
         group.rotation.y = 0;
 
         worldPhase.gameEngine.scene.add(group);
         this.bridgeMeshes.push(group);
-        tile.mesh = group;
 
         return group;
     }
