@@ -44,9 +44,9 @@ function createLetterTexture(letter, stoneImage) {
 function createBeveledHexagon(sideMaterial, topMaterial) {
     const group = new THREE.Group();
 
-    const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 3.6, 6);
+    const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 30.0, 6);
     const bodyMesh = new THREE.Mesh(bodyGeometry, sideMaterial);
-    bodyMesh.position.y = -0.2;
+    bodyMesh.position.y = -13.4;
 
     const bevelGeometry = new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6);
     const bevelMesh = new THREE.Mesh(bevelGeometry, [
@@ -347,6 +347,128 @@ export default class WorldMap {
         this.leftDoorPivot = leftDoorPivot;
         this.rightDoorPivot = rightDoorPivot;
 
+        let wallTexture = null;
+        let tunnelTexture = null;
+        if (this.stoneTexture) {
+            wallTexture = this.stoneTexture.clone();
+            wallTexture.wrapS = THREE.RepeatWrapping;
+            wallTexture.wrapT = THREE.RepeatWrapping;
+            wallTexture.repeat.set(5, 4);
+            wallTexture.needsUpdate = true;
+
+            tunnelTexture = this.stoneTexture.clone();
+            tunnelTexture.wrapS = THREE.RepeatWrapping;
+            tunnelTexture.wrapT = THREE.RepeatWrapping;
+            tunnelTexture.repeat.set(1, 2);
+            tunnelTexture.needsUpdate = true;
+        }
+
+        const caveMat = new THREE.MeshStandardMaterial({
+            map: wallTexture,
+            color: 0x555566,
+            roughness: 1.0,
+            metalness: 0.1,
+            flatShading: true
+        });
+
+        const rockLineMat = new THREE.LineBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.4
+        });
+
+        const wallGeo = new THREE.PlaneGeometry(60, 50, 60, 50);
+        wallGeo.translate(0, 15, 0);
+
+        const index = wallGeo.getIndex();
+        const pos = wallGeo.attributes.position;
+        const newIndices = [];
+        
+        for (let i = 0; i < index.count; i += 3) {
+            const a = index.getX(i);
+            const b = index.getX(i + 1);
+            const c = index.getX(i + 2);
+            
+            const cx = (pos.getX(a) + pos.getX(b) + pos.getX(c)) / 3;
+            const cy = (pos.getY(a) + pos.getY(b) + pos.getY(c)) / 3;
+            
+            if (Math.abs(cx) < 2.8 && cy > -0.5 && cy < 12.8) {
+                continue;
+            }
+            newIndices.push(a, b, c);
+        }
+        wallGeo.setIndex(newIndices);
+
+        for (let i = 0; i < pos.count; i++) {
+            let x = pos.getX(i);
+            let y = pos.getY(i);
+            let z = pos.getZ(i);
+
+            let distToEdgeX = Math.max(0, Math.abs(x) - 3.0);
+            let distToEdgeY = Math.max(0, y - 13.0);
+            let distToEdgeBottom = Math.max(0, -0.5 - y);
+            
+            let distToEdge = Math.sqrt(distToEdgeX * distToEdgeX + distToEdgeY * distToEdgeY + distToEdgeBottom * distToEdgeBottom);
+            let attenuation = Math.min(1.0, distToEdge / 6.0);
+            attenuation = attenuation * attenuation * (3 - 2 * attenuation);
+
+            // Standard fractal Brownian motion (fBm) using sine waves
+            let noiseZ = 0;
+            noiseZ += (Math.sin(x * 0.31 + y * 0.27) + Math.cos(x * 0.23 - y * 0.33)) * 1.5;
+            noiseZ += (Math.sin(x * 0.67 + y * 0.59) + Math.cos(x * 0.61 - y * 0.73)) * 0.75;
+            noiseZ += (Math.sin(x * 1.37 + y * 1.29) + Math.cos(x * 1.21 - y * 1.43)) * 0.35;
+            noiseZ += (Math.sin(x * 2.71 + y * 2.57) + Math.cos(x * 2.51 - y * 2.83)) * 0.15;
+            
+            // Bias backwards slightly to prevent bulging too far forward
+            noiseZ = (noiseZ - 1.5) * attenuation;
+
+            pos.setZ(i, z + noiseZ);
+        }
+        wallGeo.computeVertexNormals();
+
+        const wallMesh = new THREE.Mesh(wallGeo, caveMat);
+        wallMesh.position.set(0, 0, -1.0);
+        
+        const wallEdges = new THREE.EdgesGeometry(wallGeo);
+        const wallLine = new THREE.LineSegments(wallEdges, rockLineMat);
+        wallMesh.add(wallLine);
+        doorGroup.add(wallMesh);
+
+        const tunnelGeo = new THREE.BoxGeometry(5.4, 15.0, 20, 3, 3, 3);
+        const tunnelPos = tunnelGeo.attributes.position;
+        for (let i = 0; i < tunnelPos.count; i++) {
+            let x = tunnelPos.getX(i);
+            let y = tunnelPos.getY(i);
+            let z = tunnelPos.getZ(i);
+            const noise = (Math.sin(x * 1.2) + Math.cos(y * 1.2) + Math.sin(z * 1.2)) * 0.4;
+            tunnelPos.setX(i, x + noise);
+            tunnelPos.setY(i, y + noise);
+            tunnelPos.setZ(i, z + noise);
+        }
+        tunnelGeo.computeVertexNormals();
+        
+        const tunnelMat = new THREE.MeshStandardMaterial({
+            map: this.stoneTexture,
+            color: 0x333344,
+            roughness: 1.0,
+            metalness: 0.1,
+            flatShading: true,
+            side: THREE.BackSide
+        });
+        const tunnelMesh = new THREE.Mesh(tunnelGeo, tunnelMat);
+        tunnelMesh.position.set(0, 6.0, -10.5);
+        
+        const tunnelEdges = new THREE.EdgesGeometry(tunnelGeo);
+        const tunnelLine = new THREE.LineSegments(tunnelEdges, rockLineMat);
+        tunnelMesh.add(tunnelLine);
+        doorGroup.add(tunnelMesh);
+
+        const backdropGeo = new THREE.PlaneGeometry(10, 20);
+        const backdropMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
+        const backdrop = new THREE.Mesh(backdropGeo, backdropMat);
+        backdrop.position.set(0, 6.5, -19.5);
+        doorGroup.add(backdrop);
+
         doorGroup.add(leftPillar);
         doorGroup.add(rightPillar);
         doorGroup.add(arch);
@@ -356,6 +478,8 @@ export default class WorldMap {
         doorGroup.position.set(0, 2, 0);
         doorGroup.rotation.y = -Math.PI / 6;
         parentMesh.add(doorGroup);
+
+
     }
 
     /**
@@ -396,11 +520,7 @@ export default class WorldMap {
     update(playerPosition) {
         this.#mapLayout.forEach((tile) => {
             if (tile.mesh) {
-                if (tile.isPressed) {
-                    tile.mesh.position.y = tile.baseY - 0.2;
-                } else {
-                    tile.mesh.position.y = tile.baseY;
-                }
+                tile.mesh.position.y = tile.baseY;
 
                 if (playerPosition) {
                     const dx = tile.rawPosition.x - playerPosition.x;

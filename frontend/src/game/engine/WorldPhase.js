@@ -59,7 +59,7 @@ export class WorldPhase extends GamePhase {
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
-        this.player.offsetY = 3.5 + (this.worldMap.mapLayout[0].baseY || 0);
+        this.player.offsetY = 2.9 + (this.worldMap.mapLayout[0].baseY || 0);
         this.player.offsetZ = 0;
 
         for (const event of this.events) {
@@ -161,7 +161,7 @@ export class WorldPhase extends GamePhase {
             this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
-                offsetY: 3.5 + (target.baseY || 0),
+                offsetY: 2.9 + (target.baseY || 0),
             });
         }
     }
