@@ -30,6 +30,11 @@
         <div id="nav-container"></div>
         <div id="app"></div>
         <div id="page-transition"></div>
+        <div id="global-loader" class="hidden">
+            <div class="loader-content">
+                charging<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+            </div>
+        </div>
         <script>
             if (window.location.pathname === "/game") {
                 document.body.classList.add("in-game");

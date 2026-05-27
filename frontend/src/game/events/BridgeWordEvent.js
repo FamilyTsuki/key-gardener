@@ -277,6 +277,14 @@ export class BridgeWordEvent extends WorldEvent {
      * @param {WorldPhase} worldPhase
      */
     startEvent(worldPhase) {
+        if (!document.getElementById("bridge-event-styles")) {
+            const link = document.createElement("link");
+            link.id = "bridge-event-styles";
+            link.rel = "stylesheet";
+            link.href = "/asset/css/bridgeEvent.css";
+            document.head.appendChild(link);
+        }
+
         worldPhase.isTransitioning = true; 
         this.transitioningToEvent = true;
         this.transitionProgress = 0;
@@ -631,14 +639,6 @@ export class BridgeWordEvent extends WorldEvent {
      * Builds the HTML UI overlay.
      */
     buildUI() {
-        if (!document.getElementById("bridge-event-styles")) {
-            const link = document.createElement("link");
-            link.id = "bridge-event-styles";
-            link.rel = "stylesheet";
-            link.href = "/asset/css/bridgeEvent.css";
-            document.head.appendChild(link);
-        }
-
         this.uiOverlay = document.createElement("div");
         this.uiOverlay.classList.add("mission-overlay");
 

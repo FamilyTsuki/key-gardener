@@ -116,6 +116,9 @@ export class GameEngine {
      * @returns {Promise<void>}
      */
     async setPhase(newPhase) {
+        const loader = document.getElementById("global-loader");
+        if (loader) loader.classList.remove("hidden");
+
         if (this.gamePhase && this.gamePhase.cleanup) {
             this.gamePhase.cleanup();
         }
@@ -125,6 +128,8 @@ export class GameEngine {
         if (this.gamePhase.init) {
             await this.gamePhase.init();
         }
+
+        if (loader) loader.classList.add("hidden");
     }
 
     /**
