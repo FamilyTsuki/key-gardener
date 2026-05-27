@@ -573,21 +573,29 @@ export class BridgeWordEvent extends WorldEvent {
         
         const group = new THREE.Group();
         
+        const sideMaterial = new THREE.MeshStandardMaterial({
+            map: worldPhase.worldMap.stoneTexture,
+            color: 0xffffff,
+            roughness: 0.8,
+            metalness: 0.2,
+        });
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x333333 });
+        
         let thickness = 1.5;
         if (progress === 1 || progress === 5) thickness = 14.0;
         else if (progress === 2 || progress === 4) thickness = 3.0;
 
         const H = thickness - 0.4;
         const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, H, 6);
-        const bodyMesh = new THREE.Mesh(bodyGeometry, this.sharedSideMaterial);
+        const bodyMesh = new THREE.Mesh(bodyGeometry, sideMaterial);
         bodyMesh.position.y = 1.6 - (H / 2);
         const bodyEdges = new THREE.EdgesGeometry(bodyGeometry);
-        const bodyLine = new THREE.LineSegments(bodyEdges, this.sharedLineMaterial);
+        const bodyLine = new THREE.LineSegments(bodyEdges, lineMaterial);
         bodyMesh.add(bodyLine);
 
         const bevelGeometry = new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6);
         
-        let topMaterial = this.sharedSideMaterial;
+        let topMaterial = sideMaterial;
         if (tile.letter && worldPhase.worldMap.generateLetterTexture) {
             const tex = worldPhase.worldMap.generateLetterTexture(
                 tile.letter,
@@ -601,21 +609,21 @@ export class BridgeWordEvent extends WorldEvent {
         }
 
         const bevelMesh = new THREE.Mesh(bevelGeometry, [
-            this.sharedSideMaterial,
+            sideMaterial,
             topMaterial,
-            this.sharedSideMaterial,
+            sideMaterial,
         ]);
         bevelMesh.position.y = 1.8;
         
         const bevelEdges = new THREE.EdgesGeometry(bevelGeometry);
-        const bevelLine = new THREE.LineSegments(bevelEdges, this.sharedLineMaterial);
+        const bevelLine = new THREE.LineSegments(bevelEdges, lineMaterial);
         bevelMesh.add(bevelLine);
 
         group.add(bodyMesh);
         group.add(bevelMesh);
 
-        group.material = [this.sharedSideMaterial, topMaterial, this.sharedSideMaterial];
-        group.lineMaterial = this.sharedLineMaterial;
+        group.material = [sideMaterial, topMaterial, sideMaterial];
+        group.lineMaterial = lineMaterial;
         
         const random_z = archHeight + Math.random() * 0.4;
         tile.baseY = random_z;
