@@ -283,7 +283,7 @@ export default class WorldMap {
             }
 
             const hexMesh = createBeveledHexagon(sideMaterial, topMaterial);
-            let randome_z = Math.random() * 1.3;
+            let randome_z = tile.baseY !== undefined ? tile.baseY : Math.random() * 1.3;
 
             tile.baseY = randome_z;
 
@@ -594,6 +594,9 @@ export default class WorldMap {
             hex.isDoorTile = hasDoorEvent ? tileRaw.isDoorTile : false;
             hex.isBridgeTrigger = tileRaw.isBridgeTrigger;
             hex.isRavine = tileRaw.isRavine;
+            if (tileRaw.baseY !== undefined) hex.baseY = tileRaw.baseY;
+            if (tileRaw.isSpawn !== undefined) hex.isSpawn = tileRaw.isSpawn;
+            if (tileRaw.isStairs !== undefined) hex.isStairs = tileRaw.isStairs;
             return hex;
         });
 

@@ -38,7 +38,8 @@ export class WorldPhase extends GamePhase {
         const hasDoorEvent = this.events.some(e => e.constructor.name === "DoorEvent");
         const hasBridgeEvent = this.events.some(e => e.constructor.name === "BridgeWordEvent");
         
-        const worldLayout = createWordlLayout(hasBridgeEvent);
+        const introType = Math.random() > 0.5 ? "skyfall" : "staircase";
+        const worldLayout = createWordlLayout(hasBridgeEvent, introType);
 
         this.worldMap = await WorldMap.init(
             this.gameEngine.scene,
@@ -48,13 +49,15 @@ export class WorldPhase extends GamePhase {
         console.log(this.worldMap);
         this.draw_bg();
 
+        const spawnTile = this.worldMap.mapLayout.find(t => t.isSpawn) || this.worldMap.mapLayout[1];
+
         this.player = new Player(
             "Héros",
             100,
             100,
             {
-                x: this.worldMap.mapLayout[0].rawPosition.x,
-                y: this.worldMap.mapLayout[0].rawPosition.y,
+                x: spawnTile.rawPosition.x,
+                y: spawnTile.rawPosition.y,
                 z: 5,
             },
             { width: 0.4, height: 0.4 },
@@ -63,7 +66,7 @@ export class WorldPhase extends GamePhase {
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
-        this.player.offsetY = 2.9 + (this.worldMap.mapLayout[0].baseY || 0);
+        this.player.offsetY = 2.9 + (spawnTile.baseY || 0);
         this.player.offsetZ = 0;
 
         for (const event of this.events) {
@@ -71,6 +74,8 @@ export class WorldPhase extends GamePhase {
                 await event.init(this, scene);
             }
         }
+
+        this.runIntroAnimation(introType, spawnTile);
     }
 
     /**
@@ -136,10 +141,102 @@ export class WorldPhase extends GamePhase {
     }
 
     /**
+     * Runs the introduction animation.
+     * @param {string} introType 
+     * @param {Object} spawnTile 
+     */
+    async runIntroAnimation(introType, spawnTile) {
+        this.isPlayingIntro = true;
+        this.isTransitioning = true;
+
+        let arrivalTile = spawnTile;
+        if (introType === "staircase") {
+            const firstNormalTile = this.worldMap.mapLayout.find(t => !t.isStairs && t.rawPosition.y <= 0);
+            if (firstNormalTile) {
+                arrivalTile = firstNormalTile;
+            }
+        }
+
+        const arrivalX = arrivalTile.rawPosition.x * Math.sqrt(3) * 1.5 + 12;
+        const arrivalZ = arrivalTile.rawPosition.y * 1.5 * 1.5;
+        const arrivalY = 2.9 + (arrivalTile.baseY || 0);
+
+        this.camera.position.set(
+            arrivalX + 5,
+            arrivalY + 21,
+            arrivalZ + 14
+        );
+        this.camera.lookAt(arrivalX, arrivalY, arrivalZ);
+
+        if (introType === "skyfall") {
+            const targetY = this.player.offsetY;
+            this.player.offsetY = targetY + 40;
+            
+            return new Promise(resolve => {
+                let dropSpeed = 0;
+                const animateDrop = () => {
+                    dropSpeed += 0.02; 
+                    this.player.offsetY -= dropSpeed;
+
+                    this.camera.lookAt(arrivalX, this.player.offsetY, arrivalZ);
+
+                    if (this.player.offsetY <= targetY) {
+                        this.player.offsetY = targetY;
+                        this.camera.lookAt(arrivalX, targetY, arrivalZ);
+                        this.player.jumpSound.currentTime = 0;
+                        this.player.jumpSound.play();
+                        
+                        this.isPlayingIntro = false;
+                        this.isTransitioning = false;
+                        resolve();
+                    } else {
+                        requestAnimationFrame(animateDrop);
+                    }
+                };
+                requestAnimationFrame(animateDrop);
+            });
+        } else if (introType === "staircase") {
+            const stairsTiles = this.worldMap.mapLayout.filter(t => t.isStairs).sort((a, b) => b.baseY - a.baseY);
+            
+            const stepDown = async (index) => {
+                if (index >= stairsTiles.length) {
+                    const firstNormalTile = this.worldMap.mapLayout.find(t => !t.isStairs && t.rawPosition.y <= 0);
+                    if (firstNormalTile) {
+                        this.player.move({
+                            x: firstNormalTile.rawPosition.x,
+                            y: firstNormalTile.rawPosition.y,
+                            offsetY: 2.9 + (firstNormalTile.baseY || 0)
+                        });
+                        await new Promise(r => setTimeout(r, this.player.movementDuration * 16.6));
+                    }
+                    this.isPlayingIntro = false;
+                    this.isTransitioning = false;
+                    return;
+                }
+                
+                const nextTile = stairsTiles[index];
+                this.player.move({
+                    x: nextTile.rawPosition.x,
+                    y: nextTile.rawPosition.y,
+                    offsetY: 2.9 + (nextTile.baseY || 0)
+                });
+                
+                await new Promise(r => setTimeout(r, this.player.movementDuration * 16.6));
+                await stepDown(index + 1);
+            };
+            
+            await new Promise(r => setTimeout(r, 500));
+            await stepDown(1);
+        }
+    }
+
+    /**
      * Handles keyboard events for movement and interaction.
      * @param {KeyboardEvent} event - The keyboard event.
      */
     handleKeyDown(event) {
+        if (this.isPlayingIntro) return;
+
         for (const evt of this.events) {
             if (evt.handleKeyDown) {
                 const intercepted = evt.handleKeyDown(this, event);

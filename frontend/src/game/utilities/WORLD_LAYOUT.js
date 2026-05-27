@@ -4,9 +4,27 @@
  *
  * @returns {Array<Object>} An array of tile objects representing the world layout.
  */
-export function createWordlLayout(hasBridgeEvent = false) {
+export function createWordlLayout(hasBridgeEvent = false, introType = "none") {
     const height = 30;
     let worldLayout = [];
+
+    if (introType === "skyfall") {
+        worldLayout.push({ id: "intro-s-1", x: 1, y: 4, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-2", x: 2, y: 4, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-3", x: 0.5, y: 3, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-4", x: 1.5, y: 3, letter: null, isPressed: false, isSpawn: true });
+        worldLayout.push({ id: "intro-s-5", x: 2.5, y: 3, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-6", x: 1, y: 2, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-7", x: 2, y: 2, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-8", x: 1.5, y: 1, letter: null, isPressed: false });
+    } else if (introType === "staircase") {
+        worldLayout.push({ id: "intro-st-1", x: 1.5, y: 5, letter: null, isPressed: false, isSpawn: true, baseY: 6.0, isStairs: true });
+        worldLayout.push({ id: "intro-st-2", x: 1.0, y: 4, letter: null, isPressed: false, baseY: 4.5, isStairs: true });
+        worldLayout.push({ id: "intro-st-3", x: 1.5, y: 3, letter: null, isPressed: false, baseY: 3.0, isStairs: true });
+        worldLayout.push({ id: "intro-st-4", x: 1.0, y: 2, letter: null, isPressed: false, baseY: 1.5, isStairs: true });
+        worldLayout.push({ id: "intro-st-5", x: 1.5, y: 1, letter: null, isPressed: false, baseY: 0.5, isStairs: true });
+    }
+
     let tab_width = [];
     let tab_lettre = [
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
