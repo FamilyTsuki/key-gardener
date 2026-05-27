@@ -1,7 +1,7 @@
 import { GamePhase } from "./GamePhase.js";
 import * as THREE from "three";
 import WorldMap from "../managers/WorldMap.js";
-import { WORLD_LAYOUT } from "../utilities/WORLD_LAYOUT.js";
+import { createWordlLayout } from "../utilities/WORLD_LAYOUT.js";
 import Player from "../models/actors/Player.js";
 
 /**
@@ -36,9 +36,13 @@ export class WorldPhase extends GamePhase {
     async init() {
         const scene = this.gameEngine.scene;
         const hasDoorEvent = this.events.some(e => e.constructor.name === "DoorEvent");
+        const hasBridgeEvent = this.events.some(e => e.constructor.name === "BridgeWordEvent");
+        
+        const worldLayout = createWordlLayout(hasBridgeEvent);
+
         this.worldMap = await WorldMap.init(
             this.gameEngine.scene,
-            WORLD_LAYOUT,
+            worldLayout,
             hasDoorEvent
         );
         console.log(this.worldMap);
@@ -123,8 +127,8 @@ export class WorldPhase extends GamePhase {
         this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
         this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.02);
-        this.gameEngine.scene.add(ambientLight);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.02);
+        this.gameEngine.scene.add(this.ambientLight);
 
         this.playerLight = new THREE.PointLight(0xffddaa, 500, 120);
         this.playerLight.position.set(0, 7, 0);
@@ -182,6 +186,16 @@ export class WorldPhase extends GamePhase {
 
         if (this.worldMap) {
             this.gameEngine.scene.remove(this.worldMap.group);
+        }
+
+        if (this.ambientLight) {
+            this.gameEngine.scene.remove(this.ambientLight);
+            this.ambientLight.dispose && this.ambientLight.dispose();
+        }
+
+        if (this.playerLight) {
+            this.gameEngine.scene.remove(this.playerLight);
+            this.playerLight.dispose && this.playerLight.dispose();
         }
     }
 }

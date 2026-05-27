@@ -4,37 +4,13 @@
  *
  * @returns {Array<Object>} An array of tile objects representing the world layout.
  */
-export function createWordlLayout() {
+export function createWordlLayout(hasBridgeEvent = false) {
     const height = 30;
     let worldLayout = [];
     let tab_width = [];
     let tab_lettre = [
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-        "G",
-        "H",
-        "I",
-        "J",
-        "K",
-        "L",
-        "M",
-        "N",
-        "O",
-        "P",
-        "Q",
-        "R",
-        "S",
-        "T",
-        "U",
-        "V",
-        "W",
-        "X",
-        "Y",
-        "Z",
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
     ];
     for (let i = 0; i < height; i++) {
         let number = Math.random();
@@ -66,7 +42,7 @@ export function createWordlLayout() {
         if (y % 2 === 0) test += 1;
         
         let isRavine = false;
-        if (y >= 15 && y < 20) {
+        if (hasBridgeEvent && y >= 15 && y < 20) {
             isRavine = true;
         }
 
@@ -82,7 +58,7 @@ export function createWordlLayout() {
             }
 
             let isTrigger = false;
-            if (y === 14) {
+            if (hasBridgeEvent && y === 14) {
                 isTrigger = true;
             }
 
