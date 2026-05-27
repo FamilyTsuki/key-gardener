@@ -204,8 +204,27 @@ export class BridgeWordEvent extends WorldEvent {
      */
     spawnWord() {
         const wordStr = this.wordDictionary[Math.floor(Math.random() * this.wordDictionary.length)];
-        const x = 15 + Math.random() * 70;
-        const y = 25 + Math.random() * 55;
+        
+        let x, y;
+        let validPosition = false;
+        let attempts = 0;
+        
+        while (!validPosition && attempts < 50) {
+            x = 15 + Math.random() * 70;
+            y = 25 + Math.random() * 55;
+            validPosition = true;
+            
+            for (const w of this.activeWords) {
+                const dx = Math.abs(x - w.x);
+                const dy = Math.abs(y - w.y);
+                if (dx < 15 && dy < 10) {
+                    validPosition = false;
+                    break;
+                }
+            }
+            attempts++;
+        }
+
         this.activeWords.push({
             id: this.nextWordId++,
             word: wordStr,
@@ -409,6 +428,7 @@ export class BridgeWordEvent extends WorldEvent {
                 match.opacity = 1;
                 
                 this.baseSpawnDelay = Math.max(0.5, this.baseSpawnDelay - 0.4);
+                this.wordSpawnTimer = 0;
                 
                 this.currentTyped = "";
                 this.currentWordId = null;
