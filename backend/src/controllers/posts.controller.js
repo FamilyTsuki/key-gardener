@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Vote = require("../models/Votes");
+const Comment = require("../models/Comment");
 const fs = require("fs");
 const path = require("path");
 
@@ -204,6 +205,54 @@ exports.downvotePost = async (req, res, next) => {
 
         const updatedPost = await Post.findById(postId);
         res.status(200).json({ success: true, post: updatedPost });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.getComments = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const comments = await Comment.getByPostId(id);
+        res.status(200).json({ success: true, comments });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.addComment = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { content } = req.body;
+        const userId = req.user.id;
+
+        if (!content || content.trim().length === 0) {
+            return res.status(400).json({ success: false, message: "Comment content is required" });
+        }
+
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ success: false, message: "Post not found" });
+        }
+
+        const comment = await Comment.create(id, userId, content);
+        res.status(201).json({ success: true, comment });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.deleteComment = async (req, res, next) => {
+    try {
+        const { commentId } = req.params;
+        const userId = req.user.id;
+
+        const deleted = await Comment.delete(commentId, userId);
+        if (!deleted) {
+            return res.status(403).json({ success: false, message: "Not authorized or comment not found" });
+        }
+
+        res.status(200).json({ success: true, message: "Comment deleted" });
     } catch (err) {
         next(err);
     }

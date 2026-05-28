@@ -39,8 +39,13 @@ const upload = multer({
 });
 
 router.get("/user/:userId", verifyToken.optional, postsController.getUserPosts);
-router.get("/:id", verifyToken.optional, postsController.getPostById);
 router.get("/", verifyToken.optional, postsController.getAllPosts);
+
+router.get("/:id/comments", verifyToken.optional, postsController.getComments);
+router.post("/:id/comments", verifyToken, postsController.addComment);
+router.delete("/comments/:commentId", verifyToken, postsController.deleteComment);
+
+router.get("/:id", verifyToken.optional, postsController.getPostById);
 
 router.post("/", verifyToken, upload.single("media"), postsController.createPost);
 router.put("/:id", verifyToken, postsController.updatePost);

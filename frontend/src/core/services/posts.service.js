@@ -200,4 +200,58 @@ export class PostsService {
 
         return this.handleResponse(response, "Failed to downvote post");
     }
+
+    /**
+     * Retrieves all comments for a post.
+     * @param {string} id - The ID of the post.
+     * @returns {Promise<Object>} A promise resolving to the comments data.
+     */
+    static async getComments(id) {
+        const token = AuthService.getToken();
+        const headers = {};
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+        const response = await fetch(`${this.API_URL}/${id}/comments`, { headers });
+        return this.handleResponse(response, "Failed to fetch comments");
+    }
+
+    /**
+     * Adds a comment to a post.
+     * @param {string} id - The ID of the post.
+     * @param {string} content - The comment content.
+     * @returns {Promise<Object>} A promise resolving to the created comment data.
+     */
+    static async addComment(id, content) {
+        const token = AuthService.getToken();
+        if (!token) throw new Error("Not authenticated");
+
+        const response = await fetch(`${this.API_URL}/${id}/comments`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ content }),
+        });
+        return this.handleResponse(response, "Failed to add comment");
+    }
+
+    /**
+     * Deletes a comment.
+     * @param {string} commentId - The ID of the comment to delete.
+     * @returns {Promise<Object>}
+     */
+    static async deleteComment(commentId) {
+        const token = AuthService.getToken();
+        if (!token) throw new Error("Not authenticated");
+
+        const response = await fetch(`${this.API_URL}/comments/${commentId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return this.handleResponse(response, "Failed to delete comment");
+    }
 }

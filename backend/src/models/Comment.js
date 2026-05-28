@@ -1,0 +1,55 @@
+const db = require("../config/database");
+
+class Comment {
+    /**
+     * Creates a new comment in the database.
+     * @param {number} postId - The ID of the post.
+     * @param {number} userId - The ID of the user creating the comment.
+     * @param {string} content - The text content of the comment.
+     * @returns {Object} The created comment object.
+     */
+    static async create(postId, userId, content) {
+        const result = await db.query(
+            `INSERT INTO comments (post_id, user_id, content) 
+             VALUES ($1, $2, $3) 
+             RETURNING *`,
+            [postId, userId, content]
+        );
+        return result.rows[0];
+    }
+
+    /**
+     * Retrieves all comments for a specific post.
+     * @param {number} postId - The ID of the post.
+     * @returns {Array} Array of comment objects.
+     */
+    static async getByPostId(postId) {
+        const result = await db.query(
+            `SELECT c.*, u.username, u.personal_picture 
+             FROM comments c 
+             JOIN users u ON c.user_id = u.id 
+             WHERE c.post_id = $1 
+             ORDER BY c.created_at ASC`,
+            [postId]
+        );
+        return result.rows;
+    }
+
+    /**
+     * Deletes a comment by its ID and ensures the user owns it.
+     * @param {number} id - The comment ID.
+     * @param {number} userId - The ID of the user requesting deletion.
+     * @returns {Object} The deleted comment (or undefined if not found/unauthorized).
+     */
+    static async delete(id, userId) {
+        const result = await db.query(
+            `DELETE FROM comments 
+             WHERE id = $1 AND user_id = $2 
+             RETURNING *`,
+            [id, userId]
+        );
+        return result.rows[0];
+    }
+}
+
+module.exports = Comment;

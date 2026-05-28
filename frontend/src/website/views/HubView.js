@@ -164,6 +164,7 @@ export default class HubView extends AbstractView {
                 try {
                     const user = await AuthService.getCurrentUser();
                     currentUserId = user ? user.id : null;
+                    this.currentUserId = currentUserId;
                 } catch (err) {
                     console.error("Error retrieving user for post highlighting:", err);
                 }
@@ -206,9 +207,15 @@ export default class HubView extends AbstractView {
                     onclick: async () => this.handleVote(post.id, "downvote")
                 }, `▼ ${post.downvotes || 0}`);
 
+                const commentsToggleBtn = el("button", {
+                    className: "vote-btn comments-toggle-btn",
+                    onclick: () => this.toggleComments(post.id)
+                }, `💬 ${LanguageManager.t("hub.comments")}`);
+
                 const voteContainer = el("div", { className: "post-votes" },
                     upvoteBtn,
-                    downvoteBtn
+                    downvoteBtn,
+                    commentsToggleBtn
                 );
 
                 const isSelfPost = currentUserId && post.user_id === currentUserId;
@@ -234,12 +241,21 @@ export default class HubView extends AbstractView {
 
                 const postFooter = el("div", { className: "post-footer" }, voteContainer, postActions);
 
+                const commentsSection = el("div", { className: "comments-section hidden", id: `comments-${post.id}` },
+                    el("div", { className: "comments-list", id: `comments-list-${post.id}` }),
+                    AuthService.isAuthenticated() ? el("div", { className: "add-comment-form" },
+                        el("textarea", { className: "form-input comment-input", id: `comment-input-${post.id}`, placeholder: LanguageManager.t("hub.addComment") }),
+                        el("button", { className: "btn-primary btn-small post-comment-btn", onclick: () => this.submitComment(post.id) }, LanguageManager.t("hub.postComment"))
+                    ) : null
+                );
+
                 this.postsContainer.appendChild(
                     el("div", { className: `hub-post${isSelfPost ? " self-post" : ""}`, id: `post-${post.id}` },
                         el("strong", {}, post.username + ": "),
                         el("p", { className: "post-content" }, post.content),
                         mediaElement,
-                        postFooter
+                        postFooter,
+                        commentsSection
                     )
                 );
             });
@@ -335,6 +351,80 @@ export default class HubView extends AbstractView {
             await this.init();
         } catch (error) {
             FlashMessageManager.show(error.message || "Failed to delete post", "error");
+        }
+    }
+
+    async toggleComments(postId) {
+        const section = document.getElementById(`comments-${postId}`);
+        if (!section) return;
+
+        if (section.classList.contains("hidden")) {
+            section.classList.remove("hidden");
+            await this.loadComments(postId);
+        } else {
+            section.classList.add("hidden");
+        }
+    }
+
+    async loadComments(postId) {
+        const list = document.getElementById(`comments-list-${postId}`);
+        if (!list) return;
+
+        list.innerHTML = `<p class="loading-text">${LanguageManager.t("hub.loadingPosts")}</p>`;
+
+        try {
+            const data = await PostsService.getComments(postId);
+            list.innerHTML = "";
+            
+            if (!data.success || data.comments.length === 0) {
+                list.innerHTML = `<p class="no-comments">${LanguageManager.t("hub.noComments")}</p>`;
+                return;
+            }
+
+            data.comments.forEach(c => {
+                const isSelf = this.currentUserId === c.user_id;
+                
+                const deleteBtn = isSelf ? el("button", {
+                    className: "action-btn delete-btn comment-delete-btn",
+                    onclick: () => this.deleteComment(c.id, postId)
+                }, "×") : null;
+
+                const bubble = el("div", { className: `comment-bubble${isSelf ? " self-comment" : ""}` },
+                    el("strong", {}, c.username + ": "),
+                    el("span", {}, c.content),
+                    deleteBtn
+                );
+                list.appendChild(bubble);
+            });
+        } catch (error) {
+            list.innerHTML = `<p class="error">Error loading comments</p>`;
+        }
+    }
+
+    async submitComment(postId) {
+        const input = document.getElementById(`comment-input-${postId}`);
+        if (!input) return;
+        const content = input.value.trim();
+        if (!content) return;
+
+        try {
+            const data = await PostsService.addComment(postId, content);
+            if (data.success) {
+                input.value = "";
+                await this.loadComments(postId);
+            }
+        } catch (error) {
+            FlashMessageManager.show(error.message, "error");
+        }
+    }
+
+    async deleteComment(commentId, postId) {
+        if (!confirm(LanguageManager.t("hub.deleteConfirm"))) return;
+        try {
+            await PostsService.deleteComment(commentId);
+            await this.loadComments(postId);
+        } catch (error) {
+            FlashMessageManager.show(error.message, "error");
         }
     }
 

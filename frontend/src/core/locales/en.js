@@ -50,7 +50,11 @@ export const en = {
         save: "Save",
         cancel: "Cancel",
         deleteConfirm: "Are you sure you want to delete this post? This action cannot be undone.",
-        editExpired: "You can only edit posts within 5 minutes of creation."
+        editExpired: "You can only edit posts within 5 minutes of creation.",
+        comments: "Comments",
+        addComment: "Add a comment...",
+        postComment: "Post",
+        noComments: "No comments yet."
     },
     
     // LoginView

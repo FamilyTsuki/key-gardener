@@ -50,7 +50,11 @@ export const fr = {
         save: "Enregistrer",
         cancel: "Annuler",
         deleteConfirm: "Êtes-vous sûr de vouloir supprimer ce post ? Cette action est irréversible.",
-        editExpired: "Vous ne pouvez modifier un post que dans les 5 minutes suivant sa création."
+        editExpired: "Vous ne pouvez modifier un post que dans les 5 minutes suivant sa création.",
+        comments: "Commentaires",
+        addComment: "Ajouter un commentaire...",
+        postComment: "Publier",
+        noComments: "Aucun commentaire pour le moment."
     },
     
     // LoginView
