@@ -3,6 +3,7 @@ import * as THREE from "three";
 import WorldMap from "../managers/WorldMap.js";
 import { createWordlLayout } from "../utilities/WORLD_LAYOUT.js";
 import Player from "../models/actors/Player.js";
+import { DialogueBox } from "../ui/DialogueBox.js";
 
 /**
  * Represents the world exploration phase of the game.
@@ -48,6 +49,17 @@ export class WorldPhase extends GamePhase {
         );
         console.log(this.worldMap);
         this.draw_bg();
+
+        setTimeout(() => {
+            const dBox = new DialogueBox();
+            dBox.show(
+                ["Testing the new reusable dialogue box!", "Here is a 3D model next to it."], 
+                "/asset/game_assets/player.glb", 
+                () => {
+                    dBox.destroy();
+                }
+            );
+        }, 1500);
 
         const spawnTile = this.worldMap.mapLayout.find(t => t.isSpawn) || this.worldMap.mapLayout[1];
 
@@ -191,7 +203,10 @@ export class WorldPhase extends GamePhase {
                         this.player.offsetY = targetY;
                         this.camera.lookAt(arrivalX, targetY, arrivalZ);
                         this.player.jumpSound.currentTime = 0;
-                        this.player.jumpSound.play();
+                        const playPromise = this.player.jumpSound.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => console.warn("Autoplay prevented:", error));
+                        }
                         
                         this.isPlayingIntro = false;
                         this.isTransitioning = false;

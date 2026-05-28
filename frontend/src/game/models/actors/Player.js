@@ -151,7 +151,10 @@ export default class Player extends Actor {
             this.currentMovementTime = 0;
 
             this.jumpSound.currentTime = 0;
-            this.jumpSound.play();
+            const playPromise = this.jumpSound.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => console.warn("Autoplay prevented for jumpSound:", error));
+            }
         }
     }
 
@@ -225,7 +228,10 @@ export default class Player extends Actor {
      */
     damage(amount) {
         this.hp -= amount;
-        this.damageSound.play();
+        const playPromise = this.damageSound.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => console.warn("Autoplay prevented for damageSound:", error));
+        }
 
         if (this.elVignette) {
             this.elVignette.classList.add("flash-red");
