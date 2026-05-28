@@ -83,7 +83,7 @@ export default class Player extends Actor {
         this.damageSound.volume = 0.5;
 
         const loader = new GLTFLoader();
-        loader.load("/asset/game_assets/player.glb", (gltf) => {
+        this.loadPromise = loader.loadAsync("/asset/game_assets/player.glb").then((gltf) => {
             this.playerModel = gltf.scene;
             this.playerModel.scale.set(1.3, 1.3, 1.3);
             this.playerModel.position.y = 0.6;
@@ -190,7 +190,7 @@ export default class Player extends Actor {
                     this.movementProgress;
         }
 
-        if (this.mesh && this.playerModel) {
+        if (this.mesh) {
             const worldCurrentX = this.x * this.spacingX + this.offsetX;
             const worldCurrentZ = this.y * this.spacingZ + this.offsetZ;
 
@@ -203,14 +203,18 @@ export default class Player extends Actor {
                     this.targetPosition.y * this.spacingZ + this.offsetZ;
 
                 this.mesh.lookAt(worldTargetX, this.offsetY, worldTargetZ);
+            }
 
-                const jumpAmplitude = 2.0;
-                this.playerModel.position.y =
-                    0.6 +
-                    Math.sin(this.movementProgress * Math.PI) * jumpAmplitude;
-            } else {
-                this.playerModel.position.y = 0.6;
-                this.playerModel.rotation.x = 0;
+            if (this.playerModel) {
+                if (this.isMoving) {
+                    const jumpAmplitude = 2.0;
+                    this.playerModel.position.y =
+                        0.6 +
+                        Math.sin(this.movementProgress * Math.PI) * jumpAmplitude;
+                } else {
+                    this.playerModel.position.y = 0.6;
+                    this.playerModel.rotation.x = 0;
+                }
             }
         }
     }

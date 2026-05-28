@@ -75,6 +75,10 @@ export class WorldPhase extends GamePhase {
             }
         }
 
+        if (this.player.loadPromise) {
+            await this.player.loadPromise;
+        }
+
         this.runIntroAnimation(introType, spawnTile);
     }
 
@@ -151,7 +155,8 @@ export class WorldPhase extends GamePhase {
 
         let arrivalTile = spawnTile;
         if (introType === "staircase") {
-            const firstNormalTile = this.worldMap.mapLayout.find(t => !t.isStairs && t.rawPosition.y <= 0);
+            const normalTiles = this.worldMap.mapLayout.filter(t => !t.isStairs && t.rawPosition.y <= 0);
+            const firstNormalTile = normalTiles[1] || normalTiles[0];
             if (firstNormalTile) {
                 arrivalTile = firstNormalTile;
             }
@@ -171,6 +176,8 @@ export class WorldPhase extends GamePhase {
         if (introType === "skyfall") {
             const targetY = this.player.offsetY;
             this.player.offsetY = targetY + 40;
+            this.player.update();
+            this.draw();
             
             return new Promise(resolve => {
                 let dropSpeed = 0;
@@ -198,9 +205,13 @@ export class WorldPhase extends GamePhase {
         } else if (introType === "staircase") {
             const stairsTiles = this.worldMap.mapLayout.filter(t => t.isStairs).sort((a, b) => b.baseY - a.baseY);
             
+            this.player.update();
+            this.draw();
+
             const stepDown = async (index) => {
                 if (index >= stairsTiles.length) {
-                    const firstNormalTile = this.worldMap.mapLayout.find(t => !t.isStairs && t.rawPosition.y <= 0);
+                    const normalTiles = this.worldMap.mapLayout.filter(t => !t.isStairs && t.rawPosition.y <= 0);
+                    const firstNormalTile = normalTiles[1] || normalTiles[0];
                     if (firstNormalTile) {
                         this.player.move({
                             x: firstNormalTile.rawPosition.x,

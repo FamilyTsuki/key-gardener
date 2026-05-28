@@ -9,14 +9,13 @@ export function createWordlLayout(hasBridgeEvent = false, introType = "none") {
     let worldLayout = [];
 
     if (introType === "skyfall") {
-        worldLayout.push({ id: "intro-s-1", x: 1, y: 4, letter: null, isPressed: false });
-        worldLayout.push({ id: "intro-s-2", x: 2, y: 4, letter: null, isPressed: false });
-        worldLayout.push({ id: "intro-s-3", x: 0.5, y: 3, letter: null, isPressed: false });
-        worldLayout.push({ id: "intro-s-4", x: 1.5, y: 3, letter: null, isPressed: false, isSpawn: true });
-        worldLayout.push({ id: "intro-s-5", x: 2.5, y: 3, letter: null, isPressed: false });
-        worldLayout.push({ id: "intro-s-6", x: 1, y: 2, letter: null, isPressed: false });
-        worldLayout.push({ id: "intro-s-7", x: 2, y: 2, letter: null, isPressed: false });
-        worldLayout.push({ id: "intro-s-8", x: 1.5, y: 1, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-1", x: 0.5, y: 3, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-2", x: 1.5, y: 3, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-3", x: 0, y: 2, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-4", x: 1, y: 2, letter: null, isPressed: false, isSpawn: true });
+        worldLayout.push({ id: "intro-s-5", x: 2, y: 2, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-6", x: 0.5, y: 1, letter: null, isPressed: false });
+        worldLayout.push({ id: "intro-s-7", x: 1.5, y: 1, letter: null, isPressed: false });
     } else if (introType === "staircase") {
         worldLayout.push({ id: "intro-st-1", x: 1.5, y: 5, letter: null, isPressed: false, isSpawn: true, baseY: 6.0, isStairs: true });
         worldLayout.push({ id: "intro-st-2", x: 1.0, y: 4, letter: null, isPressed: false, baseY: 4.5, isStairs: true });
