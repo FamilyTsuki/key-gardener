@@ -2,6 +2,7 @@ import AbstractView from "../../core/views/AbstractView.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * View for user authentication (login, forgot password, reset password).
@@ -14,7 +15,7 @@ export default class LoginView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle("Login - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("login.title") + " - Keyboard Survivor");
         this.state = "login";
         this.resetEmail = "";
     }
@@ -51,8 +52,8 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The login form element.
      */
     createLoginForm() {
-        const emailInput = el("input", { type: "email", placeholder: "Email", required: true, className: "login-input", id: "email" });
-        const passwordInput = el("input", { type: "password", placeholder: "Password", required: true, className: "login-input", id: "password" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "login-input", id: "email" });
+        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "login-input", id: "password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -65,9 +66,9 @@ export default class LoginView extends AbstractView {
                 Navbar.render();
                 history.pushState(null, null, "/");
                 window.dispatchEvent(new Event("popstate"));
-                FlashMessageManager.show("Login successful!", "success");
+                FlashMessageManager.show(LanguageManager.t("login.loginSuccess"), "success");
             } catch (error) {
-                FlashMessageManager.show(error.message || "Login failed", "error");
+                FlashMessageManager.show(error.message || LanguageManager.t("login.loginFailed"), "error");
             }
         };
         const forgotLink = el("a", { 
@@ -78,7 +79,7 @@ export default class LoginView extends AbstractView {
                 this.state = "forgot";
                 this.renderState();
             }
-        }, "Forgot Password?");
+        }, LanguageManager.t("login.forgotPasswordLink"));
         const form = el("form", { id: "login-form", onsubmit: handleSubmit },
             emailInput,
             el("div" , {className: "input-wrapper" },
@@ -87,18 +88,18 @@ export default class LoginView extends AbstractView {
             el("p", { className: "forgot-link" }, forgotLink)
         ),
             
-            el("button", { type: "submit", className: "login-btn" }, "Login")
+            el("button", { type: "submit", className: "login-btn" }, LanguageManager.t("login.loginBtn"))
         );
 
         
 
         return el("div", {},
-            el("h2", {}, "Login"),
+            el("h2", {}, LanguageManager.t("login.title")),
             form,
             
             el("p", { className: "register-link" },
-                "Don't have an account? ",
-                el("a", { href: "/register", dataset: { link: true } }, "Sign up")
+                LanguageManager.t("login.noAccount"),
+                el("a", { href: "/register", dataset: { link: true } }, LanguageManager.t("login.signUpLink"))
             )
         );
     }
@@ -109,7 +110,7 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The forgot password form element.
      */
     createForgotForm() {
-        const emailInput = el("input", { type: "email", placeholder: "Email", required: true, className: "login-input" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "login-input" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -120,20 +121,20 @@ export default class LoginView extends AbstractView {
                 this.resetEmail = email;
                 this.state = "reset";
                 this.renderState();
-                FlashMessageManager.show("If an account exists, a reset code was sent.", "success");
+                FlashMessageManager.show(LanguageManager.t("login.resetCodeSent"), "success");
             } catch (error) {
-                FlashMessageManager.show(error.message || "Request failed", "error");
+                FlashMessageManager.show(error.message || LanguageManager.t("login.requestFailed"), "error");
             }
         };
 
         const form = el("form", { id: "forgot-form", onsubmit: handleSubmit },
             emailInput,
-            el("button", { type: "submit", className: "login-btn" }, "Send Reset Code")
+            el("button", { type: "submit", className: "login-btn" }, LanguageManager.t("login.sendResetCodeBtn"))
         );
 
         return el("div", {},
-            el("h2", {}, "Reset Password"),
-            el("p", { className: "reset-info-text" }, "Enter your email to receive a 6-digit code."),
+            el("h2", {}, LanguageManager.t("login.resetTitle")),
+            el("p", { className: "reset-info-text" }, LanguageManager.t("login.resetInfo")),
             form,
             el("p", { className: "register-link" },
                 el("a", { 
@@ -143,7 +144,7 @@ export default class LoginView extends AbstractView {
                         this.state = "login";
                         this.renderState();
                     } 
-                }, "Back to Login")
+                }, LanguageManager.t("login.backToLogin"))
             )
         );
     }
@@ -154,8 +155,8 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The reset password form element.
      */
     createResetForm() {
-        const codeInput = el("input", { type: "text", placeholder: "6-digit Code", required: true, className: "login-input", maxLength: 6 });
-        const newPasswordInput = el("input", { type: "password", placeholder: "New Password", required: true, className: "login-input" });
+        const codeInput = el("input", { type: "text", placeholder: LanguageManager.t("login.codePlaceholder"), required: true, className: "login-input", maxLength: 6 });
+        const newPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "login-input" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -166,21 +167,21 @@ export default class LoginView extends AbstractView {
                 await AuthService.resetPassword(this.resetEmail, code, newPassword);
                 this.state = "login";
                 this.renderState();
-                FlashMessageManager.show("Password reset successful! Please login.", "success");
+                FlashMessageManager.show(LanguageManager.t("login.resetSuccess"), "success");
             } catch (error) {
-                FlashMessageManager.show(error.message || "Reset failed", "error");
+                FlashMessageManager.show(error.message || LanguageManager.t("login.resetFailed"), "error");
             }
         };
 
         const form = el("form", { id: "reset-form", onsubmit: handleSubmit },
             codeInput,
             newPasswordInput,
-            el("button", { type: "submit", className: "login-btn" }, "Update Password")
+            el("button", { type: "submit", className: "login-btn" }, LanguageManager.t("login.updatePasswordBtn"))
         );
 
         return el("div", {},
-            el("h2", {}, "Enter Code"),
-            el("p", { className: "reset-info-text" }, `Code sent to ${this.resetEmail}`),
+            el("h2", {}, LanguageManager.t("login.enterCodeTitle")),
+            el("p", { className: "reset-info-text" }, LanguageManager.t("login.codeSentTo") + this.resetEmail),
             form,
             el("p", { className: "register-link" },
                 el("a", { 
@@ -190,7 +191,7 @@ export default class LoginView extends AbstractView {
                         this.state = "login";
                         this.renderState();
                     } 
-                }, "Back to Login")
+                }, LanguageManager.t("login.backToLogin"))
             )
         );
     }

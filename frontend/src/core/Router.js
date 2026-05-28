@@ -7,6 +7,7 @@ import GameView from "../website/views/GameView.js";
 import AccountView from "../website/views/AccountView.js";
 import { AuthService } from "./services/auth.service.js";
 import { FlashMessageManager } from "./utils/FlashMessageManager.js";
+import { LanguageManager } from "./utils/LanguageManager.js";
 
 /**
  * Handles application routing and view transitions.
@@ -91,7 +92,7 @@ export default class Router {
         }
 
         if (match.requiresAuth && !AuthService.isAuthenticated()) {
-            FlashMessageManager.show("You must be logged in to access this page.", "error");
+            FlashMessageManager.show(LanguageManager.t("auth.loginRequired"), "error");
             this.navigateTo("/");
             return;
         }

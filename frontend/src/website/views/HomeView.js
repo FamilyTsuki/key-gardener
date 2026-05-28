@@ -3,6 +3,7 @@ import { TunnelAnimation } from "../components/TunnelAnimation.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * View for the home landing page.
@@ -43,12 +44,12 @@ export default class HomeView extends AbstractView {
                         el(
                             "h1",
                             { className: "home-title" },
-                            "Keyboard Survivor"
+                            LanguageManager.t("home.title")
                         ),
                         el(
                             "p",
                             { className: "home-description" },
-                            "Gamify your typing skills. Explore and fight using your keyboard as the primary controller."
+                            LanguageManager.t("home.description")
                         ),
                         el(
                             "p",
@@ -60,7 +61,7 @@ export default class HomeView extends AbstractView {
                                     dataset: { link: true },
                                     className: "start-btn",
                                 },
-                                "Start Game"
+                                LanguageManager.t("home.startGame")
                             )
                         )
                     ),
@@ -81,11 +82,11 @@ export default class HomeView extends AbstractView {
                     el(
                         "div",
                         { className: "home-info-container" },
-                        el("h2", { className: "home-title" }, "why"),
+                        el("h2", { className: "home-title" }, LanguageManager.t("home.whyTitle")),
                         el(
                             "p",
                             { className: "home-info" },
-                            "Discover the unique gameplay experience that combines typing challenges with exciting adventures."
+                            LanguageManager.t("home.whyDesc")
                         )
                     )
                 ),
@@ -95,7 +96,7 @@ export default class HomeView extends AbstractView {
                     el(
                         "p",
                         { className: "home-footer-info" },
-                        "Contact us: ",
+                        LanguageManager.t("home.contactUs"),
                         el(
                             "a",
                             { href: "mailto:info@keyboard-survivor.com" },
@@ -105,7 +106,7 @@ export default class HomeView extends AbstractView {
                     el(
                         "p",
                         { className: "home-footer-info" },
-                        "Follow us on social media: ",
+                        LanguageManager.t("home.followUs"),
                         el(
                             "a",
                             {
@@ -133,16 +134,16 @@ export default class HomeView extends AbstractView {
                             "Instagram"
                         )
                     ),
-                    el("p", { className: "footer-thx" }, "Special Thank"),
+                    el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
                     el(
                         "p",
                         { className: "home-footer-info" },
-                        "to all our supporters and players who make Keyboard Survivor possible!"
+                        LanguageManager.t("home.thankSupporters")
                     ),
                     el(
                         "p",
                         { className: "home-footer-info" },
-                        "\u00A9 2024 Keyboard Survivor. All rights reserved."
+                        LanguageManager.t("home.rights")
                     )
                 )
             )

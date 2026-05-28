@@ -3,6 +3,7 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import { SaveService } from "../../core/services/save.service.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * View for managing game save slots.
@@ -28,11 +29,11 @@ export default class SaveView extends AbstractView {
         this.container = el(
             "div",
             { className: "save-container" },
-            el("h1", { className: "save-title" }, "Save Slots"),
+            el("h1", { className: "save-title" }, LanguageManager.t("save.title")),
             el(
                 "div",
                 { className: "save-slots", id: "save-slots-list" },
-                "Loading saves..."
+                LanguageManager.t("save.loadingSaves")
             )
         );
         return this.container;
@@ -57,7 +58,7 @@ export default class SaveView extends AbstractView {
                             {
                                 className: "save-login-text",
                             },
-                            "Please log in to manage your saves."
+                            LanguageManager.t("save.loginRequired")
                         ),
                         el(
                             "a",
@@ -66,7 +67,7 @@ export default class SaveView extends AbstractView {
                                 dataset: { link: true },
                                 className: "play-btn",
                             },
-                            "Login"
+                            LanguageManager.t("save.loginBtn")
                         )
                     )
                 );
@@ -132,12 +133,12 @@ export default class SaveView extends AbstractView {
             saveInfoElement = el(
                 "div",
                 { className: "save-info" },
-                el("div", { className: "save-slot-title" }, `Slot ${slot}`),
+                el("div", { className: "save-slot-title" }, LanguageManager.t("save.slotPrefix") + slot),
                 el("div", { className: "save-name" }, gameStateName),
                 el(
                     "div",
                     { className: "save-date" },
-                    `Last Played: ${lastPlayedStr}`
+                    LanguageManager.t("save.lastPlayed") + lastPlayedStr
                 )
             );
 
@@ -149,7 +150,7 @@ export default class SaveView extends AbstractView {
                 el(
                     "button",
                     { className: "play-btn require-keyboard", onclick: launchGame },
-                    "Play"
+                    LanguageManager.t("save.playBtn")
                 ),
                 el(
                     "button",
@@ -167,7 +168,7 @@ export default class SaveView extends AbstractView {
             const playItem = el(
                 "button",
                 { className: "context-item require-keyboard", onclick: launchGame },
-                "Play"
+                LanguageManager.t("save.playBtn")
             );
             const renameItem = el(
                 "button",
@@ -175,7 +176,7 @@ export default class SaveView extends AbstractView {
                     className: "context-item",
                     onclick: () => this.openRenameModal(slot, save.game_state),
                 },
-                "Rename"
+                LanguageManager.t("save.renameBtn")
             );
             const exportItem = el(
                 "button",
@@ -183,7 +184,7 @@ export default class SaveView extends AbstractView {
                     className: "context-item",
                     onclick: () => this.exportSave(slot, save.game_state),
                 },
-                "Export"
+                LanguageManager.t("save.exportBtn")
             );
             const deleteItem = el(
                 "button",
@@ -191,7 +192,7 @@ export default class SaveView extends AbstractView {
                     className: "context-item delete",
                     onclick: () => this.confirmDelete(slot),
                 },
-                "Delete"
+                LanguageManager.t("save.deleteBtn")
             );
 
             contextMenu.appendChild(playItem);
@@ -202,8 +203,8 @@ export default class SaveView extends AbstractView {
             saveInfoElement = el(
                 "div",
                 { className: "save-info" },
-                el("div", { className: "save-slot-title" }, `Slot ${slot}`),
-                el("div", { className: "save-empty" }, "Empty Slot")
+                el("div", { className: "save-slot-title" }, LanguageManager.t("save.slotPrefix") + slot),
+                el("div", { className: "save-empty" }, LanguageManager.t("save.emptySlot"))
             );
 
             const newGame = () =>
@@ -219,7 +220,7 @@ export default class SaveView extends AbstractView {
                 el(
                     "button",
                     { className: "play-btn require-keyboard", onclick: newGame },
-                    "New Game"
+                    LanguageManager.t("save.newGameBtn")
                 )
             );
         }
@@ -317,7 +318,7 @@ export default class SaveView extends AbstractView {
                     }
                 },
             },
-            "Rename"
+            LanguageManager.t("save.renameBtn")
         );
 
         const cancelBtn = el(
@@ -326,7 +327,7 @@ export default class SaveView extends AbstractView {
                 className: "modal-btn cancel",
                 onclick: () => modal.remove(),
             },
-            "Cancel"
+            LanguageManager.t("save.cancelBtn")
         );
 
         const modal = el(
@@ -335,7 +336,7 @@ export default class SaveView extends AbstractView {
             el(
                 "div",
                 { className: "modal-content" },
-                el("div", { className: "modal-title" }, "Rename Save Slot"),
+                el("div", { className: "modal-title" }, LanguageManager.t("save.renameTitle")),
                 input,
                 el("div", { className: "modal-actions" }, cancelBtn, confirmBtn)
             )
@@ -380,7 +381,7 @@ export default class SaveView extends AbstractView {
                     await this.loadSaves();
                 },
             },
-            "Delete"
+            LanguageManager.t("save.deleteBtn")
         );
 
         const cancelBtn = el(
@@ -389,7 +390,7 @@ export default class SaveView extends AbstractView {
                 className: "modal-btn cancel",
                 onclick: () => modal.remove(),
             },
-            "Cancel"
+            LanguageManager.t("save.cancelBtn")
         );
 
         const modal = el(
@@ -398,11 +399,11 @@ export default class SaveView extends AbstractView {
             el(
                 "div",
                 { className: "modal-content" },
-                el("div", { className: "modal-title" }, "Delete Save?"),
+                el("div", { className: "modal-title" }, LanguageManager.t("save.deleteConfirmTitle")),
                 el(
                     "div",
                     { className: "modal-delete-text" },
-                    `Are you sure you want to delete Slot ${slot}? This action is irreversible.`
+                    LanguageManager.t("save.deleteConfirmText", { slot: slot })
                 ),
                 el("div", { className: "modal-actions" }, cancelBtn, confirmBtn)
             )

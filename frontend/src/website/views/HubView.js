@@ -3,6 +3,7 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { PostsService } from "../../core/services/posts.service.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * View for the community hub displaying posts and interactions.
@@ -26,17 +27,17 @@ export default class HubView extends AbstractView {
      */
     async render() {
         this.postsContainer = el("div", { id: "posts-container" },
-            el("p", {}, "Loading posts...")
+            el("p", {}, LanguageManager.t("hub.loadingPosts"))
         );
 
         return el("div", { className: "community-hub-container" },
-            el("h1", {}, "Community Hub"),
-            el("p", { className: "welcome-text" }, "Welcome to the community! Share your progress and interact with other players."),
+            el("h1", {}, LanguageManager.t("hub.title")),
+            el("p", { className: "welcome-text" }, LanguageManager.t("hub.welcome")),
             AuthService.isAuthenticated()
                 ? this.displayAddPostForm()
                 : el("div", { className: "login-prompt" },
-                    el("p", {}, "You must be logged in to share your progress."),
-                    el("a", { href: "/login", "data-link": "true" }, "Login")
+                    el("p", {}, LanguageManager.t("hub.loginPrompt")),
+                    el("a", { href: "/login", "data-link": "true" }, LanguageManager.t("hub.login"))
                   ),
             this.postsContainer
         );
@@ -59,8 +60,8 @@ export default class HubView extends AbstractView {
         this.previewContainer = el("div", { id: "media-preview" });
 
         return el("div", { className: "add-post-form" },
-            el("h3", {}, "Add a Post"),
-            el("textarea", { id: "post-content", placeholder: "Share your progress..." }),
+            el("h3", {}, LanguageManager.t("hub.addPostTitle")),
+            el("textarea", { id: "post-content", placeholder: LanguageManager.t("hub.shareProgress") }),
             fileInput,
             this.previewContainer,
             el("div", { className: "form-actions" },
@@ -68,8 +69,8 @@ export default class HubView extends AbstractView {
                     type: "button",
                     className: "add-media-btn",
                     onclick: () => fileInput.click()
-                }, "+ Add Image/Video"),
-                el("button", { onclick: () => this.addPost(), className: "post-btn" }, "Post")
+                }, LanguageManager.t("hub.addImageVideo")),
+                el("button", { onclick: () => this.addPost(), className: "post-btn" }, LanguageManager.t("hub.postBtn"))
             )
         );
     }
@@ -173,7 +174,7 @@ export default class HubView extends AbstractView {
             this.postsContainer.innerHTML = "";
 
             if (!data.success || data.posts.length === 0) {
-                this.postsContainer.appendChild(el("p", {}, "No posts yet. Be the first!"));
+                this.postsContainer.appendChild(el("p", {}, LanguageManager.t("hub.noPostsYet")));
                 return;
             }
 
@@ -225,7 +226,7 @@ export default class HubView extends AbstractView {
         } catch (error) {
             console.error("Error loading posts:", error);
             this.postsContainer.innerHTML = "";
-            this.postsContainer.appendChild(el("p", {}, "Error loading community messages."));
+            this.postsContainer.appendChild(el("p", {}, LanguageManager.t("hub.errorLoading")));
         }
     }
 
@@ -238,7 +239,7 @@ export default class HubView extends AbstractView {
      */
     async handleVote(postId, type) {
         if (!AuthService.isAuthenticated()) {
-            FlashMessageManager.show("You must be logged in to vote!", "error");
+            FlashMessageManager.show(LanguageManager.t("hub.loginToVote"), "error");
             return;
         }
         try {
@@ -250,7 +251,7 @@ export default class HubView extends AbstractView {
             await this.init();
         } catch (error) {
             console.error(`Error casting ${type}:`, error);
-            FlashMessageManager.show(error.message || `Failed to cast ${type}.`, "error");
+            FlashMessageManager.show(error.message || LanguageManager.t("hub.voteFailed"), "error");
         }
     }
 

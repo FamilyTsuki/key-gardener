@@ -1,6 +1,7 @@
 import { GamePhase } from "./GamePhase.js";
 import { WorldPhase } from "./WorldPhase.js";
 import { AmbientBackground, GlitchEffect } from "../utilities/IntroVisuals.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * Represents the introductory cinematic phase of the game.
@@ -30,7 +31,7 @@ export class IntroPhase extends GamePhase {
         this.dialogueContainer = null;
         this.dialogueText = null;
         this.dialogueStep = 0;
-        this.dialogues = ["...", "Is anyone there?"];
+        this.dialogues = [LanguageManager.t("engine.introDialogue1"), LanguageManager.t("engine.introDialogue2")];
         this.dialogueTimeout = null;
         this.typewriterInterval = null;
     }

@@ -4,6 +4,7 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { GameEngine } from "../../game/engine/GameEngine.js";
 import { SaveService } from "../../core/services/save.service.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * View for the main game interface.
@@ -36,7 +37,7 @@ export default class GameView extends AbstractView {
                 className: "save-quit-btn",
                 onclick: () => this.saveAndQuit(),
             },
-            "Save & Quit"
+            LanguageManager.t("game.saveQuitBtn")
         );
         return el(
             "div",
@@ -92,16 +93,16 @@ export default class GameView extends AbstractView {
         if (token) {
             try {
                 await SaveService.saveGame(activeSlot, currentGameState);
-                FlashMessageManager.show("Game saved successfully!", "success");
+                FlashMessageManager.show(LanguageManager.t("game.saveSuccess"), "success");
             } catch (err) {
                 console.error("Failed to save game:", err);
                 FlashMessageManager.show(
-                    "Failed to save game to server.",
+                    LanguageManager.t("game.saveFailed"),
                     "error"
                 );
             }
         } else {
-            FlashMessageManager.show("Saved locally (not logged in).", "info");
+            FlashMessageManager.show(LanguageManager.t("game.savedLocally"), "info");
         }
 
         localStorage.setItem(

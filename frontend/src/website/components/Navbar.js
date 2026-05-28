@@ -1,6 +1,7 @@
 import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * Component representing the navigation bar.
@@ -16,7 +17,7 @@ export default class Navbar {
         const container = document.getElementById("nav-container");
         if (!container) return;
 
-        let userComponent = el("a", { href: "/login", dataset: { link: true }, className: "login" }, "Login");
+        let userComponent = el("a", { href: "/login", dataset: { link: true }, className: "login" }, LanguageManager.t("nav.login"));
         let saveComponent = null;
 
         if (AuthService.isAuthenticated()) {
@@ -35,12 +36,12 @@ export default class Navbar {
                 this.usernameSpan,
                 this.personalPictureImg
             );
-            saveComponent = el("a", { href: "/save", dataset: { link: true }, className: "save" }, "Save");
+            saveComponent = el("a", { href: "/save", dataset: { link: true }, className: "save" }, LanguageManager.t("nav.save"));
             
         }
 
-        const homeLink = el("a", { href: "/", dataset: { link: true } }, "Home");
-        const hubLink = el("a", { href: "/hub", dataset: { link: true } }, "Community Hub");
+        const homeLink = el("a", { href: "/", dataset: { link: true } }, LanguageManager.t("nav.home"));
+        const hubLink = el("a", { href: "/hub", dataset: { link: true } }, LanguageManager.t("nav.communityHub"));
         const sep1 = el("span", { className: "nav-separator" }, "|");
         const sep2 = saveComponent ? el("span", { className: "nav-separator" }, "|") : null;
 
@@ -83,7 +84,7 @@ export default class Navbar {
         } catch (error) {
             console.error("Navbar failed to load user data:", error);
             if (error.message.includes("Too many requests") || error.message.includes("rate limit")) {
-                FlashMessageManager.show("Rate limit exceeded. Please wait a moment.", "error");
+                FlashMessageManager.show(LanguageManager.t("auth.rateLimit"), "error");
                 return;
             }
             AuthService.logout();

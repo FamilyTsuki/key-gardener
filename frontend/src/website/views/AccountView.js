@@ -3,6 +3,7 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import Navbar from "../components/Navbar.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * View for displaying and managing user account information.
@@ -15,7 +16,7 @@ export default class AccountView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle("Account - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("nav.account") + " - Keyboard Survivor");
     }
 
     /**
@@ -39,7 +40,7 @@ export default class AccountView extends AbstractView {
                         await Navbar.updateUserInfo();
                     } catch (error) {
                         console.error("Upload failed:", error);
-                        FlashMessageManager.show(error.message || "Upload failed", "error");
+                        FlashMessageManager.show(error.message || LanguageManager.t("account.uploadFailed"), "error");
                     }
                 }
             }
@@ -65,34 +66,50 @@ export default class AccountView extends AbstractView {
                     history.pushState(null, null, "/");
                     window.dispatchEvent(new Event("popstate"));
                 } 
-            }, "Logout");
+            }, LanguageManager.t("account.logout"));
         const passwordContainer = el("div", { className: "password-container" },
-            el("h3", { className: "password-title" }, "Change Password"),
-            el("input", { type: "password", id: "current-password", placeholder: "Current Password", className: "account-info-input password-input" }),
-            el("input", { type: "password", id: "new-password", placeholder: "New Password", className: "account-info-input password-input" }),
+            el("h3", { className: "password-title" }, LanguageManager.t("account.changePasswordTitle")),
+            el("input", { type: "password", id: "current-password", placeholder: LanguageManager.t("account.currentPasswordPlaceholder"), className: "account-info-input password-input" }),
+            el("input", { type: "password", id: "new-password", placeholder: LanguageManager.t("account.newPasswordPlaceholder"), className: "account-info-input password-input" }),
             el("button", { 
                 className: "update-password-btn", 
                 onclick: async () => {
                     const currentPwd = document.getElementById("current-password").value;
                     const newPwd = document.getElementById("new-password").value;
                     if (!currentPwd || !newPwd) {
-                        FlashMessageManager.show("Please fill both password fields", "error");
+                        FlashMessageManager.show(LanguageManager.t("account.passwordFillBoth"), "error");
                         return;
                     }
                     try {
                         await AuthService.changePassword(currentPwd, newPwd);
-                        FlashMessageManager.show("Password changed successfully", "success");
+                        FlashMessageManager.show(LanguageManager.t("account.passwordSuccess"), "success");
                         document.getElementById("current-password").value = "";
                         document.getElementById("new-password").value = "";
                     } catch (error) {
-                        FlashMessageManager.show(error.message || "Failed to change password", "error");
+                        FlashMessageManager.show(error.message || LanguageManager.t("account.passwordFailed"), "error");
                     }
                 }
-            }, "Update Password")
+            }, LanguageManager.t("account.updatePasswordBtn"))
+        );
+        const currentLang = LanguageManager.getLanguage();
+        const langSelect = el("select", {
+            className: "account-info-input",
+            style: "margin-top: 10px; width: 100%; box-sizing: border-box;",
+            onchange: (e) => {
+                LanguageManager.setLanguage(e.target.value);
+            }
+        }, 
+            el("option", { value: "en", selected: currentLang === "en" }, LanguageManager.t("account.english")),
+            el("option", { value: "fr", selected: currentLang === "fr" }, LanguageManager.t("account.french"))
+        );
+
+        const langContainer = el("div", { className: "password-container" },
+            el("h3", { className: "password-title" }, LanguageManager.t("account.languageTitle")),
+            langSelect
         );
             
         const container = el("div", { className: "account-container" },
-            el("h1", { className: "account-title" }, "Profile"),
+            el("h1", { className: "account-title" }, LanguageManager.t("account.title")),
 
             el("div", { className: "account-content" },
                 this.personalPictureImg,
@@ -105,7 +122,8 @@ export default class AccountView extends AbstractView {
                     this.usermail,
                     this.editUsermail,
                 ),
-                passwordContainer
+                passwordContainer,
+                langContainer
             ),
             logoutTxt
         );
@@ -188,11 +206,11 @@ export default class AccountView extends AbstractView {
 
         try {
             await AuthService.updateUsername(newUsername);
-            FlashMessageManager.show("Username updated successfully", "success");
+            FlashMessageManager.show(LanguageManager.t("account.usernameSuccess"), "success");
             this.usernameSpan.textContent = newUsername;
             await Navbar.updateUserInfo();
         } catch (error) {
-            FlashMessageManager.show(error.message || "Failed to update username", "error");
+            FlashMessageManager.show(error.message || LanguageManager.t("account.usernameFailed"), "error");
         }
         
         this.cancelEditUsername(input);
@@ -245,10 +263,10 @@ export default class AccountView extends AbstractView {
 
         try {
             await AuthService.updateEmail(newUsermail);
-            FlashMessageManager.show("Email updated successfully", "success");
+            FlashMessageManager.show(LanguageManager.t("account.emailSuccess"), "success");
             this.usermail.textContent = newUsermail;
         } catch (error) {
-            FlashMessageManager.show(error.message || "Failed to update email", "error");
+            FlashMessageManager.show(error.message || LanguageManager.t("account.emailFailed"), "error");
         }
         
         this.cancelEditUsermail(input);

@@ -412,16 +412,13 @@ export default class WorldMap {
             let attenuation = Math.min(1.0, distToEdge / 6.0);
             attenuation = attenuation * attenuation * (3 - 2 * attenuation);
 
-            // Standard fractal Brownian motion (fBm) using sine waves
             let noiseZ = 0;
             noiseZ += (Math.sin(x * 0.31 + y * 0.27) + Math.cos(x * 0.23 - y * 0.33)) * 1.5;
             noiseZ += (Math.sin(x * 0.67 + y * 0.59) + Math.cos(x * 0.61 - y * 0.73)) * 0.75;
             noiseZ += (Math.sin(x * 1.37 + y * 1.29) + Math.cos(x * 1.21 - y * 1.43)) * 0.35;
             noiseZ += (Math.sin(x * 2.71 + y * 2.57) + Math.cos(x * 2.51 - y * 2.83)) * 0.15;
             
-            // Bias backwards slightly to prevent bulging too far forward
             noiseZ = (noiseZ - 1.5) * attenuation;
-
             pos.setZ(i, z + noiseZ);
         }
         wallGeo.computeVertexNormals();

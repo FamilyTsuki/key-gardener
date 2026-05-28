@@ -2,6 +2,7 @@ import AbstractView from "../../core/views/AbstractView.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * View for registering a new user account.
@@ -14,7 +15,7 @@ export default class RegisterView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle("Register - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("register.title") + " - Keyboard Survivor");
     }
 
     /**
@@ -23,10 +24,10 @@ export default class RegisterView extends AbstractView {
      * @returns {Promise<HTMLElement>} The register view container element.
      */
     async render() {
-        const usernameInput = el("input", { type: "text", placeholder: "Username", required: true, className: "register-input", id: "username" });
-        const emailInput = el("input", { type: "email", placeholder: "Email", required: true, className: "register-input", id: "reg-email" });
-        const passwordInput = el("input", { type: "password", placeholder: "Password", required: true, className: "register-input", id: "reg-password" });
-        const confirmPasswordInput = el("input", { type: "password", placeholder: "Confirm Password", required: true, className: "register-input", id: "confirm-password" });
+        const usernameInput = el("input", { type: "text", placeholder: LanguageManager.t("register.usernamePlaceholder"), required: true, className: "register-input", id: "username" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("register.emailPlaceholder"), required: true, className: "register-input", id: "reg-email" });
+        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.passwordPlaceholder"), required: true, className: "register-input", id: "reg-password" });
+        const confirmPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.confirmPasswordPlaceholder"), required: true, className: "register-input", id: "confirm-password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -37,12 +38,12 @@ export default class RegisterView extends AbstractView {
             const confirmPassword = confirmPasswordInput.value.trim();
 
             if (password !== confirmPassword) {
-                FlashMessageManager.show("Passwords do not match", "error");
+                FlashMessageManager.show(LanguageManager.t("register.passwordsDoNotMatch"), "error");
                 return;
             }
 
             if (password.length < 6) {
-                FlashMessageManager.show("Password must be at least 6 characters", "error");
+                FlashMessageManager.show(LanguageManager.t("register.passwordTooShort"), "error");
                 return;
             }
 
@@ -52,9 +53,9 @@ export default class RegisterView extends AbstractView {
                 history.pushState(null, null, "/login");
                 window.dispatchEvent(new Event("popstate"));
                 
-                FlashMessageManager.show("Registration successful!", "success");
+                FlashMessageManager.show(LanguageManager.t("register.registerSuccess"), "success");
             } catch (error) {
-                FlashMessageManager.show(error.message || "Registration failed", "error");
+                FlashMessageManager.show(error.message || LanguageManager.t("register.registerFailed"), "error");
             }
         };
 
@@ -63,15 +64,15 @@ export default class RegisterView extends AbstractView {
             emailInput,
             passwordInput,
             confirmPasswordInput,
-            el("button", { type: "submit", className: "register-btn" }, "Register")
+            el("button", { type: "submit", className: "register-btn" }, LanguageManager.t("register.registerBtn"))
         );
 
         return el("div", { className: "register-container" },
-            el("h2", {}, "Register"),
+            el("h2", {}, LanguageManager.t("register.title")),
             form,
             el("p", { className: "register-link" },
-                "Already have an account? ",
-                el("a", { href: "/login", dataset: { link: true } }, "Login")
+                LanguageManager.t("register.alreadyHaveAccount"),
+                el("a", { href: "/login", dataset: { link: true } }, LanguageManager.t("register.loginLink"))
             )
         );
     }
