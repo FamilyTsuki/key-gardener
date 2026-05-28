@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { WorldPhase } from "./WorldPhase.js";
-import { IntroPhase } from "./IntroPhase.js";
-import { SurvivePhase } from "./SurvivePhase.js";
+import { WorldPhase } from "../phases/WorldPhase.js";
+import { IntroPhase } from "../phases/IntroPhase.js";
+import { SurvivePhase } from "../phases/SurvivePhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
 import { TempoEvent } from "../events/TempoEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
