@@ -26,7 +26,7 @@ export default class LoginView extends AbstractView {
      * @returns {Promise<HTMLElement>} The login container element.
      */
     async render() {
-        this.container = el("div", { className: "login-container" });
+        this.container = el("div", { className: "login-container glass-panel" });
         this.renderState();
         return this.container;
     }
@@ -52,8 +52,8 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The login form element.
      */
     createLoginForm() {
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "login-input", id: "email" });
-        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "login-input", id: "password" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", id: "email" });
+        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "form-input", id: "password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -88,7 +88,7 @@ export default class LoginView extends AbstractView {
             el("p", { className: "forgot-link" }, forgotLink)
         ),
             
-            el("button", { type: "submit", className: "login-btn" }, LanguageManager.t("login.loginBtn"))
+            el("button", { type: "submit", className: "btn-primary" }, LanguageManager.t("login.loginBtn"))
         );
 
         
@@ -110,7 +110,7 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The forgot password form element.
      */
     createForgotForm() {
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "login-input" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -129,7 +129,7 @@ export default class LoginView extends AbstractView {
 
         const form = el("form", { id: "forgot-form", onsubmit: handleSubmit },
             emailInput,
-            el("button", { type: "submit", className: "login-btn" }, LanguageManager.t("login.sendResetCodeBtn"))
+            el("button", { type: "submit", className: "btn-primary" }, LanguageManager.t("login.sendResetCodeBtn"))
         );
 
         return el("div", {},
@@ -155,8 +155,8 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The reset password form element.
      */
     createResetForm() {
-        const codeInput = el("input", { type: "text", placeholder: LanguageManager.t("login.codePlaceholder"), required: true, className: "login-input", maxLength: 6 });
-        const newPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "login-input" });
+        const codeInput = el("input", { type: "text", placeholder: LanguageManager.t("login.codePlaceholder"), required: true, className: "form-input", maxLength: 6 });
+        const newPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "form-input" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -176,7 +176,7 @@ export default class LoginView extends AbstractView {
         const form = el("form", { id: "reset-form", onsubmit: handleSubmit },
             codeInput,
             newPasswordInput,
-            el("button", { type: "submit", className: "login-btn" }, LanguageManager.t("login.updatePasswordBtn"))
+            el("button", { type: "submit", className: "btn-primary" }, LanguageManager.t("login.updatePasswordBtn"))
         );
 
         return el("div", {},

@@ -12,10 +12,6 @@
     flex-direction: column;
     align-items: center;
     gap: clamp(18px, 2.5vw, 32px);
-    background: var(--dark-overlay-dense);
-    border: 1px solid var(--card-border);
-    border-radius: 28px;
-    box-shadow: var(--shadow-glow);
 }
 
 .login-container h2 {
@@ -48,55 +44,7 @@
     gap: 8px;
 }
 
-.login-input {
-    width: 100%;
-    padding: 16px 20px;
-    border-radius: 16px;
-    border: 1px solid var(--card-border);
-    background: var(--light-overlay);
-    color: var(--text-color);
-    font-size: 1.1rem;
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
-}
 
-.login-input:-webkit-autofill,
-.login-input:-webkit-autofill:hover, 
-.login-input:-webkit-autofill:focus, 
-.login-input:-webkit-autofill:active {
-    transition: background-color 5000s ease-in-out 0s;
-    -webkit-text-fill-color: var(--text-color) !important;
-}
-
-.login-input::placeholder {
-    color: var(--text-muted);
-}
-
-.login-input:focus {
-    border-color: var(--primary-color);
-    background: var(--light-overlay-hover);
-    box-shadow: var(--focus-ring);
-}
-
-button.login-btn {
-    width: 100%;
-    padding: 16px 20px;
-    border: none;
-    border-radius: 16px;
-    background-color: var(--primary-color);
-    color: var(--bg-color);
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-sizing: border-box;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-button.login-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-glow);
-}
 
 .register-link {
     font-size: 1.1rem;
@@ -158,15 +106,7 @@ button.login-btn:hover {
         gap: 18px;
     }
 
-    .login-input {
-        padding: 14px 16px;
-        font-size: 1rem;
-    }
 
-    button.login-btn {
-        padding: 14px;
-        font-size: 1rem;
-    }
 
     .register-link,
     .reset-info-text {

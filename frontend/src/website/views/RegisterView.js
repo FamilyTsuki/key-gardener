@@ -24,10 +24,10 @@ export default class RegisterView extends AbstractView {
      * @returns {Promise<HTMLElement>} The register view container element.
      */
     async render() {
-        const usernameInput = el("input", { type: "text", placeholder: LanguageManager.t("register.usernamePlaceholder"), required: true, className: "register-input", id: "username" });
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("register.emailPlaceholder"), required: true, className: "register-input", id: "reg-email" });
-        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.passwordPlaceholder"), required: true, className: "register-input", id: "reg-password" });
-        const confirmPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.confirmPasswordPlaceholder"), required: true, className: "register-input", id: "confirm-password" });
+        const usernameInput = el("input", { type: "text", placeholder: LanguageManager.t("register.usernamePlaceholder"), required: true, className: "form-input", id: "username" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("register.emailPlaceholder"), required: true, className: "form-input", id: "reg-email" });
+        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.passwordPlaceholder"), required: true, className: "form-input", id: "reg-password" });
+        const confirmPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.confirmPasswordPlaceholder"), required: true, className: "form-input", id: "confirm-password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -64,10 +64,10 @@ export default class RegisterView extends AbstractView {
             emailInput,
             passwordInput,
             confirmPasswordInput,
-            el("button", { type: "submit", className: "register-btn" }, LanguageManager.t("register.registerBtn"))
+            el("button", { type: "submit", className: "btn-primary" }, LanguageManager.t("register.registerBtn"))
         );
 
-        return el("div", { className: "register-container" },
+        return el("div", { className: "register-container glass-panel" },
             el("h2", {}, LanguageManager.t("register.title")),
             form,
             el("p", { className: "register-link" },

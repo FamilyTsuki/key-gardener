@@ -59,9 +59,9 @@ export default class HubView extends AbstractView {
 
         this.previewContainer = el("div", { id: "media-preview" });
 
-        return el("div", { className: "add-post-form" },
+        return el("div", { className: "add-post-form glass-panel" },
             el("h3", {}, LanguageManager.t("hub.addPostTitle")),
-            el("textarea", { id: "post-content", placeholder: LanguageManager.t("hub.shareProgress") }),
+            el("textarea", { id: "post-content", className: "form-input", placeholder: LanguageManager.t("hub.shareProgress") }),
             fileInput,
             this.previewContainer,
             el("div", { className: "form-actions" },
@@ -70,7 +70,7 @@ export default class HubView extends AbstractView {
                     className: "add-media-btn",
                     onclick: () => fileInput.click()
                 }, LanguageManager.t("hub.addImageVideo")),
-                el("button", { onclick: () => this.addPost(), className: "post-btn" }, LanguageManager.t("hub.postBtn"))
+                el("button", { onclick: () => this.addPost(), className: "btn-primary" }, LanguageManager.t("hub.postBtn"))
             )
         );
     }

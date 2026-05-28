@@ -18,15 +18,8 @@
 }
 
 .add-post-form {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
     padding: 25px;
     margin-bottom: 40px;
-}
-
-.add-post-form:focus-within {
-    border-color: var(--card-hover-border);
 }
 
 .add-post-form h3 {
@@ -38,23 +31,8 @@
 }
 
 .add-post-form textarea {
-    width: 100%;
     min-height: 100px;
-    background: var(--black);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 12px;
-    color: var(--text-color);
-    font-family: inherit;
-    font-size: 1rem;
     resize: vertical;
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-}
-
-.add-post-form textarea:focus {
-    border-color: var(--primary-color);
 }
 
 .form-actions {
@@ -85,27 +63,7 @@
     color: var(--primary-color);
 }
 
-.add-post-form button[onclick] {
-    background: var(--primary-color);
-    color: var(--bg-color);
-    border: none;
-    padding: 10px 24px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-}
 
-.add-post-form button[onclick]:hover {
-    transform: translateY(-2px);
-    background-color: var(--primary-hover);
-    box-shadow: var(--shadow-glow);
-}
-
-.add-post-form button[onclick]:active {
-    transform: translateY(0);
-}
 
 #media-preview {
     margin-top: 15px;
@@ -189,23 +147,7 @@
     gap: 20px;
 }
 
-.post-btn {
-    background: var(--primary-color);
-    color: var(--bg-color);
-    border: none;
-    padding: 10px 24px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-}
 
-.post-btn:hover {
-    transform: translateY(-2px);
-    background-color: var(--primary-hover);
-    box-shadow: var(--shadow-glow);
-}
 
 .hub-post {
     background: var(--card-bg);
