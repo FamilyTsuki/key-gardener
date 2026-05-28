@@ -44,12 +44,15 @@ export class GameEngine {
 
         this.resize();
 
-        window.addEventListener("resize", () => this.resize());
-        window.addEventListener("keydown", (e) => {
+        this.onResize = () => this.resize();
+        this.onKeyDown = (e) => {
             if (this.gamePhase) {
                 this.gamePhase.handleKeyDown(e);
             }
-        });
+        };
+
+        window.addEventListener("resize", this.onResize);
+        window.addEventListener("keydown", this.onKeyDown);
     }
 
     /**
@@ -176,6 +179,18 @@ export class GameEngine {
      */
     stop() {
         this.isRunning = false;
+    }
+
+    /**
+     * Destroys the engine, removing event listeners and cleaning up phases.
+     */
+    destroy() {
+        this.stop();
+        window.removeEventListener("resize", this.onResize);
+        window.removeEventListener("keydown", this.onKeyDown);
+        if (this.gamePhase && this.gamePhase.cleanup) {
+            this.gamePhase.cleanup();
+        }
     }
 
     /**

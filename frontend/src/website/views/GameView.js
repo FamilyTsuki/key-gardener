@@ -113,7 +113,7 @@ export default class GameView extends AbstractView {
         document.body.classList.remove("in-game");
 
         if (this.engine) {
-            this.engine.stop();
+            this.engine.destroy();
         }
 
         history.pushState(null, null, "/save");
@@ -126,7 +126,7 @@ export default class GameView extends AbstractView {
     destroy() {
         document.body.classList.remove("in-game");
         if (this.engine) {
-            this.engine.stop();
+            this.engine.destroy();
         }
     }
 
