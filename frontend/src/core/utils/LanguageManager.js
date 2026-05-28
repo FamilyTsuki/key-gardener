@@ -51,3 +51,5 @@ export class LanguageManager {
         return val;
     }
 }
+
+document.documentElement.lang = LanguageManager.getLanguage();

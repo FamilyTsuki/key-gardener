@@ -44,7 +44,13 @@ export const fr = {
         noPostsYet: "Aucun post pour le moment. Soyez le premier !",
         errorLoading: "Erreur lors du chargement des messages communautaires.",
         loginToVote: "Vous devez être connecté pour voter !",
-        voteFailed: "Échec du vote."
+        voteFailed: "Échec du vote.",
+        edit: "Modifier",
+        delete: "Supprimer",
+        save: "Enregistrer",
+        cancel: "Annuler",
+        deleteConfirm: "Êtes-vous sûr de vouloir supprimer ce post ? Cette action est irréversible.",
+        editExpired: "Vous ne pouvez modifier un post que dans les 5 minutes suivant sa création."
     },
     
     // LoginView

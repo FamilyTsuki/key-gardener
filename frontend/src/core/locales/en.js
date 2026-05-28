@@ -44,7 +44,13 @@ export const en = {
         noPostsYet: "No posts yet. Be the first!",
         errorLoading: "Error loading community messages.",
         loginToVote: "You must be logged in to vote!",
-        voteFailed: "Failed to cast vote."
+        voteFailed: "Failed to cast vote.",
+        edit: "Edit",
+        delete: "Delete",
+        save: "Save",
+        cancel: "Cancel",
+        deleteConfirm: "Are you sure you want to delete this post? This action cannot be undone.",
+        editExpired: "You can only edit posts within 5 minutes of creation."
     },
     
     // LoginView

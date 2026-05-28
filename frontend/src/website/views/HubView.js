@@ -213,12 +213,33 @@ export default class HubView extends AbstractView {
 
                 const isSelfPost = currentUserId && post.user_id === currentUserId;
 
+                let postActions = null;
+                if (isSelfPost) {
+                    const postDate = new Date(post.created_at.endsWith("Z") ? post.created_at : post.created_at + "Z");
+                    const diffMinutes = (new Date() - postDate) / (1000 * 60);
+                    const canEdit = diffMinutes <= 5;
+
+                    const editBtn = canEdit ? el("button", { 
+                        className: "action-btn edit-btn",
+                        onclick: () => this.handleEdit(post)
+                    }, LanguageManager.t("hub.edit")) : null;
+
+                    const deleteBtn = el("button", {
+                        className: "action-btn delete-btn",
+                        onclick: () => this.handleDelete(post.id)
+                    }, LanguageManager.t("hub.delete"));
+
+                    postActions = el("div", { className: "post-actions-container" }, editBtn, deleteBtn);
+                }
+
+                const postFooter = el("div", { className: "post-footer" }, voteContainer, postActions);
+
                 this.postsContainer.appendChild(
-                    el("div", { className: `hub-post${isSelfPost ? " self-post" : ""}` },
+                    el("div", { className: `hub-post${isSelfPost ? " self-post" : ""}`, id: `post-${post.id}` },
                         el("strong", {}, post.username + ": "),
                         el("p", { className: "post-content" }, post.content),
                         mediaElement,
-                        voteContainer
+                        postFooter
                     )
                 );
             });
@@ -252,6 +273,68 @@ export default class HubView extends AbstractView {
         } catch (error) {
             console.error(`Error casting ${type}:`, error);
             FlashMessageManager.show(error.message || LanguageManager.t("hub.voteFailed"), "error");
+        }
+    }
+
+    /**
+     * Replaces post content with a textarea for inline editing.
+     * @param {Object} post - The post object.
+     */
+    handleEdit(post) {
+        const postElement = document.getElementById(`post-${post.id}`);
+        if (!postElement) return;
+
+        const contentP = postElement.querySelector(".post-content");
+        const actionsContainer = postElement.querySelector(".post-actions-container");
+        if (!contentP || !actionsContainer) return;
+
+        const textarea = el("textarea", { className: "form-input edit-post-textarea" });
+        textarea.value = post.content;
+
+        const saveBtn = el("button", {
+            className: "action-btn save-btn",
+            onclick: () => this.handleSaveEdit(post.id, textarea.value)
+        }, LanguageManager.t("hub.save"));
+
+        const cancelBtn = el("button", {
+            className: "action-btn cancel-btn",
+            onclick: () => this.init()
+        }, LanguageManager.t("hub.cancel"));
+
+        contentP.replaceWith(textarea);
+
+        actionsContainer.innerHTML = "";
+        actionsContainer.appendChild(saveBtn);
+        actionsContainer.appendChild(cancelBtn);
+    }
+
+    /**
+     * Saves the edited post content.
+     * @param {number} postId - The post ID.
+     * @param {string} newContent - The new content.
+     */
+    async handleSaveEdit(postId, newContent) {
+        if (!newContent || newContent.trim().length === 0) return;
+        try {
+            await PostsService.updatePost(postId, newContent);
+            await this.init();
+        } catch (error) {
+            FlashMessageManager.show(error.message || LanguageManager.t("hub.editExpired"), "error");
+            await this.init();
+        }
+    }
+
+    /**
+     * Deletes a post after user confirmation.
+     * @param {number} postId - The post ID.
+     */
+    async handleDelete(postId) {
+        if (!confirm(LanguageManager.t("hub.deleteConfirm"))) return;
+        try {
+            await PostsService.deletePost(postId);
+            await this.init();
+        } catch (error) {
+            FlashMessageManager.show(error.message || "Failed to delete post", "error");
         }
     }
 

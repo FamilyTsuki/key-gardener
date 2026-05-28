@@ -1,6 +1,8 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Vote = require("../models/Votes");
+const fs = require("fs");
+const path = require("path");
 
 exports.getAllPosts = async (req, res, next) => {
     try {
@@ -68,6 +70,7 @@ exports.updatePost = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { content } = req.body;
+        const userId = req.user.id;
 
         if (!content || content.trim().length === 0) {
             return res
@@ -82,6 +85,22 @@ exports.updatePost = async (req, res, next) => {
                 .json({ success: false, message: "Post not found" });
         }
 
+        if (post.user_id !== userId) {
+            return res
+                .status(403)
+                .json({ success: false, message: "You can only edit your own posts" });
+        }
+
+        const now = new Date();
+        const postTime = new Date(post.created_at);
+        const diffMinutes = (now - postTime) / (1000 * 60);
+
+        if (diffMinutes > 5) {
+            return res
+                .status(403)
+                .json({ success: false, message: "You can only edit a post within 5 minutes of creation" });
+        }
+
         const updatedPost = await Post.update(id, content);
         res.status(200).json({ success: true, post: updatedPost });
     } catch (err) {
@@ -92,12 +111,27 @@ exports.updatePost = async (req, res, next) => {
 exports.deletePost = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const userId = req.user.id;
+        
         const post = await Post.findById(id);
 
         if (!post) {
             return res
                 .status(404)
                 .json({ success: false, message: "Post not found" });
+        }
+
+        if (post.user_id !== userId) {
+            return res
+                .status(403)
+                .json({ success: false, message: "You can only delete your own posts" });
+        }
+
+        if (post.image_url) {
+            const filepath = path.join(__dirname, "../../../../frontend/public", post.image_url);
+            if (fs.existsSync(filepath)) {
+                fs.unlinkSync(filepath);
+            }
         }
 
         await Post.delete(id);

@@ -40,6 +40,7 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 15px;
+    gap: 40px;
 }
 
 .add-media-btn {
@@ -183,12 +184,18 @@
     margin-top: 15px;
 }
 
-.post-votes {
+.post-footer {
     display: flex;
-    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 15px;
     border-top: 1px solid var(--card-border);
     padding-top: 15px;
+}
+
+.post-votes {
+    display: flex;
+    gap: 12px;
 }
 
 .vote-btn {
@@ -230,4 +237,70 @@
     background: var(--danger-translucent);
     border-color: var(--danger-color);
     color: var(--danger-color);
+}
+
+.post-actions-container {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.edit-btn {
+    color: var(--secondary-color);
+    border-color: var(--card-border);
+}
+
+.edit-btn:hover {
+    background: var(--secondary-translucent);
+    border-color: var(--secondary-color);
+}
+
+.delete-btn {
+    color: var(--danger-color);
+    border-color: var(--card-border);
+}
+
+.delete-btn:hover {
+    background: var(--danger-translucent);
+    border-color: var(--danger-color);
+}
+
+.save-btn {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: var(--primary-translucent);
+}
+
+.save-btn:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.cancel-btn {
+    color: var(--text-muted);
+}
+
+.cancel-btn:hover {
+    color: var(--text-color);
+    border-color: var(--text-muted);
+}
+
+.edit-post-textarea {
+    width: 100%;
+    min-height: 80px;
+    margin-bottom: 10px;
 }
