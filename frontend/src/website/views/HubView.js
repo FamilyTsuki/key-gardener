@@ -210,7 +210,7 @@ export default class HubView extends AbstractView {
                 const commentsToggleBtn = el("button", {
                     className: "vote-btn comments-toggle-btn",
                     onclick: () => this.toggleComments(post.id)
-                }, `💬 ${LanguageManager.t("hub.comments")}`);
+                }, el("span", { style: "font-family: 'Noto Color Emoji', sans-serif;" }, "💬 "), LanguageManager.t("hub.comments"));
 
                 const voteContainer = el("div", { className: "post-votes" },
                     upvoteBtn,
