@@ -6,6 +6,7 @@ import Keyboard from "../managers/Keyboard.js";
 import Player from "../models/actors/Player.js";
 import Projectile from "../models/Projectile.js";
 import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
+import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
 
 const loader = new GLTFLoader();
 
@@ -16,9 +17,12 @@ export class SurvivePhase extends GamePhase {
     /**
      * Creates an instance of SurvivePhase.
      * @param {GameEngine} gameEngine - The game engine instance.
+     * @param {string} decorType - The type of decor ('mine', 'styx', 'default').
      */
-    constructor(gameEngine) {
+    constructor(gameEngine, decorType = "default") {
         super(gameEngine);
+        this.decorType = decorType;
+        this.decor = null;
         this.keyboard = null;
         this.player = null;
         this.enemies = null;
@@ -81,7 +85,7 @@ export class SurvivePhase extends GamePhase {
             spellListContainer.classList.remove("none");
         }
 
-        this.draw_bg();
+        this.decor = SurviveDecorBuilder.buildDecor(this.decorType, scene);
     }
 
     /**
@@ -100,6 +104,9 @@ export class SurvivePhase extends GamePhase {
         }
         if (this.player) {
             this.player.update();
+        }
+        if (this.decor) {
+            this.decor.update(deltaTime);
         }
     }
 
@@ -129,26 +136,7 @@ export class SurvivePhase extends GamePhase {
                 1.5,
                 targetY * spacing
             );
-            
-            if (this.playerLight) {
-                this.playerLight.position.set(targetX * spacing, 7, targetY * spacing);
-            }
         }
-    }
-
-    /**
-     * Sets up the background and lighting for the scene.
-     */
-    draw_bg() {
-        this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
-        this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
-        
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.02);
-        this.gameEngine.scene.add(ambientLight);
-        
-        this.playerLight = new THREE.PointLight(0xffddaa, 500, 120);
-        this.playerLight.position.set(0, 7, 0);
-        this.gameEngine.scene.add(this.playerLight);
     }
 
     /**
@@ -203,6 +191,9 @@ export class SurvivePhase extends GamePhase {
         }
         if (this.player && this.player.mesh) {
             this.gameEngine.scene.remove(this.player.mesh);
+        }
+        if (this.decor) {
+            this.decor.cleanup();
         }
         const spellListContainer = document.getElementById("spell-list-container");
         if (spellListContainer) {
