@@ -255,7 +255,7 @@ export class IntroPhase extends GamePhase {
         this.rift.removeEventListener("click", this.onRiftClick);
         this.container.classList.add("transitioning");
         setTimeout(() => {
-            this.gameEngine.setPhase(new WorldPhase(this.gameEngine));
+            this.gameEngine.loadLevel(this.gameEngine.currentLevel || 1);
         }, IntroPhase.RIFT_TRANSITION_DELAY_MS);
     }
 

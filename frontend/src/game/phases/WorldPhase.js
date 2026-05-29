@@ -50,13 +50,16 @@ export class WorldPhase extends GamePhase {
         console.log(this.worldMap);
         this.draw_bg();
 
-        setTimeout(() => {
-            const dBox = new DialogueBox();
-            dBox.show(
+        this.dialogueTimeout = setTimeout(() => {
+            this.dBox = new DialogueBox();
+            this.dBox.show(
                 ["Testing the new reusable dialogue box!", "Here is a 3D model next to it."], 
                 "/asset/game_assets/player.glb", 
                 () => {
-                    dBox.destroy();
+                    if (this.dBox) {
+                        this.dBox.destroy();
+                        this.dBox = null;
+                    }
                 }
             );
         }, 1500);
@@ -297,6 +300,15 @@ export class WorldPhase extends GamePhase {
      * Cleans up resources used by the world phase.
      */
     cleanup() {
+        if (this.dialogueTimeout) {
+            clearTimeout(this.dialogueTimeout);
+            this.dialogueTimeout = null;
+        }
+        if (this.dBox) {
+            this.dBox.destroy();
+            this.dBox = null;
+        }
+
         for (const event of this.events) {
             if (event.cleanup) {
                 event.cleanup(this);
