@@ -62,6 +62,25 @@ export class SurvivePhase extends GamePhase {
             .getElementById("currentWord")
             .parentElement.classList.remove("none");
 
+        const spellListContainer = document.getElementById("spell-list-container");
+        if (spellListContainer && this.player) {
+            spellListContainer.innerHTML = "";
+            const spells = this.player.wordSpells.filter(w => w && w !== "");
+            
+            const title = document.createElement("h3");
+            title.textContent = "Sorts disponibles :";
+            spellListContainer.appendChild(title);
+            
+            const ul = document.createElement("ul");
+            spells.forEach(spell => {
+                const li = document.createElement("li");
+                li.textContent = spell;
+                ul.appendChild(li);
+            });
+            spellListContainer.appendChild(ul);
+            spellListContainer.classList.remove("none");
+        }
+
         this.draw_bg();
     }
 
@@ -184,6 +203,11 @@ export class SurvivePhase extends GamePhase {
         }
         if (this.player && this.player.mesh) {
             this.gameEngine.scene.remove(this.player.mesh);
+        }
+        const spellListContainer = document.getElementById("spell-list-container");
+        if (spellListContainer) {
+            spellListContainer.classList.add("none");
+            spellListContainer.innerHTML = "";
         }
     }
 }

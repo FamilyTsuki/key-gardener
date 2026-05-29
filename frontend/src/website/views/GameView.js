@@ -49,7 +49,8 @@ export default class GameView extends AbstractView {
                 { className: "word-container none" },
                 el("span", { id: "currentWord" }),
                 el("span", { className: "clignotant" }, "_")
-            )
+            ),
+            el("div", { className: "spell-list-container none", id: "spell-list-container" })
         );
     }
 

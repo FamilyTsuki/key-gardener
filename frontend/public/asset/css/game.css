@@ -328,6 +328,39 @@
     box-shadow: var(--primary-glow-heavy);
     transform: scale(1.05);
 }
+
+.spell-list-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+    background: var(--dark-overlay-dense);
+    border: 1px solid var(--card-border);
+    padding: 20px;
+    border-radius: 15px;
+    color: var(--text-color);
+    font-family: var(--font-main);
+}
+
+.spell-list-container h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.spell-list-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.spell-list-container li {
+    font-size: 1.1rem;
+    padding: 5px 0;
+    font-weight: bold;
+}
+
 .none {
     display: none;
 }
