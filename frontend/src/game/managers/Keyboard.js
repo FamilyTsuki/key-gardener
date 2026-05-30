@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import Key from "../models/Key.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**
  * Manages the virtual keyboard rendering and logic.
@@ -34,63 +33,59 @@ export default class Keyboard {
     }
 
     /**
-     * Loads the key models and creates instances for each key in the layout.
+     * Creates instances for each key procedurally to match the vintage typewriter style.
      * @param {THREE.Scene} scene - The main three.js scene.
      */
     loadAndCreateKeys(scene) {
-        const loader = new GLTFLoader();
+        const ringGeo = new THREE.CylinderGeometry(1.4, 1.4, 0.3, 32);
+        const ringMat = new THREE.MeshStandardMaterial({
+            color: 0xc5a059,
+            roughness: 0.3,
+            metalness: 0.8,
+        });
 
-        loader.load(
-            "/asset/game_assets/key.glb",
-            (gltf) => {
-                const keyModel = gltf.scene;
+        const capGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.35, 32);
+        const capMat = new THREE.MeshStandardMaterial({
+            color: 0x111111,
+            roughness: 0.8,
+            metalness: 0.1,
+        });
 
-                this.#keyboardLayout.forEach((keyObj) => {
-                    const keyMesh = keyModel.clone();
+        const planeGeometry = new THREE.PlaneGeometry(1.8, 1.8);
 
-                    keyMesh.position.set(keyObj.x, 0, keyObj.y);
+        this.#keyboardLayout.forEach((keyObj) => {
+            const keyGroup = new THREE.Group();
+            
+            const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+            const capMesh = new THREE.Mesh(capGeo, capMat);
+            
+            keyGroup.add(ringMesh);
+            keyGroup.add(capMesh);
 
-                    keyMesh.traverse((child) => {
-                        if (child.isMesh) {
-                            child.material = new THREE.MeshStandardMaterial({
-                                color: 0xaaaaaa,
-                                roughness: 0.5,
-                                metalness: 0.2,
-                            });
-                        }
-                    });
+            const letterTexture = createTextTexture(
+                keyObj.key.toUpperCase(),
+                "#c5a059",
+                "rgba(0,0,0,0)",
+                180
+            );
 
-                    const letterTexture = createTextTexture(
-                        keyObj.key.toUpperCase()
-                    );
+            const planeMaterial = new THREE.MeshBasicMaterial({
+                map: letterTexture,
+                transparent: true,
+                side: THREE.DoubleSide,
+            });
+            
+            const letterPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+            letterPlane.position.set(0, 0.18, 0);
+            letterPlane.rotation.x = -Math.PI / 2;
 
-                    const planeGeometry = new THREE.PlaneGeometry(1.2, 1.2);
-                    const planeMaterial = new THREE.MeshBasicMaterial({
-                        map: letterTexture,
-                        transparent: true,
-                        side: THREE.DoubleSide,
-                    });
-                    const letterPlane = new THREE.Mesh(
-                        planeGeometry,
-                        planeMaterial
-                    );
+            keyGroup.add(letterPlane);
 
-                    letterPlane.position.set(0, 1, 0);
-                    letterPlane.rotation.x = -Math.PI / 2;
+            keyGroup.position.set(keyObj.x, 0.15, keyObj.y);
 
-                    keyMesh.add(letterPlane);
-
-                    keyObj.mesh = keyMesh;
-                    this.group.add(keyMesh);
-                });
-            },
-            undefined,
-            (error) => {
-                throw new Error(
-                    `Erreur lors du chargement du modèle GLB: ${error}`
-                );
-            }
-        );
+            keyObj.mesh = keyGroup;
+            this.group.add(keyGroup);
+        });
     }
 
     /**
