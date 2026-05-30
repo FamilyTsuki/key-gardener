@@ -86,7 +86,7 @@ export default class Player extends Actor {
         this.loadPromise = loader.loadAsync("/asset/game_assets/player.glb").then((gltf) => {
             this.playerModel = gltf.scene;
             this.playerModel.scale.set(1.3, 1.3, 1.3);
-            this.playerModel.position.y = 0.6;
+            this.playerModel.position.y = 1.35;
             this.mesh.add(this.playerModel);
         });
 
@@ -137,6 +137,16 @@ export default class Player extends Actor {
             this.targetPosition.x !== newPosition.x ||
             this.targetPosition.y !== newPosition.y
         ) {
+            const now = Date.now();
+            const timeSinceLastPress = now - (this.lastKeyPressTime || 0);
+            this.lastKeyPressTime = now;
+
+            if (timeSinceLastPress < 300) {
+                this.movementDuration = Math.max(3, this.movementDuration * 0.4);
+            } else {
+                this.movementDuration = 15;
+            }
+
             this.startPosition = { x: this.x, y: this.y };
             this.targetPosition = newPosition;
 
@@ -149,6 +159,12 @@ export default class Player extends Actor {
 
             this.isMoving = true;
             this.currentMovementTime = 0;
+
+            if (this.mesh) {
+                const worldTargetX = this.targetPosition.x * this.spacingX + this.offsetX;
+                const worldTargetZ = this.targetPosition.y * this.spacingZ + this.offsetZ;
+                this.mesh.lookAt(worldTargetX, this.offsetY, worldTargetZ);
+            }
 
             this.jumpSound.currentTime = 0;
             const playPromise = this.jumpSound.play();
@@ -212,10 +228,10 @@ export default class Player extends Actor {
                 if (this.isMoving) {
                     const jumpAmplitude = 2.0;
                     this.playerModel.position.y =
-                        0.6 +
+                        1.35 +
                         Math.sin(this.movementProgress * Math.PI) * jumpAmplitude;
                 } else {
-                    this.playerModel.position.y = 0.6;
+                    this.playerModel.position.y = 1.35;
                     this.playerModel.rotation.x = 0;
                 }
             }

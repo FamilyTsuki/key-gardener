@@ -120,8 +120,8 @@ export class SurvivePhase extends GamePhase {
         if (this.keyboard && this.player) {
             this.keyboard.keyboardLayout.forEach((tile) => {
                 const isPlayerOnTile =
-                    Math.abs(this.player.position.x * 3.2 - tile.x) < 0.4 &&
-                    Math.abs(this.player.position.y * 3.2 - tile.y) < 0.4;
+                    this.player.targetPosition.x === tile.rawPosition.x &&
+                    this.player.targetPosition.y === tile.rawPosition.y;
 
                 tile.isPressed = isPlayerOnTile;
             });
@@ -129,17 +129,6 @@ export class SurvivePhase extends GamePhase {
             this.keyboard.update();
         }
 
-        if (this.player && this.player.mesh) {
-            const spacing = 3.2;
-            const targetX = this.player.position.x;
-            const targetY = this.player.position.y;
-
-            this.player.mesh.position.set(
-                targetX * spacing,
-                1.5,
-                targetY * spacing
-            );
-        }
     }
 
     /**
