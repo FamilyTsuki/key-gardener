@@ -100,6 +100,7 @@ export class SurviveDecorBuilder {
         const topLight = this._buildMineLighting(decorGroup);
         const lines = this._buildMineParticles(decorGroup, disposables);
         const scrollingWalls = this._buildMineWalls(decorGroup, disposables);
+        this._buildMineClutter(decorGroup, disposables);
 
         return () => {
             topLight.intensity = 3.5 + Math.random() * 1.5;
@@ -120,6 +121,106 @@ export class SurviveDecorBuilder {
                 }
             });
         };
+    }
+
+    /**
+     * Builds additional clutter (crates, control panel, barrels) to fill the empty space in the elevator.
+     * @param {THREE.Group} decorGroup - The parent group.
+     * @param {Array<{dispose: Function}>} disposables - Array for memory cleanup.
+     */
+    static _buildMineClutter(decorGroup, disposables) {
+        const woodMat = new THREE.MeshStandardMaterial({ 
+            color: 0x3d2314,
+            roughness: 0.9,
+            metalness: 0.1
+        });
+        const crateGeo1 = new THREE.BoxGeometry(4, 4, 4);
+        const crateGeo2 = new THREE.BoxGeometry(6, 3, 4);
+        const plankGeo = new THREE.BoxGeometry(8, 0.2, 1.5);
+        disposables.push(woodMat, crateGeo1, crateGeo2, plankGeo);
+
+        const crate1 = new THREE.Mesh(crateGeo1, woodMat);
+        crate1.position.set(-1, 2, -15);
+        crate1.rotation.y = 0.2;
+        decorGroup.add(crate1);
+
+        const crate2 = new THREE.Mesh(crateGeo1, woodMat);
+        crate2.position.set(2, 2, -17);
+        crate2.rotation.y = -0.1;
+        decorGroup.add(crate2);
+
+        const crate3 = new THREE.Mesh(crateGeo2, woodMat);
+        crate3.position.set(32, 1.5, -14);
+        crate3.rotation.y = 0.4;
+        decorGroup.add(crate3);
+
+        const crate4 = new THREE.Mesh(crateGeo1, woodMat);
+        crate4.position.set(31, 4.5, -15);
+        crate4.rotation.y = 0.1;
+        decorGroup.add(crate4);
+
+        const crate5 = new THREE.Mesh(crateGeo1, woodMat);
+        crate5.position.set(34, 2, -17);
+        crate5.rotation.y = -0.3;
+        decorGroup.add(crate5);
+
+        for(let i=0; i<3; i++) {
+            const plank = new THREE.Mesh(plankGeo, woodMat);
+            plank.position.set(
+                Math.random() * 26 + 2, 
+                0.1, 
+                -12 - Math.random() * 5
+            );
+            plank.rotation.y = Math.random() * Math.PI;
+            decorGroup.add(plank);
+        }
+
+        const metalMat = new THREE.MeshStandardMaterial({
+            color: 0x444455,
+            metalness: 0.6,
+            roughness: 0.7
+        });
+        const barrelGeo = new THREE.CylinderGeometry(1.5, 1.5, 4, 16);
+        disposables.push(metalMat, barrelGeo);
+
+        const barrel1 = new THREE.Mesh(barrelGeo, metalMat);
+        barrel1.position.set(-2, 2, -8);
+        decorGroup.add(barrel1);
+
+        const barrel2 = new THREE.Mesh(barrelGeo, metalMat);
+        barrel2.position.set(0, 2, -10);
+        decorGroup.add(barrel2);
+
+        const barrel3 = new THREE.Mesh(barrelGeo, metalMat);
+        barrel3.position.set(34, 2, -8);
+        decorGroup.add(barrel3);
+
+        const brassMat = new THREE.MeshStandardMaterial({ 
+            color: 0xc5a059,
+            metalness: 0.8,
+            roughness: 0.2
+        });
+        const panelMat = new THREE.MeshStandardMaterial({
+            color: 0x111111,
+            metalness: 0.5,
+            roughness: 0.5
+        });
+        const pedestalGeo = new THREE.CylinderGeometry(0.5, 1, 4, 16);
+        const consoleGeo = new THREE.BoxGeometry(3, 0.5, 2);
+        disposables.push(brassMat, panelMat, pedestalGeo, consoleGeo);
+
+        const controlGroup = new THREE.Group();
+        const pedestal = new THREE.Mesh(pedestalGeo, brassMat);
+        pedestal.position.set(0, 2, 0);
+        controlGroup.add(pedestal);
+
+        const consoleMesh = new THREE.Mesh(consoleGeo, panelMat);
+        consoleMesh.position.set(0, 4, 0);
+        consoleMesh.rotation.x = 0.3;
+        controlGroup.add(consoleMesh);
+
+        controlGroup.position.set(16, 0, -17);
+        decorGroup.add(controlGroup);
     }
 
     /**

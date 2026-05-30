@@ -57,7 +57,7 @@ export default class Keyboard {
             const keyGroup = new THREE.Group();
             
             const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-            const capMesh = new THREE.Mesh(capGeo, capMat);
+            const capMesh = new THREE.Mesh(capGeo, capMat.clone());
             
             keyGroup.add(ringMesh);
             keyGroup.add(capMesh);
@@ -94,10 +94,13 @@ export default class Keyboard {
     update() {
         this.#keyboardLayout.forEach((keyObj) => {
             if (keyObj.mesh) {
+                const capMaterial = keyObj.mesh.children[1].material;
                 if (keyObj.isPressed) {
-                    keyObj.mesh.position.y = -0.2;
+                    keyObj.mesh.position.y = 0.05;
+                    capMaterial.color.setHex(0xc5a059);
                 } else {
-                    keyObj.mesh.position.y = 0;
+                    keyObj.mesh.position.y = 0.15;
+                    capMaterial.color.setHex(0x111111);
                 }
             }
         });

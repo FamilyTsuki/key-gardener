@@ -25,6 +25,7 @@ export default class Key extends GameObject {
     this.#tileSize = tileSize;
 
     this.mesh = null;
+    this.lightUpTimer = 0;
   }
 
   get key() {

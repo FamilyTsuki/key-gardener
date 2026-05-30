@@ -93,6 +93,9 @@ export class SurvivePhase extends GamePhase {
      * @param {number} deltaTime - The time elapsed since the last update.
      */
     update(deltaTime) {
+        this.gameEngine.camera.position.set(15, 18, 7);
+        this.gameEngine.camera.lookAt(15, 0, 3);
+
         if (this.enemies && this.player) {
             this.enemies.clearDead();
             this.enemies.update(
