@@ -230,9 +230,18 @@ export default class Player extends Actor {
                     this.playerModel.position.y =
                         1.35 +
                         Math.sin(this.movementProgress * Math.PI) * jumpAmplitude;
+
+                    const speedFactor = 15 / this.movementDuration;
+                    const maxStretchZ = Math.max(1, speedFactor * 0.6);
+                    
+                    const stretchFactor = 1 + (maxStretchZ - 1) * Math.sin(this.movementProgress * Math.PI);
+                    const shrinkFactor = 1.3 / Math.sqrt(stretchFactor);
+                    
+                    this.playerModel.scale.set(shrinkFactor, shrinkFactor, 1.3 * stretchFactor);
                 } else {
                     this.playerModel.position.y = 1.35;
                     this.playerModel.rotation.x = 0;
+                    this.playerModel.scale.set(1.3, 1.3, 1.3);
                 }
             }
         }
