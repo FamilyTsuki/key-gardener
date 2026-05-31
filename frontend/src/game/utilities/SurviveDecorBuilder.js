@@ -102,9 +102,9 @@ export class SurviveDecorBuilder {
         waterNorm.rotation = Math.PI / 2; 
 
         const waterMat = new THREE.MeshPhongMaterial({ 
-            color: 0x006666,
+            color: 0x050B0D,
             transparent: true, 
-            opacity: 0.85,
+            opacity: 0.75,
             shininess: 120,
             specular: 0x55aaaa,
             normalMap: waterNorm,
@@ -114,6 +114,24 @@ export class SurviveDecorBuilder {
         water.rotation.x = -Math.PI / 2;
         water.position.y = -1.0;
         decorGroup.add(water);
+
+        const floorMat = new THREE.MeshStandardMaterial({ 
+            color: 0x0a1c1c, // Darker color
+            metalness: 0.1,
+            roughness: 0.9,
+            flatShading: true
+        });
+        const floorEdgesMat = new THREE.LineBasicMaterial({ color: 0x153030, transparent: true, opacity: 0.15 });
+        
+        const scrollingFloors = [];
+        for (let i = 0; i < 2; i++) {
+            const floorBlock = this._createChaoticWall(200, 200, floorMat, floorEdgesMat, disposables);
+            floorBlock.rotation.x = -Math.PI / 2;
+            floorBlock.scale.z = 0.15; // Flatten the chaotic spikes so they stay safely underwater
+            floorBlock.position.set(i * 200, -10.0, 0); 
+            decorGroup.add(floorBlock);
+            scrollingFloors.push(floorBlock);
+        }
 
         const ambientLight = new THREE.AmbientLight(0x88ffff, 2.0);
         decorGroup.add(ambientLight);
@@ -128,21 +146,28 @@ export class SurviveDecorBuilder {
         decorGroup.add(moonLight);
         decorGroup.add(moonLight.target);
 
-        disposables.push(logGeo, logMat, ropeGeo, ropeMat, waterGeo, waterMat);
+        disposables.push(logGeo, logMat, ropeGeo, ropeMat, waterGeo, waterMat, floorMat, floorEdgesMat);
 
         let time = 0;
         return (deltaTime) => {
             time += deltaTime;
             
+            scrollingFloors.forEach(floor => {
+                floor.position.x -= 4 * deltaTime; // Slower scrolling speed
+                if (floor.position.x < -200) {
+                    floor.position.x += 400;
+                }
+            });
+            
             waterNorm.offset.x = 0;
-            waterNorm.offset.y += 0.05 * deltaTime;
+            waterNorm.offset.y += 0.01 * deltaTime;
             
             const posAttr = waterGeo.attributes.position;
             for (let i = 0; i < posAttr.count; i++) {
                 const x = posAttr.getX(i);
                 const y = posAttr.getY(i);
                 
-                const wave1 = Math.sin(x * 0.1 - time * 2) * 0.4;
+                const wave1 = Math.sin(x * 0.1 - time * 2.0) * 0.4;
                 const wave2 = Math.sin(y * 0.2 + time * 1.5) * 0.15;
                 
                 posAttr.setZ(i, originalZ[i] + wave1 + wave2);
@@ -153,10 +178,10 @@ export class SurviveDecorBuilder {
             const raftX = 16;
             const raftY = 3.2;
             const raftWaveHeight = 
-                Math.sin(raftX * 0.1 - time * 2) * 0.4 + 
+                Math.sin(raftX * 0.1 - time * 2.0) * 0.4 + 
                 Math.sin(raftY * 0.2 + time * 1.5) * 0.15;
                 
-            const slopeX = Math.cos(raftX * 0.1 - time * 2) * 0.04;
+            const slopeX = Math.cos(raftX * 0.1 - time * 2.0) * 0.04;
             const slopeY = Math.cos(raftY * 0.2 + time * 1.5) * 0.03;
             
             water.position.y = -1.1; 

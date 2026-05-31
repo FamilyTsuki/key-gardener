@@ -153,6 +153,9 @@ export default class Enemy extends Actor {
      */
     set path(path) {
         this.#path = path;
+        if (!this.isJumping && !this.isSpawning && this.#path.length > 0) {
+            this.move();
+        }
     }
 
     /**
