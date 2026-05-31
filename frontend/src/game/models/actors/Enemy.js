@@ -153,9 +153,6 @@ export default class Enemy extends Actor {
      */
     set path(path) {
         this.#path = path;
-        if (!this.isJumping && !this.isSpawning && this.#path.length > 0) {
-            this.move();
-        }
     }
 
     /**
@@ -188,9 +185,9 @@ export default class Enemy extends Actor {
      * Moves the enemy along its path.
      */
     move() {
-        if (this.isSpawning || this.isJumping) return;
+        if (this.isSpawning || this.isJumping || this.jumpDelayTimer > 0) return;
 
-        if (this.#path.length > 0) {
+        if (this.#path && this.#path.length > 0) {
             this.isJumping = true;
             this.startJumpPos = { x: this.position.x, y: this.position.y };
 
@@ -241,8 +238,9 @@ export default class Enemy extends Actor {
     /**
      * Updates the enemy's state and position each frame.
      * @param {Player} player - The player instance to check for collisions.
+     * @param {number} deltaTime - Time elapsed since last frame.
      */
-    update(player) {
+    update(player, deltaTime = 0.016) {
         if (this.isSpawning) {
             this.spawnProgress += 0.025;
             if (this.spawnProgress >= 1) {
@@ -286,14 +284,34 @@ export default class Enemy extends Actor {
             }
         }
 
+        if (this.jumpDelayTimer > 0) {
+            this.jumpDelayTimer -= deltaTime;
+            if (this.jumpDelayTimer <= 0) {
+                this.jumpDelayTimer = 0;
+                this.move();
+            }
+        }
+
         if (!this.#targetedPosition) return;
 
         const dx = this.#targetedPosition.x - this.position.x;
         const dy = this.#targetedPosition.y - this.position.y;
-        const currentDist = Math.sqrt(dx * dx + dy * dy);
+        let currentDist = Math.sqrt(dx * dx + dy * dy);
 
-        this.position.x += dx * this.speed;
-        this.position.y += dy * this.speed;
+        const moveSpeed = 6.0;
+        const moveDist = moveSpeed * deltaTime;
+
+        if (currentDist <= moveDist) {
+            this.position.x = this.#targetedPosition.x;
+            this.position.y = this.#targetedPosition.y;
+            currentDist = 0;
+        } else if (currentDist > 0 && this.isJumping) {
+            this.position.x += (dx / currentDist) * moveDist;
+            this.position.y += (dy / currentDist) * moveDist;
+            const newDx = this.#targetedPosition.x - this.position.x;
+            const newDy = this.#targetedPosition.y - this.position.y;
+            currentDist = Math.sqrt(newDx * newDx + newDy * newDy);
+        }
 
         if (this.mesh) {
             const spacing = 3.2;
@@ -303,7 +321,7 @@ export default class Enemy extends Actor {
                 this.position.y * spacing
             );
 
-            if (currentDist > 0.05) {
+            if (currentDist > 0.05 && this.isJumping) {
                 const targetWorldX = this.#targetedPosition.x * spacing;
                 const targetWorldZ = this.#targetedPosition.y * spacing;
                 const targetPos = new THREE.Vector3(targetWorldX, 0, targetWorldZ);
@@ -342,7 +360,7 @@ export default class Enemy extends Actor {
                     this.position.x = this.#targetedPosition.x;
                     this.position.y = this.#targetedPosition.y;
                     this.totalJumpDist = 0;
-                    this.move();
+                    this.jumpDelayTimer = 0.07 / this.speed;
                 }
             }
         }

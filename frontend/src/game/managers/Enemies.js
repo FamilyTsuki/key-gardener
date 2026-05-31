@@ -104,15 +104,25 @@ export default class Enemies {
      * @param {Array<Projectile>} projectiles - The active projectiles in the scene.
      * @param {Array<Object>} bonks - Active bonks or hit effects.
      * @param {Player} player - The player instance.
+     * @param {number} deltaTime - The time elapsed since the last update.
      */
-    update(playerPos, projectiles, bonks, player) {
-        for (const enemy of this.#container) {
+    update(playerPos, projectiles, bonks, player, deltaTime) {
+        for (let i = this.#container.length - 1; i >= 0; i--) {
+            const enemy = this.#container[i];
+            if (enemy.isDead) {
+                if (enemy.model) {
+                    this.scene.remove(enemy.model);
+                }
+                this.#container.splice(i, 1);
+                continue;
+            }
             if (enemy !== this.#boss) {
-                enemy.update(player);
+                enemy.update(player, deltaTime);
             }
         }
+        
         if (this.#boss) {
-            this.#boss.update(10, playerPos, projectiles, bonks);
+            this.#boss.update(playerPos, projectiles, bonks, player);
         }
     }
 

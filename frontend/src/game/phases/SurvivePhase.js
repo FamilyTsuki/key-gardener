@@ -128,7 +128,8 @@ export class SurvivePhase extends GamePhase {
                     this.player.position,
                     this.projectiles,
                     this.bonks,
-                    this.player
+                    this.player,
+                    deltaTime
                 );
             }
         }

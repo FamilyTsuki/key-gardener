@@ -116,7 +116,7 @@ export class SurviveDecorBuilder {
         decorGroup.add(water);
 
         const floorMat = new THREE.MeshStandardMaterial({ 
-            color: 0x0a1c1c, // Darker color
+            color: 0x0a1c1c,
             metalness: 0.1,
             roughness: 0.9,
             flatShading: true
@@ -127,7 +127,7 @@ export class SurviveDecorBuilder {
         for (let i = 0; i < 2; i++) {
             const floorBlock = this._createChaoticWall(200, 200, floorMat, floorEdgesMat, disposables);
             floorBlock.rotation.x = -Math.PI / 2;
-            floorBlock.scale.z = 0.15; // Flatten the chaotic spikes so they stay safely underwater
+            floorBlock.scale.z = 0.15;
             floorBlock.position.set(i * 200, -10.0, 0); 
             decorGroup.add(floorBlock);
             scrollingFloors.push(floorBlock);
@@ -153,7 +153,7 @@ export class SurviveDecorBuilder {
             time += deltaTime;
             
             scrollingFloors.forEach(floor => {
-                floor.position.x -= 4 * deltaTime; // Slower scrolling speed
+                floor.position.x -= 4 * deltaTime;
                 if (floor.position.x < -200) {
                     floor.position.x += 400;
                 }
