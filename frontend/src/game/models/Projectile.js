@@ -88,7 +88,8 @@ export default class Projectile extends DamageObject {
 
         this.fireSound = new Audio("/asset/game_assets/sounds/fire.wav");
         this.fireSound.volume = 0.5;
-        this.fireSound.play();
+        this.fireSound.play();
+
         if (this.mesh) {
             const hitBoxGeo = new THREE.BoxGeometry(
                 this.size.width * this.spacing,

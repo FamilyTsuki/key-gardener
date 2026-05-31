@@ -29,6 +29,8 @@ export class SurvivePhase extends GamePhase {
         this.projectiles = [];
         this.bonks = [];
         this.elCurrentWord = null;
+        this.spawnTimer = 0;
+        this.spawnInterval = 3;
     }
 
     /**
@@ -61,6 +63,7 @@ export class SurvivePhase extends GamePhase {
             fireballGltf.scene,
             this.enemies
         );
+        this.lastPlayerKey = "A";
         this.elCurrentWord = document.getElementById("currentWord");
         document
             .getElementById("currentWord")
@@ -97,17 +100,53 @@ export class SurvivePhase extends GamePhase {
         this.gameEngine.camera.lookAt(15, 0, 3);
 
         if (this.enemies && this.player) {
-            this.enemies.clearDead();
-            this.enemies.update(
-                this.player.position,
-                this.projectiles,
-                this.bonks,
-                this.player
-            );
+            if (this.player.isAlive()) {
+                this.spawnTimer += deltaTime;
+                if (this.spawnTimer >= this.spawnInterval) {
+                    this.spawnTimer = 0;
+                    this.spawnEnemy();
+                }
+
+                this.pathUpdateTimer = (this.pathUpdateTimer || 0) + deltaTime;
+                if (this.pathUpdateTimer >= 1.0) {
+                    this.pathUpdateTimer = 0;
+                    if (this.lastPlayerKey) {
+                        this.enemies.updatePath(this.lastPlayerKey, this.keyboard);
+                    }
+                }
+
+                this.enemies.clearDead();
+                this.enemies.update(
+                    this.player.position,
+                    this.projectiles,
+                    this.bonks,
+                    this.player
+                );
+            }
         }
         if (this.player) {
             this.player.update();
         }
+        
+        for (let i = this.projectiles.length - 1; i >= 0; i--) {
+            const p = this.projectiles[i];
+            p.update(null, deltaTime * 1000);
+            
+            if (this.enemies && this.enemies.container) {
+                for (const enemy of this.enemies.container) {
+                    if (!enemy.isDead && p.checkCollision(enemy)) {
+                        enemy.takeDamage(p.damage || 50);
+                        p.die();
+                        break;
+                    }
+                }
+            }
+            
+            if (p.isDead) {
+                this.projectiles.splice(i, 1);
+            }
+        }
+
         if (this.decor) {
             this.decor.update(deltaTime);
         }
@@ -121,7 +160,8 @@ export class SurvivePhase extends GamePhase {
             this.keyboard.keyboardLayout.forEach((tile) => {
                 const isPlayerOnTile =
                     this.player.targetPosition.x === tile.rawPosition.x &&
-                    this.player.targetPosition.y === tile.rawPosition.y;
+                    this.player.targetPosition.y === tile.rawPosition.y &&
+                    this.player.isAlive();
 
                 tile.isPressed = isPlayerOnTile;
             });
@@ -132,10 +172,47 @@ export class SurvivePhase extends GamePhase {
     }
 
     /**
+     * Spawns a new random enemy on a random key (avoiding the player's current key).
+     */
+    spawnEnemy() {
+        if (!this.keyboard || !this.enemies) return;
+
+        const keys = this.keyboard.keyboardLayout;
+        let randomKey;
+        let attempts = 0;
+        let dist = 1000;
+        
+        do {
+            randomKey = keys[Math.floor(Math.random() * keys.length)];
+            attempts++;
+            
+            if (this.player) {
+                const dx = randomKey.rawPosition.x - this.player.x;
+                const dy = randomKey.rawPosition.y - this.player.y;
+                dist = Math.sqrt(dx * dx + dy * dy);
+            }
+        } while (
+            dist < 2 &&
+            attempts < 20
+        );
+
+        const types = ["basic", "speedy", "tank"];
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        
+        this.enemies.spawnAt(randomKey, this.gameEngine.scene, randomType);
+        
+        if (this.lastPlayerKey) {
+            this.enemies.updatePath(this.lastPlayerKey, this.keyboard);
+        }
+    }
+
+    /**
      * Handles keyboard events for movement and attacking.
      * @param {KeyboardEvent} event - The keyboard event.
      */
     handleKeyDown(event) {
+        if (!this.player || !this.player.isAlive()) return;
+
         const keyName = event.key.toUpperCase();
         const target = this.keyboard?.find(keyName);
         if (!target) {
@@ -143,6 +220,7 @@ export class SurvivePhase extends GamePhase {
         }
 
         target.isPressed = true;
+        this.lastPlayerKey = target.key;
 
         if (this.player && this.enemies) {
             this.enemies.updatePath(target.key, this.keyboard);

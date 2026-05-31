@@ -138,6 +138,11 @@ export default class Enemies {
                     playerKey,
                     this.#aStarGrid
                 ).map((keyStr) => keyboard.find(keyStr));
+                
+                if (path.length > 1 && path[0].key === enemy.actualKey) {
+                    path.shift();
+                }
+
                 enemy.path = path;
                 enemy.move();
             }

@@ -93,7 +93,7 @@ export class DialogueBox {
      * @param {string} path - Path to the speaker resource.
      */
     setupSpeaker(path) {
-        this.cleanupSpeaker(); // Clear existing content
+        this.cleanupSpeaker();
 
         if (!path) return;
 

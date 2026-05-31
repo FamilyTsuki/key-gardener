@@ -38,9 +38,9 @@ export default class ProjectileLuncher extends Spell {
     const projectileSpeed = 0.2;
     const projectileSize = { width: 0.4, height: 0.4 };
 
-    const dx = target.x - player.x;
-    const dy = target.y - player.y;
-    const distance = Math.sqrt(dx ** 2 + dy ** 2);
+    const dx = target.x - player.position.x;
+    const dy = target.y - player.position.y;
+    const distance = Math.sqrt(dx ** 2 + dy ** 2) || 0.0001;
 
     const velocity = {
       x: (dx / distance) * projectileSpeed,

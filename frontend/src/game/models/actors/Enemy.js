@@ -52,13 +52,28 @@ export default class Enemy extends Actor {
         if (type == "basic") {
             this.color = 0x00ff00;
             this.speed = 0.05;
+            this.hp = 100;
+            this.hpMax = 100;
         } else if (type == "speedy") {
             this.speed = 0.15;
             this.color = 0x0000ff;
+            this.hp = 50;
+            this.hpMax = 50;
         } else if (type == "tank") {
             this.color = 0xff0000;
             this.speed = 0.02;
+            this.hp = 250;
+            this.hpMax = 250;
         }
+
+        this.isSpawning = true;
+        this.spawnProgress = 0;
+        const spawnAngle = Math.random() * Math.PI * 2;
+        const spawnDist = 12;
+        this.spawnSource = {
+            x: position.x + Math.cos(spawnAngle) * spawnDist,
+            y: position.y + Math.sin(spawnAngle) * spawnDist
+        };
 
         scene.add(this.mesh);
 
@@ -170,7 +185,7 @@ export default class Enemy extends Actor {
      * Moves the enemy along its path.
      */
     move() {
-        if (this.isJumping) return;
+        if (this.isSpawning || this.isJumping) return;
 
         if (this.#path.length > 0) {
             this.isJumping = true;
@@ -225,6 +240,45 @@ export default class Enemy extends Actor {
      * @param {Player} player - The player instance to check for collisions.
      */
     update(player) {
+        if (this.isSpawning) {
+            this.spawnProgress += 0.025;
+            if (this.spawnProgress >= 1) {
+                this.isSpawning = false;
+                this.spawnProgress = 1;
+                this.mesh.position.set(this.position.x * 3.2, 0, this.position.y * 3.2);
+                if (this.model) {
+                    this.model.position.y = 1.3;
+                    this.model.rotation.x = 0;
+                }
+                if (this.hpSprite) this.hpSprite.visible = true;
+                
+                if (this.jumpSound) {
+                    this.jumpSound.currentTime = 0;
+                    this.jumpSound.volume = 0.4;
+                    this.jumpSound.play().catch(e => {});
+                }
+                
+                this.move();
+            } else {
+                const currentX = this.spawnSource.x + (this.position.x - this.spawnSource.x) * this.spawnProgress;
+                const currentY = this.spawnSource.y + (this.position.y - this.spawnSource.y) * this.spawnProgress;
+                
+                const height = 1.3 + Math.sin(this.spawnProgress * Math.PI) * 12;
+                
+                this.mesh.position.set(currentX * 3.2, 0, currentY * 3.2);
+                this.mesh.lookAt(this.position.x * 3.2, 0, this.position.y * 3.2);
+
+                if (this.model) {
+                    this.model.position.y = height;
+                    this.model.rotation.x = this.spawnProgress * Math.PI * 2;
+                    this.model.rotation.x = this.spawnProgress * Math.PI * 2;
+                }
+                if (this.hpSprite) this.hpSprite.visible = false;
+                
+                return;
+            }
+        }
+
         if (!this.#targetedPosition) return;
 
         const dx = this.#targetedPosition.x - this.position.x;
@@ -277,11 +331,33 @@ export default class Enemy extends Actor {
                     this.position.x = this.#targetedPosition.x;
                     this.position.y = this.#targetedPosition.y;
                     this.totalJumpDist = 0;
+                    this.move();
                 }
             }
         }
 
-        if (this.checkCollision(player)) {
+        let collision = this.checkCollision(player);
+        
+        if (!collision && player.isMoving && player.lastX !== undefined) {
+            const minX = Math.min(player.lastX, player.x);
+            const maxX = Math.max(player.lastX, player.x) + player.size.width;
+            const minY = Math.min(player.lastY, player.y);
+            const maxY = Math.max(player.lastY, player.y) + player.size.height;
+
+            const enemyCenterX = this.position.x + this.size.width / 2;
+            const enemyCenterY = this.position.y + this.size.height / 2;
+
+            if (
+                enemyCenterX >= minX &&
+                enemyCenterX <= maxX &&
+                enemyCenterY >= minY &&
+                enemyCenterY <= maxY
+            ) {
+                collision = true;
+            }
+        }
+
+        if (collision) {
             this.hp = -1;
             player.damage(50);
             this.die();

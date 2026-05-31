@@ -48,9 +48,9 @@ export default class Player extends Actor {
         this.#wordSpells = [
             new Undefined(),
             new FireCircle("fire", 1, 2.3, 9000, scene, this, enemiesManager),
-            new ProjectileLuncher("wasa", 25, 10000, fireballModel),
-            new ProjectileLuncher("pok", 2, 10000, fireballModel),
-            new HealSpell("heal", 15),
+            new ProjectileLuncher("wasa", 100, 10000, fireballModel),
+            new ProjectileLuncher("pok", 35, 10000, fireballModel),
+            new HealSpell("heal", 30),
         ];
 
         this.targetPosition = { x: position.x, y: position.y, z: position.z };
@@ -91,6 +91,51 @@ export default class Player extends Actor {
         });
 
         this.elVignette = document.getElementById("damage-vignette");
+
+        const canvas = document.createElement("canvas");
+        canvas.width = 256;
+        canvas.height = 64;
+        this.hpContext = canvas.getContext("2d");
+        this.hpCanvas = canvas;
+
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+        this.hpSprite = new THREE.Sprite(spriteMaterial);
+
+        this.hpSprite.scale.set(2, 0.5, 1);
+        this.hpSprite.position.y = 3.0;
+        this.mesh.add(this.hpSprite);
+        
+        this.lastHp = this.hp;
+        this.updateHpBar();
+    }
+
+    /**
+     * Updates the health bar visual representation.
+     */
+    updateHpBar() {
+        if (!this.hpContext) return;
+        const ctx = this.hpContext;
+        const width = this.hpCanvas.width;
+        const height = this.hpCanvas.height;
+        const ratio = Math.max(0, this.hp / this.hpMax);
+
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.fillStyle = ratio > 0.3 ? "#2ecc71" : "#e74c3c";
+        ctx.fillRect(5, 5, (width - 10) * ratio, height - 10);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 40px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(
+            `${Math.ceil(Math.max(0, this.hp))}/${this.hpMax}`,
+            width / 2,
+            height / 2 + 15
+        );
+
+        this.hpSprite.material.map.needsUpdate = true;
     }
 
     /**
@@ -178,11 +223,46 @@ export default class Player extends Actor {
      * Updates the player's state, spells, and position each frame.
      */
     update() {
+        if (!this.isAlive()) {
+            if (this.playerModel && !this.deathAnimationPlayed) {
+                this.playerModel.rotation.x = -Math.PI / 2;
+                this.playerModel.position.y = 0.5;
+                this.playerModel.scale.set(1.3, 1.3, 1.3);
+                if (this.hpSprite) this.hpSprite.visible = false;
+                this.deathAnimationPlayed = true;
+
+                const gameOverDiv = document.createElement("div");
+                gameOverDiv.id = "game-over-screen";
+                gameOverDiv.style.position = "absolute";
+                gameOverDiv.style.top = "50%";
+                gameOverDiv.style.left = "50%";
+                gameOverDiv.style.transform = "translate(-50%, -50%)";
+                gameOverDiv.style.color = "red";
+                gameOverDiv.style.fontSize = "100px";
+                gameOverDiv.style.fontFamily = "Arial, sans-serif";
+                gameOverDiv.style.fontWeight = "bold";
+                gameOverDiv.style.zIndex = "1000";
+                gameOverDiv.style.textShadow = "2px 2px 10px black";
+                gameOverDiv.style.pointerEvents = "none";
+                gameOverDiv.textContent = "GAME OVER";
+                document.body.appendChild(gameOverDiv);
+            }
+            return;
+        }
+
         this.#wordSpells.forEach((spell) => {
             if (spell.update) {
                 spell.update(16.6);
             }
         });
+
+        if (this.lastHp !== this.hp) {
+            this.updateHpBar();
+            this.lastHp = this.hp;
+        }
+
+        this.lastX = this.x;
+        this.lastY = this.y;
 
         if (this.isMoving) {
             this.currentMovementTime += 1;
@@ -192,16 +272,18 @@ export default class Player extends Actor {
             if (this.movementProgress >= 1) {
                 this.movementProgress = 1;
                 this.isMoving = false;
+                this.x = this.targetPosition.x;
+                this.y = this.targetPosition.y;
+            } else {
+                this.x =
+                    this.startPosition.x +
+                    (this.targetPosition.x - this.startPosition.x) *
+                        this.movementProgress;
+                this.y =
+                    this.startPosition.y +
+                    (this.targetPosition.y - this.startPosition.y) *
+                        this.movementProgress;
             }
-
-            this.x =
-                this.startPosition.x +
-                (this.targetPosition.x - this.startPosition.x) *
-                    this.movementProgress;
-            this.y =
-                this.startPosition.y +
-                (this.targetPosition.y - this.startPosition.y) *
-                    this.movementProgress;
             
             this.offsetY = 
                 this.startOffsetY + 
