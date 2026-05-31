@@ -208,7 +208,11 @@ export default class Player extends Actor {
             if (this.mesh) {
                 const worldTargetX = this.targetPosition.x * this.spacingX + this.offsetX;
                 const worldTargetZ = this.targetPosition.y * this.spacingZ + this.offsetZ;
-                this.mesh.lookAt(worldTargetX, this.offsetY, worldTargetZ);
+                const targetPos = new THREE.Vector3(worldTargetX, this.offsetY, worldTargetZ);
+                if (this.mesh.parent) {
+                    this.mesh.parent.localToWorld(targetPos);
+                }
+                this.mesh.lookAt(targetPos);
             }
 
             this.jumpSound.currentTime = 0;
@@ -303,7 +307,11 @@ export default class Player extends Actor {
                 const worldTargetZ =
                     this.targetPosition.y * this.spacingZ + this.offsetZ;
 
-                this.mesh.lookAt(worldTargetX, this.offsetY, worldTargetZ);
+                const targetPos = new THREE.Vector3(worldTargetX, this.offsetY, worldTargetZ);
+                if (this.mesh.parent) {
+                    this.mesh.parent.localToWorld(targetPos);
+                }
+                this.mesh.lookAt(targetPos);
             }
 
             if (this.playerModel) {

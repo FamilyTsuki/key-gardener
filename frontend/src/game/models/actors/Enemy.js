@@ -266,7 +266,11 @@ export default class Enemy extends Actor {
                 const height = 1.3 + Math.sin(this.spawnProgress * Math.PI) * 12;
                 
                 this.mesh.position.set(currentX * 3.2, 0, currentY * 3.2);
-                this.mesh.lookAt(this.position.x * 3.2, 0, this.position.y * 3.2);
+                const lookTarget = new THREE.Vector3(this.position.x * 3.2, 0, this.position.y * 3.2);
+                if (this.mesh.parent) {
+                    this.mesh.parent.localToWorld(lookTarget);
+                }
+                this.mesh.lookAt(lookTarget);
 
                 if (this.model) {
                     this.model.position.y = height;
@@ -299,7 +303,11 @@ export default class Enemy extends Actor {
             if (currentDist > 0.05) {
                 const targetWorldX = this.#targetedPosition.x * spacing;
                 const targetWorldZ = this.#targetedPosition.y * spacing;
-                this.mesh.lookAt(targetWorldX, 0, targetWorldZ);
+                const targetPos = new THREE.Vector3(targetWorldX, 0, targetWorldZ);
+                if (this.mesh.parent) {
+                    this.mesh.parent.localToWorld(targetPos);
+                }
+                this.mesh.lookAt(targetPos);
             }
 
             if (this.isJumping) {

@@ -43,18 +43,51 @@ export class SurviveDecorBuilder {
      * @returns {Function} The update loop function for this specific decor.
      */
     static _buildStyxDecor(scene, decorGroup, disposables) {
-        scene.background = new THREE.Color(0x1a0505);
-        scene.fog = new THREE.FogExp2(0x2a0000, 0.04);
-        
-        const raftGeo = new THREE.BoxGeometry(42, 1, 16);
-        const raftMat = new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.9 });
-        const raft = new THREE.Mesh(raftGeo, raftMat);
-        raft.position.set(16, -0.5, 4.5); 
+        const raft = new THREE.Group();
+        raft.position.set(16, -1.5, 4.5); 
         decorGroup.add(raft);
+
+        const textureLoader = new THREE.TextureLoader();
+        const woodTexture = textureLoader.load('/asset/game_assets/wood.jpg');
+        woodTexture.wrapS = THREE.RepeatWrapping;
+        woodTexture.wrapT = THREE.RepeatWrapping;
+        woodTexture.repeat.set(1, 4);
+
+        const logGeo = new THREE.CylinderGeometry(1.5, 1.5, 48, 16);
+        const logMat = new THREE.MeshStandardMaterial({ 
+            map: woodTexture,
+            color: 0x8b5a2b, 
+            roughness: 0.9,
+            bumpMap: woodTexture,
+            bumpScale: 0.05
+        });
+        
+        const ropeGeo = new THREE.TorusGeometry(1.6, 0.15, 8, 16);
+        const ropeMat = new THREE.MeshStandardMaterial({ color: 0x6e5c47, roughness: 1.0 });
+
+        for (let i = -3; i <= 4; i++) { 
+            const log = new THREE.Mesh(logGeo, logMat);
+            log.rotation.z = Math.PI / 2; 
+            log.position.set(0, 0, i * 2.8); 
+            
+            log.position.y += (Math.random() - 0.5) * 0.2;
+            log.rotation.y += (Math.random() - 0.5) * 0.05;
+            raft.add(log);
+
+            const ropeL = new THREE.Mesh(ropeGeo, ropeMat);
+            ropeL.rotation.y = Math.PI / 2;
+            ropeL.position.set(-18, log.position.y, i * 2.8);
+            raft.add(ropeL);
+            
+            const ropeR = new THREE.Mesh(ropeGeo, ropeMat);
+            ropeR.rotation.y = Math.PI / 2;
+            ropeR.position.set(18, log.position.y, i * 2.8);
+            raft.add(ropeR);
+        }
 
         const waterGeo = new THREE.PlaneGeometry(200, 200, 20, 20);
         const waterMat = new THREE.MeshStandardMaterial({ 
-            color: 0x5a0000, 
+            color: 0x006666,
             transparent: true, 
             opacity: 0.8,
             roughness: 0.1,
@@ -62,25 +95,29 @@ export class SurviveDecorBuilder {
         });
         const water = new THREE.Mesh(waterGeo, waterMat);
         water.rotation.x = -Math.PI / 2;
-        water.position.y = -2;
+        water.position.y = -1.0;
         decorGroup.add(water);
 
-        const ambientLight = new THREE.AmbientLight(0xffaaaa, 1.5);
+        const ambientLight = new THREE.AmbientLight(0x88ffff, 2.5);
         decorGroup.add(ambientLight);
 
-        const topLight = new THREE.PointLight(0xffaacc, 3, 100);
-        topLight.position.set(16, 10, 5);
+        const topLight = new THREE.PointLight(0xaaffff, 4, 150);
+        topLight.position.set(16, 12, 5);
         decorGroup.add(topLight);
-
-        disposables.push(raftGeo, raftMat, waterGeo, waterMat);
+        disposables.push(logGeo, logMat, ropeGeo, ropeMat, waterGeo, waterMat);
 
         let time = 0;
         return () => {
             time += 0.02;
-            water.position.y = -2 + Math.sin(time) * 0.5;
-            raft.position.y = -0.5 + Math.sin(time + 1) * 0.2;
-            raft.rotation.z = Math.sin(time * 0.5) * 0.02;
-            raft.rotation.x = Math.cos(time * 0.5) * 0.02;
+            const wave = Math.sin(time) * 0.15;
+            
+            water.position.y = -1.1 + wave;
+            raft.position.y = -1.5 + wave;
+            
+            raft.rotation.z = Math.sin(time * 0.5) * 0.01;
+            raft.rotation.x = Math.cos(time * 0.5) * 0.01;
+
+            return wave;
         };
     }
 
@@ -120,6 +157,8 @@ export class SurviveDecorBuilder {
                     wallGroup.position.y -= 400;
                 }
             });
+
+            return 0;
         };
     }
 

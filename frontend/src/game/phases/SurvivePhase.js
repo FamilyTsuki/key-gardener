@@ -40,7 +40,10 @@ export class SurvivePhase extends GamePhase {
     async init() {
         const scene = this.gameEngine.scene;
 
-        this.keyboard = Keyboard.init(scene, KEYBOARD_LAYOUT);
+        this.worldGroup = new THREE.Group();
+        scene.add(this.worldGroup);
+
+        this.keyboard = Keyboard.init(this.worldGroup, KEYBOARD_LAYOUT, this.decorType);
 
         const enemyGltf = await loader.loadAsync("/asset/game_assets/bug.glb");
         const fireballGltf = await loader.loadAsync(
@@ -59,7 +62,7 @@ export class SurvivePhase extends GamePhase {
             100,
             { x: 0, y: 0, z: 5 },
             { width: 0.4, height: 0.4 },
-            scene,
+            this.worldGroup,
             fireballGltf.scene,
             this.enemies
         );
@@ -148,7 +151,10 @@ export class SurvivePhase extends GamePhase {
         }
 
         if (this.decor) {
-            this.decor.update(deltaTime);
+            const waveOffset = this.decor.update(deltaTime) || 0;
+            if (this.worldGroup) {
+                this.worldGroup.position.y = waveOffset;
+            }
         }
     }
 
@@ -199,7 +205,7 @@ export class SurvivePhase extends GamePhase {
         const types = ["basic", "speedy", "tank"];
         const randomType = types[Math.floor(Math.random() * types.length)];
         
-        this.enemies.spawnAt(randomKey, this.gameEngine.scene, randomType);
+        this.enemies.spawnAt(randomKey, this.worldGroup, randomType);
         
         if (this.lastPlayerKey) {
             this.enemies.updatePath(this.lastPlayerKey, this.keyboard);
@@ -256,11 +262,14 @@ export class SurvivePhase extends GamePhase {
      * Cleans up resources used by the survive phase.
      */
     cleanup() {
-        if (this.keyboard) {
-            this.gameEngine.scene.remove(this.keyboard.group);
+        if (this.keyboard && this.worldGroup) {
+            this.worldGroup.remove(this.keyboard.group);
         }
-        if (this.player && this.player.mesh) {
-            this.gameEngine.scene.remove(this.player.mesh);
+        if (this.player && this.player.mesh && this.worldGroup) {
+            this.worldGroup.remove(this.player.mesh);
+        }
+        if (this.worldGroup) {
+            this.gameEngine.scene.remove(this.worldGroup);
         }
         if (this.decor) {
             this.decor.cleanup();

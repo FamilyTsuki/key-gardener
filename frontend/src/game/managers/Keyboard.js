@@ -14,10 +14,12 @@ export default class Keyboard {
      * @param {Array<Key>} keyboardLayout - Array of instantiated Key objects.
      * @param {number} tileSize - The size of each tile/key.
      * @param {THREE.Scene} scene - The main three.js scene.
+     * @param {string} theme - The theme of the keyboard ('mine' or 'styx').
      */
-    constructor(keyboardLayout, tileSize, scene) {
+    constructor(keyboardLayout, tileSize, scene, theme = "mine") {
         this.#keyboardLayout = keyboardLayout;
         this.tileSize = tileSize;
+        this.theme = theme;
         this.group = new THREE.Group();
         scene.add(this.group);
 
@@ -33,25 +35,30 @@ export default class Keyboard {
     }
 
     /**
-     * Creates instances for each key procedurally to match the vintage typewriter style.
+     * Creates instances for each key procedurally to match the visual theme.
      * @param {THREE.Scene} scene - The main three.js scene.
      */
     loadAndCreateKeys(scene) {
-        const ringGeo = new THREE.CylinderGeometry(1.4, 1.4, 0.3, 32);
-        const ringMat = new THREE.MeshStandardMaterial({
-            color: 0xc5a059,
-            roughness: 0.3,
-            metalness: 0.8,
-        });
+        const isStyx = this.theme === "styx";
 
-        const capGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.35, 32);
-        const capMat = new THREE.MeshStandardMaterial({
-            color: 0x111111,
-            roughness: 0.8,
-            metalness: 0.1,
-        });
+        const ringGeo = isStyx 
+            ? new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6)
+            : new THREE.CylinderGeometry(1.4, 1.4, 0.3, 32);
+            
+        const ringMat = isStyx
+            ? new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 1.0 })
+            : new THREE.MeshStandardMaterial({ color: 0xc5a059, roughness: 0.3, metalness: 0.8 });
+
+        const capGeo = isStyx
+            ? new THREE.CylinderGeometry(1.2, 1.4, 0.45, 6)
+            : new THREE.CylinderGeometry(1.2, 1.2, 0.35, 32);
+            
+        const capMat = isStyx
+            ? new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 1.0 })
+            : new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.1 });
 
         const planeGeometry = new THREE.PlaneGeometry(1.8, 1.8);
+        const textColor = isStyx ? "#88ffff" : "#c5a059";
 
         this.#keyboardLayout.forEach((keyObj) => {
             const keyGroup = new THREE.Group();
@@ -59,12 +66,17 @@ export default class Keyboard {
             const ringMesh = new THREE.Mesh(ringGeo, ringMat);
             const capMesh = new THREE.Mesh(capGeo, capMat.clone());
             
+            if (isStyx) {
+                ringMesh.rotation.y = Math.random() * Math.PI;
+                capMesh.rotation.y = ringMesh.rotation.y;
+            }
+
             keyGroup.add(ringMesh);
             keyGroup.add(capMesh);
 
             const letterTexture = createTextTexture(
                 keyObj.key.toUpperCase(),
-                "#c5a059",
+                textColor,
                 "rgba(0,0,0,0)",
                 180
             );
@@ -76,7 +88,7 @@ export default class Keyboard {
             });
             
             const letterPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-            letterPlane.position.set(0, 0.18, 0);
+            letterPlane.position.set(0, isStyx ? 0.24 : 0.18, 0);
             letterPlane.rotation.x = -Math.PI / 2;
 
             keyGroup.add(letterPlane);
@@ -92,15 +104,20 @@ export default class Keyboard {
      * Updates the visuals of the keys based on their state (e.g., pressed).
      */
     update() {
+        const isStyx = this.theme === "styx";
+        const pressedColor = isStyx ? 0x228888 : 0xc5a059;
+        const unpressedColor = isStyx ? 0x222222 : 0x111111;
+        const pressedY = isStyx ? 0.0 : 0.05;
+
         this.#keyboardLayout.forEach((keyObj) => {
             if (keyObj.mesh) {
                 const capMaterial = keyObj.mesh.children[1].material;
                 if (keyObj.isPressed) {
-                    keyObj.mesh.position.y = 0.05;
-                    capMaterial.color.setHex(0xc5a059);
+                    keyObj.mesh.position.y = pressedY;
+                    capMaterial.color.setHex(pressedColor);
                 } else {
                     keyObj.mesh.position.y = 0.15;
-                    capMaterial.color.setHex(0x111111);
+                    capMaterial.color.setHex(unpressedColor);
                 }
             }
         });
@@ -119,9 +136,10 @@ export default class Keyboard {
      * Factory method to initialize the keyboard.
      * @param {THREE.Scene} scene - The main three.js scene.
      * @param {Array<Object>} keyboardLayout - The raw layout definition.
+     * @param {string} theme - The theme of the keyboard ('mine' or 'styx').
      * @returns {Keyboard} A new Keyboard instance.
      */
-    static init(scene, keyboardLayout) {
+    static init(scene, keyboardLayout, theme = "mine") {
         const initialSize = 1;
         const keys = keyboardLayout.map(
             (keyRaw) =>
@@ -133,7 +151,7 @@ export default class Keyboard {
                     initialSize
                 )
         );
-        return new Keyboard(keys, initialSize, scene);
+        return new Keyboard(keys, initialSize, scene, theme);
     }
 }
 

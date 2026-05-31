@@ -79,7 +79,7 @@ export class GameEngine {
         if (initialPhaseName === "game") {
             await this.loadLevel(this.currentLevel);
         } else if (initialPhaseName === "survive") {
-            const decorType = this.currentLevel >= 4 ? "styx" : "mine";
+            const decorType = (this.currentLevel === 1 || this.currentLevel >= 4) ? "styx" : "mine";
             await this.setPhase(new SurvivePhase(this, decorType));
         } else {
             await this.setPhase(new IntroPhase(this));
@@ -95,7 +95,7 @@ export class GameEngine {
         this.currentLevel = level;
         
         if (level === 1) {
-            await this.setPhase(new SurvivePhase(this, "mine"));
+            await this.setPhase(new SurvivePhase(this, "styx"));
         } else if (level === 2) {
             await this.setPhase(new WorldPhase(this, [new TempoEvent(), new DoorEvent()]));
         } else if (level === 3) {
