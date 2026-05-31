@@ -44,16 +44,17 @@ export class SurviveDecorBuilder {
      */
     static _buildStyxDecor(scene, decorGroup, disposables) {
         const raft = new THREE.Group();
-        raft.position.set(16, -1.5, 4.5); 
+        raft.position.set(16, -1.5, 3.2); 
         decorGroup.add(raft);
 
         const textureLoader = new THREE.TextureLoader();
-        const woodTexture = textureLoader.load('/asset/game_assets/wood.jpg');
+        const woodTexture = textureLoader.load('/asset/game_assets/log.jpg');
         woodTexture.wrapS = THREE.RepeatWrapping;
         woodTexture.wrapT = THREE.RepeatWrapping;
-        woodTexture.repeat.set(1, 4);
+        woodTexture.repeat.set(0.5, 1); 
+        woodTexture.center.set(0.5, 0.5);
 
-        const logGeo = new THREE.CylinderGeometry(1.5, 1.5, 48, 16);
+        const logGeo = new THREE.CylinderGeometry(1.5, 1.5, 34, 16); 
         const logMat = new THREE.MeshStandardMaterial({ 
             map: woodTexture,
             color: 0x8b5a2b, 
@@ -65,59 +66,110 @@ export class SurviveDecorBuilder {
         const ropeGeo = new THREE.TorusGeometry(1.6, 0.15, 8, 16);
         const ropeMat = new THREE.MeshStandardMaterial({ color: 0x6e5c47, roughness: 1.0 });
 
-        for (let i = -3; i <= 4; i++) { 
+        for (let i = -2; i <= 2; i++) {
             const log = new THREE.Mesh(logGeo, logMat);
             log.rotation.z = Math.PI / 2; 
             log.position.set(0, 0, i * 2.8); 
             
             log.position.y += (Math.random() - 0.5) * 0.2;
             log.rotation.y += (Math.random() - 0.5) * 0.05;
-            raft.add(log);
 
             const ropeL = new THREE.Mesh(ropeGeo, ropeMat);
-            ropeL.rotation.y = Math.PI / 2;
-            ropeL.position.set(-18, log.position.y, i * 2.8);
-            raft.add(ropeL);
+            ropeL.rotation.x = Math.PI / 2;
+            ropeL.position.set(0, -16, 0); 
+            log.add(ropeL);
             
             const ropeR = new THREE.Mesh(ropeGeo, ropeMat);
-            ropeR.rotation.y = Math.PI / 2;
-            ropeR.position.set(18, log.position.y, i * 2.8);
-            raft.add(ropeR);
+            ropeR.rotation.x = Math.PI / 2;
+            ropeR.position.set(0, 16, 0);
+            log.add(ropeR);
+
+            raft.add(log);
         }
 
-        const waterGeo = new THREE.PlaneGeometry(200, 200, 20, 20);
-        const waterMat = new THREE.MeshStandardMaterial({ 
+        const waterGeo = new THREE.PlaneGeometry(200, 200, 50, 50); 
+        const positionAttribute = waterGeo.attributes.position;
+        const originalZ = new Float32Array(positionAttribute.count);
+        for (let i = 0; i < positionAttribute.count; i++) {
+            originalZ[i] = positionAttribute.getZ(i);
+        }
+        
+        const waterNorm = textureLoader.load("/asset/game_assets/Water_002_SD/Water_002_NORM.jpg");
+        waterNorm.wrapS = THREE.RepeatWrapping;
+        waterNorm.wrapT = THREE.RepeatWrapping;
+        waterNorm.repeat.set(4, 4); 
+        waterNorm.center.set(0.5, 0.5);
+        waterNorm.rotation = Math.PI / 2; 
+
+        const waterMat = new THREE.MeshPhongMaterial({ 
             color: 0x006666,
             transparent: true, 
-            opacity: 0.8,
-            roughness: 0.1,
-            metalness: 0.5
+            opacity: 0.85,
+            shininess: 120,
+            specular: 0x55aaaa,
+            normalMap: waterNorm,
+            normalScale: new THREE.Vector2(1.5, 1.5)
         });
         const water = new THREE.Mesh(waterGeo, waterMat);
         water.rotation.x = -Math.PI / 2;
         water.position.y = -1.0;
         decorGroup.add(water);
 
-        const ambientLight = new THREE.AmbientLight(0x88ffff, 2.5);
+        const ambientLight = new THREE.AmbientLight(0x88ffff, 2.0);
         decorGroup.add(ambientLight);
 
         const topLight = new THREE.PointLight(0xaaffff, 4, 150);
         topLight.position.set(16, 12, 5);
         decorGroup.add(topLight);
+
+        const moonLight = new THREE.DirectionalLight(0x88ffff, 3.0);
+        moonLight.position.set(16, 10, -40); 
+        moonLight.target.position.set(16, 0, 10); 
+        decorGroup.add(moonLight);
+        decorGroup.add(moonLight.target);
+
         disposables.push(logGeo, logMat, ropeGeo, ropeMat, waterGeo, waterMat);
 
         let time = 0;
-        return () => {
-            time += 0.02;
-            const wave = Math.sin(time) * 0.15;
+        return (deltaTime) => {
+            time += deltaTime;
             
-            water.position.y = -1.1 + wave;
-            raft.position.y = -1.5 + wave;
+            waterNorm.offset.x = 0;
+            waterNorm.offset.y += 0.05 * deltaTime;
             
-            raft.rotation.z = Math.sin(time * 0.5) * 0.01;
-            raft.rotation.x = Math.cos(time * 0.5) * 0.01;
+            const posAttr = waterGeo.attributes.position;
+            for (let i = 0; i < posAttr.count; i++) {
+                const x = posAttr.getX(i);
+                const y = posAttr.getY(i);
+                
+                const wave1 = Math.sin(x * 0.1 - time * 2) * 0.4;
+                const wave2 = Math.sin(y * 0.2 + time * 1.5) * 0.15;
+                
+                posAttr.setZ(i, originalZ[i] + wave1 + wave2);
+            }
+            posAttr.needsUpdate = true;
+            waterGeo.computeVertexNormals(); 
+            
+            const raftX = 16;
+            const raftY = 3.2;
+            const raftWaveHeight = 
+                Math.sin(raftX * 0.1 - time * 2) * 0.4 + 
+                Math.sin(raftY * 0.2 + time * 1.5) * 0.15;
+                
+            const slopeX = Math.cos(raftX * 0.1 - time * 2) * 0.04;
+            const slopeY = Math.cos(raftY * 0.2 + time * 1.5) * 0.03;
+            
+            water.position.y = -1.1; 
+            raft.position.y = -1.5 + raftWaveHeight;
+            
+            raft.rotation.z = slopeX; 
+            raft.rotation.x = -slopeY;
 
-            return wave;
+            return {
+                y: raftWaveHeight,
+                rotationX: -slopeY,
+                rotationZ: slopeX
+            };
         };
     }
 
@@ -158,7 +210,7 @@ export class SurviveDecorBuilder {
                 }
             });
 
-            return 0;
+            return { y: 0, rotationX: 0, rotationZ: 0 };
         };
     }
 

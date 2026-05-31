@@ -40,8 +40,13 @@ export class SurvivePhase extends GamePhase {
     async init() {
         const scene = this.gameEngine.scene;
 
+        this.worldGroupPivot = new THREE.Group();
+        this.worldGroupPivot.position.set(16, 0, 3.2);
+        scene.add(this.worldGroupPivot);
+
         this.worldGroup = new THREE.Group();
-        scene.add(this.worldGroup);
+        this.worldGroup.position.set(-16, 0, -3.2);
+        this.worldGroupPivot.add(this.worldGroup);
 
         this.keyboard = Keyboard.init(this.worldGroup, KEYBOARD_LAYOUT, this.decorType);
 
@@ -111,7 +116,7 @@ export class SurvivePhase extends GamePhase {
                 }
 
                 this.pathUpdateTimer = (this.pathUpdateTimer || 0) + deltaTime;
-                if (this.pathUpdateTimer >= 1.0) {
+                if (this.pathUpdateTimer >= 0.5) {
                     this.pathUpdateTimer = 0;
                     if (this.lastPlayerKey) {
                         this.enemies.updatePath(this.lastPlayerKey, this.keyboard);
@@ -151,9 +156,15 @@ export class SurvivePhase extends GamePhase {
         }
 
         if (this.decor) {
-            const waveOffset = this.decor.update(deltaTime) || 0;
-            if (this.worldGroup) {
-                this.worldGroup.position.y = waveOffset;
+            const waveData = this.decor.update(deltaTime) || { y: 0, rotationX: 0, rotationZ: 0 };
+            if (this.worldGroupPivot) {
+                if (typeof waveData === 'number') {
+                    this.worldGroupPivot.position.y = waveData;
+                } else {
+                    this.worldGroupPivot.position.y = waveData.y;
+                    this.worldGroupPivot.rotation.x = waveData.rotationX;
+                    this.worldGroupPivot.rotation.z = waveData.rotationZ;
+                }
             }
         }
     }
@@ -229,7 +240,6 @@ export class SurvivePhase extends GamePhase {
         this.lastPlayerKey = target.key;
 
         if (this.player && this.enemies) {
-            this.enemies.updatePath(target.key, this.keyboard);
             this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
@@ -268,8 +278,8 @@ export class SurvivePhase extends GamePhase {
         if (this.player && this.player.mesh && this.worldGroup) {
             this.worldGroup.remove(this.player.mesh);
         }
-        if (this.worldGroup) {
-            this.gameEngine.scene.remove(this.worldGroup);
+        if (this.worldGroupPivot) {
+            this.gameEngine.scene.remove(this.worldGroupPivot);
         }
         if (this.decor) {
             this.decor.cleanup();
