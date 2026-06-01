@@ -70,7 +70,7 @@ export default class Boss extends Actor {
     if (bossUI)
       setTimeout(() => {
         bossUI.classList.remove("hidden");
-      }, 5500);
+      }, 1500);
     this.updateHpBar();
   }
 
@@ -85,7 +85,8 @@ export default class Boss extends Actor {
    * Updates the visual representation of the boss's HP bar.
    */
   updateHpBar() {
-    const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
+    const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
+
     const fill = document.getElementById("boss-hp-fill");
     const currentTxt = document.getElementById("boss-hp-current");
     const maxTxt = document.getElementById("boss-hp-max");

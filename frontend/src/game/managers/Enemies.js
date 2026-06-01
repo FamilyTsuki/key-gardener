@@ -270,7 +270,7 @@ export default class Enemies {
         );
         this.#container.push(this.#boss);
 
-        this.boss.mesh.position.set(this.boss.x, 0, this.boss.y);
+        this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
     }
 }
 

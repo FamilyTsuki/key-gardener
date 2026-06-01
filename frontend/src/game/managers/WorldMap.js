@@ -601,7 +601,7 @@ export default class WorldMap {
         let stoneTexture = null;
         try {
             stoneTexture = await textureLoader.loadAsync(
-                "/asset/game_assets/textures/."
+                "/asset/game_assets/textures/stone.jpg"
             );
         } catch (e) {
             console.error("Error loading stone texture:", e);

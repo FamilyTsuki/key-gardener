@@ -41,6 +41,8 @@ export class GameEngine {
         this.lastTime = 0;
         this.gamePhase = null;
         this.currentLevel = 1;
+        this.shakeIntensity = 0;
+        this.shakeDecay = 0.9;
 
         this.resize();
 
@@ -53,6 +55,10 @@ export class GameEngine {
 
         window.addEventListener("resize", this.onResize);
         window.addEventListener("keydown", this.onKeyDown);
+
+        window.startShake = (intensity) => {
+            this.shakeIntensity = intensity;
+        };
     }
 
     /**
@@ -245,6 +251,9 @@ export class GameEngine {
         this.stop();
         window.removeEventListener("resize", this.onResize);
         window.removeEventListener("keydown", this.onKeyDown);
+        if (window.startShake) {
+            delete window.startShake;
+        }
         if (this.gamePhase && this.gamePhase.cleanup) {
             this.gamePhase.cleanup();
         }
@@ -285,6 +294,21 @@ export class GameEngine {
 
         if (!activeCamera) return;
 
+        let savedPosition = null;
+        if (this.shakeIntensity > 0.05) {
+            savedPosition = activeCamera.position.clone();
+            activeCamera.position.x += (Math.random() - 0.5) * this.shakeIntensity;
+            activeCamera.position.y += (Math.random() - 0.5) * this.shakeIntensity;
+            activeCamera.position.z += (Math.random() - 0.5) * this.shakeIntensity;
+            this.shakeIntensity *= this.shakeDecay;
+        } else {
+            this.shakeIntensity = 0;
+        }
+
         this.renderer.render(this.scene, activeCamera);
+
+        if (savedPosition) {
+            activeCamera.position.copy(savedPosition);
+        }
     }
 }

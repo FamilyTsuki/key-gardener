@@ -132,6 +132,11 @@ export class SurvivePhase extends GamePhase {
         if (this.isPhaseEnded) return;
 
         if (this.enemies && this.enemies.boss && this.enemies.boss.isDead) {
+            const bossUI = document.getElementById("boss-ui");
+            if (bossUI) {
+                bossUI.classList.add("hidden");
+            }
+            
             this.isPhaseEnded = true;
             this.gameEngine.nextLevel();
             return;
