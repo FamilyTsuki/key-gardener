@@ -166,26 +166,24 @@ export default class Enemies {
      */
     findClosestEnemy(playerPos) {
         if (this.#container.length > 0) {
-            const first = this.#container[0];
-            let closestEnemy = {
-                instance: first,
-                dist: Math.sqrt(
-                    (playerPos.x - first.x) ** 2 + (playerPos.y - first.y) ** 2
-                ),
-            };
+            let closestEnemy = null;
+            let minDist = Infinity;
 
-            for (let i = 1; i < this.#container.length; i++) {
+            for (let i = 0; i < this.#container.length; i++) {
                 const enemy = this.#container[i];
+                if (enemy.isSpawning || !enemy.model) continue;
+
                 const dist = Math.sqrt(
                     (playerPos.x - enemy.x) ** 2 + (playerPos.y - enemy.y) ** 2
                 );
 
-                if (dist < closestEnemy.dist) {
+                if (dist < minDist) {
+                    minDist = dist;
                     closestEnemy = { instance: enemy, dist };
                 }
             }
 
-            return closestEnemy;
+            return closestEnemy || false;
         }
 
         return false;

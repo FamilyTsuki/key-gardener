@@ -58,6 +58,7 @@ export default class Player extends Actor {
 
         this.isMoving = false;
         this.movementProgress = 0;
+        this.facingDirection = { x: 0, y: -1 };
         this.movementDuration = 15;
         this.currentMovementTime = 0;
 
@@ -193,6 +194,14 @@ export default class Player extends Actor {
             }
 
             this.startPosition = { x: this.x, y: this.y };
+            
+            const dx = newPosition.x - this.targetPosition.x;
+            const dy = newPosition.y - this.targetPosition.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 0) {
+                this.facingDirection = { x: dx / dist, y: dy / dist };
+            }
+            
             this.targetPosition = newPosition;
 
             this.startOffsetY = this.offsetY;

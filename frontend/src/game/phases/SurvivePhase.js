@@ -135,6 +135,29 @@ export class SurvivePhase extends GamePhase {
         }
         if (this.player) {
             this.player.update();
+            
+            if (this.pendingSpell && !this.player.isMoving) {
+                const closestEnemy = this.enemies.findClosestEnemy(
+                    this.player.position
+                );
+
+                const spellResult = this.player.attack(this.pendingSpell, closestEnemy);
+
+                if (spellResult instanceof Projectile) {
+                    this.projectiles.push(spellResult);
+                }
+                
+                if (this.elCurrentWord) {
+                    this.elCurrentWord.textContent = this.pendingSpell;
+                    setTimeout(() => {
+                        if (this.elCurrentWord) {
+                            this.elCurrentWord.textContent = this.player.currentWord;
+                        }
+                    }, 100);
+                }
+                
+                this.pendingSpell = null;
+            }
         }
         
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
@@ -143,7 +166,7 @@ export class SurvivePhase extends GamePhase {
             
             if (this.enemies && this.enemies.container) {
                 for (const enemy of this.enemies.container) {
-                    if (!enemy.isDead && p.checkCollision(enemy)) {
+                    if (!enemy.isDead && !enemy.isSpawning && enemy.model && p.checkCollision(enemy)) {
                         enemy.takeDamage(p.damage || 50);
                         p.die();
                         break;
@@ -249,22 +272,8 @@ export class SurvivePhase extends GamePhase {
         let word = this.player.handleKeyPress(event.key);
 
         if (word) {
-            const closestEnemy = this.enemies.findClosestEnemy(
-                this.player.position
-            );
-
-            const spellResult = this.player.attack(word, closestEnemy);
-
-            if (spellResult instanceof Projectile) {
-                this.projectiles.push(spellResult);
-            }
-            if (this.elCurrentWord) {
-                this.elCurrentWord.textContent = word;
-                setTimeout(() => {
-                    this.elCurrentWord.textContent = this.player.currentWord;
-                }, 100);
-            }
-        } else if (this.elCurrentWord) {
+            this.pendingSpell = word;
+        } else if (this.elCurrentWord && !this.pendingSpell) {
             this.elCurrentWord.textContent = this.player.currentWord;
         }
     }

@@ -259,7 +259,7 @@ export default class Enemy extends Actor {
                     this.jumpSound.play().catch(e => {});
                 }
                 
-                this.move();
+                this.jumpDelayTimer = 0.07 / this.speed;
             } else {
                 const currentX = this.spawnSource.x + (this.position.x - this.spawnSource.x) * this.spawnProgress;
                 const currentY = this.spawnSource.y + (this.position.y - this.spawnSource.y) * this.spawnProgress;

@@ -72,16 +72,23 @@ export default class ProjectileLuncher extends Spell {
    * @returns {Projectile|boolean} The created projectile, or false if out of range.
    */
   effect(closestEnemy, player, scene) {
-    if (closestEnemy) {
-      if (closestEnemy.dist <= this.range) {
-        return this.shootProjectile(
-          closestEnemy.instance.rawPosition,
-          player,
-          scene,
-        );
-      }
+    if (closestEnemy && closestEnemy.dist <= this.range) {
+      return this.shootProjectile(
+        closestEnemy.instance.position,
+        player,
+        scene,
+      );
     }
-
-    return false;
+    
+    const forwardTarget = {
+      x: player.position.x + (player.facingDirection?.x || 0) * 10,
+      y: player.position.y + (player.facingDirection?.y || -1) * 10
+    };
+    
+    return this.shootProjectile(
+      forwardTarget,
+      player,
+      scene
+    );
   }
 }

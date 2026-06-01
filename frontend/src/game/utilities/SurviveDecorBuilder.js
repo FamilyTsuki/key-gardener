@@ -124,14 +124,29 @@ export class SurviveDecorBuilder {
         const floorEdgesMat = new THREE.LineBasicMaterial({ color: 0x153030, transparent: true, opacity: 0.15 });
         
         const scrollingFloors = [];
+        const baseFloorBlock = this._createChaoticWall(200, 200, floorMat, floorEdgesMat, disposables);
+        
         for (let i = 0; i < 2; i++) {
-            const floorBlock = this._createChaoticWall(200, 200, floorMat, floorEdgesMat, disposables);
+            const floorBlock = i === 0 ? baseFloorBlock : baseFloorBlock.clone();
             floorBlock.rotation.x = -Math.PI / 2;
             floorBlock.scale.z = 0.15;
             floorBlock.position.set(i * 200, -10.0, 0); 
             decorGroup.add(floorBlock);
             scrollingFloors.push(floorBlock);
         }
+
+        const acidGeo = new THREE.PlaneGeometry(400, 400);
+        const acidMat = new THREE.MeshStandardMaterial({
+            color: 0x11ff44,
+            emissive: 0x11ff44,
+            emissiveIntensity: 2.5,
+            transparent: true,
+            opacity: 0.2
+        });
+        const acidLake = new THREE.Mesh(acidGeo, acidMat);
+        acidLake.rotation.x = -Math.PI / 2;
+        acidLake.position.set(0, -12.5, 0);
+        decorGroup.add(acidLake);
 
         const ambientLight = new THREE.AmbientLight(0x88ffff, 2.0);
         decorGroup.add(ambientLight);
@@ -146,7 +161,7 @@ export class SurviveDecorBuilder {
         decorGroup.add(moonLight);
         decorGroup.add(moonLight.target);
 
-        disposables.push(logGeo, logMat, ropeGeo, ropeMat, waterGeo, waterMat, floorMat, floorEdgesMat);
+        disposables.push(logGeo, logMat, ropeGeo, ropeMat, waterGeo, waterMat, floorMat, floorEdgesMat, acidGeo, acidMat);
 
         let time = 0;
         return (deltaTime) => {
@@ -158,7 +173,7 @@ export class SurviveDecorBuilder {
                     floor.position.x += 400;
                 }
             });
-            
+
             waterNorm.offset.x = 0;
             waterNorm.offset.y += 0.01 * deltaTime;
             
@@ -589,7 +604,9 @@ export class SurviveDecorBuilder {
      * @returns {THREE.Mesh} The generated wall mesh.
      */
     static _createChaoticWall(width, height, wallMat, wallEdgesMat, disposables) {
-        const geo = new THREE.PlaneGeometry(width, height, Math.floor(width / 10), Math.floor(height / 10));
+        const segsX = Math.floor(width / 10);
+        const segsY = Math.floor(height / 10);
+        const geo = new THREE.PlaneGeometry(width, height, segsX, segsY);
         const pos = geo.attributes.position;
         
         for (let i = 0; i < pos.count; i++) {
@@ -608,6 +625,20 @@ export class SurviveDecorBuilder {
             const chaosZ = (Math.random() - 0.5) * 20.0 + Math.sin(x * 0.1) * 15.0 + Math.cos(y * 0.1) * 15.0;
             pos.setZ(i, chaosZ);
         }
+
+        const cols = segsX + 1;
+        const rows = segsY + 1;
+        for (let r = 0; r < rows; r++) {
+            const leftIndex = r * cols;
+            const rightIndex = r * cols + (cols - 1);
+            pos.setZ(rightIndex, pos.getZ(leftIndex));
+        }
+        for (let c = 0; c < cols; c++) {
+            const topIndex = c;
+            const bottomIndex = (rows - 1) * cols + c;
+            pos.setZ(bottomIndex, pos.getZ(topIndex));
+        }
+
         geo.computeVertexNormals();
         
         const mesh = new THREE.Mesh(geo, wallMat);
