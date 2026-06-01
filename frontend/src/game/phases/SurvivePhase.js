@@ -263,6 +263,10 @@ export class SurvivePhase extends GamePhase {
                 }
             }
             
+            if (p.position && (Math.abs(p.position.x) > 50 || Math.abs(p.position.y) > 50)) {
+                p.die();
+            }
+            
             if (p.isDead) {
                 this.projectiles.splice(i, 1);
             }

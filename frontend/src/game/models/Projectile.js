@@ -167,9 +167,30 @@ export default class Projectile extends DamageObject {
      */
     die() {
         this.isDead = true;
-        if (this.mesh && this.mesh.parent) {
-            this.mesh.parent.remove(this.mesh);
+        if (this.mesh) {
+            if (this.mesh.parent) {
+                this.mesh.parent.remove(this.mesh);
+            }
+            this.mesh.traverse((child) => {
+                if (child.isMesh) {
+                    if (child.geometry) {
+                        child.geometry.dispose();
+                    }
+                    if (child.material) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach((mat) => mat.dispose());
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                }
+            });
             this.mesh.visible = false;
+        }
+        if (this.lineMesh && this.lineMesh.parent) {
+            this.scene.remove(this.lineMesh);
+            this.lineMesh.geometry.dispose();
+            this.lineMaterial.dispose();
         }
     }
 

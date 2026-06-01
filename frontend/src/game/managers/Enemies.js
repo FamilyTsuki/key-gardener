@@ -112,8 +112,21 @@ export default class Enemies {
         for (let i = this.#container.length - 1; i >= 0; i--) {
             const enemy = this.#container[i];
             if (enemy.isDead) {
-                if (enemy.model) {
-                    this.scene.remove(enemy.model);
+                if (enemy.mesh) {
+                    if (enemy.mesh.parent) enemy.mesh.parent.remove(enemy.mesh);
+                    enemy.mesh.traverse((child) => {
+                        if (child.isMesh) {
+                            if (child.geometry) child.geometry.dispose();
+                            if (child.material) {
+                                if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+                                else child.material.dispose();
+                            }
+                        }
+                        if (child.isSprite && child.material) {
+                            if (child.material.map) child.material.map.dispose();
+                            child.material.dispose();
+                        }
+                    });
                 }
                 this.#container.splice(i, 1);
                 continue;
