@@ -196,6 +196,8 @@ export class GameEngine {
         }
 
         if (loader) loader.classList.add("hidden");
+
+        this.lastTime = performance.now();
     }
 
     /**
@@ -266,8 +268,12 @@ export class GameEngine {
     loop(currentTime) {
         if (!this.isRunning) return;
 
-        const deltaTime = (currentTime - this.lastTime) / 1000;
+        let deltaTime = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
+
+        if (deltaTime > 0.1) {
+            deltaTime = 0.1;
+        }
 
         if (this.gamePhase) {
             if (!this.isPaused) {

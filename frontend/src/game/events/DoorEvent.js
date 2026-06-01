@@ -64,6 +64,10 @@ export class DoorEvent extends WorldEvent {
      * @returns {boolean} True if the event was intercepted, false otherwise.
      */
     handleKeyDown(worldPhase, event) {
+        if (this.isOpeningDoor) {
+            return true;
+        }
+
         if (this.isDoorSequenceActive) {
             const keyName = event.key.toUpperCase();
             if (keyName === this.doorSequence[this.doorSequenceIndex]) {

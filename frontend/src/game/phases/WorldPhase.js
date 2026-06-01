@@ -19,6 +19,14 @@ export class WorldPhase extends GamePhase {
         );
 
         this.isTransitioning = false;
+        this.isPlayingIntro = false;
+        this.isStunnedAfterFall = false;
+        this.stunTimer = 0;
+        this.dropSpeed = 0;
+        this.arrivalX = 0;
+        this.arrivalZ = 0;
+        this.targetY = 0;
+        this.activeIntroType = null;
         
         if (Array.isArray(options)) {
             this.options = {};
@@ -44,8 +52,8 @@ export class WorldPhase extends GamePhase {
         const hasDoorEvent = this.events.some(e => e.constructor.name === "DoorEvent");
         const hasBridgeEvent = this.events.some(e => e.constructor.name === "BridgeWordEvent");
         
-        const introType = this.introType === "random" ? (Math.random() > 0.5 ? "skyfall" : "staircase") : this.introType;
-        const worldLayout = createWordlLayout(hasBridgeEvent, introType);
+        this.activeIntroType = this.introType === "random" ? (Math.random() > 0.5 ? "skyfall" : "staircase") : this.introType;
+        const worldLayout = createWordlLayout(hasBridgeEvent, this.activeIntroType);
 
         this.worldMap = await WorldMap.init(
             this.gameEngine.scene,
@@ -54,22 +62,6 @@ export class WorldPhase extends GamePhase {
         );
         console.log(this.worldMap);
         this.draw_bg();
-
-        if (this.dialogue && this.dialogue.length > 0) {
-            this.dialogueTimeout = setTimeout(() => {
-                this.dBox = new DialogueBox();
-                this.dBox.show(
-                    this.dialogue, 
-                    this.dialogueModel, 
-                    () => {
-                        if (this.dBox) {
-                            this.dBox.destroy();
-                            this.dBox = null;
-                        }
-                    }
-                );
-            }, 1500);
-        }
 
         const spawnTile = this.worldMap.mapLayout.find(t => t.isSpawn) || this.worldMap.mapLayout[1];
 
@@ -88,6 +80,7 @@ export class WorldPhase extends GamePhase {
             undefined,
             () => this.gameEngine.loadLevel(this.gameEngine.currentLevel)
         );
+        this.player.allowSpeedUp = false;
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
@@ -104,7 +97,7 @@ export class WorldPhase extends GamePhase {
             await this.player.loadPromise;
         }
 
-        this.runIntroAnimation(introType, spawnTile);
+        this.runIntroAnimation(this.activeIntroType, spawnTile);
     }
 
     executeEventAction(eventToTrigger) {
@@ -123,6 +116,42 @@ export class WorldPhase extends GamePhase {
         }
 
         this.elapsedTime += deltaTime;
+
+        if (this.isPlayingIntro && this.activeIntroType === "skyfall") {
+            this.dropSpeed += 25 * deltaTime;
+            this.player.offsetY -= this.dropSpeed * deltaTime;
+
+            this.camera.position.set(
+                this.arrivalX + 5,
+                this.targetY + 21,
+                this.arrivalZ + 14
+            );
+            this.camera.lookAt(this.arrivalX, this.player.offsetY, this.arrivalZ);
+
+            if (this.player.offsetY <= this.targetY) {
+                this.player.offsetY = this.targetY;
+                this.camera.lookAt(this.arrivalX, this.targetY, this.arrivalZ);
+                this.player.jumpSound.currentTime = 0;
+                const playPromise = this.player.jumpSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => console.warn("Autoplay prevented:", error));
+                }
+
+                this.isPlayingIntro = false;
+                this.isStunnedAfterFall = true;
+                this.stunTimer = 0.8;
+            }
+        }
+
+        if (this.isStunnedAfterFall) {
+            this.stunTimer -= deltaTime;
+            if (this.stunTimer <= 0) {
+                this.isStunnedAfterFall = false;
+                this.isTransitioning = false;
+                this.startIntroDialogue();
+            }
+        }
+
         if (this.storyEvents) {
             const eventToTrigger = this.storyEvents.find(evt => {
                 if (evt.isTriggered) return false;
@@ -201,6 +230,24 @@ export class WorldPhase extends GamePhase {
         this.gameEngine.scene.add(this.playerLight);
     }
 
+    startIntroDialogue() {
+        if (this.dialogue && this.dialogue.length > 0) {
+            this.gameEngine.isPaused = true;
+            this.dBox = new DialogueBox();
+            this.dBox.show(
+                this.dialogue, 
+                this.dialogueModel, 
+                () => {
+                    if (this.dBox) {
+                        this.dBox.destroy();
+                        this.dBox = null;
+                    }
+                    this.gameEngine.isPaused = false;
+                }
+            );
+        }
+    }
+
     async runIntroAnimation(introType, spawnTile) {
         this.isPlayingIntro = true;
         this.isTransitioning = true;
@@ -218,6 +265,10 @@ export class WorldPhase extends GamePhase {
         const arrivalZ = arrivalTile.rawPosition.y * 1.5 * 1.5;
         const arrivalY = 2.9 + (arrivalTile.baseY || 0);
 
+        this.arrivalX = arrivalX;
+        this.arrivalZ = arrivalZ;
+        this.targetY = arrivalY;
+
         this.camera.position.set(
             arrivalX + 5,
             arrivalY + 21,
@@ -226,37 +277,12 @@ export class WorldPhase extends GamePhase {
         this.camera.lookAt(arrivalX, arrivalY, arrivalZ);
 
         if (introType === "skyfall") {
-            const targetY = this.player.offsetY;
-            this.player.offsetY = targetY + 40;
+            this.isPlayingIntro = true;
+            this.isTransitioning = true;
+            this.dropSpeed = 0;
+            this.player.offsetY = arrivalY + 40;
             this.player.update();
             this.draw();
-            
-            return new Promise(resolve => {
-                let dropSpeed = 0;
-                const animateDrop = () => {
-                    dropSpeed += 0.02; 
-                    this.player.offsetY -= dropSpeed;
-
-                    this.camera.lookAt(arrivalX, this.player.offsetY, arrivalZ);
-
-                    if (this.player.offsetY <= targetY) {
-                        this.player.offsetY = targetY;
-                        this.camera.lookAt(arrivalX, targetY, arrivalZ);
-                        this.player.jumpSound.currentTime = 0;
-                        const playPromise = this.player.jumpSound.play();
-                        if (playPromise !== undefined) {
-                            playPromise.catch(error => console.warn("Autoplay prevented:", error));
-                        }
-                        
-                        this.isPlayingIntro = false;
-                        this.isTransitioning = false;
-                        resolve();
-                    } else {
-                        requestAnimationFrame(animateDrop);
-                    }
-                };
-                requestAnimationFrame(animateDrop);
-            });
         } else if (introType === "staircase") {
             const stairsTiles = this.worldMap.mapLayout.filter(t => t.isStairs).sort((a, b) => b.baseY - a.baseY);
             
@@ -277,6 +303,7 @@ export class WorldPhase extends GamePhase {
                     }
                     this.isPlayingIntro = false;
                     this.isTransitioning = false;
+                    this.startIntroDialogue();
                     return;
                 }
                 

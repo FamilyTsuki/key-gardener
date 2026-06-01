@@ -64,6 +64,8 @@ export default class Player extends Actor {
         this.facingDirection = { x: 0, y: -1 };
         this.movementDuration = 15;
         this.currentMovementTime = 0;
+        this.lastKeyPressTime = 0;
+        this.allowSpeedUp = true;
 
         this.spacingX = 3.2;
         this.spacingZ = 3.2;
@@ -191,7 +193,7 @@ export default class Player extends Actor {
             const timeSinceLastPress = now - (this.lastKeyPressTime || 0);
             this.lastKeyPressTime = now;
 
-            if (timeSinceLastPress < 300) {
+            if (this.allowSpeedUp && timeSinceLastPress < 300) {
                 this.movementDuration = Math.max(3, this.movementDuration * 0.4);
             } else {
                 this.movementDuration = 15;
@@ -283,7 +285,7 @@ export default class Player extends Actor {
     /**
      * Updates the player's state, spells, and position each frame.
      */
-    update() {
+    update(deltaTime = 0.0166) {
         if (!this.isAlive()) {
             if (this.playerModel && !this.deathAnimationPlayed) {
                 this.playerModel.rotation.x = -Math.PI / 2;
@@ -312,9 +314,9 @@ export default class Player extends Actor {
         this.lastY = this.y;
 
         if (this.isMoving) {
-            this.currentMovementTime += 1;
+            this.currentMovementTime += deltaTime;
             this.movementProgress =
-                this.currentMovementTime / this.movementDuration;
+                this.currentMovementTime / (this.movementDuration * 0.0166);
 
             if (this.movementProgress >= 1) {
                 this.movementProgress = 1;
@@ -375,6 +377,10 @@ export default class Player extends Actor {
                     this.playerModel.position.y = 1.35;
                     this.playerModel.rotation.x = 0;
                     this.playerModel.scale.set(1.3, 1.3, 1.3);
+                }
+
+                if (this.hpSprite) {
+                    this.hpSprite.position.y = this.playerModel.position.y + 1.65;
                 }
             }
         }

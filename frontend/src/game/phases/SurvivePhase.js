@@ -221,7 +221,7 @@ export class SurvivePhase extends GamePhase {
             }
         }
         if (this.player) {
-            this.player.update();
+            this.player.update(deltaTime);
             
             if (this.pendingSpell && !this.player.isMoving) {
                 const closestEnemy = this.enemies.findClosestEnemy(
