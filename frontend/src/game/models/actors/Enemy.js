@@ -390,7 +390,7 @@ export default class Enemy extends Actor {
 
         if (collision) {
             this.hp = -1;
-            player.damage(50);
+            player.damage(50, "Écrasé par un ennemi.");
             this.die();
         }
     }

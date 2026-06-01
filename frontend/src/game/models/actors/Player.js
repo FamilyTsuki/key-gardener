@@ -35,7 +35,8 @@ export default class Player extends Actor {
         size,
         scene,
         fireballModel,
-        enemiesManager
+        enemiesManager,
+        onDeath = null
     ) {
         const position = {
             x: rawPosition.x,
@@ -52,6 +53,8 @@ export default class Player extends Actor {
             new ProjectileLuncher("pok", 35, 10000, fireballModel),
             new HealSpell("heal", 30),
         ];
+
+        this.onDeath = onDeath;
 
         this.targetPosition = { x: position.x, y: position.y, z: position.z };
         this.startPosition = { x: position.x, y: position.y };
@@ -232,6 +235,50 @@ export default class Player extends Actor {
         }
     }
 
+    showGameOverScreen() {
+        const canvas = document.getElementById("game-canvas");
+        if (canvas) canvas.classList.add("player-dead");
+
+        const screen = document.createElement("div");
+        screen.id = "game-over-screen";
+
+        const banner = document.createElement("div");
+        banner.className = "div-title";
+
+        const title = document.createElement("h1");
+        title.className = "game-over-title";
+        title.textContent = "Vous êtes mort.";
+
+        const reason = document.createElement("p");
+        reason.className = "game-over-reason";
+        reason.textContent = this.deathReason || "Cause inconnue.";
+
+        banner.appendChild(title);
+        banner.appendChild(reason);
+        screen.appendChild(banner);
+        document.body.appendChild(screen);
+
+        setTimeout(() => {
+            const el = document.getElementById("game-over-screen");
+            const c = document.getElementById("game-canvas");
+
+            if (el) el.classList.add("fading-out");
+            if (c) {
+                c.classList.remove("player-dead");
+                c.classList.add("player-restarting");
+            }
+
+            setTimeout(() => {
+                if (el) el.remove();
+                if (c) c.classList.remove("player-restarting");
+
+                if (this.onDeath) {
+                    this.onDeath();
+                }
+            }, 1200);
+        }, 8000);
+    }
+
     /**
      * Updates the player's state, spells, and position each frame.
      */
@@ -244,21 +291,7 @@ export default class Player extends Actor {
                 if (this.hpSprite) this.hpSprite.visible = false;
                 this.deathAnimationPlayed = true;
 
-                const gameOverDiv = document.createElement("div");
-                gameOverDiv.id = "game-over-screen";
-                gameOverDiv.style.position = "absolute";
-                gameOverDiv.style.top = "50%";
-                gameOverDiv.style.left = "50%";
-                gameOverDiv.style.transform = "translate(-50%, -50%)";
-                gameOverDiv.style.color = "red";
-                gameOverDiv.style.fontSize = "100px";
-                gameOverDiv.style.fontFamily = "Arial, sans-serif";
-                gameOverDiv.style.fontWeight = "bold";
-                gameOverDiv.style.zIndex = "1000";
-                gameOverDiv.style.textShadow = "2px 2px 10px black";
-                gameOverDiv.style.pointerEvents = "none";
-                gameOverDiv.textContent = "GAME OVER";
-                document.body.appendChild(gameOverDiv);
+                this.showGameOverScreen();
             }
             return;
         }
@@ -349,9 +382,13 @@ export default class Player extends Actor {
     /**
      * Applies damage to the player.
      * @param {number} amount - The amount of damage to apply.
+     * @param {string} [reason] - Human-readable cause of the damage.
      */
-    damage(amount) {
+    damage(amount, reason = null) {
         this.hp -= amount;
+        if (reason && this.hp <= 0) {
+            this.deathReason = reason;
+        }
         const playPromise = this.damageSound.play();
         if (playPromise !== undefined) {
             playPromise.catch(error => console.warn("Autoplay prevented for damageSound:", error));

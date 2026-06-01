@@ -74,7 +74,8 @@ export class SurvivePhase extends GamePhase {
             { width: 0.4, height: 0.4 },
             this.worldGroup,
             fireballGltf.scene,
-            this.enemies
+            this.enemies,
+            () => this.gameEngine.loadLevel(this.gameEngine.currentLevel)
         );
         this.lastPlayerKey = "A";
         this.elCurrentWord = document.getElementById("currentWord");

@@ -180,11 +180,11 @@ export class FlameWallEvent extends WorldEvent {
      */
     displayGameOverOverlay() {
         this.uiOverlay = document.createElement("div");
-        this.uiOverlay.classList.add("game-over-overlay");
+        this.uiOverlay.classList.add("flame-wall-overlay");
         
         this.uiOverlay.innerHTML = `
-            <h1 class="game-over-title">REDUCED TO ASHES!</h1>
-            <p class="game-over-subtitle">Press R to restart</p>
+            <h1 class="flame-wall-title">RÉDUIT EN CENDRES !</h1>
+            <p class="flame-wall-subtitle">Appuyez sur R pour recommencer</p>
         `;
         
         document.body.appendChild(this.uiOverlay);
