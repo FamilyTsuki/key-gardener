@@ -84,7 +84,7 @@ export default class Player extends Actor {
         this.damageSound.volume = 0.5;
 
         const loader = new GLTFLoader();
-        this.loadPromise = loader.loadAsync("/asset/game_assets/player.glb").then((gltf) => {
+        this.loadPromise = loader.loadAsync("/asset/game_assets/models/player.glb").then((gltf) => {
             this.playerModel = gltf.scene;
             this.playerModel.scale.set(1.3, 1.3, 1.3);
             this.playerModel.position.y = 1.35;

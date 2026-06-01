@@ -24,7 +24,7 @@ export class WorldPhase extends GamePhase {
             this.events = options;
             this.introType = "random";
             this.dialogue = ["Testing the new reusable dialogue box!", "Here is a 3D model next to it."];
-            this.dialogueModel = "/asset/game_assets/player.glb";
+            this.dialogueModel = "/asset/game_assets/models/player.glb";
             this.storyEvents = [];
         } else {
             this.events = options.events || [];
@@ -135,7 +135,7 @@ export class WorldPhase extends GamePhase {
                     this.gameEngine.isPaused = true;
                     
                     const dBox = new DialogueBox();
-                    dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/player.glb", () => {
+                    dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/models/player.glb", () => {
                         dBox.destroy();
                         this.gameEngine.isPaused = false;
                     });

@@ -235,7 +235,7 @@ export default class Enemies {
         const bossRawPosition = { x: 5, y: -2 };
 
         const bossModel = await loader.loadAsync(
-            "/asset/game_assets/yameter.glb",
+            "/asset/game_assets/models/.glb",
             (bossGltf) => bossGltf
         );
 

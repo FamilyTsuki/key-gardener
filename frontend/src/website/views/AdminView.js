@@ -129,7 +129,7 @@ export class AdminView {
                     actionType: 'dialogue',
                     triggerType: 'time',
                     triggerValue: 0,
-                    dialogueModel: options.dialogueModel || '/asset/game_assets/player.glb',
+                    dialogueModel: options.dialogueModel || '/asset/game_assets/models/player.glb',
                     dialogue: options.dialogue
                 });
             }
@@ -227,7 +227,7 @@ export class AdminView {
         this.init3DPreview(previewContainer, level.phase_type, options, card);
     }
 
-    createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: ['Hello!'], dialogueModel: '/asset/game_assets/player.glb', healAmount: 50, spawnEnemy: 'skeleton' }) {
+    createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: ['Hello!'], dialogueModel: '/asset/game_assets/models/player.glb', healAmount: 50, spawnEnemy: 'skeleton' }) {
         const currentPhaseType = typeSelect.value;
         const div = document.createElement("div");
         div.className = "story-event-block";
@@ -282,7 +282,7 @@ export class AdminView {
             <div class="evt-fields-dialogue block-row" style="display: ${(!evt.actionType || evt.actionType === 'dialogue') ? 'flex' : 'none'}; flex-direction: column; align-items: stretch;">
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <label>Modèle 3D (.glb):</label>
-                    <input type="text" class="evt-model block-input" value="${evt.dialogueModel || '/asset/game_assets/player.glb'}" style="flex: 1;">
+                    <input type="text" class="evt-model block-input" value="${evt.dialogueModel || '/asset/game_assets/models/player.glb'}" style="flex: 1;">
                 </div>
                 <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
                     <label>Dialogues:</label>
@@ -346,7 +346,7 @@ export class AdminView {
         let playerMesh = null;
         
         const loader = new GLTFLoader();
-        loader.load("/asset/game_assets/player.glb", (gltf) => {
+        loader.load("/asset/game_assets/models/player.glb", (gltf) => {
             playerMesh = gltf.scene;
             playerMesh.scale.set(1.3, 1.3, 1.3);
             playerMesh.position.set(15, 1.35, 3);

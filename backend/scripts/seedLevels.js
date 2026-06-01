@@ -23,7 +23,7 @@ const seedLevels = async () => {
                 options: {
                     introType: "random",
                     dialogue: ["Bienvenue dans le Hub.", "Trouve la porte pour avancer."],
-                    dialogueModel: "/asset/game_assets/player.glb",
+                    dialogueModel: "/asset/game_assets/models/player.glb",
                     events: ["TempoEvent", "DoorEvent"]
                 }
             },
@@ -33,7 +33,7 @@ const seedLevels = async () => {
                 options: {
                     introType: "skyfall",
                     dialogue: ["Attention !", "Ce pont est gardé par des flammes."],
-                    dialogueModel: "/asset/game_assets/player.glb",
+                    dialogueModel: "/asset/game_assets/models/player.glb",
                     events: ["FlameWallEvent", "DoorEvent"]
                 }
             },

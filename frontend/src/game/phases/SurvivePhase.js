@@ -55,9 +55,9 @@ export class SurvivePhase extends GamePhase {
 
         this.keyboard = Keyboard.init(this.worldGroup, KEYBOARD_LAYOUT, this.decorType);
 
-        const enemyGltf = await loader.loadAsync("/asset/game_assets/bug.glb");
+        const enemyGltf = await loader.loadAsync("/asset/game_assets/models/bug.glb");
         const fireballGltf = await loader.loadAsync(
-            "/asset/game_assets/fireball.glb"
+            "/asset/game_assets/models/fireball.glb"
         );
 
         this.enemies = new Enemies(
@@ -139,7 +139,7 @@ export class SurvivePhase extends GamePhase {
                 } else {
                     this.gameEngine.isPaused = true;
                     const dBox = new DialogueBox();
-                    dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/player.glb", () => {
+                    dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/models/player.glb", () => {
                         dBox.destroy();
                         this.gameEngine.isPaused = false;
                     });

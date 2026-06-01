@@ -78,11 +78,11 @@ export default class Enemy extends Actor {
         scene.add(this.mesh);
 
         const textureLoader = new THREE.TextureLoader();
-        const bugTexture = textureLoader.load("/asset/game_assets/bug.png");
+        const bugTexture = textureLoader.load("/asset/game_assets/textures/bug.png");
         bugTexture.flipY = false;
         bugTexture.colorSpace = THREE.SRGBColorSpace;
         const loader = new GLTFLoader();
-        loader.load("/asset/game_assets/bug.glb", (gltf) => {
+        loader.load("/asset/game_assets/models/bug.glb", (gltf) => {
             this.model = gltf.scene;
             this.model.scale.set(1.3, 1.3, 1.3);
 
@@ -373,14 +373,16 @@ export default class Enemy extends Actor {
             const minY = Math.min(player.lastY, player.y);
             const maxY = Math.max(player.lastY, player.y) + player.size.height;
 
-            const enemyCenterX = this.position.x + this.size.width / 2;
-            const enemyCenterY = this.position.y + this.size.height / 2;
+            const enemyMinX = this.position.x;
+            const enemyMaxX = this.position.x + this.size.width;
+            const enemyMinY = this.position.y;
+            const enemyMaxY = this.position.y + this.size.height;
 
             if (
-                enemyCenterX >= minX &&
-                enemyCenterX <= maxX &&
-                enemyCenterY >= minY &&
-                enemyCenterY <= maxY
+                enemyMinX < maxX &&
+                enemyMaxX > minX &&
+                enemyMinY < maxY &&
+                enemyMaxY > minY
             ) {
                 collision = true;
             }
