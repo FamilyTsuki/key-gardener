@@ -41,6 +41,7 @@ export class SurvivePhase extends GamePhase {
         this.survivalTime = 0;
         this.isPhaseEnded = false;
         this.enemiesKilled = 0;
+        this.isTransitioningToNextLevel = false;
     }
 
     async init() {
@@ -128,17 +129,48 @@ export class SurvivePhase extends GamePhase {
         }
     }
 
+    triggerPhaseTransition() {
+        this.isTransitioningToNextLevel = true;
+
+        const overlay = document.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100vw";
+        overlay.style.height = "100vh";
+        overlay.style.backgroundColor = "black";
+        overlay.style.opacity = "0";
+        overlay.style.zIndex = "9999";
+        overlay.style.pointerEvents = "none";
+        overlay.style.transition = "opacity 1000ms ease-in-out";
+        document.body.appendChild(overlay);
+
+        setTimeout(() => {
+            overlay.style.opacity = "1";
+            
+            setTimeout(async () => {
+                this.isPhaseEnded = true;
+                await this.gameEngine.nextLevel();
+                
+                overlay.style.opacity = "0";
+                
+                setTimeout(() => {
+                    overlay.remove();
+                }, 1000);
+            }, 1000);
+        }, 2000);
+    }
+
     update(deltaTime) {
         if (this.isPhaseEnded) return;
 
-        if (this.enemies && this.enemies.boss && this.enemies.boss.isDead) {
+        if (this.enemies && this.enemies.boss && this.enemies.boss.isDead && !this.isTransitioningToNextLevel) {
             const bossUI = document.getElementById("boss-ui");
             if (bossUI) {
                 bossUI.classList.add("hidden");
             }
             
-            this.isPhaseEnded = true;
-            this.gameEngine.nextLevel();
+            this.triggerPhaseTransition();
             return;
         }
 
@@ -189,7 +221,7 @@ export class SurvivePhase extends GamePhase {
 
         if (this.enemies && this.player) {
             if (this.player.isAlive()) {
-                if (this.spawnInterval !== null && this.spawnInterval !== undefined && this.spawnInterval > 0) {
+                if (this.spawnInterval !== null && this.spawnInterval !== undefined && this.spawnInterval > 0 && !this.isTransitioningToNextLevel) {
                     this.spawnTimer += deltaTime;
                     if (this.spawnTimer >= this.spawnInterval) {
                         const regularEnemiesCount = this.enemies.container.filter(e => e !== this.enemies.boss).length;
@@ -359,7 +391,7 @@ export class SurvivePhase extends GamePhase {
      * @param {KeyboardEvent} event - The keyboard event.
      */
     handleKeyDown(event) {
-        if (!this.player || !this.player.isAlive()) return;
+        if (!this.player || !this.player.isAlive() || this.isTransitioningToNextLevel) return;
 
         const keyName = event.key.toUpperCase();
         const target = this.keyboard?.find(keyName);

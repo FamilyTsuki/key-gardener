@@ -79,6 +79,12 @@ export default class Player extends Actor {
         this.scene = scene;
         scene.add(this.mesh);
 
+        const initialAngle = Math.atan2(
+            this.facingDirection.x * this.spacingX,
+            this.facingDirection.y * this.spacingZ
+        );
+        this.mesh.rotation.set(0, initialAngle, 0);
+
         this.fireballModel = fireballModel;
         this.playerModel = null;
 
@@ -221,13 +227,11 @@ export default class Player extends Actor {
             this.currentMovementTime = 0;
 
             if (this.mesh) {
-                const worldTargetX = this.targetPosition.x * this.spacingX + this.offsetX;
-                const worldTargetZ = this.targetPosition.y * this.spacingZ + this.offsetZ;
-                const targetPos = new THREE.Vector3(worldTargetX, this.offsetY, worldTargetZ);
-                if (this.mesh.parent) {
-                    this.mesh.parent.localToWorld(targetPos);
-                }
-                this.mesh.lookAt(targetPos);
+                const angle = Math.atan2(
+                    this.facingDirection.x * this.spacingX,
+                    this.facingDirection.y * this.spacingZ
+                );
+                this.mesh.rotation.set(0, angle, 0);
             }
 
             this.jumpSound.currentTime = 0;
@@ -287,10 +291,12 @@ export default class Player extends Actor {
      */
     update(deltaTime = 0.0166) {
         if (!this.isAlive()) {
-            if (this.playerModel && !this.deathAnimationPlayed) {
-                this.playerModel.rotation.x = -Math.PI / 2;
-                this.playerModel.position.y = 0.5;
-                this.playerModel.scale.set(1.3, 1.3, 1.3);
+            if (!this.deathAnimationPlayed) {
+                if (this.playerModel) {
+                    this.playerModel.rotation.x = -Math.PI / 2;
+                    this.playerModel.position.y = 0.5;
+                    this.playerModel.scale.set(1.3, 1.3, 1.3);
+                }
                 if (this.hpSprite) this.hpSprite.visible = false;
                 this.deathAnimationPlayed = true;
 
@@ -346,18 +352,7 @@ export default class Player extends Actor {
 
             this.mesh.position.set(worldCurrentX, this.offsetY, worldCurrentZ);
 
-            if (this.isMoving) {
-                const worldTargetX =
-                    this.targetPosition.x * this.spacingX + this.offsetX;
-                const worldTargetZ =
-                    this.targetPosition.y * this.spacingZ + this.offsetZ;
 
-                const targetPos = new THREE.Vector3(worldTargetX, this.offsetY, worldTargetZ);
-                if (this.mesh.parent) {
-                    this.mesh.parent.localToWorld(targetPos);
-                }
-                this.mesh.lookAt(targetPos);
-            }
 
             if (this.playerModel) {
                 if (this.isMoving) {
