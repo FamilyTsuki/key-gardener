@@ -5,16 +5,8 @@ import { createWordlLayout } from "../utilities/WORLD_LAYOUT.js";
 import Player from "../models/actors/Player.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
 
-/**
- * Represents the world exploration phase of the game.
- */
 export class WorldPhase extends GamePhase {
-    /**
-     * Creates an instance of WorldPhase.
-     * @param {GameEngine} gameEngine - The game engine instance.
-     * @param {Array<Object>} [events=[]] - Array of events to handle in this phase.
-     */
-    constructor(gameEngine, events = []) {
+    constructor(gameEngine, options = {}) {
         super(gameEngine);
         this.worldMap = null;
         this.player = null;
@@ -27,19 +19,30 @@ export class WorldPhase extends GamePhase {
         );
 
         this.isTransitioning = false;
-        this.events = events || []; 
+        
+        if (Array.isArray(options)) {
+            this.events = options;
+            this.introType = "random";
+            this.dialogue = ["Testing the new reusable dialogue box!", "Here is a 3D model next to it."];
+            this.dialogueModel = "/asset/game_assets/player.glb";
+            this.storyEvents = [];
+        } else {
+            this.events = options.events || [];
+            this.introType = options.introType || "random";
+            this.dialogue = options.dialogue || [];
+            this.dialogueModel = options.dialogueModel || null;
+            this.storyEvents = (options.storyEvents || []).map(evt => ({ ...evt, isTriggered: false }));
+        }
+        
+        this.elapsedTime = 0;
     }
 
-    /**
-     * Initializes the world phase, setting up the map, player, and events.
-     * @returns {Promise<void>}
-     */
     async init() {
         const scene = this.gameEngine.scene;
         const hasDoorEvent = this.events.some(e => e.constructor.name === "DoorEvent");
         const hasBridgeEvent = this.events.some(e => e.constructor.name === "BridgeWordEvent");
         
-        const introType = Math.random() > 0.5 ? "skyfall" : "staircase";
+        const introType = this.introType === "random" ? (Math.random() > 0.5 ? "skyfall" : "staircase") : this.introType;
         const worldLayout = createWordlLayout(hasBridgeEvent, introType);
 
         this.worldMap = await WorldMap.init(
@@ -50,26 +53,28 @@ export class WorldPhase extends GamePhase {
         console.log(this.worldMap);
         this.draw_bg();
 
-        this.dialogueTimeout = setTimeout(() => {
-            this.dBox = new DialogueBox();
-            this.dBox.show(
-                ["Testing the new reusable dialogue box!", "Here is a 3D model next to it."], 
-                "/asset/game_assets/player.glb", 
-                () => {
-                    if (this.dBox) {
-                        this.dBox.destroy();
-                        this.dBox = null;
+        if (this.dialogue && this.dialogue.length > 0) {
+            this.dialogueTimeout = setTimeout(() => {
+                this.dBox = new DialogueBox();
+                this.dBox.show(
+                    this.dialogue, 
+                    this.dialogueModel, 
+                    () => {
+                        if (this.dBox) {
+                            this.dBox.destroy();
+                            this.dBox = null;
+                        }
                     }
-                }
-            );
-        }, 1500);
+                );
+            }, 1500);
+        }
 
         const spawnTile = this.worldMap.mapLayout.find(t => t.isSpawn) || this.worldMap.mapLayout[1];
 
         this.player = new Player(
             "Héros",
-            100,
-            100,
+            this.options.playerHp || 100,
+            this.options.playerHp || 100,
             {
                 x: spawnTile.rawPosition.x,
                 y: spawnTile.rawPosition.y,
@@ -97,14 +102,48 @@ export class WorldPhase extends GamePhase {
         this.runIntroAnimation(introType, spawnTile);
     }
 
-    /**
-     * Updates the game state for the world phase.
-     * @param {number} deltaTime - The time elapsed since the last update.
-     */
     update(deltaTime) {
         if (!this.player) {
             return;
         }
+
+        this.elapsedTime += deltaTime;
+
+        this.elapsedTime += deltaTime;
+        if (this.storyEvents) {
+            const eventToTrigger = this.storyEvents.find(evt => {
+                if (evt.isTriggered) return false;
+                if (evt.triggerType === "time") {
+                    return this.elapsedTime >= evt.triggerValue;
+                } else if (evt.triggerType === "distance") {
+                } else if (evt.triggerType === "distance") {
+                    return Math.abs(this.player.y) >= evt.triggerValue;
+                }
+                return false;
+            });
+
+            if (eventToTrigger) {
+                eventToTrigger.isTriggered = true;
+                
+                if (eventToTrigger.actionType === "heal") {
+                    if (this.player) {
+                        this.player.heal(eventToTrigger.healAmount || 50);
+                    }
+                } else if (eventToTrigger.actionType === "spawn") {
+                    console.log("Spawn action triggered in WorldPhase, but not fully supported here yet.");
+                } else {
+                    this.gameEngine.isPaused = true;
+                    
+                    const dBox = new DialogueBox();
+                    dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/player.glb", () => {
+                        dBox.destroy();
+                        this.gameEngine.isPaused = false;
+                    });
+                    return;
+                }
+            }
+        }
+
         this.player.update();
         if (this.player && this.player.mesh) {
             const playerPos = this.player.mesh.position;
@@ -128,9 +167,6 @@ export class WorldPhase extends GamePhase {
         }
     }
 
-    /**
-     * Draws the elements of the world phase.
-     */
     draw() {
         if (this.player && this.player.mesh && this.playerLight) {
             const pos = this.player.mesh.position;
@@ -144,9 +180,6 @@ export class WorldPhase extends GamePhase {
         }
     }
 
-    /**
-     * Sets up the background and lighting for the scene.
-     */
     draw_bg() {
         this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
         this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
@@ -159,11 +192,6 @@ export class WorldPhase extends GamePhase {
         this.gameEngine.scene.add(this.playerLight);
     }
 
-    /**
-     * Runs the introduction animation.
-     * @param {string} introType 
-     * @param {Object} spawnTile 
-     */
     async runIntroAnimation(introType, spawnTile) {
         this.isPlayingIntro = true;
         this.isTransitioning = true;
@@ -259,10 +287,6 @@ export class WorldPhase extends GamePhase {
         }
     }
 
-    /**
-     * Handles keyboard events for movement and interaction.
-     * @param {KeyboardEvent} event - The keyboard event.
-     */
     handleKeyDown(event) {
         if (this.isPlayingIntro) return;
 
@@ -296,9 +320,6 @@ export class WorldPhase extends GamePhase {
         }
     }
 
-    /**
-     * Cleans up resources used by the world phase.
-     */
     cleanup() {
         if (this.dialogueTimeout) {
             clearTimeout(this.dialogueTimeout);

@@ -1,0 +1,224 @@
+/* Clean, Professional Admin Panel CSS (GitHub/VSCode Dark Theme Style) */
+
+/* Global container styling */
+.admin-view-container {
+    padding: 40px;
+    color: #c9d1d9;
+    background-color: #0d1117;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.admin-title {
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #e6edf3;
+}
+
+.admin-subtitle {
+    font-size: 1.1em;
+    color: #8b949e;
+    margin-bottom: 30px;
+}
+
+/* Standard Cards */
+.admin-card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #21262d;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.25em;
+    color: #e6edf3;
+    font-weight: 600;
+}
+
+/* 3D Preview */
+.preview-container {
+    width: 100%;
+    height: 250px;
+    background: #010409;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #30363d;
+    margin-bottom: 20px;
+}
+
+.preview-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(33, 38, 45, 0.8);
+    color: #8b949e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    border: 1px solid #30363d;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Form Elements */
+.admin-label {
+    display: block;
+    font-size: 14px;
+    color: #c9d1d9;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.admin-select, .admin-input {
+    width: 100%;
+    padding: 5px 12px;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    line-height: 20px;
+}
+
+.admin-select:focus, .admin-input:focus {
+    border-color: #58a6ff;
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+}
+
+/* Event Blocks (Simple, Flat Colors) */
+.story-event-block {
+    padding: 12px;
+    border-radius: 6px;
+    position: relative;
+    margin-bottom: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+
+/* Muted solid colors for blocks */
+.block-survive { background-color: #9e4a1b; }
+.block-world { background-color: #5d348a; }
+.block-dialogue { background-color: #215fa8; }
+.block-heal { background-color: #237841; }
+.block-spawn { background-color: #99283e; }
+.block-door { background-color: #9e7512; }
+.block-bridge { background-color: #12755c; }
+.block-flamewall { background-color: #a63131; }
+
+/* Sub-elements inside blocks */
+.block-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.block-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.15);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.block-input, .block-select, .block-textarea {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 4px !important;
+    padding: 4px 8px !important;
+    font-size: 13px;
+}
+
+.block-input:focus, .block-select:focus, .block-textarea:focus {
+    border-color: #ffffff !important;
+    outline: none;
+}
+
+.block-textarea {
+    resize: vertical;
+    width: 100%;
+}
+
+.remove-evt-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.remove-evt-btn:hover {
+    background-color: rgba(255, 0, 0, 0.3);
+    color: #ffffff;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #238636;
+    color: #ffffff;
+    border: 1px solid rgba(240, 246, 252, 0.1);
+    border-radius: 6px;
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.btn-primary:hover {
+    background-color: #2ea043;
+}
+
+.btn-secondary {
+    background-color: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.btn-secondary:hover {
+    background-color: #30363d;
+    border-color: #8b949e;
+}
+
+.events-section-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #8b949e;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+}

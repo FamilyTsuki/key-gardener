@@ -7,21 +7,29 @@ import Player from "../models/actors/Player.js";
 import Projectile from "../models/Projectile.js";
 import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
 import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
+import { DialogueBox } from "../ui/DialogueBox.js";
 
 const loader = new GLTFLoader();
 
-/**
- * Represents the survive phase of the game where the player defends against enemies.
- */
 export class SurvivePhase extends GamePhase {
-    /**
-     * Creates an instance of SurvivePhase.
-     * @param {GameEngine} gameEngine - The game engine instance.
-     * @param {string} decorType - The type of decor ('mine', 'styx', 'default').
-     */
-    constructor(gameEngine, decorType = "default") {
+    constructor(gameEngine, options = {}) {
         super(gameEngine);
-        this.decorType = decorType;
+        this.options = options;
+        
+        if (typeof options === "string") {
+            this.decorType = options;
+            this.duration = 60;
+            this.spawnInterval = 3;
+            this.maxEnemies = Infinity;
+            this.storyEvents = [];
+        } else {
+            this.decorType = options.decorType || "default";
+            this.duration = options.duration !== undefined ? options.duration : 60;
+            this.spawnInterval = options.spawnInterval !== undefined ? options.spawnInterval : 3;
+            this.maxEnemies = options.maxEnemies || Infinity;
+            this.storyEvents = (options.storyEvents || []).map(evt => ({ ...evt, isTriggered: false }));
+        }
+
         this.decor = null;
         this.keyboard = null;
         this.player = null;
@@ -30,13 +38,10 @@ export class SurvivePhase extends GamePhase {
         this.bonks = [];
         this.elCurrentWord = null;
         this.spawnTimer = 0;
-        this.spawnInterval = 3;
+        this.survivalTime = 0;
+        this.isPhaseEnded = false;
     }
 
-    /**
-     * Initializes the survive phase, including the player, enemies, and keyboard.
-     * @returns {Promise<void>}
-     */
     async init() {
         const scene = this.gameEngine.scene;
 
@@ -63,8 +68,8 @@ export class SurvivePhase extends GamePhase {
 
         this.player = new Player(
             "Héros",
-            100,
-            100,
+            this.options.playerHp || 100,
+            this.options.playerHp || 100,
             { x: 0, y: 0, z: 5 },
             { width: 0.4, height: 0.4 },
             this.worldGroup,
@@ -99,20 +104,58 @@ export class SurvivePhase extends GamePhase {
         this.decor = SurviveDecorBuilder.buildDecor(this.decorType, scene);
     }
 
-    /**
-     * Updates the game state for the survive phase.
-     * @param {number} deltaTime - The time elapsed since the last update.
-     */
     update(deltaTime) {
+        if (this.isPhaseEnded) return;
+
         this.gameEngine.camera.position.set(15, 18, 7);
         this.gameEngine.camera.lookAt(15, 0, 3);
+
+        if (this.duration !== null) {
+            this.survivalTime += deltaTime;
+            if (this.survivalTime >= this.duration) {
+                this.isPhaseEnded = true;
+                this.gameEngine.nextLevel();
+                return;
+            }
+        }
+
+        if (this.storyEvents) {
+            const eventToTrigger = this.storyEvents.find(evt => !evt.isTriggered && evt.triggerType === "time" && this.survivalTime >= evt.triggerValue);
+            if (eventToTrigger) {
+                eventToTrigger.isTriggered = true;
+                
+                if (eventToTrigger.actionType === "heal") {
+                    if (this.player) {
+                        this.player.heal(eventToTrigger.healAmount || 50);
+                    }
+                } else if (eventToTrigger.actionType === "spawn") {
+                    if (this.enemies) {
+                        this.enemies.spawnEnemy(this.player.position, "basic"); 
+                    }
+                } else if (eventToTrigger.actionType === "spawnerConfig") {
+                    this.spawnInterval = eventToTrigger.spawnInterval !== undefined ? eventToTrigger.spawnInterval : 3;
+                    this.maxEnemies = eventToTrigger.maxEnemies !== undefined ? eventToTrigger.maxEnemies : 20;
+                    console.log(`[SurvivePhase] Spawner Config Updated: interval=${this.spawnInterval}, max=${this.maxEnemies}`);
+                } else {
+                    this.gameEngine.isPaused = true;
+                    const dBox = new DialogueBox();
+                    dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/player.glb", () => {
+                        dBox.destroy();
+                        this.gameEngine.isPaused = false;
+                    });
+                    return; 
+                }
+            }
+        }
 
         if (this.enemies && this.player) {
             if (this.player.isAlive()) {
                 this.spawnTimer += deltaTime;
                 if (this.spawnTimer >= this.spawnInterval) {
-                    this.spawnTimer = 0;
-                    this.spawnEnemy();
+                    if (!this.enemies.container || this.enemies.container.length < this.maxEnemies) {
+                        this.spawnTimer = 0;
+                        this.spawnEnemy();
+                    }
                 }
 
                 this.pathUpdateTimer = (this.pathUpdateTimer || 0) + deltaTime;
@@ -193,9 +236,6 @@ export class SurvivePhase extends GamePhase {
         }
     }
 
-    /**
-     * Draws the elements of the survive phase, updating positions and states.
-     */
     draw() {
         if (this.keyboard && this.player) {
             this.keyboard.keyboardLayout.forEach((tile) => {

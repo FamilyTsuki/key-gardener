@@ -3,7 +3,6 @@ import { WorldPhase } from "../phases/WorldPhase.js";
 import { IntroPhase } from "../phases/IntroPhase.js";
 import { SurvivePhase } from "../phases/SurvivePhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
-import { TempoEvent } from "../events/TempoEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
 import { BridgeWordEvent } from "../events/BridgeWordEvent.js";
 
@@ -38,6 +37,7 @@ export class GameEngine {
         this.renderer.setClearColor(0x0a0c10, 1);
 
         this.isRunning = false;
+        this.isPaused = false;
         this.lastTime = 0;
         this.gamePhase = null;
         this.currentLevel = 1;
@@ -46,7 +46,7 @@ export class GameEngine {
 
         this.onResize = () => this.resize();
         this.onKeyDown = (e) => {
-            if (this.gamePhase) {
+            if (this.gamePhase && typeof this.gamePhase.handleKeyDown === "function" && !this.isPaused) {
                 this.gamePhase.handleKeyDown(e);
             }
         };
@@ -94,14 +94,47 @@ export class GameEngine {
     async loadLevel(level) {
         this.currentLevel = level;
         
+        try {
+            const response = await fetch(`/api/levels/${level}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.config) {
+                    const phaseType = data.config.phase_type;
+                    const options = data.config.options || {};
+                    
+                    if (phaseType === "survive") {
+                        await this.setPhase(new SurvivePhase(this, options));
+                        return;
+                    } else if (phaseType === "world") {
+                        const eventMap = {
+                            "BridgeWordEvent": BridgeWordEvent,
+                            "DoorEvent": DoorEvent,
+                            "FlameWallEvent": FlameWallEvent
+                        };
+                        const eventInstances = (options.events || []).map(evtName => {
+                            const EventClass = eventMap[evtName];
+                            return EventClass ? new EventClass() : null;
+                        }).filter(Boolean);
+                        
+                        options.events = eventInstances;
+                        await this.setPhase(new WorldPhase(this, options));
+                        return;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("Could not fetch level config, using defaults", e);
+        }
+        
+        // Fallback defaults
         if (level === 1) {
-            await this.setPhase(new SurvivePhase(this, "styx"));
+            await this.setPhase(new SurvivePhase(this, { decorType: "styx", duration: 60 }));
         } else if (level === 2) {
-            await this.setPhase(new WorldPhase(this, [new TempoEvent(), new DoorEvent()]));
+            await this.setPhase(new WorldPhase(this, { events: [new BridgeWordEvent(), new DoorEvent()] }));
         } else if (level === 3) {
-            await this.setPhase(new WorldPhase(this, [new FlameWallEvent(), new DoorEvent()]));
+            await this.setPhase(new WorldPhase(this, { events: [new FlameWallEvent(), new DoorEvent()] }));
         } else if (level >= 4) {
-            await this.setPhase(new SurvivePhase(this, "styx"));
+            await this.setPhase(new SurvivePhase(this, { decorType: "styx", duration: null }));
         }
     }
 
@@ -205,7 +238,10 @@ export class GameEngine {
         this.lastTime = currentTime;
 
         if (this.gamePhase) {
-            this.gamePhase.update(deltaTime);
+            if (!this.isPaused) {
+                this.gamePhase.update(deltaTime);
+            }
+            // Always draw so the scene doesn't disappear when paused
             this.gamePhase.draw();
         }
 
