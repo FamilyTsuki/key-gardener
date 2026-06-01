@@ -201,3 +201,63 @@
 .none {
     display: none;
 }
+
+/* =============== BOSS UI STYLING =============== */
+.boss-ui {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    max-width: 800px;
+    background: rgba(10, 12, 16, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--danger-color);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+    border-radius: 12px;
+    padding: 16px 24px;
+    z-index: 9999;
+    font-family: var(--font-main);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.boss-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color);
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.boss-name {
+    font-size: 1.2rem;
+    color: var(--danger-color);
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.boss-hp-text {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.boss-hp-bar {
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.boss-hp-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--danger-hover), var(--danger-color));
+    box-shadow: 0 0 10px var(--danger-color);
+    border-radius: 6px;
+    transition: width 0.3s ease-out;
+}

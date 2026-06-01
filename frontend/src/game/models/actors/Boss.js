@@ -256,4 +256,17 @@ export default class Boss extends Actor {
       this.mesh.visible = false;
     }
   }
+
+  /**
+   * Reduces the boss's health by the specified damage.
+   * @param {number} nb - The amount of damage to take.
+   */
+  takeDamage(nb) {
+      this.hp -= nb;
+      if (this.hp <= 0) {
+          this.hp = -1;
+          this.die();
+      }
+      this.updateHpBar();
+  }
 }

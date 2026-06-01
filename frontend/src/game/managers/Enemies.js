@@ -86,16 +86,18 @@ export default class Enemies {
      * @returns {number} The bonus awarded.
      */
     clearDead() {
+        let deadCount = 0;
         for (const enemy of this.#container) {
             if (enemy.isDead) {
                 this.bonus = 100;
                 console.log("Enemy dead, bonus", this.bonus);
+                deadCount++;
             }
         }
 
         this.#container = this.#container.filter((enemy) => !enemy.isDead);
 
-        return this.bonus;
+        return deadCount;
     }
 
     /**
@@ -122,7 +124,7 @@ export default class Enemies {
         }
         
         if (this.#boss) {
-            this.#boss.update(playerPos, projectiles, bonks, player);
+            this.#boss.update(deltaTime * 1000, playerPos, projectiles, bonks);
         }
     }
 
@@ -171,7 +173,7 @@ export default class Enemies {
 
             for (let i = 0; i < this.#container.length; i++) {
                 const enemy = this.#container[i];
-                if (enemy.isSpawning || !enemy.model) continue;
+                if (enemy.isSpawning || (!enemy.model && !enemy.mesh)) continue;
 
                 const dist = Math.sqrt(
                     (playerPos.x - enemy.x) ** 2 + (playerPos.y - enemy.y) ** 2
@@ -235,7 +237,7 @@ export default class Enemies {
         const bossRawPosition = { x: 5, y: -2 };
 
         const bossModel = await loader.loadAsync(
-            "/asset/game_assets/models/.glb",
+            "/asset/game_assets/models/yameter.glb",
             (bossGltf) => bossGltf
         );
 

@@ -122,7 +122,7 @@ export default class Player extends Actor {
         const ctx = this.hpContext;
         const width = this.hpCanvas.width;
         const height = this.hpCanvas.height;
-        const ratio = Math.max(0, this.hp / this.hpMax);
+        const ratio = this.hp === Infinity ? 1 : Math.max(0, this.hp / this.hpMax);
 
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 0, width, height);
@@ -133,8 +133,9 @@ export default class Player extends Actor {
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 40px Arial";
         ctx.textAlign = "center";
+        const hpText = this.hp === Infinity ? "Immortel" : `${Math.ceil(Math.max(0, this.hp))}/${this.hpMax}`;
         ctx.fillText(
-            `${Math.ceil(Math.max(0, this.hp))}/${this.hpMax}`,
+            hpText,
             width / 2,
             height / 2 + 15
         );

@@ -50,7 +50,28 @@ export default class GameView extends AbstractView {
                 el("span", { id: "currentWord" }),
                 el("span", { className: "clignotant" }, "_")
             ),
-            el("div", { className: "spell-list-container none", id: "spell-list-container" })
+            el("div", { className: "spell-list-container none", id: "spell-list-container" }),
+            el(
+                "div",
+                { id: "boss-ui", className: "boss-ui hidden" },
+                el(
+                    "div",
+                    { className: "boss-info" },
+                    el("span", { className: "boss-name" }, "OCTOPUS"),
+                    el(
+                        "div",
+                        { className: "boss-hp-text" },
+                        el("span", { id: "boss-hp-current" }, "0"),
+                        " / ",
+                        el("span", { id: "boss-hp-max" }, "0")
+                    )
+                ),
+                el(
+                    "div",
+                    { className: "boss-hp-bar" },
+                    el("div", { id: "boss-hp-fill", className: "boss-hp-fill" })
+                )
+            )
         );
     }
 

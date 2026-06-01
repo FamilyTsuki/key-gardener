@@ -21,12 +21,14 @@ export class WorldPhase extends GamePhase {
         this.isTransitioning = false;
         
         if (Array.isArray(options)) {
+            this.options = {};
             this.events = options;
             this.introType = "random";
             this.dialogue = ["Testing the new reusable dialogue box!", "Here is a 3D model next to it."];
             this.dialogueModel = "/asset/game_assets/models/player.glb";
             this.storyEvents = [];
         } else {
+            this.options = options;
             this.events = options.events || [];
             this.introType = options.introType || "random";
             this.dialogue = options.dialogue || [];
@@ -73,8 +75,8 @@ export class WorldPhase extends GamePhase {
 
         this.player = new Player(
             "Héros",
-            this.options.playerHp || 100,
-            this.options.playerHp || 100,
+            this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
+            this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
             {
                 x: spawnTile.rawPosition.x,
                 y: spawnTile.rawPosition.y,
@@ -105,12 +107,20 @@ export class WorldPhase extends GamePhase {
         this.runIntroAnimation(introType, spawnTile);
     }
 
+    executeEventAction(eventToTrigger) {
+        if (eventToTrigger.actionType === "heal") {
+            if (this.player) {
+                this.player.heal(eventToTrigger.healAmount || 50);
+            }
+        } else if (eventToTrigger.actionType === "spawn") {
+            console.log("Spawn action triggered in WorldPhase, but not fully supported here yet.");
+        }
+    }
+
     update(deltaTime) {
         if (!this.player) {
             return;
         }
-
-        this.elapsedTime += deltaTime;
 
         this.elapsedTime += deltaTime;
         if (this.storyEvents) {
@@ -118,7 +128,6 @@ export class WorldPhase extends GamePhase {
                 if (evt.isTriggered) return false;
                 if (evt.triggerType === "time") {
                     return this.elapsedTime >= evt.triggerValue;
-                } else if (evt.triggerType === "distance") {
                 } else if (evt.triggerType === "distance") {
                     return Math.abs(this.player.y) >= evt.triggerValue;
                 }
@@ -128,21 +137,18 @@ export class WorldPhase extends GamePhase {
             if (eventToTrigger) {
                 eventToTrigger.isTriggered = true;
                 
-                if (eventToTrigger.actionType === "heal") {
-                    if (this.player) {
-                        this.player.heal(eventToTrigger.healAmount || 50);
-                    }
-                } else if (eventToTrigger.actionType === "spawn") {
-                    console.log("Spawn action triggered in WorldPhase, but not fully supported here yet.");
-                } else {
+                if (eventToTrigger.dialogue && eventToTrigger.dialogue.length > 0) {
                     this.gameEngine.isPaused = true;
                     
                     const dBox = new DialogueBox();
                     dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/models/player.glb", () => {
                         dBox.destroy();
                         this.gameEngine.isPaused = false;
+                        this.executeEventAction(eventToTrigger);
                     });
                     return;
+                } else {
+                    this.executeEventAction(eventToTrigger);
                 }
             }
         }

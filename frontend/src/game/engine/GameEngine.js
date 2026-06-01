@@ -76,11 +76,8 @@ export class GameEngine {
             console.error("Failed to parse activeSaveData", e);
         }
 
-        if (initialPhaseName === "game") {
+        if (initialPhaseName === "game" || initialPhaseName === "survive") {
             await this.loadLevel(this.currentLevel);
-        } else if (initialPhaseName === "survive") {
-            const decorType = (this.currentLevel === 1 || this.currentLevel >= 4) ? "styx" : "mine";
-            await this.setPhase(new SurvivePhase(this, decorType));
         } else {
             await this.setPhase(new IntroPhase(this));
         }
@@ -126,15 +123,41 @@ export class GameEngine {
             console.warn("Could not fetch level config, using defaults", e);
         }
         
-        // Fallback defaults
         if (level === 1) {
-            await this.setPhase(new SurvivePhase(this, { decorType: "styx", duration: 60 }));
+            await this.setPhase(new SurvivePhase(this, {
+                decorType: "styx",
+                duration: 60,
+                spawnInterval: 3,
+                maxEnemies: 20
+            }));
         } else if (level === 2) {
             await this.setPhase(new WorldPhase(this, { events: [new BridgeWordEvent(), new DoorEvent()] }));
         } else if (level === 3) {
             await this.setPhase(new WorldPhase(this, { events: [new FlameWallEvent(), new DoorEvent()] }));
-        } else if (level >= 4) {
-            await this.setPhase(new SurvivePhase(this, { decorType: "styx", duration: null }));
+        } else if (level === 4) {
+            await this.setPhase(new SurvivePhase(this, {
+                decorType: "mine",
+                duration: 120,
+                spawnInterval: 2,
+                maxEnemies: 30,
+                storyEvents: [
+                    {
+                        triggerType: "time",
+                        triggerValue: 10,
+                        actionType: "spawnBoss",
+                        dialogue: ["Un signal suspect a été détecté...", "Le Virus suprême s'éveille !"],
+                        dialogueModel: "/asset/game_assets/models/bug.glb"
+                    }
+                ]
+            }));
+        } else if (level >= 5) {
+            await this.setPhase(new SurvivePhase(this, {
+                decorType: "styx",
+                duration: null,
+                spawnInterval: null,
+                maxEnemies: 0,
+                boss: true
+            }));
         }
     }
 
@@ -241,7 +264,6 @@ export class GameEngine {
             if (!this.isPaused) {
                 this.gamePhase.update(deltaTime);
             }
-            // Always draw so the scene doesn't disappear when paused
             this.gamePhase.draw();
         }
 

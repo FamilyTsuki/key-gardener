@@ -222,3 +222,14 @@
     font-weight: 600;
     text-transform: uppercase;
 }
+
+/* Force dark theme styling on native select dropdown options */
+.admin-select option {
+    background-color: #0d1117 !important;
+    color: #c9d1d9 !important;
+}
+
+.block-select option {
+    background-color: #161b22 !important;
+    color: #ffffff !important;
+}

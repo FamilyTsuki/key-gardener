@@ -25,8 +25,8 @@ export class SurvivePhase extends GamePhase {
         } else {
             this.decorType = options.decorType || "default";
             this.duration = options.duration !== undefined ? options.duration : 60;
-            this.spawnInterval = options.spawnInterval !== undefined ? options.spawnInterval : 3;
-            this.maxEnemies = options.maxEnemies || Infinity;
+            this.spawnInterval = options.spawnInterval !== undefined ? options.spawnInterval : null;
+            this.maxEnemies = options.maxEnemies !== undefined ? options.maxEnemies : 0;
             this.storyEvents = (options.storyEvents || []).map(evt => ({ ...evt, isTriggered: false }));
         }
 
@@ -40,6 +40,7 @@ export class SurvivePhase extends GamePhase {
         this.spawnTimer = 0;
         this.survivalTime = 0;
         this.isPhaseEnded = false;
+        this.enemiesKilled = 0;
     }
 
     async init() {
@@ -68,8 +69,8 @@ export class SurvivePhase extends GamePhase {
 
         this.player = new Player(
             "Héros",
-            this.options.playerHp || 100,
-            this.options.playerHp || 100,
+            this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
+            this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
             { x: 0, y: 0, z: 5 },
             { width: 0.4, height: 0.4 },
             this.worldGroup,
@@ -103,59 +104,94 @@ export class SurvivePhase extends GamePhase {
         }
 
         this.decor = SurviveDecorBuilder.buildDecor(this.decorType, scene);
+
+        if (this.options && this.options.boss) {
+            await this.enemies.spawnBoss(this.worldGroup);
+        }
+    }
+
+    executeEventAction(eventToTrigger) {
+        if (eventToTrigger.actionType === "heal") {
+            if (this.player) {
+                this.player.heal(eventToTrigger.healAmount || 50);
+            }
+        } else if (eventToTrigger.actionType === "spawn") {
+            this.spawnEnemy(eventToTrigger.enemyType || eventToTrigger.spawnEnemy || "basic"); 
+        } else if (eventToTrigger.actionType === "spawnBoss") {
+            if (this.enemies) {
+                this.enemies.spawnBoss(this.worldGroup);
+            }
+        } else if (eventToTrigger.actionType === "spawnerConfig") {
+            this.spawnInterval = eventToTrigger.spawnInterval !== undefined ? eventToTrigger.spawnInterval : 3;
+            this.maxEnemies = eventToTrigger.maxEnemies !== undefined ? eventToTrigger.maxEnemies : 20;
+            console.log(`[SurvivePhase] Spawner Config Updated: interval=${this.spawnInterval}, max=${this.maxEnemies}`);
+        }
     }
 
     update(deltaTime) {
         if (this.isPhaseEnded) return;
 
+        if (this.enemies && this.enemies.boss && this.enemies.boss.isDead) {
+            this.isPhaseEnded = true;
+            this.gameEngine.nextLevel();
+            return;
+        }
+
         this.gameEngine.camera.position.set(15, 18, 7);
         this.gameEngine.camera.lookAt(15, 0, 3);
 
+        this.survivalTime += deltaTime;
+
         if (this.duration !== null) {
-            this.survivalTime += deltaTime;
             if (this.survivalTime >= this.duration) {
-                this.isPhaseEnded = true;
-                this.gameEngine.nextLevel();
-                return;
+                if (!this.enemies || !this.enemies.boss) {
+                    this.isPhaseEnded = true;
+                    this.gameEngine.nextLevel();
+                    return;
+                }
             }
         }
 
         if (this.storyEvents) {
-            const eventToTrigger = this.storyEvents.find(evt => !evt.isTriggered && evt.triggerType === "time" && this.survivalTime >= evt.triggerValue);
+            const eventToTrigger = this.storyEvents.find(evt => {
+                if (evt.isTriggered) return false;
+                if (evt.triggerType === "time") {
+                    return this.survivalTime >= evt.triggerValue;
+                }
+                if (evt.triggerType === "enemiesKilled") {
+                    return this.enemiesKilled >= evt.triggerValue;
+                }
+                return false;
+            });
+
             if (eventToTrigger) {
                 eventToTrigger.isTriggered = true;
                 
-                if (eventToTrigger.actionType === "heal") {
-                    if (this.player) {
-                        this.player.heal(eventToTrigger.healAmount || 50);
-                    }
-                } else if (eventToTrigger.actionType === "spawn") {
-                    if (this.enemies) {
-                        this.enemies.spawnEnemy(this.player.position, "basic"); 
-                    }
-                } else if (eventToTrigger.actionType === "spawnerConfig") {
-                    this.spawnInterval = eventToTrigger.spawnInterval !== undefined ? eventToTrigger.spawnInterval : 3;
-                    this.maxEnemies = eventToTrigger.maxEnemies !== undefined ? eventToTrigger.maxEnemies : 20;
-                    console.log(`[SurvivePhase] Spawner Config Updated: interval=${this.spawnInterval}, max=${this.maxEnemies}`);
-                } else {
+                if (eventToTrigger.dialogue && eventToTrigger.dialogue.length > 0 && !(eventToTrigger.dialogue.length === 1 && eventToTrigger.dialogue[0] === 'Hello!')) {
                     this.gameEngine.isPaused = true;
                     const dBox = new DialogueBox();
                     dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/models/player.glb", () => {
                         dBox.destroy();
                         this.gameEngine.isPaused = false;
+                        this.executeEventAction(eventToTrigger);
                     });
                     return; 
+                } else {
+                    this.executeEventAction(eventToTrigger);
                 }
             }
         }
 
         if (this.enemies && this.player) {
             if (this.player.isAlive()) {
-                this.spawnTimer += deltaTime;
-                if (this.spawnTimer >= this.spawnInterval) {
-                    if (!this.enemies.container || this.enemies.container.length < this.maxEnemies) {
-                        this.spawnTimer = 0;
-                        this.spawnEnemy();
+                if (this.spawnInterval !== null && this.spawnInterval !== undefined && this.spawnInterval > 0) {
+                    this.spawnTimer += deltaTime;
+                    if (this.spawnTimer >= this.spawnInterval) {
+                        const regularEnemiesCount = this.enemies.container.filter(e => e !== this.enemies.boss).length;
+                        if (regularEnemiesCount < this.maxEnemies) {
+                            this.spawnTimer = 0;
+                            this.spawnEnemy();
+                        }
                     }
                 }
 
@@ -167,7 +203,9 @@ export class SurvivePhase extends GamePhase {
                     }
                 }
 
-                this.enemies.clearDead();
+                const deadCount = this.enemies.clearDead() || 0;
+                this.enemiesKilled += deadCount;
+
                 this.enemies.update(
                     this.player.position,
                     this.projectiles,
@@ -208,18 +246,34 @@ export class SurvivePhase extends GamePhase {
             const p = this.projectiles[i];
             p.update(null, deltaTime * 1000);
             
-            if (this.enemies && this.enemies.container) {
-                for (const enemy of this.enemies.container) {
-                    if (!enemy.isDead && !enemy.isSpawning && enemy.model && p.checkCollision(enemy)) {
-                        enemy.takeDamage(p.damage || 50);
-                        p.die();
-                        break;
+            if (p.team === "player") {
+                if (this.enemies && this.enemies.container) {
+                    for (const enemy of this.enemies.container) {
+                        if (!enemy.isDead && !enemy.isSpawning && (enemy.model || enemy.mesh) && p.checkCollision(enemy)) {
+                            enemy.takeDamage(p.damage || 50);
+                            p.die();
+                            break;
+                        }
                     }
+                }
+            } else {
+                if (this.player && this.player.isAlive() && p.checkCollision(this.player)) {
+                    this.player.damage(p.damage || 10, "Touché par une boule de feu du boss");
+                    p.die();
                 }
             }
             
             if (p.isDead) {
                 this.projectiles.splice(i, 1);
+            }
+        }
+
+        for (let i = this.bonks.length - 1; i >= 0; i--) {
+            const bonk = this.bonks[i];
+            bonk.update(deltaTime * 1000, this.player);
+            
+            if (bonk.isDead) {
+                this.bonks.splice(i, 1);
             }
         }
 
@@ -256,7 +310,7 @@ export class SurvivePhase extends GamePhase {
     /**
      * Spawns a new random enemy on a random key (avoiding the player's current key).
      */
-    spawnEnemy() {
+    spawnEnemy(type = null) {
         if (!this.keyboard || !this.enemies) return;
 
         const keys = this.keyboard.keyboardLayout;
@@ -279,7 +333,10 @@ export class SurvivePhase extends GamePhase {
         );
 
         const types = ["basic", "speedy", "tank"];
-        const randomType = types[Math.floor(Math.random() * types.length)];
+        let randomType = type || types[Math.floor(Math.random() * types.length)];
+        if (!types.includes(randomType)) {
+            randomType = "basic";
+        }
         
         this.enemies.spawnAt(randomKey, this.worldGroup, randomType);
         
@@ -339,6 +396,10 @@ export class SurvivePhase extends GamePhase {
         if (spellListContainer) {
             spellListContainer.classList.add("none");
             spellListContainer.innerHTML = "";
+        }
+        const bossUI = document.getElementById("boss-ui");
+        if (bossUI) {
+            bossUI.classList.add("hidden");
         }
     }
 }

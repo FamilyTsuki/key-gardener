@@ -66,9 +66,8 @@ export class AdminView {
             const card = document.createElement("div");
             card.className = "admin-card";
             
-            // Generate unique ID for collapsable body
             const bodyId = `level-body-${level.level_number}`;
-            const isCollapsed = !level.isNew; // New level is expanded by default
+            const isCollapsed = !level.isNew;
 
             const options = level.options || {};
             const isSurvive = level.phase_type === "survive";
@@ -170,7 +169,7 @@ export class AdminView {
                     triggerType: block.querySelector('.evt-trigger-type').value,
                     triggerValue: Number(block.querySelector('.evt-trigger-value').value) || 0,
                     dialogueModel: block.querySelector('.evt-model').value,
-                    dialogue: dText.split('\n').map(l => l.trim()).filter(l => l.length > 0),
+                    dialogue: actionType === 'dialogue' ? dText.split('\n').map(l => l.trim()).filter(l => l.length > 0) : [],
                     healAmount: Number(block.querySelector('.evt-heal-amount').value) || 50,
                     spawnEnemy: block.querySelector('.evt-spawn-type').value,
                     spawnInterval: Number(block.querySelector('.evt-spawn-interval').value) || 3,
@@ -183,7 +182,9 @@ export class AdminView {
                 parsedOptions = {
                     decorType: card.querySelector('.survive-decor').value,
                     duration: card.querySelector('.survive-duration').value ? Number(card.querySelector('.survive-duration').value) : null,
-                    playerHp: Number(card.querySelector('.survive-hp').value) || 100,
+                    playerHp: card.querySelector('.survive-hp').value ? Number(card.querySelector('.survive-hp').value) : null,
+                    spawnInterval: card.querySelector('.survive-spawn-interval').value ? Number(card.querySelector('.survive-spawn-interval').value) : null,
+                    maxEnemies: card.querySelector('.survive-max-enemies').value ? Number(card.querySelector('.survive-max-enemies').value) : 0,
                     storyEvents: gatheredStoryEvents
                 };
             } else {
@@ -212,7 +213,7 @@ export class AdminView {
 
                 parsedOptions = {
                     introType: card.querySelector('.world-intro').value,
-                    playerHp: Number(card.querySelector('.world-hp').value) || 100,
+                    playerHp: card.querySelector('.world-hp').value ? Number(card.querySelector('.world-hp').value) : null,
                     events: eventsList,
                     dialogue: globalDialogue,
                     dialogueModel: globalDialogueModel,
@@ -223,17 +224,62 @@ export class AdminView {
             this.saveLevel(level.level_number, phaseType, parsedOptions);
         });
 
+        const spawnIntervalInput = card.querySelector('.survive-spawn-interval');
+        if (spawnIntervalInput) {
+            spawnIntervalInput.addEventListener('input', (e) => {
+                if (e.target.value !== "" && Number(e.target.value) < 1) {
+                    e.target.value = "";
+                }
+            });
+        }
+
+        const maxEnemiesInput = card.querySelector('.survive-max-enemies');
+        if (maxEnemiesInput) {
+            maxEnemiesInput.addEventListener('input', (e) => {
+                if (e.target.value !== "" && Number(e.target.value) < 1) {
+                    e.target.value = "";
+                }
+            });
+        }
+
+        const durationInput = card.querySelector('.survive-duration');
+        if (durationInput) {
+            durationInput.addEventListener('input', (e) => {
+                if (e.target.value !== "" && Number(e.target.value) < 1) {
+                    e.target.value = "";
+                }
+            });
+        }
+
+        const surviveHpInput = card.querySelector('.survive-hp');
+        if (surviveHpInput) {
+            surviveHpInput.addEventListener('input', (e) => {
+                if (e.target.value !== "" && Number(e.target.value) < 1) {
+                    e.target.value = "";
+                }
+            });
+        }
+
+        const worldHpInput = card.querySelector('.world-hp');
+        if (worldHpInput) {
+            worldHpInput.addEventListener('input', (e) => {
+                if (e.target.value !== "" && Number(e.target.value) < 1) {
+                    e.target.value = "";
+                }
+            });
+        }
+
         const previewContainer = card.querySelector(`.preview-container-${level.level_number}`);
         this.init3DPreview(previewContainer, level.phase_type, options, card);
     }
 
-    createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: ['Hello!'], dialogueModel: '/asset/game_assets/models/player.glb', healAmount: 50, spawnEnemy: 'skeleton' }) {
+    createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: [], dialogueModel: '/asset/game_assets/models/player.glb', healAmount: 50, spawnEnemy: 'skeleton' }) {
         const currentPhaseType = typeSelect.value;
         const div = document.createElement("div");
         div.className = "story-event-block";
         
         if (evt.actionType === 'heal') div.classList.add("block-heal");
-        else if (evt.actionType === 'spawn') div.classList.add("block-spawn");
+        else if (evt.actionType === 'spawn' || evt.actionType === 'spawnBoss') div.classList.add("block-spawn");
         else if (evt.actionType === 'spawnerConfig') div.classList.add("block-spawn");
         else if (evt.actionType === 'door') div.classList.add("block-door");
         else if (evt.actionType === 'bridge') div.classList.add("block-bridge");
@@ -246,6 +292,7 @@ export class AdminView {
                 <option value="dialogue" ${evt.actionType === 'dialogue' || !evt.actionType ? 'selected' : ''}>💬 Lancer un Dialogue</option>
                 <option value="heal" ${evt.actionType === 'heal' ? 'selected' : ''}>💚 Soigner le Joueur</option>
                 <option value="spawn" ${evt.actionType === 'spawn' ? 'selected' : ''}>👹 Faire apparaître un Ennemi</option>
+                <option value="spawnBoss" ${evt.actionType === 'spawnBoss' ? 'selected' : ''}>🐙 Faire apparaître le Boss</option>
                 <option value="spawnerConfig" ${evt.actionType === 'spawnerConfig' ? 'selected' : ''}>⚙️ Configurer le Générateur d'Ennemis</option>
             `;
         } else {
@@ -317,7 +364,7 @@ export class AdminView {
             
             div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-door', 'block-bridge', 'block-flamewall');
             if (newType === 'heal') div.classList.add("block-heal");
-            else if (newType === 'spawn' || newType === 'spawnerConfig') div.classList.add("block-spawn");
+            else if (newType === 'spawn' || newType === 'spawnBoss' || newType === 'spawnerConfig') div.classList.add("block-spawn");
             else if (newType === 'door') div.classList.add("block-door");
             else if (newType === 'bridge') div.classList.add("block-bridge");
             else if (newType === 'flamewall') div.classList.add("block-flamewall");
@@ -491,7 +538,17 @@ export class AdminView {
                     </div>
                     <div style="flex: 1; min-width: 100px;">
                         <label class="admin-label">PV Joueur :</label>
-                        <input type="number" class="survive-hp block-input" value="${options.playerHp || 100}" />
+                        <input type="number" class="survive-hp block-input" value="${options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : ''}" placeholder="Immortel" />
+                    </div>
+                </div>
+                <div class="block-row" style="margin-top: 15px;">
+                    <div style="flex: 1; min-width: 150px;">
+                        <label class="admin-label">Intervalle de Spawn (sec) :</label>
+                        <input type="number" step="0.1" class="survive-spawn-interval block-input" value="${options.spawnInterval !== undefined && options.spawnInterval !== null ? options.spawnInterval : ''}" placeholder="Désactivé" />
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label class="admin-label">Max Ennemis :</label>
+                        <input type="number" class="survive-max-enemies block-input" value="${options.maxEnemies !== undefined && options.maxEnemies !== null ? options.maxEnemies : ''}" placeholder="Désactivé" />
                     </div>
                 </div>
             </div>
@@ -512,7 +569,7 @@ export class AdminView {
                     </div>
                     <div style="flex: 1; min-width: 100px;">
                         <label class="admin-label">PV Joueur :</label>
-                        <input type="number" class="world-hp block-input" value="${options.playerHp || 100}" />
+                        <input type="number" class="world-hp block-input" value="${options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : ''}" placeholder="Immortel" />
                     </div>
                 </div>
             </div>

@@ -44,7 +44,27 @@ const seedLevels = async () => {
                     decorType: "mine",
                     duration: 120,
                     spawnInterval: 2,
-                    maxEnemies: 30
+                    maxEnemies: 30,
+                    storyEvents: [
+                        {
+                            triggerType: "time",
+                            triggerValue: 10,
+                            actionType: "spawnBoss",
+                            dialogue: ["Un signal suspect a été détecté...", "Le Virus suprême s'éveille !"],
+                            dialogueModel: "/asset/game_assets/models/bug.glb"
+                        }
+                    ]
+                }
+            },
+            {
+                level_number: 5,
+                phase_type: "survive",
+                options: {
+                    decorType: "styx",
+                    duration: null,
+                    spawnInterval: null,
+                    maxEnemies: 0,
+                    boss: true
                 }
             }
         ];
@@ -53,7 +73,8 @@ const seedLevels = async () => {
             await db.query(
                 `INSERT INTO levels_config (level_number, phase_type, options) 
                  VALUES ($1, $2, $3) 
-                 ON CONFLICT (level_number) DO NOTHING`,
+                 ON CONFLICT (level_number) 
+                 DO UPDATE SET phase_type = EXCLUDED.phase_type, options = EXCLUDED.options`,
                 [level.level_number, level.phase_type, level.options]
             );
             console.log(`Level ${level.level_number} inserted/exists.`);
