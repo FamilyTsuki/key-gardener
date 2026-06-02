@@ -71,7 +71,32 @@ export default class GameView extends AbstractView {
                     { className: "boss-hp-bar" },
                     el("div", { id: "boss-hp-fill", className: "boss-hp-fill" })
                 )
-            )
+            ),
+            el(
+                "div",
+                { id: "player-hud", className: "player-hud", style: "display: none;" },
+                el(
+                    "div",
+                    { className: "hud-tech-ring" },
+                    el("div", { className: "hud-tech-core" })
+                ),
+                el(
+                    "div",
+                    { className: "hud-bar-wrapper" },
+                        el(
+                            "div",
+                            { className: "player-hp-bar" },
+                            el("div", { id: "player-hp-fill", className: "player-hp-fill" }),
+                            el(
+                                "div",
+                                { className: "player-hp-text" },
+                                el("span", { id: "player-hp-current" }, "100"),
+                                " / ",
+                                el("span", { id: "player-hp-max" }, "100")
+                            )
+                        )
+                    )
+                )
         );
     }
 

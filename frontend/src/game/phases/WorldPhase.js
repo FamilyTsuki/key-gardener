@@ -139,9 +139,30 @@ export class WorldPhase extends GamePhase {
                     playPromise.catch(error => console.warn("Autoplay prevented:", error));
                 }
 
+                // Add crack texture decal
+                const loader = new THREE.TextureLoader();
+                loader.load('/asset/game_assets/textures/break.png', (texture) => {
+                    const geometry = new THREE.PlaneGeometry(3.5, 3.5); // Agrandissement de la texture
+                    const material = new THREE.MeshBasicMaterial({ 
+                        map: texture, 
+                        transparent: true, 
+                        depthWrite: false,
+                        opacity: 0.8
+                    });
+                    const crackMesh = new THREE.Mesh(geometry, material);
+                    crackMesh.rotation.x = -Math.PI / 2;
+                    // targetY is 2.9 + baseY, tile surface is 2.0 + baseY. We put it at 2.01 + baseY to avoid z-fighting.
+                    crackMesh.position.set(this.arrivalX, this.targetY - 0.89, this.arrivalZ);
+                    this.gameEngine.scene.add(crackMesh);
+                    this.crackMesh = crackMesh;
+                    // Sauvegarde de la position sur la grille pour calculer l'assombrissement
+                    this.crackTilePos = { x: this.player.x, y: this.player.y };
+                });
+
                 this.isPlayingIntro = false;
                 this.isStunnedAfterFall = true;
                 this.stunTimer = 0.8;
+                this.cameraShakeTime = 0.4; // 400ms of camera shake
             }
         }
 
@@ -188,11 +209,24 @@ export class WorldPhase extends GamePhase {
         if (this.player && this.player.mesh) {
             const playerPos = this.player.mesh.position;
 
-            if (!this.isTransitioning) {
+            if (!this.isPlayingIntro) {
+                let shakeX = 0;
+                let shakeY = 0;
+                let shakeZ = 0;
+                
+                if (this.cameraShakeTime > 0) {
+                    this.cameraShakeTime -= deltaTime;
+                    // Intensité proportionnelle au temps restant (max 1.5 unités de tremblement)
+                    const intensity = Math.max(0, (this.cameraShakeTime / 0.4)) * 1.5; 
+                    shakeX = (Math.random() - 0.5) * intensity;
+                    shakeY = (Math.random() - 0.5) * intensity;
+                    shakeZ = (Math.random() - 0.5) * intensity;
+                }
+
                 this.camera.position.set(
-                    playerPos.x + 5,
-                    playerPos.y + 21,
-                    playerPos.z + 14
+                    playerPos.x + 5 + shakeX,
+                    playerPos.y + 21 + shakeY,
+                    playerPos.z + 14 + shakeZ
                 );
                 this.camera.lookAt(playerPos.x, playerPos.y, playerPos.z);
             }
@@ -217,6 +251,24 @@ export class WorldPhase extends GamePhase {
             this.worldMap.update(
                 this.player ? { x: this.player.x, y: this.player.y } : null
             );
+        }
+        
+        // Assombrissement de la fissure en fonction de la distance, comme les tuiles
+        if (this.crackMesh && this.crackTilePos && this.player) {
+            const dx = this.crackTilePos.x - this.player.x;
+            const dy = this.crackTilePos.y - this.player.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            let intensity = 1.0;
+            if (dist > 4) {
+                intensity = 0.05;
+            } else if (dist > 2.0) {
+                intensity = 1.0 - ((dist - 2.0) / 2.0) * 0.95;
+            }
+            
+            const r = Math.floor(255 * intensity);
+            const hex = (r << 16) | (r << 8) | r;
+            this.crackMesh.material.color.setHex(hex);
         }
     }
 
@@ -341,7 +393,7 @@ export class WorldPhase extends GamePhase {
 
         let target = null;
         if (this.worldMap) {
-            target = this.worldMap.find(keyName, this.player.position.y);
+            target = this.worldMap.find(keyName, this.player.y);
         }
         if (!target) {
             return;
@@ -390,6 +442,14 @@ export class WorldPhase extends GamePhase {
         if (this.playerLight) {
             this.gameEngine.scene.remove(this.playerLight);
             this.playerLight.dispose && this.playerLight.dispose();
+        }
+        
+        if (this.crackMesh) {
+            this.gameEngine.scene.remove(this.crackMesh);
+            if (this.crackMesh.material.map) this.crackMesh.material.map.dispose();
+            this.crackMesh.material.dispose();
+            this.crackMesh.geometry.dispose();
+            this.crackMesh = null;
         }
     }
 }

@@ -103,20 +103,6 @@ export default class Player extends Actor {
         });
 
         this.elVignette = document.getElementById("damage-vignette");
-
-        const canvas = document.createElement("canvas");
-        canvas.width = 256;
-        canvas.height = 64;
-        this.hpContext = canvas.getContext("2d");
-        this.hpCanvas = canvas;
-
-        const texture = new THREE.CanvasTexture(canvas);
-        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-        this.hpSprite = new THREE.Sprite(spriteMaterial);
-
-        this.hpSprite.scale.set(2, 0.5, 1);
-        this.hpSprite.position.y = 3.0;
-        this.mesh.add(this.hpSprite);
         
         this.lastHp = this.hp;
         this.updateHpBar();
@@ -126,29 +112,53 @@ export default class Player extends Actor {
      * Updates the health bar visual representation.
      */
     updateHpBar() {
-        if (!this.hpContext) return;
-        const ctx = this.hpContext;
-        const width = this.hpCanvas.width;
-        const height = this.hpCanvas.height;
-        const ratio = this.hp === Infinity ? 1 : Math.max(0, this.hp / this.hpMax);
+        const fillEl = document.getElementById("player-hp-fill");
+        const currentEl = document.getElementById("player-hp-current");
+        const maxEl = document.getElementById("player-hp-max");
+        const separatorNode = maxEl ? maxEl.previousSibling : null;
 
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(0, 0, width, height);
+        const hudEl = document.getElementById("player-hud");
+        if (hudEl) hudEl.style.display = "flex";
 
-        ctx.fillStyle = ratio > 0.3 ? "#2ecc71" : "#e74c3c";
-        ctx.fillRect(5, 5, (width - 10) * ratio, height - 10);
+        if (fillEl && currentEl && maxEl) {
+            
+            if (this.hp === Infinity) {
+                currentEl.textContent = "";
+                maxEl.textContent = "";
+                if (separatorNode && separatorNode.nodeType === Node.TEXT_NODE) {
+                    separatorNode.textContent = "";
+                }
+                fillEl.style.width = "100%";
+                fillEl.style.background = "linear-gradient(90deg, #f1c40f, #f39c12)";
+                fillEl.style.boxShadow = "0 0 10px #f1c40f";
+            } else {
+                const ratio = Math.max(0, this.hp / this.hpMax);
+                currentEl.textContent = Math.ceil(Math.max(0, this.hp));
+                maxEl.textContent = this.hpMax;
+                if (separatorNode && separatorNode.nodeType === Node.TEXT_NODE) {
+                    separatorNode.textContent = " / ";
+                }
+                fillEl.style.width = `${ratio * 100}%`;
+                
+                if (ratio > 0.3) {
+                    fillEl.style.background = "linear-gradient(90deg, #27ae60, var(--success-color))";
+                    fillEl.style.boxShadow = "0 0 10px var(--success-color)";
+                } else {
+                    fillEl.style.background = "linear-gradient(90deg, var(--danger-hover), var(--danger-color))";
+                    fillEl.style.boxShadow = "0 0 10px var(--danger-color)";
+                }
+            }
+        }
+    }
 
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 40px Arial";
-        ctx.textAlign = "center";
-        const hpText = this.hp === Infinity ? "Immortel" : `${Math.ceil(Math.max(0, this.hp))}/${this.hpMax}`;
-        ctx.fillText(
-            hpText,
-            width / 2,
-            height / 2 + 15
-        );
-
-        this.hpSprite.material.map.needsUpdate = true;
+    /**
+     * Cleans up the player object and hides UI.
+     */
+    destroy() {
+        const hudEl = document.getElementById("player-hud");
+        if (hudEl) hudEl.style.display = "none";
+        
+        super.destroy();
     }
 
     /**
