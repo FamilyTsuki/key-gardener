@@ -91,11 +91,11 @@ export class AdminView {
                 
                 const bodyEl = document.getElementById(bodyId);
                 const iconEl = document.getElementById(`icon-${level.level_number}`);
-                if (bodyEl.style.display === 'none') {
-                    bodyEl.style.display = 'block';
+                if (bodyEl.classList.contains('none')) {
+                    bodyEl.classList.remove('none');
                     if (iconEl) iconEl.textContent = '▼';
                 } else {
-                    bodyEl.style.display = 'none';
+                    bodyEl.classList.add('none');
                     if (iconEl) iconEl.textContent = '▶';
                 }
             });
@@ -118,10 +118,15 @@ export class AdminView {
         
         if (level.phase_type === 'world') {
             const eventsArray = options.events || [];
+            options.outroType = 'DoorEvent';
             eventsArray.forEach(eType => {
-                if (eType === 'DoorEvent') initialStoryEvents.push({ actionType: 'door' });
-                if (eType === 'BridgeWordEvent') initialStoryEvents.push({ actionType: 'bridge' });
-                if (eType === 'FlameWallEvent') initialStoryEvents.push({ actionType: 'flamewall' });
+                if (eType === 'DoorEvent' || eType === 'HoleEvent') {
+                    options.outroType = eType;
+                } else if (eType === 'BridgeWordEvent') {
+                    initialStoryEvents.push({ actionType: 'bridge' });
+                } else if (eType === 'FlameWallEvent') {
+                    initialStoryEvents.push({ actionType: 'flamewall' });
+                }
             });
             if (options.dialogue && options.dialogue.length > 0) {
                 initialStoryEvents.push({
@@ -147,11 +152,11 @@ export class AdminView {
         
         typeSelect.addEventListener('change', (e) => {
             if (e.target.value === 'survive') {
-                surviveDiv.style.display = 'block';
-                worldDiv.style.display = 'none';
+                surviveDiv.classList.remove('none');
+                worldDiv.classList.add('none');
             } else {
-                surviveDiv.style.display = 'none';
-                worldDiv.style.display = 'block';
+                surviveDiv.classList.add('none');
+                worldDiv.classList.remove('none');
             }
             storyContainer.innerHTML = '';
         });
@@ -192,11 +197,13 @@ export class AdminView {
                 const filteredStoryEvents = [];
                 
                 gatheredStoryEvents.forEach(evt => {
-                    if (evt.actionType === 'door') eventsList.push('DoorEvent');
-                    else if (evt.actionType === 'bridge') eventsList.push('BridgeWordEvent');
+                    if (evt.actionType === 'bridge') eventsList.push('BridgeWordEvent');
                     else if (evt.actionType === 'flamewall') eventsList.push('FlameWallEvent');
                     else filteredStoryEvents.push(evt);
                 });
+
+                const outroType = card.querySelector('.world-outro').value;
+                if (outroType) eventsList.push(outroType);
 
                 let globalDialogue = [];
                 let globalDialogueModel = null;
@@ -281,7 +288,6 @@ export class AdminView {
         if (evt.actionType === 'heal') div.classList.add("block-heal");
         else if (evt.actionType === 'spawn' || evt.actionType === 'spawnBoss') div.classList.add("block-spawn");
         else if (evt.actionType === 'spawnerConfig') div.classList.add("block-spawn");
-        else if (evt.actionType === 'door') div.classList.add("block-door");
         else if (evt.actionType === 'bridge') div.classList.add("block-bridge");
         else if (evt.actionType === 'flamewall') div.classList.add("block-flamewall");
         else div.classList.add("block-dialogue");
@@ -299,13 +305,12 @@ export class AdminView {
             optionsHtml = `
                 <option value="dialogue" ${evt.actionType === 'dialogue' || !evt.actionType ? 'selected' : ''}>💬 Lancer un Dialogue</option>
                 <option value="heal" ${evt.actionType === 'heal' ? 'selected' : ''}>💚 Soigner le Joueur</option>
-                <option value="door" ${evt.actionType === 'door' ? 'selected' : ''}>🚪 Placer une Porte de Fin</option>
                 <option value="bridge" ${evt.actionType === 'bridge' ? 'selected' : ''}>⏳ Placer un Pont de Mots (Bridge)</option>
                 <option value="flamewall" ${evt.actionType === 'flamewall' ? 'selected' : ''}>🔥 Placer un Mur de Flammes</option>
             `;
         }
 
-        const hideTrigger = ['door', 'bridge', 'flamewall'].includes(evt.actionType) ? 'display: none;' : 'display: flex; gap: 10px; margin-bottom: 10px;';
+        const hideTriggerClass = ['bridge', 'flamewall'].includes(evt.actionType) ? 'none' : '';
 
         div.innerHTML = `
             <button class="remove-evt-btn">X</button>
@@ -317,7 +322,7 @@ export class AdminView {
                 </select>
             </div>
 
-            <div class="evt-trigger-container block-row" style="${hideTrigger}">
+            <div class="evt-trigger-container block-row ${hideTriggerClass}">
                 <label>Quand ?</label>
                 <select class="evt-trigger-type block-select">
                     <option value="time" ${evt.triggerType === 'time' ? 'selected' : ''}>Après Temps (sec)</option>
@@ -326,7 +331,7 @@ export class AdminView {
                 <input type="number" class="evt-trigger-value block-input" value="${evt.triggerValue !== undefined ? evt.triggerValue : 10}" style="width: 80px;">
             </div>
             
-            <div class="evt-fields-dialogue block-row" style="display: ${(!evt.actionType || evt.actionType === 'dialogue') ? 'flex' : 'none'}; flex-direction: column; align-items: stretch;">
+            <div class="evt-fields-dialogue block-row" style="flex-direction: column; align-items: stretch;">
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <label>Modèle 3D (.glb):</label>
                     <input type="text" class="evt-model block-input" value="${evt.dialogueModel || '/asset/game_assets/models/player.glb'}" style="flex: 1;">
@@ -337,17 +342,17 @@ export class AdminView {
                 </div>
             </div>
 
-            <div class="evt-fields-heal block-row" style="display: ${evt.actionType === 'heal' ? 'flex' : 'none'};">
+            <div class="evt-fields-heal block-row">
                 <label>Points de vie (PV) :</label>
                 <input type="number" class="evt-heal-amount block-input" value="${evt.healAmount || 50}" style="width: 100px;">
             </div>
 
-            <div class="evt-fields-spawn block-row" style="display: ${evt.actionType === 'spawn' ? 'flex' : 'none'};">
+            <div class="evt-fields-spawn block-row">
                 <label>Type d'ennemi :</label>
                 <input type="text" class="evt-spawn-type block-input" value="${evt.spawnEnemy || 'boss'}" style="width: 150px;">
             </div>
 
-            <div class="evt-fields-spawnerConfig block-row" style="display: ${evt.actionType === 'spawnerConfig' ? 'flex' : 'none'};">
+            <div class="evt-fields-spawnerConfig block-row">
                 <label>Intervalle Spawn (sec) :</label>
                 <input type="number" step="0.1" class="evt-spawn-interval block-input" value="${evt.spawnInterval !== undefined ? evt.spawnInterval : 3}" style="width: 80px; margin-right: 15px;">
                 
@@ -362,24 +367,14 @@ export class AdminView {
         selectAction.addEventListener('change', (e) => {
             const newType = e.target.value;
             
-            div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-door', 'block-bridge', 'block-flamewall');
+            div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-bridge', 'block-flamewall');
             if (newType === 'heal') div.classList.add("block-heal");
             else if (newType === 'spawn' || newType === 'spawnBoss' || newType === 'spawnerConfig') div.classList.add("block-spawn");
-            else if (newType === 'door') div.classList.add("block-door");
             else if (newType === 'bridge') div.classList.add("block-bridge");
             else if (newType === 'flamewall') div.classList.add("block-flamewall");
             else div.classList.add("block-dialogue");
 
-            div.querySelector('.evt-fields-dialogue').style.display = newType === 'dialogue' ? 'flex' : 'none';
-
-            const triggerContainer = div.querySelector('.evt-trigger-container');
-            if (triggerContainer) {
-                triggerContainer.style.display = ['door', 'bridge', 'flamewall'].includes(newType) ? 'none' : 'flex';
-            }
-
-            div.querySelector('.evt-fields-heal').style.display = newType === 'heal' ? 'flex' : 'none';
-            div.querySelector('.evt-fields-spawn').style.display = newType === 'spawn' ? 'flex' : 'none';
-            div.querySelector('.evt-fields-spawnerConfig').style.display = newType === 'spawnerConfig' ? 'flex' : 'none';
+            // Visibility is now handled entirely by CSS via block-* classes!
         });
 
         storyContainer.appendChild(div);
@@ -436,12 +431,12 @@ export class AdminView {
 
             } else {
                 const introType = card.querySelector('.world-intro').value || "staircase";
+                const outroType = card.querySelector('.world-outro').value || "DoorEvent";
                 const stContainer = card.querySelector('div[class*="story-events-container-"]');
                 const bubbles = stContainer ? Array.from(stContainer.querySelectorAll('.evt-action-type')).map(sel => sel.value) : [];
-                const hasDoor = bubbles.includes('door');
                 const hasBridge = bubbles.includes('bridge');
                 
-                WorldMap.init(scene, createWordlLayout(hasBridge, introType), hasDoor).then((wMap) => {
+                WorldMap.init(scene, createWordlLayout(hasBridge, introType)).then((wMap) => {
                     currentDecor = wMap.group;
                     const spawnTile = wMap.mapLayout.find(t => t.isSpawn) || wMap.mapLayout[1] || wMap.mapLayout[0];
                     const spawnPos = spawnTile.mesh.position;
@@ -497,7 +492,7 @@ export class AdminView {
                 </div>
             </div>
             
-            <div id="${bodyId}" style="display: ${isCollapsed ? 'none' : 'block'};">
+            <div id="${bodyId}" class="${isCollapsed ? 'none' : ''}">
                 <div class="preview-container-${level.level_number} preview-container">
                     <div class="preview-badge">Aperçu 3D</div>
                 </div>
@@ -521,7 +516,7 @@ export class AdminView {
 
     buildSurviveFormHtml(options, isSurvive) {
         return `
-            <div class="survive-form story-event-block block-survive" style="display: ${isSurvive ? 'block' : 'none'};">
+            <div class="survive-form story-event-block block-survive ${isSurvive ? '' : 'none'}">
                 <div class="block-title">⚙️ Paramètres de Survie</div>
                 <div class="block-row">
                     <div style="flex: 1; min-width: 150px;">
@@ -557,7 +552,7 @@ export class AdminView {
 
     buildWorldFormHtml(options, isSurvive) {
         return `
-            <div class="world-form story-event-block block-world" style="display: ${!isSurvive ? 'block' : 'none'};">
+            <div class="world-form story-event-block block-world ${!isSurvive ? '' : 'none'}">
                 <div class="block-title">⚙️ Paramètres d'Exploration</div>
                 <div class="block-row">
                     <div style="flex: 1; min-width: 200px;">
@@ -565,6 +560,13 @@ export class AdminView {
                         <select class="world-intro block-select">
                             <option value="staircase" ${options.introType === 'staircase' ? 'selected' : ''}>Escaliers (Staircase)</option>
                             <option value="skyfall" ${options.introType === 'skyfall' ? 'selected' : ''}>Chute du Ciel (Skyfall)</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label class="admin-label">Type de Fin :</label>
+                        <select class="world-outro block-select">
+                            <option value="DoorEvent" ${options.outroType === 'DoorEvent' ? 'selected' : ''}>🚪 Porte (DoorEvent)</option>
+                            <option value="HoleEvent" ${options.outroType === 'HoleEvent' ? 'selected' : ''}>🕳️ Trou (HoleEvent)</option>
                         </select>
                     </div>
                     <div style="flex: 1; min-width: 100px;">

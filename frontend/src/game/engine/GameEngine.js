@@ -3,6 +3,7 @@ import { WorldPhase } from "../phases/WorldPhase.js";
 import { IntroPhase } from "../phases/IntroPhase.js";
 import { SurvivePhase } from "../phases/SurvivePhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
+import { HoleEvent } from "../events/HoleEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
 import { BridgeWordEvent } from "../events/BridgeWordEvent.js";
 
@@ -112,6 +113,7 @@ export class GameEngine {
                         const eventMap = {
                             "BridgeWordEvent": BridgeWordEvent,
                             "DoorEvent": DoorEvent,
+                            "HoleEvent": HoleEvent,
                             "FlameWallEvent": FlameWallEvent
                         };
                         const eventInstances = (options.events || []).map(evtName => {
@@ -129,42 +131,7 @@ export class GameEngine {
             console.warn("Could not fetch level config, using defaults", e);
         }
         
-        if (level === 1) {
-            await this.setPhase(new SurvivePhase(this, {
-                decorType: "styx",
-                duration: 60,
-                spawnInterval: 3,
-                maxEnemies: 20
-            }));
-        } else if (level === 2) {
-            await this.setPhase(new WorldPhase(this, { events: [new BridgeWordEvent(), new DoorEvent()] }));
-        } else if (level === 3) {
-            await this.setPhase(new WorldPhase(this, { events: [new FlameWallEvent(), new DoorEvent()] }));
-        } else if (level === 4) {
-            await this.setPhase(new SurvivePhase(this, {
-                decorType: "mine",
-                duration: 120,
-                spawnInterval: 2,
-                maxEnemies: 30,
-                storyEvents: [
-                    {
-                        triggerType: "time",
-                        triggerValue: 10,
-                        actionType: "spawnBoss",
-                        dialogue: ["Un signal suspect a été détecté...", "Le Virus suprême s'éveille !"],
-                        dialogueModel: "/asset/game_assets/models/bug.glb"
-                    }
-                ]
-            }));
-        } else if (level >= 5) {
-            await this.setPhase(new SurvivePhase(this, {
-                decorType: "styx",
-                duration: null,
-                spawnInterval: null,
-                maxEnemies: 0,
-                boss: true
-            }));
-        }
+        console.warn(`Level ${level} not found or failed to load. Halting progression.`);
     }
 
     /**

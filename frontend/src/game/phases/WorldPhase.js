@@ -49,21 +49,23 @@ export class WorldPhase extends GamePhase {
 
     async init() {
         const scene = this.gameEngine.scene;
-        const hasDoorEvent = this.events.some(e => e.constructor.name === "DoorEvent");
-        const hasBridgeEvent = this.events.some(e => e.constructor.name === "BridgeWordEvent");
-        
         this.activeIntroType = this.introType === "random" ? (Math.random() > 0.5 ? "skyfall" : "staircase") : this.introType;
-        const worldLayout = createWordlLayout(hasBridgeEvent, this.activeIntroType);
+        const worldLayout = createWordlLayout(this.activeIntroType);
+
+        for (const event of this.events) {
+            if (event.modifyLayout) {
+                event.modifyLayout(worldLayout);
+            }
+        }
 
         this.worldMap = await WorldMap.init(
             this.gameEngine.scene,
-            worldLayout,
-            hasDoorEvent
+            worldLayout
         );
         console.log(this.worldMap);
         this.draw_bg();
 
-        const spawnTile = this.worldMap.mapLayout.find(t => t.isSpawn) || this.worldMap.mapLayout[1];
+        const spawnTile = this.worldMap.mapLayout.find(t => t.role === "spawn") || this.worldMap.mapLayout[1];
 
         this.player = new Player(
             "Héros",
@@ -254,7 +256,7 @@ export class WorldPhase extends GamePhase {
 
         let arrivalTile = spawnTile;
         if (introType === "staircase") {
-            const normalTiles = this.worldMap.mapLayout.filter(t => !t.isStairs && t.rawPosition.y <= 0);
+            const normalTiles = this.worldMap.mapLayout.filter(t => t.role !== "stairs" && t.rawPosition.y <= 0);
             const firstNormalTile = normalTiles[1] || normalTiles[0];
             if (firstNormalTile) {
                 arrivalTile = firstNormalTile;
@@ -284,14 +286,14 @@ export class WorldPhase extends GamePhase {
             this.player.update();
             this.draw();
         } else if (introType === "staircase") {
-            const stairsTiles = this.worldMap.mapLayout.filter(t => t.isStairs).sort((a, b) => b.baseY - a.baseY);
+            const stairsTiles = this.worldMap.mapLayout.filter(t => t.role === "stairs").sort((a, b) => b.baseY - a.baseY);
             
             this.player.update();
             this.draw();
 
             const stepDown = async (index) => {
                 if (index >= stairsTiles.length) {
-                    const normalTiles = this.worldMap.mapLayout.filter(t => !t.isStairs && t.rawPosition.y <= 0);
+                    const normalTiles = this.worldMap.mapLayout.filter(t => t.role !== "stairs" && t.rawPosition.y <= 0);
                     const firstNormalTile = normalTiles[1] || normalTiles[0];
                     if (firstNormalTile) {
                         this.player.move({

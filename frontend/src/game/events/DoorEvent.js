@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { WorldEvent } from "./WorldEvent.js";
 
 /**
@@ -17,15 +18,250 @@ export class DoorEvent extends WorldEvent {
         this.enterPromptOverlay = null;
         this.uiOverlay = null;
         this.errorTimeout = null;
+        this.leftDoorPivot = null;
+        this.rightDoorPivot = null;
+        this.doorTileId = null;
     }
 
     /**
-     * Initializes the door event.
+     * Mutates the map layout to specify which tile is the door tile.
+     * @param {Array} mapLayout - The raw map layout array.
+     */
+    modifyLayout(mapLayout) {
+        const doorRow = mapLayout.filter((t) => t.y === -34);
+        if (doorRow.length > 0) {
+            doorRow.sort((a, b) => a.x - b.x);
+            const centerTile = doorRow[Math.floor(doorRow.length / 2)];
+            if (centerTile) {
+                this.doorTileId = centerTile.id;
+            }
+        }
+    }
+
+    /**
+     * Initializes the door event, building the door mesh on the designated tile.
      * @param {WorldPhase} worldPhase - The world phase instance.
      * @param {THREE.Scene} scene - The scene instance.
      * @returns {Promise<void>}
      */
-    async init(worldPhase, scene) {}
+    async init(worldPhase, scene) {
+        if (!worldPhase.worldMap || !this.doorTileId) return;
+
+        const doorTile = worldPhase.worldMap.mapLayout.find((t) => t.id === this.doorTileId);
+        if (doorTile && doorTile.mesh) {
+            const stoneTexture = worldPhase.worldMap.stoneTexture;
+            this.buildDoor(doorTile.mesh, stoneTexture);
+        }
+    }
+
+    /**
+     * Creates a decorative door on a given tile mesh.
+     * @param {THREE.Object3D} parentMesh - The parent mesh for the door.
+     * @param {THREE.Texture} [stoneTexture] - The texture for the door walls/tunnel.
+     */
+    buildDoor(parentMesh, stoneTexture) {
+        const doorGroup = new THREE.Group();
+
+        const pillarMat = new THREE.MeshStandardMaterial({
+            map: stoneTexture,
+            color: 0x888888,
+            roughness: 0.9,
+            metalness: 0.1,
+        });
+
+        const pillarGeo = new THREE.BoxGeometry(1.5, 12, 1.5);
+        const leftPillar = new THREE.Mesh(pillarGeo, pillarMat);
+        leftPillar.position.set(-3, 6, 0);
+
+        const rightPillar = new THREE.Mesh(pillarGeo, pillarMat);
+        rightPillar.position.set(3, 6, 0);
+
+        const archGeo = new THREE.BoxGeometry(7.5, 2, 1.5);
+        const arch = new THREE.Mesh(archGeo, pillarMat);
+        arch.position.set(0, 13, 0);
+
+        const doorMat = new THREE.MeshStandardMaterial({
+            color: 0x5c4033,
+            roughness: 0.9,
+            metalness: 0.1,
+        });
+        const doorGeo = new THREE.BoxGeometry(2.25, 12, 0.5);
+
+        const leftDoorPivot = new THREE.Group();
+        leftDoorPivot.position.set(-2.25, 6, 0);
+        const leftDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+        leftDoorMesh.position.set(1.125, 0, 0);
+        leftDoorPivot.add(leftDoorMesh);
+
+        const rightDoorPivot = new THREE.Group();
+        rightDoorPivot.position.set(2.25, 6, 0);
+        const rightDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+        rightDoorMesh.position.set(-1.125, 0, 0);
+        rightDoorPivot.add(rightDoorMesh);
+
+        this.leftDoorPivot = leftDoorPivot;
+        this.rightDoorPivot = rightDoorPivot;
+
+        let wallTexture = null;
+        let tunnelTexture = null;
+        if (stoneTexture) {
+            wallTexture = stoneTexture.clone();
+            wallTexture.wrapS = THREE.RepeatWrapping;
+            wallTexture.wrapT = THREE.RepeatWrapping;
+            wallTexture.repeat.set(5, 4);
+            wallTexture.needsUpdate = true;
+
+            tunnelTexture = stoneTexture.clone();
+            tunnelTexture.wrapS = THREE.RepeatWrapping;
+            tunnelTexture.wrapT = THREE.RepeatWrapping;
+            tunnelTexture.repeat.set(1, 2);
+            tunnelTexture.needsUpdate = true;
+        }
+
+        const caveMat = new THREE.MeshStandardMaterial({
+            map: wallTexture,
+            color: 0x555566,
+            roughness: 1.0,
+            metalness: 0.1,
+            flatShading: true
+        });
+
+        const rockLineMat = new THREE.LineBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.4
+        });
+
+        const wallGeo = new THREE.PlaneGeometry(60, 50, 60, 50);
+        wallGeo.translate(0, 15, 0);
+
+        const index = wallGeo.getIndex();
+        const pos = wallGeo.attributes.position;
+        const newIndices = [];
+        
+        for (let i = 0; i < index.count; i += 3) {
+            const a = index.getX(i);
+            const b = index.getX(i + 1);
+            const c = index.getX(i + 2);
+            
+            const cx = (pos.getX(a) + pos.getX(b) + pos.getX(c)) / 3;
+            const cy = (pos.getY(a) + pos.getY(b) + pos.getY(c)) / 3;
+            
+            if (Math.abs(cx) < 2.8 && cy > -0.5 && cy < 12.8) {
+                continue;
+            }
+            newIndices.push(a, b, c);
+        }
+        wallGeo.setIndex(newIndices);
+
+        for (let i = 0; i < pos.count; i++) {
+            let x = pos.getX(i);
+            let y = pos.getY(i);
+            let z = pos.getZ(i);
+
+            let distToEdgeX = Math.max(0, Math.abs(x) - 3.0);
+            let distToEdgeY = Math.max(0, y - 13.0);
+            let distToEdgeBottom = Math.max(0, -0.5 - y);
+            
+            let distToEdge = Math.sqrt(distToEdgeX * distToEdgeX + distToEdgeY * distToEdgeY + distToEdgeBottom * distToEdgeBottom);
+            let attenuation = Math.min(1.0, distToEdge / 6.0);
+            attenuation = attenuation * attenuation * (3 - 2 * attenuation);
+
+            let noiseZ = 0;
+            noiseZ += (Math.sin(x * 0.31 + y * 0.27) + Math.cos(x * 0.23 - y * 0.33)) * 1.5;
+            noiseZ += (Math.sin(x * 0.67 + y * 0.59) + Math.cos(x * 0.61 - y * 0.73)) * 0.75;
+            noiseZ += (Math.sin(x * 1.37 + y * 1.29) + Math.cos(x * 1.21 - y * 1.43)) * 0.35;
+            noiseZ += (Math.sin(x * 2.71 + y * 2.57) + Math.cos(x * 2.51 - y * 2.83)) * 0.15;
+            
+            noiseZ = (noiseZ - 1.5) * attenuation;
+            pos.setZ(i, z + noiseZ);
+        }
+        wallGeo.computeVertexNormals();
+
+        const wallMesh = new THREE.Mesh(wallGeo, caveMat);
+        wallMesh.position.set(0, 0, -1.0);
+        
+        const wallEdges = new THREE.EdgesGeometry(wallGeo);
+        const wallLine = new THREE.LineSegments(wallEdges, rockLineMat);
+        wallMesh.add(wallLine);
+        doorGroup.add(wallMesh);
+
+        const tunnelGeo = new THREE.BoxGeometry(5.4, 15.0, 20, 3, 3, 3);
+        const tunnelPos = tunnelGeo.attributes.position;
+        for (let i = 0; i < tunnelPos.count; i++) {
+            let x = tunnelPos.getX(i);
+            let y = tunnelPos.getY(i);
+            let z = tunnelPos.getZ(i);
+            const noise = (Math.sin(x * 1.2) + Math.cos(y * 1.2) + Math.sin(z * 1.2)) * 0.4;
+            tunnelPos.setX(i, x + noise);
+            tunnelPos.setY(i, y + noise);
+            tunnelPos.setZ(i, z + noise);
+        }
+        tunnelGeo.computeVertexNormals();
+        
+        const tunnelMat = new THREE.MeshStandardMaterial({
+            map: stoneTexture,
+            color: 0x333344,
+            roughness: 1.0,
+            metalness: 0.1,
+            flatShading: true,
+            side: THREE.BackSide
+        });
+        const tunnelMesh = new THREE.Mesh(tunnelGeo, tunnelMat);
+        tunnelMesh.position.set(0, 6.0, -10.5);
+        
+        const tunnelEdges = new THREE.EdgesGeometry(tunnelGeo);
+        const tunnelLine = new THREE.LineSegments(tunnelEdges, rockLineMat);
+        tunnelMesh.add(tunnelLine);
+        doorGroup.add(tunnelMesh);
+
+        const backdropGeo = new THREE.PlaneGeometry(10, 20);
+        const backdropMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
+        const backdrop = new THREE.Mesh(backdropGeo, backdropMat);
+        backdrop.position.set(0, 6.5, -19.5);
+        doorGroup.add(backdrop);
+
+        doorGroup.add(leftPillar);
+        doorGroup.add(rightPillar);
+        doorGroup.add(arch);
+        doorGroup.add(leftDoorPivot);
+        doorGroup.add(rightDoorPivot);
+
+        doorGroup.position.set(0, 2, 0);
+        doorGroup.rotation.y = -Math.PI / 6;
+        parentMesh.add(doorGroup);
+    }
+
+    /**
+     * Animates the door opening.
+     * @returns {Promise<void>} Resolves when the animation finishes.
+     */
+    openDoor() {
+        return new Promise((resolve) => {
+            if (!this.leftDoorPivot || !this.rightDoorPivot) {
+                resolve();
+                return;
+            }
+            const duration = 1500;
+            const startTime = performance.now();
+
+            const animateFade = (time) => {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const angle = progress * (Math.PI / 2);
+                this.leftDoorPivot.rotation.y = -angle;
+                this.rightDoorPivot.rotation.y = angle;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateFade);
+                } else {
+                    resolve();
+                }
+            };
+            requestAnimationFrame(animateFade);
+        });
+    }
 
     /**
      * Updates the state of the door event, checking player proximity.
@@ -33,10 +269,10 @@ export class DoorEvent extends WorldEvent {
      * @param {number} deltaTime - Time elapsed since last frame.
      */
     update(worldPhase, deltaTime) {
-        if (!worldPhase.player || !worldPhase.worldMap) return;
+        if (!worldPhase.player || !worldPhase.worldMap || !this.doorTileId) return;
 
         const doorTile = worldPhase.worldMap.mapLayout.find(
-            (t) => t.isDoorTile
+            (t) => t.id === this.doorTileId
         );
         if (doorTile) {
             const dx = doorTile.rawPosition.x - worldPhase.player.x;
@@ -48,7 +284,7 @@ export class DoorEvent extends WorldEvent {
                     this.startDoorSequence(worldPhase);
                 }
             } else if (this.isDoorOpen) {
-                if (dist < 0.5) {
+                if (dist < 1.5 && !worldPhase.isTransitioning) {
                     this.showEnterPrompt(worldPhase);
                 } else {
                     this.hideEnterPrompt(worldPhase);
@@ -99,16 +335,25 @@ export class DoorEvent extends WorldEvent {
         const keyName = event.key.toUpperCase();
         if (this.isDoorOpen && keyName === "ENTER") {
             const doorTile = worldPhase.worldMap.mapLayout.find(
-                (t) => t.isDoorTile
+                (t) => t.id === this.doorTileId
             );
             if (doorTile) {
                 const dx = doorTile.rawPosition.x - worldPhase.player.x;
                 const dy = doorTile.rawPosition.y - worldPhase.player.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 2.5) {
+                if (dist < 1.5) {
                     worldPhase.isTransitioning = true;
-                    this.hideEnterPrompt(worldPhase);
-                    worldPhase.gameEngine.nextLevel();
+                    
+                    if (this.enterPromptOverlay) {
+                        const keyElement = this.enterPromptOverlay.querySelector('.enter-prompt-key');
+                        if (keyElement) keyElement.classList.add("active");
+                    }
+                    
+                    setTimeout(() => {
+                        this.hideEnterPrompt(worldPhase);
+                        worldPhase.gameEngine.nextLevel();
+                    }, 150);
+                    
                     return true;
                 }
             }
@@ -184,9 +429,7 @@ export class DoorEvent extends WorldEvent {
             this.uiOverlay = null;
         }
 
-        if (worldPhase.worldMap) {
-            await worldPhase.worldMap.openDoor();
-        }
+        await this.openDoor();
 
         this.isOpeningDoor = false;
         this.isDoorOpen = true;

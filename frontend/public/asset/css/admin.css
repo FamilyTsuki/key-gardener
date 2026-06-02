@@ -233,3 +233,18 @@
     background-color: #161b22 !important;
     color: #ffffff !important;
 }
+
+/* Utility classes */
+.none {
+    display: none !important;
+}
+
+/* Event Block Visibility Rules */
+.story-event-block:not(.block-dialogue) .evt-fields-dialogue,
+.story-event-block:not(.block-heal) .evt-fields-heal,
+.story-event-block:not(.block-spawn) .evt-fields-spawn,
+.story-event-block:not(.block-spawn) .evt-fields-spawnerConfig,
+.story-event-block.block-bridge .evt-trigger-container,
+.story-event-block.block-flamewall .evt-trigger-container {
+    display: none !important;
+}

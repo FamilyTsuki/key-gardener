@@ -8,6 +8,12 @@ export class WorldEvent {
     constructor() {}
 
     /**
+     * Called before the WorldMap meshes are generated to allow the event to mutate the layout.
+     * @param {Array} mapLayout - The raw layout array.
+     */
+    modifyLayout(mapLayout) {}
+
+    /**
      * Called when the WorldPhase initializes.
      * @param {WorldPhase} worldPhase - The instance of WorldPhase.
      * @param {THREE.Scene} scene - The main three.js scene.

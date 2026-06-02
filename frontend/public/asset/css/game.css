@@ -17,6 +17,23 @@
     z-index: 1;
 }
 
+.phase-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    opacity: 0;
+    z-index: 9999;
+    pointer-events: none;
+    transition: opacity 1000ms ease-in-out;
+}
+
+.phase-transition-overlay.active {
+    opacity: 1;
+}
+
 .door-mini-game-overlay {
     position: absolute;
     top: 50%;
@@ -107,6 +124,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all 0.1s ease-in-out;
+}
+
+.enter-prompt-key.active {
+    transform: translateY(4px) scale(0.95);
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .save-quit-btn {

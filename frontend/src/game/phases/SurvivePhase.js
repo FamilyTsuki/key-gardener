@@ -133,26 +133,17 @@ export class SurvivePhase extends GamePhase {
         this.isTransitioningToNextLevel = true;
 
         const overlay = document.createElement("div");
-        overlay.style.position = "fixed";
-        overlay.style.top = "0";
-        overlay.style.left = "0";
-        overlay.style.width = "100vw";
-        overlay.style.height = "100vh";
-        overlay.style.backgroundColor = "black";
-        overlay.style.opacity = "0";
-        overlay.style.zIndex = "9999";
-        overlay.style.pointerEvents = "none";
-        overlay.style.transition = "opacity 1000ms ease-in-out";
+        overlay.classList.add("phase-transition-overlay");
         document.body.appendChild(overlay);
 
         setTimeout(() => {
-            overlay.style.opacity = "1";
+            overlay.classList.add("active");
             
             setTimeout(async () => {
                 this.isPhaseEnded = true;
                 await this.gameEngine.nextLevel();
                 
-                overlay.style.opacity = "0";
+                overlay.classList.remove("active");
                 
                 setTimeout(() => {
                     overlay.remove();
