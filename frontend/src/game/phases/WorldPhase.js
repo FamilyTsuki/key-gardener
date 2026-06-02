@@ -139,10 +139,9 @@ export class WorldPhase extends GamePhase {
                     playPromise.catch(error => console.warn("Autoplay prevented:", error));
                 }
 
-                // Add crack texture decal
                 const loader = new THREE.TextureLoader();
                 loader.load('/asset/game_assets/textures/break.png', (texture) => {
-                    const geometry = new THREE.PlaneGeometry(3.5, 3.5); // Agrandissement de la texture
+                    const geometry = new THREE.PlaneGeometry(2.5, 2.5);
                     const material = new THREE.MeshBasicMaterial({ 
                         map: texture, 
                         transparent: true, 
@@ -151,18 +150,16 @@ export class WorldPhase extends GamePhase {
                     });
                     const crackMesh = new THREE.Mesh(geometry, material);
                     crackMesh.rotation.x = -Math.PI / 2;
-                    // targetY is 2.9 + baseY, tile surface is 2.0 + baseY. We put it at 2.01 + baseY to avoid z-fighting.
                     crackMesh.position.set(this.arrivalX, this.targetY - 0.89, this.arrivalZ);
                     this.gameEngine.scene.add(crackMesh);
                     this.crackMesh = crackMesh;
-                    // Sauvegarde de la position sur la grille pour calculer l'assombrissement
                     this.crackTilePos = { x: this.player.x, y: this.player.y };
                 });
 
                 this.isPlayingIntro = false;
                 this.isStunnedAfterFall = true;
                 this.stunTimer = 0.8;
-                this.cameraShakeTime = 0.4; // 400ms of camera shake
+                this.cameraShakeTime = 0.4;
             }
         }
 
@@ -216,7 +213,6 @@ export class WorldPhase extends GamePhase {
                 
                 if (this.cameraShakeTime > 0) {
                     this.cameraShakeTime -= deltaTime;
-                    // Intensité proportionnelle au temps restant (max 1.5 unités de tremblement)
                     const intensity = Math.max(0, (this.cameraShakeTime / 0.4)) * 1.5; 
                     shakeX = (Math.random() - 0.5) * intensity;
                     shakeY = (Math.random() - 0.5) * intensity;
@@ -253,7 +249,6 @@ export class WorldPhase extends GamePhase {
             );
         }
         
-        // Assombrissement de la fissure en fonction de la distance, comme les tuiles
         if (this.crackMesh && this.crackTilePos && this.player) {
             const dx = this.crackTilePos.x - this.player.x;
             const dy = this.crackTilePos.y - this.player.y;

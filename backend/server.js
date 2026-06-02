@@ -11,6 +11,7 @@ const authRoutes = require("./src/routes/auth.routes");
 const postsRoutes = require("./src/routes/posts.routes");
 const savesRoutes = require("./src/routes/saves.routes");
 const levelsRoutes = require("./src/routes/levels.routes");
+const statisticsRoutes = require("./src/routes/statistics.routes");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -46,6 +47,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/saves", savesRoutes);
 app.use("/api/levels", levelsRoutes);
+app.use("/api/stats", statisticsRoutes);
 
 app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "OK", message: "API is running securely" });

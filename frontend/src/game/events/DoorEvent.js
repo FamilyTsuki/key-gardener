@@ -356,7 +356,6 @@ export class DoorEvent extends WorldEvent {
                             x: doorTile.rawPosition.x*2,
                             y: doorTile.rawPosition.y*2
                         });
-                        // IMPORTANT: movementDuration MUST be set AFTER move() parce que move() le remet à 15 !
                         worldPhase.player.movementDuration = 480;
                         
                         worldPhase.player.facingDirection = { x: 0, y: -1 };
@@ -364,14 +363,13 @@ export class DoorEvent extends WorldEvent {
                             worldPhase.player.mesh.rotation.set(0, Math.PI, 0);
                         }
                         
-                        // Création de l'écran noir pour la transition
                         const overlay = document.createElement("div");
                         overlay.classList.add("phase-transition-overlay");
                         document.body.appendChild(overlay);
 
                         setTimeout(() => {
                             overlay.classList.add("active");
-                        }, 150); // Petit délai pour laisser le joueur faire les premiers pas avant le fondu
+                        }, 150); 
                         
                         setTimeout(async () => {
                             await worldPhase.gameEngine.nextLevel();

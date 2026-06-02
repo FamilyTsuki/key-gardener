@@ -4,6 +4,7 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import Navbar from "../components/Navbar.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { StatisticsService } from "../../core/services/statistics.service.js";
 
 /**
  * View for displaying and managing user account information.
@@ -122,6 +123,7 @@ export default class AccountView extends AbstractView {
                     this.usermail,
                     this.editUsermail,
                 ),
+                (this.statsContainer = el("div", { className: "stats-container hidden" })),
                 passwordContainer,
                 langContainer
             ),
@@ -152,11 +154,54 @@ export default class AccountView extends AbstractView {
                 this.personalPictureImg.src = "/asset/img/users/" + user.personalPicture;
             }
             
+            this.renderStats();
+            
         } catch (error) {
             console.error("AccountView failed to load user data", error);
             AuthService.logout();
             Router.navigate("/");
         }
+    }
+
+    /**
+     * Fetches and renders user statistics.
+     */
+    async renderStats() {
+        try {
+            const stats = await StatisticsService.getStats();
+            if (this.statsContainer) {
+                this.statsContainer.innerHTML = "";
+                this.statsContainer.classList.remove("hidden");
+
+                const rank = StatisticsService.getRankFromWpm(stats.highest_wpm || 0);
+
+                const statsGrid = el("div", { className: "stats-grid" },
+                    this.createStatItem("Grade Actuel", rank.name, rank.class),
+                    this.createStatItem("Top WPM", `${stats.highest_wpm} WPM`),
+                    this.createStatItem("WPM Moyen", `${stats.average_wpm} WPM`),
+                    this.createStatItem("Précision", `${stats.accuracy}%`),
+                    this.createStatItem("Mots Tapés", stats.total_words_typed),
+                    this.createStatItem("Ennemis Vaincus", stats.enemies_defeated),
+                    this.createStatItem("Boss Vaincus", stats.bosses_defeated),
+                    this.createStatItem("Temps de Jeu", `${Math.floor(stats.total_playtime_seconds / 60)} min`)
+                );
+
+                this.statsContainer.appendChild(el("h3", { className: "password-title" }, "Statistiques Globales"));
+                this.statsContainer.appendChild(statsGrid);
+            }
+        } catch (error) {
+            console.warn("Could not load stats:", error);
+        }
+    }
+
+    /**
+     * Creates a DOM element for a single stat item.
+     */
+    createStatItem(label, value, valueClass = "") {
+        return el("div", { className: "stat-item" },
+            el("div", { className: "stat-label" }, label),
+            el("div", { className: `stat-value ${valueClass}` }, value)
+        );
     }
 
     /**

@@ -374,7 +374,6 @@ export class AdminView {
             else if (newType === 'flamewall') div.classList.add("block-flamewall");
             else div.classList.add("block-dialogue");
 
-            // Visibility is now handled entirely by CSS via block-* classes!
         });
 
         storyContainer.appendChild(div);
