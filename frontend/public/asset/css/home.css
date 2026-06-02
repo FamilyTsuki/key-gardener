@@ -99,19 +99,6 @@ body {
     color: var(--text-color);
 }
 
-/* ===============FOOTER =============== */
-
-.home-footer {
-    height: 100dvh;
-    background-color: var(--dark-overlay);
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
 
 /* =============== RESPONSIVE =============== */
 @media (max-width: 768px) {
@@ -143,11 +130,5 @@ body {
 
     .start-btn {
         padding: 8px 16px;
-    }
-
-    .home-footer {
-        padding: 2rem 1rem;
-        height: auto;
-        gap: 1rem;
     }
 }

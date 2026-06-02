@@ -27,7 +27,7 @@ export const en = {
         followUs: "Follow us on social media: ",
         specialThank: "Special Thank",
         thankSupporters: "to all our supporters and players who make Keyboard Survivor possible!",
-        rights: "\u00A9 2024 Keyboard Survivor. All rights reserved."
+        rights: "\u00A9 2026 Keyboard Survivor. All rights reserved."
     },
     
     // HubView

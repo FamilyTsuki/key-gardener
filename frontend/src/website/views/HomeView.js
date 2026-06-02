@@ -66,7 +66,7 @@ export default class HomeView extends AbstractView {
                         )
                     ),
                     el("img", {
-                        src: "/asset/img/home.jpg",
+                        src: "/asset/img/home_hero.png",
                         alt: "Game Image",
                         className: "first-home-img",
                     })
@@ -75,8 +75,8 @@ export default class HomeView extends AbstractView {
                     "div",
                     { className: "home-contaner-2" },
                     el("img", {
-                        src: "/asset/img/home.jpg",
-                        alt: "Game Image",
+                        src: "/asset/img/home_battle.png",
+                        alt: "Gameplay Action",
                         className: "first-home-img",
                     }),
                     el(
@@ -94,56 +94,34 @@ export default class HomeView extends AbstractView {
                     "div",
                     { className: "home-footer" },
                     el(
-                        "p",
-                        { className: "home-footer-info" },
-                        LanguageManager.t("home.contactUs"),
+                        "div",
+                        { className: "footer-grid" },
                         el(
-                            "a",
-                            { href: "mailto:info@keyboard-survivor.com" },
-                            "info@keyboard-survivor.com"
+                            "div",
+                            { className: "footer-column" },
+                            el("h3", {}, LanguageManager.t("home.contactUs")),
+                            el("a", { href: "mailto:info@keyboard-survivor.com" }, "info@keyboard-survivor.com")
+                        ),
+                        el(
+                            "div",
+                            { className: "footer-column" },
+                            el("h3", {}, LanguageManager.t("home.followUs")),
+                            el("a", { href: "https://www.facebook.com/keyboardsurvivor", target: "_blank" }, "Facebook"),
+                            el("a", { href: "https://www.twitter.com/keyboardsurvivor", target: "_blank" }, "Twitter"),
+                            el("a", { href: "https://www.instagram.com/keyboardsurvivor", target: "_blank" }, "Instagram")
+                        ),
+                        el(
+                            "div",
+                            { className: "footer-column" },
+                            el("h3", {}, "Credits"),
+                            el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
+                            el("p", { className: "footer-thx" }, LanguageManager.t("home.thankSupporters"))
                         )
                     ),
                     el(
-                        "p",
-                        { className: "home-footer-info" },
-                        LanguageManager.t("home.followUs"),
-                        el(
-                            "a",
-                            {
-                                href: "https://www.facebook.com/keyboardsurvivor",
-                                target: "_blank",
-                            },
-                            "Facebook"
-                        ),
-                        ", ",
-                        el(
-                            "a",
-                            {
-                                href: "https://www.twitter.com/keyboardsurvivor",
-                                target: "_blank",
-                            },
-                            "Twitter"
-                        ),
-                        ", ",
-                        el(
-                            "a",
-                            {
-                                href: "https://www.instagram.com/keyboardsurvivor",
-                                target: "_blank",
-                            },
-                            "Instagram"
-                        )
-                    ),
-                    el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
-                    el(
-                        "p",
-                        { className: "home-footer-info" },
-                        LanguageManager.t("home.thankSupporters")
-                    ),
-                    el(
-                        "p",
-                        { className: "home-footer-info" },
-                        LanguageManager.t("home.rights")
+                        "div",
+                        { className: "footer-bottom" },
+                        el("p", { className: "home-footer-info" }, LanguageManager.t("home.rights"))
                     )
                 )
             )
@@ -172,6 +150,6 @@ export default class HomeView extends AbstractView {
      * @returns {Array<string>} List of CSS file paths.
      */
     getCss() {
-        return ["/asset/css/home.css"];
+        return ["/asset/css/home.css", "/asset/css/footer.css"];
     }
 }
