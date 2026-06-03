@@ -35,7 +35,8 @@ export default class Player extends Actor {
         size,
         scene,
         fireballModel,
-        enemiesManager
+        enemiesManager,
+        onDeath = null
     ) {
         const position = {
             x: rawPosition.x,
@@ -48,18 +49,23 @@ export default class Player extends Actor {
         this.#wordSpells = [
             new Undefined(),
             new FireCircle("fire", 1, 2.3, 9000, scene, this, enemiesManager),
-            new ProjectileLuncher("wasa", 25, 10000, fireballModel),
-            new ProjectileLuncher("pok", 2, 10000, fireballModel),
-            new HealSpell("heal", 15),
+            new ProjectileLuncher("wasa", 100, 10000, fireballModel),
+            new ProjectileLuncher("pok", 35, 10000, fireballModel),
+            new HealSpell("heal", 30),
         ];
+
+        this.onDeath = onDeath;
 
         this.targetPosition = { x: position.x, y: position.y, z: position.z };
         this.startPosition = { x: position.x, y: position.y };
 
         this.isMoving = false;
         this.movementProgress = 0;
+        this.facingDirection = { x: 0, y: -1 };
         this.movementDuration = 15;
         this.currentMovementTime = 0;
+        this.lastKeyPressTime = 0;
+        this.allowSpeedUp = true;
 
         this.spacingX = 3.2;
         this.spacingZ = 3.2;
@@ -73,6 +79,12 @@ export default class Player extends Actor {
         this.scene = scene;
         scene.add(this.mesh);
 
+        const initialAngle = Math.atan2(
+            this.facingDirection.x * this.spacingX,
+            this.facingDirection.y * this.spacingZ
+        );
+        this.mesh.rotation.set(0, initialAngle, 0);
+
         this.fireballModel = fireballModel;
         this.playerModel = null;
 
@@ -83,14 +95,70 @@ export default class Player extends Actor {
         this.damageSound.volume = 0.5;
 
         const loader = new GLTFLoader();
-        this.loadPromise = loader.loadAsync("/asset/game_assets/player.glb").then((gltf) => {
+        this.loadPromise = loader.loadAsync("/asset/game_assets/models/player.glb").then((gltf) => {
             this.playerModel = gltf.scene;
             this.playerModel.scale.set(1.3, 1.3, 1.3);
-            this.playerModel.position.y = 0.6;
+            this.playerModel.position.y = 1.35;
             this.mesh.add(this.playerModel);
         });
 
         this.elVignette = document.getElementById("damage-vignette");
+        
+        this.lastHp = this.hp;
+        this.updateHpBar();
+    }
+
+    /**
+     * Updates the health bar visual representation.
+     */
+    updateHpBar() {
+        const fillEl = document.getElementById("player-hp-fill");
+        const currentEl = document.getElementById("player-hp-current");
+        const maxEl = document.getElementById("player-hp-max");
+        const separatorNode = maxEl ? maxEl.previousSibling : null;
+
+        const hudEl = document.getElementById("player-hud");
+        if (hudEl) hudEl.style.display = "flex";
+
+        if (fillEl && currentEl && maxEl) {
+            
+            if (this.hp === Infinity) {
+                currentEl.textContent = "";
+                maxEl.textContent = "";
+                if (separatorNode && separatorNode.nodeType === Node.TEXT_NODE) {
+                    separatorNode.textContent = "";
+                }
+                fillEl.style.width = "100%";
+                fillEl.style.background = "linear-gradient(90deg, #f1c40f, #f39c12)";
+                fillEl.style.boxShadow = "0 0 10px #f1c40f";
+            } else {
+                const ratio = Math.max(0, this.hp / this.hpMax);
+                currentEl.textContent = Math.ceil(Math.max(0, this.hp));
+                maxEl.textContent = this.hpMax;
+                if (separatorNode && separatorNode.nodeType === Node.TEXT_NODE) {
+                    separatorNode.textContent = " / ";
+                }
+                fillEl.style.width = `${ratio * 100}%`;
+                
+                if (ratio > 0.3) {
+                    fillEl.style.background = "linear-gradient(90deg, #27ae60, var(--success-color))";
+                    fillEl.style.boxShadow = "0 0 10px var(--success-color)";
+                } else {
+                    fillEl.style.background = "linear-gradient(90deg, var(--danger-hover), var(--danger-color))";
+                    fillEl.style.boxShadow = "0 0 10px var(--danger-color)";
+                }
+            }
+        }
+    }
+
+    /**
+     * Cleans up the player object and hides UI.
+     */
+    destroy() {
+        const hudEl = document.getElementById("player-hud");
+        if (hudEl) hudEl.style.display = "none";
+        
+        super.destroy();
     }
 
     /**
@@ -137,7 +205,25 @@ export default class Player extends Actor {
             this.targetPosition.x !== newPosition.x ||
             this.targetPosition.y !== newPosition.y
         ) {
+            const now = Date.now();
+            const timeSinceLastPress = now - (this.lastKeyPressTime || 0);
+            this.lastKeyPressTime = now;
+
+            if (this.allowSpeedUp && timeSinceLastPress < 300) {
+                this.movementDuration = Math.max(3, this.movementDuration * 0.4);
+            } else {
+                this.movementDuration = 15;
+            }
+
             this.startPosition = { x: this.x, y: this.y };
+            
+            const dx = newPosition.x - this.targetPosition.x;
+            const dy = newPosition.y - this.targetPosition.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 0) {
+                this.facingDirection = { x: dx / dist, y: dy / dist };
+            }
+            
             this.targetPosition = newPosition;
 
             this.startOffsetY = this.offsetY;
@@ -150,6 +236,14 @@ export default class Player extends Actor {
             this.isMoving = true;
             this.currentMovementTime = 0;
 
+            if (this.mesh) {
+                const angle = Math.atan2(
+                    this.facingDirection.x * this.spacingX,
+                    this.facingDirection.y * this.spacingZ
+                );
+                this.mesh.rotation.set(0, angle, 0);
+            }
+
             this.jumpSound.currentTime = 0;
             const playPromise = this.jumpSound.play();
             if (playPromise !== undefined) {
@@ -158,34 +252,103 @@ export default class Player extends Actor {
         }
     }
 
+    showGameOverScreen() {
+        const canvas = document.getElementById("game-canvas");
+        if (canvas) canvas.classList.add("player-dead");
+
+        const screen = document.createElement("div");
+        screen.id = "game-over-screen";
+
+        const banner = document.createElement("div");
+        banner.className = "div-title";
+
+        const title = document.createElement("h1");
+        title.className = "game-over-title";
+        title.textContent = "Vous êtes mort.";
+
+        const reason = document.createElement("p");
+        reason.className = "game-over-reason";
+        reason.textContent = this.deathReason || "Cause inconnue.";
+
+        banner.appendChild(title);
+        banner.appendChild(reason);
+        screen.appendChild(banner);
+        document.body.appendChild(screen);
+
+        setTimeout(() => {
+            const el = document.getElementById("game-over-screen");
+            const c = document.getElementById("game-canvas");
+
+            if (el) el.classList.add("fading-out");
+            if (c) {
+                c.classList.remove("player-dead");
+                c.classList.add("player-restarting");
+            }
+
+            setTimeout(() => {
+                if (el) el.remove();
+                if (c) c.classList.remove("player-restarting");
+
+                if (this.onDeath) {
+                    this.onDeath();
+                }
+            }, 1200);
+        }, 8000);
+    }
+
     /**
      * Updates the player's state, spells, and position each frame.
      */
-    update() {
+    update(deltaTime = 0.0166) {
+        if (!this.isAlive()) {
+            if (!this.deathAnimationPlayed) {
+                if (this.playerModel) {
+                    this.playerModel.rotation.x = -Math.PI / 2;
+                    this.playerModel.position.y = 0.5;
+                    this.playerModel.scale.set(1.3, 1.3, 1.3);
+                }
+                if (this.hpSprite) this.hpSprite.visible = false;
+                this.deathAnimationPlayed = true;
+
+                this.showGameOverScreen();
+            }
+            return;
+        }
+
         this.#wordSpells.forEach((spell) => {
             if (spell.update) {
                 spell.update(16.6);
             }
         });
 
+        if (this.lastHp !== this.hp) {
+            this.updateHpBar();
+            this.lastHp = this.hp;
+        }
+
+        this.lastX = this.x;
+        this.lastY = this.y;
+
         if (this.isMoving) {
-            this.currentMovementTime += 1;
+            this.currentMovementTime += deltaTime;
             this.movementProgress =
-                this.currentMovementTime / this.movementDuration;
+                this.currentMovementTime / (this.movementDuration * 0.0166);
 
             if (this.movementProgress >= 1) {
                 this.movementProgress = 1;
                 this.isMoving = false;
+                this.x = this.targetPosition.x;
+                this.y = this.targetPosition.y;
+            } else {
+                this.x =
+                    this.startPosition.x +
+                    (this.targetPosition.x - this.startPosition.x) *
+                        this.movementProgress;
+                this.y =
+                    this.startPosition.y +
+                    (this.targetPosition.y - this.startPosition.y) *
+                        this.movementProgress;
             }
-
-            this.x =
-                this.startPosition.x +
-                (this.targetPosition.x - this.startPosition.x) *
-                    this.movementProgress;
-            this.y =
-                this.startPosition.y +
-                (this.targetPosition.y - this.startPosition.y) *
-                    this.movementProgress;
             
             this.offsetY = 
                 this.startOffsetY + 
@@ -199,24 +362,30 @@ export default class Player extends Actor {
 
             this.mesh.position.set(worldCurrentX, this.offsetY, worldCurrentZ);
 
-            if (this.isMoving) {
-                const worldTargetX =
-                    this.targetPosition.x * this.spacingX + this.offsetX;
-                const worldTargetZ =
-                    this.targetPosition.y * this.spacingZ + this.offsetZ;
 
-                this.mesh.lookAt(worldTargetX, this.offsetY, worldTargetZ);
-            }
 
             if (this.playerModel) {
                 if (this.isMoving) {
                     const jumpAmplitude = 2.0;
                     this.playerModel.position.y =
-                        0.6 +
+                        1.35 +
                         Math.sin(this.movementProgress * Math.PI) * jumpAmplitude;
+
+                    const speedFactor = 15 / this.movementDuration;
+                    const maxStretchZ = Math.max(1, speedFactor * 0.6);
+                    
+                    const stretchFactor = 1 + (maxStretchZ - 1) * Math.sin(this.movementProgress * Math.PI);
+                    const shrinkFactor = 1.3 / Math.sqrt(stretchFactor);
+                    
+                    this.playerModel.scale.set(shrinkFactor, shrinkFactor, 1.3 * stretchFactor);
                 } else {
-                    this.playerModel.position.y = 0.6;
+                    this.playerModel.position.y = 1.35;
                     this.playerModel.rotation.x = 0;
+                    this.playerModel.scale.set(1.3, 1.3, 1.3);
+                }
+
+                if (this.hpSprite) {
+                    this.hpSprite.position.y = this.playerModel.position.y + 1.65;
                 }
             }
         }
@@ -225,9 +394,13 @@ export default class Player extends Actor {
     /**
      * Applies damage to the player.
      * @param {number} amount - The amount of damage to apply.
+     * @param {string} [reason] - Human-readable cause of the damage.
      */
-    damage(amount) {
+    damage(amount, reason = null) {
         this.hp -= amount;
+        if (reason && this.hp <= 0) {
+            this.deathReason = reason;
+        }
         const playPromise = this.damageSound.play();
         if (playPromise !== undefined) {
             playPromise.catch(error => console.warn("Autoplay prevented for damageSound:", error));

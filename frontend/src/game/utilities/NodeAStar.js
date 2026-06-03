@@ -77,6 +77,14 @@ export default class NodeAStar {
   }
 
   /**
+   * Sets the cost object for pathfinding.
+   * @param {Object} newCost - The new cost object {g, h, f}.
+   */
+  set cost(newCost) {
+    this.#cost = newCost;
+  }
+
+  /**
    * Sets the parent node.
    * @param {NodeAStar|null} newParent - The new parent node.
    */

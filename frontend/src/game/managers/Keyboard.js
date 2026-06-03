@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import Key from "../models/Key.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**
  * Manages the virtual keyboard rendering and logic.
@@ -15,10 +14,12 @@ export default class Keyboard {
      * @param {Array<Key>} keyboardLayout - Array of instantiated Key objects.
      * @param {number} tileSize - The size of each tile/key.
      * @param {THREE.Scene} scene - The main three.js scene.
+     * @param {string} theme - The theme of the keyboard ('mine' or 'styx').
      */
-    constructor(keyboardLayout, tileSize, scene) {
+    constructor(keyboardLayout, tileSize, scene, theme = "mine") {
         this.#keyboardLayout = keyboardLayout;
         this.tileSize = tileSize;
+        this.theme = theme;
         this.group = new THREE.Group();
         scene.add(this.group);
 
@@ -34,75 +35,89 @@ export default class Keyboard {
     }
 
     /**
-     * Loads the key models and creates instances for each key in the layout.
+     * Creates instances for each key procedurally to match the visual theme.
      * @param {THREE.Scene} scene - The main three.js scene.
      */
     loadAndCreateKeys(scene) {
-        const loader = new GLTFLoader();
+        const isStyx = this.theme === "styx";
 
-        loader.load(
-            "/asset/game_assets/key.glb",
-            (gltf) => {
-                const keyModel = gltf.scene;
+        const ringGeo = isStyx 
+            ? new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6)
+            : new THREE.CylinderGeometry(1.4, 1.4, 0.3, 32);
+            
+        const ringMat = isStyx
+            ? new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 1.0 })
+            : new THREE.MeshStandardMaterial({ color: 0xc5a059, roughness: 0.3, metalness: 0.8 });
 
-                this.#keyboardLayout.forEach((keyObj) => {
-                    const keyMesh = keyModel.clone();
+        const capGeo = isStyx
+            ? new THREE.CylinderGeometry(1.2, 1.4, 0.45, 6)
+            : new THREE.CylinderGeometry(1.2, 1.2, 0.35, 32);
+            
+        const capMat = isStyx
+            ? new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 1.0 })
+            : new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.1 });
 
-                    keyMesh.position.set(keyObj.x, 0, keyObj.y);
+        const planeGeometry = new THREE.PlaneGeometry(1.8, 1.8);
+        const textColor = isStyx ? "#88ffff" : "#c5a059";
 
-                    keyMesh.traverse((child) => {
-                        if (child.isMesh) {
-                            child.material = new THREE.MeshStandardMaterial({
-                                color: 0xaaaaaa,
-                                roughness: 0.5,
-                                metalness: 0.2,
-                            });
-                        }
-                    });
-
-                    const letterTexture = createTextTexture(
-                        keyObj.key.toUpperCase()
-                    );
-
-                    const planeGeometry = new THREE.PlaneGeometry(1.2, 1.2);
-                    const planeMaterial = new THREE.MeshBasicMaterial({
-                        map: letterTexture,
-                        transparent: true,
-                        side: THREE.DoubleSide,
-                    });
-                    const letterPlane = new THREE.Mesh(
-                        planeGeometry,
-                        planeMaterial
-                    );
-
-                    letterPlane.position.set(0, 1, 0);
-                    letterPlane.rotation.x = -Math.PI / 2;
-
-                    keyMesh.add(letterPlane);
-
-                    keyObj.mesh = keyMesh;
-                    this.group.add(keyMesh);
-                });
-            },
-            undefined,
-            (error) => {
-                throw new Error(
-                    `Erreur lors du chargement du modèle GLB: ${error}`
-                );
+        this.#keyboardLayout.forEach((keyObj) => {
+            const keyGroup = new THREE.Group();
+            
+            const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+            const capMesh = new THREE.Mesh(capGeo, capMat.clone());
+            
+            if (isStyx) {
+                ringMesh.rotation.y = Math.random() * Math.PI;
+                capMesh.rotation.y = ringMesh.rotation.y;
             }
-        );
+
+            keyGroup.add(ringMesh);
+            keyGroup.add(capMesh);
+
+            const letterTexture = createTextTexture(
+                keyObj.key.toUpperCase(),
+                textColor,
+                "rgba(0,0,0,0)",
+                180
+            );
+
+            const planeMaterial = new THREE.MeshBasicMaterial({
+                map: letterTexture,
+                transparent: true,
+                side: THREE.DoubleSide,
+            });
+            
+            const letterPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+            letterPlane.position.set(0, isStyx ? 0.24 : 0.18, 0);
+            letterPlane.rotation.x = -Math.PI / 2;
+
+            keyGroup.add(letterPlane);
+
+            keyGroup.position.set(keyObj.x, 0.15, keyObj.y);
+
+            keyObj.mesh = keyGroup;
+            this.group.add(keyGroup);
+        });
     }
 
     /**
      * Updates the visuals of the keys based on their state (e.g., pressed).
      */
     update() {
+        const isStyx = this.theme === "styx";
+        const pressedColor = isStyx ? 0x228888 : 0xc5a059;
+        const unpressedColor = isStyx ? 0x222222 : 0x111111;
+        const pressedY = isStyx ? 0.0 : 0.05;
+
         this.#keyboardLayout.forEach((keyObj) => {
             if (keyObj.mesh) {
+                const capMaterial = keyObj.mesh.children[1].material;
                 if (keyObj.isPressed) {
-                    keyObj.mesh.position.y = -0.2;
+                    keyObj.mesh.position.y = pressedY;
+                    capMaterial.color.setHex(pressedColor);
                 } else {
-                    keyObj.mesh.position.y = 0;
+                    keyObj.mesh.position.y = 0.15;
+                    capMaterial.color.setHex(unpressedColor);
                 }
             }
         });
@@ -121,9 +136,10 @@ export default class Keyboard {
      * Factory method to initialize the keyboard.
      * @param {THREE.Scene} scene - The main three.js scene.
      * @param {Array<Object>} keyboardLayout - The raw layout definition.
+     * @param {string} theme - The theme of the keyboard ('mine' or 'styx').
      * @returns {Keyboard} A new Keyboard instance.
      */
-    static init(scene, keyboardLayout) {
+    static init(scene, keyboardLayout, theme = "mine") {
         const initialSize = 1;
         const keys = keyboardLayout.map(
             (keyRaw) =>
@@ -135,7 +151,7 @@ export default class Keyboard {
                     initialSize
                 )
         );
-        return new Keyboard(keys, initialSize, scene);
+        return new Keyboard(keys, initialSize, scene, theme);
     }
 }
 

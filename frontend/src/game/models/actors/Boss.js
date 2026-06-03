@@ -41,6 +41,8 @@ export default class Boss extends Actor {
     this.attackPhase = "idle";
     this.attackStartTime = 0;
     this.isAttacking = false;
+    this.isDying = false;
+    this.deathProgress = 0;
 
     if (bossModel) {
       this.mesh = bossModel.scene.clone();
@@ -70,7 +72,7 @@ export default class Boss extends Actor {
     if (bossUI)
       setTimeout(() => {
         bossUI.classList.remove("hidden");
-      }, 5500);
+      }, 1500);
     this.updateHpBar();
   }
 
@@ -79,13 +81,14 @@ export default class Boss extends Actor {
    * @returns {boolean} True if dead, false otherwise.
    */
   get isDead() {
-    return this.hp <= 0 || this.hp === undefined;
+    return this.hp < 0;
   }
   /**
    * Updates the visual representation of the boss's HP bar.
    */
   updateHpBar() {
-    const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
+    const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
+
     const fill = document.getElementById("boss-hp-fill");
     const currentTxt = document.getElementById("boss-hp-current");
     const maxTxt = document.getElementById("boss-hp-max");
@@ -102,7 +105,30 @@ export default class Boss extends Actor {
    * @param {Array} bonks - Array of active bonk attacks.
    */
   update(deltaTime, playerPos, projectiles, bonks) {
-    if (this.isDead) return;
+    if (this.hp < 0) return;
+
+    if (this.isDying) {
+      this.deathProgress += deltaTime / 1500;
+      if (this.deathProgress >= 1) {
+        this.deathProgress = 1;
+        this.hp = -1;
+        this.isDying = false;
+        this.die();
+      } else {
+        const t = this.deathProgress;
+        this.mesh.position.y = -10 * t;
+        this.mesh.rotation.y += deltaTime * 0.005;
+        const scaleFactor = 1 - t;
+        const s_w = this.size.width * scaleFactor;
+        const s_h = this.size.height * scaleFactor;
+        this.mesh.scale.set(s_w * 2, s_h * 2, s_w * 2);
+      }
+      if (this.mesh) {
+        this.mesh.updateMatrixWorld(true);
+      }
+      return;
+    }
+
     if (this.isEmerging) {
       this.emergeProgress += deltaTime * 0.0005;
 
@@ -255,5 +281,22 @@ export default class Boss extends Actor {
       this.mesh.parent.remove(this.mesh);
       this.mesh.visible = false;
     }
+  }
+
+  /**
+   * Reduces the boss's health by the specified damage.
+   * @param {number} nb - The amount of damage to take.
+   */
+  takeDamage(nb) {
+      if (this.isDying || this.hp < 0) return;
+      this.hp -= nb;
+      if (this.hp <= 0) {
+          this.hp = 0;
+          this.isDying = true;
+          this.deathProgress = 0;
+          const bossUI = document.getElementById("boss-ui");
+          if (bossUI) bossUI.classList.add("hidden");
+      }
+      this.updateHpBar();
   }
 }

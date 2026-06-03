@@ -49,6 +49,23 @@ export class BridgeWordEvent extends WorldEvent {
         this.triggerY = 0;
         this.bridgeMeshes = [];
         this.animatingTiles = [];
+        this.triggerTileId = null;
+    }
+
+    /**
+     * Mutates the map layout to create the ravine and bridge trigger.
+     * @param {Array} mapLayout - The raw map layout array.
+     */
+    modifyLayout(mapLayout) {
+        mapLayout.forEach(tile => {
+            if (tile.y <= -15 && tile.y > -20) {
+                tile.renderMesh = false;
+                tile.letter = null;
+            }
+            if (tile.y === -14) {
+                this.triggerTileId = tile.id;
+            }
+        });
     }
 
     /**
@@ -207,12 +224,14 @@ export class BridgeWordEvent extends WorldEvent {
      * @param {WorldPhase} worldPhase - The current world phase.
      */
     checkBridgeTrigger(worldPhase) {
+        if (!this.triggerTileId) return;
+
         const currentTile = worldPhase.worldMap.mapLayout.find(t => 
             Math.abs(t.rawPosition.x - worldPhase.player.x) < 0.1 && 
             Math.abs(t.rawPosition.y - worldPhase.player.y) < 0.1
         );
 
-        if (currentTile && currentTile.isBridgeTrigger) {
+        if (currentTile && currentTile.id === this.triggerTileId) {
             if (!this.isActive && !this.transitioningToEvent) {
                 this.triggerX = currentTile.rawPosition.x;
                 this.triggerY = currentTile.rawPosition.y;
@@ -569,7 +588,7 @@ export class BridgeWordEvent extends WorldEvent {
         const tile = data.tile;
         const archHeight = data.archHeight;
         const progress = data.progress;
-        tile.isRavine = false;
+        tile.renderMesh = true;
         
         const group = new THREE.Group();
         

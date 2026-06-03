@@ -4,7 +4,7 @@
  *
  * @returns {Array<Object>} An array of tile objects representing the world layout.
  */
-export function createWordlLayout(hasBridgeEvent = false, introType = "none") {
+export function createWordlLayout(introType = "none") {
     const height = 30;
     let worldLayout = [];
 
@@ -12,16 +12,16 @@ export function createWordlLayout(hasBridgeEvent = false, introType = "none") {
         worldLayout.push({ id: "intro-s-1", x: 0.5, y: 3, letter: null, isPressed: false });
         worldLayout.push({ id: "intro-s-2", x: 1.5, y: 3, letter: null, isPressed: false });
         worldLayout.push({ id: "intro-s-3", x: 0, y: 2, letter: null, isPressed: false });
-        worldLayout.push({ id: "intro-s-4", x: 1, y: 2, letter: null, isPressed: false, isSpawn: true });
+        worldLayout.push({ id: "intro-s-4", x: 1, y: 2, letter: null, isPressed: false, role: "spawn" });
         worldLayout.push({ id: "intro-s-5", x: 2, y: 2, letter: null, isPressed: false });
         worldLayout.push({ id: "intro-s-6", x: 0.5, y: 1, letter: null, isPressed: false });
         worldLayout.push({ id: "intro-s-7", x: 1.5, y: 1, letter: null, isPressed: false });
     } else if (introType === "staircase") {
-        worldLayout.push({ id: "intro-st-1", x: 1.5, y: 5, letter: null, isPressed: false, isSpawn: true, baseY: 6.0, isStairs: true });
-        worldLayout.push({ id: "intro-st-2", x: 1.0, y: 4, letter: null, isPressed: false, baseY: 4.5, isStairs: true });
-        worldLayout.push({ id: "intro-st-3", x: 1.5, y: 3, letter: null, isPressed: false, baseY: 3.0, isStairs: true });
-        worldLayout.push({ id: "intro-st-4", x: 1.0, y: 2, letter: null, isPressed: false, baseY: 1.5, isStairs: true });
-        worldLayout.push({ id: "intro-st-5", x: 1.5, y: 1, letter: null, isPressed: false, baseY: 0.5, isStairs: true });
+        worldLayout.push({ id: "intro-st-1", x: 1.5, y: 5, letter: null, isPressed: false, role: "spawn", baseY: 6.0 });
+        worldLayout.push({ id: "intro-st-2", x: 1.0, y: 4, letter: null, isPressed: false, role: "stairs", baseY: 4.5 });
+        worldLayout.push({ id: "intro-st-3", x: 1.5, y: 3, letter: null, isPressed: false, role: "stairs", baseY: 3.0 });
+        worldLayout.push({ id: "intro-st-4", x: 1.0, y: 2, letter: null, isPressed: false, role: "stairs", baseY: 1.5 });
+        worldLayout.push({ id: "intro-st-5", x: 1.5, y: 1, letter: null, isPressed: false, role: "stairs", baseY: 0.5 });
     }
 
     let tab_width = [];
@@ -57,15 +57,10 @@ export function createWordlLayout(hasBridgeEvent = false, introType = "none") {
     let lastCenterIndex = 0;
     for (let y = 0; y < tab_width.length; y++) {
         if (y % 2 === 0) test += 1;
-        
-        let isRavine = false;
-        if (hasBridgeEvent && y >= 15 && y < 20) {
-            isRavine = true;
-        }
 
         for (let x = 0; x < tab_width[y]; x++) {
             let min_decal = 0;
-            let genere_leter = isRavine ? null : tab_lettre[Math.floor(Math.random() * 26)];
+            let genere_leter = tab_lettre[Math.floor(Math.random() * 26)];
             if (y % 2 === 1) min_decal = 0.5;
 
             let posX = x + min_decal + test + tab_decalage[y];
@@ -74,19 +69,12 @@ export function createWordlLayout(hasBridgeEvent = false, introType = "none") {
                 lastCenterIndex = x + tab_decalage[y];
             }
 
-            let isTrigger = false;
-            if (hasBridgeEvent && y === 14) {
-                isTrigger = true;
-            }
-
             worldLayout.push({
                 id: `${posX}-${-y}`,
                 x: posX,
                 y: -y,
                 letter: genere_leter,
                 isPressed: false,
-                isBridgeTrigger: isTrigger,
-                isRavine: isRavine,
             });
         }
     }
@@ -103,7 +91,6 @@ export function createWordlLayout(hasBridgeEvent = false, introType = "none") {
 
         for (let x = 0; x < w; x++) {
             let posX = x + min_decal + test + decalage;
-            let isDoorCenter = i === 4 && x === Math.floor(w / 2);
 
             let letterValue = null;
             if (x === Math.floor(w / 2) && i <= 4) {
@@ -116,7 +103,6 @@ export function createWordlLayout(hasBridgeEvent = false, introType = "none") {
                 y: -y,
                 letter: letterValue,
                 isPressed: false,
-                isDoorTile: isDoorCenter,
             });
         }
     }

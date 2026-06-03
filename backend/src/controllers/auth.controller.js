@@ -83,7 +83,7 @@ exports.login = async (req, res, next) => {
         res.json({
             success: true,
             token,
-            user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture },
+            user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture, is_admin: user.is_admin },
         });
     } catch (err) {
         next(err);
@@ -95,7 +95,7 @@ exports.me = async (req, res, next) => {
         const user = req.user;
         res.json({
             success: true,
-            user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture },
+            user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture, is_admin: user.is_admin },
         });
     } catch (err) {
         next(err);

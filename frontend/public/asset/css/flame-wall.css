@@ -1,25 +1,45 @@
-.game-over-overlay {
+.flame-wall-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 50, 0, 0.8);
-    color: white;
+    inset: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-family: Arial, sans-serif;
+    gap: 16px;
+    background: linear-gradient(
+        to bottom,
+        rgba(180, 30, 0, 0.85),
+        rgba(255, 80, 0, 0.6)
+    );
     z-index: 9999;
+    pointer-events: all;
+    animation: flame-overlay-in 0.8s ease-out forwards;
 }
 
-.game-over-title {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    text-shadow: 0 0 20px yellow;
+.flame-wall-title {
+    font-family: var(--font-main), 'Impact', Arial, sans-serif;
+    font-size: clamp(40px, 7vw, 90px);
+    font-weight: 900;
+    color: #fff8e1;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    text-shadow:
+        0 0 20px rgba(255, 180, 0, 0.9),
+        0 0 50px rgba(255, 80, 0, 0.7),
+        3px 3px 0 #800;
+    margin: 0;
 }
 
-.game-over-subtitle {
-    font-size: 1.5rem;
+.flame-wall-subtitle {
+    font-family: var(--font-main), Arial, sans-serif;
+    font-size: clamp(14px, 2vw, 22px);
+    color: rgba(255, 230, 180, 0.85);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+@keyframes flame-overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }

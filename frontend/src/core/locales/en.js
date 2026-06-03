@@ -22,12 +22,23 @@ export const en = {
         description: "Gamify your typing skills. Explore and fight using your keyboard as the primary controller.",
         startGame: "Start Game",
         whyTitle: "why",
-        whyDesc: "Discover the unique gameplay experience that combines typing challenges with exciting adventures.",
-        contactUs: "Contact us: ",
+        whyDesc: "Discover a unique gaming experience combining typing challenges with exciting adventures.",
+        feature1Title: "Improve your typing",
+        feature1Desc: "Train yourself to type faster under the pressure of an enemy invasion.",
+        feature2Title: "Discover the depths",
+        feature2Desc: "Explore a giant cave and fight fearsome monsters.",
+        motivationTitle: "Our Motivation",
+        motivationDesc: "Keyboard Survivor was born from a simple idea: making touch-typing learning as addictive as an intense action survival game. Type to survive.",
+        roadmapTitle: "Key Development Steps",
+        roadmapDesc1: "Procedural 3D dungeon generation",
+        roadmapDesc2: "Fast-paced word-based combat system",
+        roadmapDesc3: "Player progression and statistics",
+        callToAction: "Ready to dive into the abyss?",
+        contactUs: "Contact Us: ",
         followUs: "Follow us on social media: ",
-        specialThank: "Special Thank",
+        specialThank: "Special Thanks",
         thankSupporters: "to all our supporters and players who make Keyboard Survivor possible!",
-        rights: "\u00A9 2024 Keyboard Survivor. All rights reserved."
+        rights: "\u00A9 2026 Keyboard Survivor. All rights reserved."
     },
     
     // HubView

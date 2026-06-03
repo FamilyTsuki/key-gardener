@@ -5,6 +5,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     position: relative;
+    overscroll-behavior-y: none;
 }
 
 .content {
@@ -49,16 +50,27 @@ body {
     color: var(--primary-color);
 }
 
-/* ===============HOME PAGE 1 =============== */
-
-.home-contaner-1 {
+.home-section-row {
     display: flex;
     flex-direction: row;
     padding: 0 5vw;
-    height: 90dvh;
     align-items: center;
-    margin-top: 10dvh;
     justify-content: space-between;
+}
+
+.home-section-col {
+    display: flex;
+    flex-direction: column;
+    padding: 0 5vw;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Phase 1: Pure Dirt (Top) */
+.home-contaner-1 {
+    margin-top: 10dvh;
+    margin-bottom: 100dvh; /* Distance to Phase 2 */
 }
 
 .home-description {
@@ -74,15 +86,37 @@ body {
     margin: 0;
 }
 
-/* ===============HOME PAGE 2 =============== */
-
+/* Phase 2: Compressed Dirt */
 .home-contaner-2 {
-    display: flex;
-    flex-direction: row;
-    padding: 0 5vw;
-    height: 100dvh;
-    align-items: center;
-    justify-content: space-between;
+    margin-bottom: 250dvh; /* Distance to Phase 3 */
+}
+
+/* Phase 3: Transition (Pebbles) */
+.home-contaner-3 {
+    margin-bottom: 300dvh; /* Distance to Phase 4 */
+}
+
+/* Phase 4: Pure Stone */
+.home-contaner-4 {
+    margin-bottom: 400dvh; /* Distance to Phase 5 */
+    gap: 4vh;
+}
+
+/* Phase 5: Deep Stone & Minerals */
+.home-contaner-5 {
+    margin-bottom: 250dvh; /* Distance to Final Section */
+}
+
+/* Deepest part of Phase 5 */
+.home-contaner-6 {
+    margin-bottom: 150dvh; /* Distance to Footer */
+    gap: 4vh;
+}
+
+.big-btn {
+    font-size: clamp(24px, 4vw, 36px);
+    padding: 15px 40px;
+    margin-top: 2rem;
 }
 
 .home-info-container {
@@ -99,24 +133,11 @@ body {
     color: var(--text-color);
 }
 
-/* ===============FOOTER =============== */
-
-.home-footer {
-    height: 100dvh;
-    background-color: var(--dark-overlay);
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
 
 /* =============== RESPONSIVE =============== */
 @media (max-width: 768px) {
-    .home-contaner-1,
-    .home-contaner-2 {
+    .home-section-row,
+    .home-section-col {
         flex-direction: column;
         height: auto;
         padding: 5vh 5vw;
@@ -143,11 +164,5 @@ body {
 
     .start-btn {
         padding: 8px 16px;
-    }
-
-    .home-footer {
-        padding: 2rem 1rem;
-        height: auto;
-        gap: 1rem;
     }
 }

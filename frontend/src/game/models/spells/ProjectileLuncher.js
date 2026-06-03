@@ -38,9 +38,9 @@ export default class ProjectileLuncher extends Spell {
     const projectileSpeed = 0.2;
     const projectileSize = { width: 0.4, height: 0.4 };
 
-    const dx = target.x - player.x;
-    const dy = target.y - player.y;
-    const distance = Math.sqrt(dx ** 2 + dy ** 2);
+    const dx = target.x - player.position.x;
+    const dy = target.y - player.position.y;
+    const distance = Math.sqrt(dx ** 2 + dy ** 2) || 0.0001;
 
     const velocity = {
       x: (dx / distance) * projectileSpeed,
@@ -72,16 +72,23 @@ export default class ProjectileLuncher extends Spell {
    * @returns {Projectile|boolean} The created projectile, or false if out of range.
    */
   effect(closestEnemy, player, scene) {
-    if (closestEnemy) {
-      if (closestEnemy.dist <= this.range) {
-        return this.shootProjectile(
-          closestEnemy.instance.rawPosition,
-          player,
-          scene,
-        );
-      }
+    if (closestEnemy && closestEnemy.dist <= this.range) {
+      return this.shootProjectile(
+        closestEnemy.instance.position,
+        player,
+        scene,
+      );
     }
-
-    return false;
+    
+    const forwardTarget = {
+      x: player.position.x + (player.facingDirection?.x || 0) * 10,
+      y: player.position.y + (player.facingDirection?.y || -1) * 10
+    };
+    
+    return this.shootProjectile(
+      forwardTarget,
+      player,
+      scene
+    );
   }
 }

@@ -52,3 +52,16 @@ CREATE TABLE IF NOT EXISTS comments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS user_statistics (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    highest_wpm INTEGER DEFAULT 0,
+    average_wpm INTEGER DEFAULT 0,
+    accuracy NUMERIC(5,2) DEFAULT 0.00,
+    total_words_typed INTEGER DEFAULT 0,
+    enemies_defeated INTEGER DEFAULT 0,
+    bosses_defeated INTEGER DEFAULT 0,
+    total_playtime_seconds INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
