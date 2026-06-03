@@ -36,7 +36,8 @@ export default class Player extends Actor {
         scene,
         fireballModel,
         enemiesManager,
-        onDeath = null
+        onDeath = null,
+        statsManager = null
     ) {
         const position = {
             x: rawPosition.x,
@@ -55,6 +56,7 @@ export default class Player extends Actor {
         ];
 
         this.onDeath = onDeath;
+        this.statsManager = statsManager;
 
         this.targetPosition = { x: position.x, y: position.y, z: position.z };
         this.startPosition = { x: position.x, y: position.y };
@@ -422,8 +424,10 @@ export default class Player extends Actor {
      * @returns {string|boolean} The completed spell word or false.
      */
     handleKeyPress(key, findClosestEnemy) {
+        let keyProcessed = false;
         if (key.length === 1 && key.match(/[a-z]/i)) {
             this.#currentWord += key.toLowerCase();
+            keyProcessed = true;
         } else if (key === "Backspace") {
             this.#currentWord = this.#currentWord.slice(0, -1);
         }
@@ -434,12 +438,15 @@ export default class Player extends Actor {
 
         if (!isValidPrefix) {
             this.#currentWord = "";
+            if (keyProcessed && this.statsManager) this.statsManager.recordKeystroke(false);
         } else {
+            if (keyProcessed && this.statsManager) this.statsManager.recordKeystroke(true);
             const completeSpell = this.#wordSpells.find(
                 (spell) => spell.word === this.#currentWord
             );
             if (completeSpell) {
                 this.#currentWord = "";
+                if (this.statsManager) this.statsManager.recordWordTyped();
                 return completeSpell.word;
             }
         }

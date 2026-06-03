@@ -6,6 +6,8 @@ import { DoorEvent } from "../events/DoorEvent.js";
 import { HoleEvent } from "../events/HoleEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
 import { BridgeWordEvent } from "../events/BridgeWordEvent.js";
+import { StatisticsManager } from "../managers/StatisticsManager.js";
+import { StatisticsService } from "../../core/services/statistics.service.js";
 
 /**
  * Represents the main game engine that manages scenes, phases, and the render loop.
@@ -44,6 +46,8 @@ export class GameEngine {
         this.currentLevel = 1;
         this.shakeIntensity = 0;
         this.shakeDecay = 0.9;
+        
+        this.stats = new StatisticsManager();
 
         this.resize();
 
@@ -96,6 +100,7 @@ export class GameEngine {
      * @returns {Promise<void>}
      */
     async loadLevel(level) {
+        await this.saveStats();
         this.currentLevel = level;
         
         try {
@@ -218,6 +223,7 @@ export class GameEngine {
      */
     destroy() {
         this.stop();
+        this.saveStats();
         window.removeEventListener("resize", this.onResize);
         window.removeEventListener("keydown", this.onKeyDown);
         if (window.startShake) {
@@ -225,6 +231,18 @@ export class GameEngine {
         }
         if (this.gamePhase && this.gamePhase.cleanup) {
             this.gamePhase.cleanup();
+        }
+    }
+
+    async saveStats() {
+        try {
+            const data = this.stats.getStatsData();
+            if (data.playtimeSeconds > 0 || data.wordsTyped > 0) {
+                await StatisticsService.updateStats(data);
+                this.stats = new StatisticsManager();
+            }
+        } catch (e) {
+            console.error("Failed to save statistics:", e);
         }
     }
 
@@ -244,6 +262,7 @@ export class GameEngine {
 
         if (this.gamePhase) {
             if (!this.isPaused) {
+                this.stats.addPlaytime(deltaTime);
                 this.gamePhase.update(deltaTime);
             }
             this.gamePhase.draw();

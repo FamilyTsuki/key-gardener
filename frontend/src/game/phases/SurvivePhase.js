@@ -77,7 +77,8 @@ export class SurvivePhase extends GamePhase {
             this.worldGroup,
             fireballGltf.scene,
             this.enemies,
-            () => this.gameEngine.loadLevel(this.gameEngine.currentLevel)
+            () => this.gameEngine.loadLevel(this.gameEngine.currentLevel),
+            this.gameEngine.stats
         );
         this.lastPlayerKey = "A";
         this.elCurrentWord = document.getElementById("currentWord");
@@ -156,6 +157,10 @@ export class SurvivePhase extends GamePhase {
         if (this.isPhaseEnded) return;
 
         if (this.enemies && this.enemies.boss && this.enemies.boss.isDead && !this.isTransitioningToNextLevel) {
+            if (this.gameEngine.stats && !this.bossDeathRecorded) {
+                this.gameEngine.stats.recordEnemyDefeated(true);
+                this.bossDeathRecorded = true;
+            }
             const bossUI = document.getElementById("boss-ui");
             if (bossUI) {
                 bossUI.classList.add("hidden");
@@ -233,6 +238,11 @@ export class SurvivePhase extends GamePhase {
 
                 const deadCount = this.enemies.clearDead() || 0;
                 this.enemiesKilled += deadCount;
+                if (deadCount > 0 && this.gameEngine.stats) {
+                    for (let i = 0; i < deadCount; i++) {
+                        this.gameEngine.stats.recordEnemyDefeated(false);
+                    }
+                }
 
                 this.enemies.update(
                     this.player.position,

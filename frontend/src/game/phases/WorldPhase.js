@@ -80,7 +80,8 @@ export class WorldPhase extends GamePhase {
             scene,
             undefined,
             undefined,
-            () => this.gameEngine.loadLevel(this.gameEngine.currentLevel)
+            () => this.gameEngine.loadLevel(this.gameEngine.currentLevel),
+            this.gameEngine.stats
         );
         this.player.allowSpeedUp = false;
         this.player.spacingX = Math.sqrt(3) * 1.5;
