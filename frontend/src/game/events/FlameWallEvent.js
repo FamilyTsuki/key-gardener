@@ -172,22 +172,9 @@ export class FlameWallEvent extends WorldEvent {
      */
     triggerGameOver(worldPhase) {
         this.isGameOver = true;
-        this.displayGameOverOverlay();
-    }
-
-    /**
-     * Displays the game over UI overlay.
-     */
-    displayGameOverOverlay() {
-        this.uiOverlay = document.createElement("div");
-        this.uiOverlay.classList.add("game-over-overlay");
-        
-        this.uiOverlay.innerHTML = `
-            <h1 class="game-over-title">REDUCED TO ASHES!</h1>
-            <p class="game-over-subtitle">Press R to restart</p>
-        `;
-        
-        document.body.appendChild(this.uiOverlay);
+        if (worldPhase.player) {
+            worldPhase.player.damage(worldPhase.player.hp, "Brûlé par le mur de flammes.");
+        }
     }
 
     /**
@@ -197,21 +184,7 @@ export class FlameWallEvent extends WorldEvent {
      * @returns {boolean} True if the input is intercepted and blocked.
      */
     handleKeyDown(worldPhase, event) {
-        if (this.isRestartRequested(event)) {
-            worldPhase.gameEngine.loadLevel(worldPhase.gameEngine.currentLevel);
-            return true;
-        }
-        
         return this.isGameOver;
-    }
-
-    /**
-     * Validates if the player pressed the restart key.
-     * @param {KeyboardEvent} event
-     * @returns {boolean}
-     */
-    isRestartRequested(event) {
-        return this.isGameOver && event.key.toUpperCase() === "R";
     }
 
     /**

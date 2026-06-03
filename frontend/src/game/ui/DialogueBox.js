@@ -93,7 +93,7 @@ export class DialogueBox {
      * @param {string} path - Path to the speaker resource.
      */
     setupSpeaker(path) {
-        this.cleanupSpeaker(); // Clear existing content
+        this.cleanupSpeaker();
 
         if (!path) return;
 
@@ -137,7 +137,6 @@ export class DialogueBox {
             
             this.model.position.set(0, 1.5, 0);
             this.model.scale.set(4, 4, 4);
-            //this.model.rotation.y = -Math.PI / 6;
 
             this.scene.add(this.model);
             this.renderer.render(this.scene, this.camera);

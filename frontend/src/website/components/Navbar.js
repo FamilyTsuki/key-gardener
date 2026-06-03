@@ -44,15 +44,21 @@ export default class Navbar {
         const hubLink = el("a", { href: "/hub", dataset: { link: true } }, LanguageManager.t("nav.communityHub"));
         const sep1 = el("span", { className: "nav-separator" }, "|");
         const sep2 = saveComponent ? el("span", { className: "nav-separator" }, "|") : null;
+        this.adminLink = null;
+        this.adminSep = null;
+
+        const navPageChildren = [
+            homeLink, sep1, hubLink
+        ];
+        
+        if (saveComponent) {
+            navPageChildren.push(sep2, saveComponent);
+        }
+
+        this.navPage = el("div", { className: "nav-page" }, ...navPageChildren);
 
         const nav = el("nav", {},
-            el("div", { className: "nav-page" },
-                homeLink,
-                sep1,
-                hubLink,
-                saveComponent ? sep2 : null,
-                saveComponent
-            ),
+            this.navPage,
             userComponent
         );
 
@@ -80,6 +86,13 @@ export default class Navbar {
                 this.personalPictureImg.src = user.personalPicture;
             } else {
                 this.personalPictureImg.src = "/asset/img/users/" + user.personalPicture;
+            }
+
+            if (user.is_admin && !this.adminLink) {
+                this.adminSep = el("span", { className: "nav-separator" }, "|");
+                this.adminLink = el("a", { href: "/admin", dataset: { link: true }, className: "admin", style: "color: #f39c12;" }, "Admin Panel");
+                this.navPage.appendChild(this.adminSep);
+                this.navPage.appendChild(this.adminLink);
             }
         } catch (error) {
             console.error("Navbar failed to load user data:", error);

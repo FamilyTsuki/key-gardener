@@ -32,6 +32,8 @@ export default class HexTile extends GameObject {
     this.#tileSize = tileSize;
     this.#letter = letter;
 
+    this.renderMesh = true;
+    this.role = null;
     this.mesh = null;
   }
 

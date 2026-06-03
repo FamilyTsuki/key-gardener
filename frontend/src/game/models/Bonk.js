@@ -67,7 +67,7 @@ export default class Bonk extends DamageObject {
                     );
                 }
                 if (this.checkCollision(player)) {
-                    player.damage(this.damage);
+                    player.damage(this.damage, "Touché par une attaque de zone.");
                 }
             }
         } else {

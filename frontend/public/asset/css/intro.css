@@ -291,7 +291,7 @@
     transform: translateY(-80%);
     width: 600px;
     height: 450px;
-    background-image: url("/asset/game_assets/bull.png");
+    background-image: url("/asset/game_assets/textures/.");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center bottom;

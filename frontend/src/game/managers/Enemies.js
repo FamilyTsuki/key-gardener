@@ -86,16 +86,18 @@ export default class Enemies {
      * @returns {number} The bonus awarded.
      */
     clearDead() {
+        let deadCount = 0;
         for (const enemy of this.#container) {
             if (enemy.isDead) {
                 this.bonus = 100;
                 console.log("Enemy dead, bonus", this.bonus);
+                deadCount++;
             }
         }
 
         this.#container = this.#container.filter((enemy) => !enemy.isDead);
 
-        return this.bonus;
+        return deadCount;
     }
 
     /**
@@ -104,15 +106,38 @@ export default class Enemies {
      * @param {Array<Projectile>} projectiles - The active projectiles in the scene.
      * @param {Array<Object>} bonks - Active bonks or hit effects.
      * @param {Player} player - The player instance.
+     * @param {number} deltaTime - The time elapsed since the last update.
      */
-    update(playerPos, projectiles, bonks, player) {
-        for (const enemy of this.#container) {
+    update(playerPos, projectiles, bonks, player, deltaTime) {
+        for (let i = this.#container.length - 1; i >= 0; i--) {
+            const enemy = this.#container[i];
+            if (enemy.isDead) {
+                if (enemy.mesh) {
+                    if (enemy.mesh.parent) enemy.mesh.parent.remove(enemy.mesh);
+                    enemy.mesh.traverse((child) => {
+                        if (child.isMesh) {
+                            if (child.geometry) child.geometry.dispose();
+                            if (child.material) {
+                                if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+                                else child.material.dispose();
+                            }
+                        }
+                        if (child.isSprite && child.material) {
+                            if (child.material.map) child.material.map.dispose();
+                            child.material.dispose();
+                        }
+                    });
+                }
+                this.#container.splice(i, 1);
+                continue;
+            }
             if (enemy !== this.#boss) {
-                enemy.update(player);
+                enemy.update(player, deltaTime);
             }
         }
+        
         if (this.#boss) {
-            this.#boss.update(10, playerPos, projectiles, bonks);
+            this.#boss.update(deltaTime * 1000, playerPos, projectiles, bonks);
         }
     }
 
@@ -138,6 +163,11 @@ export default class Enemies {
                     playerKey,
                     this.#aStarGrid
                 ).map((keyStr) => keyboard.find(keyStr));
+                
+                if (path.length > 1 && path[0].key === enemy.actualKey) {
+                    path.shift();
+                }
+
                 enemy.path = path;
                 enemy.move();
             }
@@ -151,26 +181,24 @@ export default class Enemies {
      */
     findClosestEnemy(playerPos) {
         if (this.#container.length > 0) {
-            const first = this.#container[0];
-            let closestEnemy = {
-                instance: first,
-                dist: Math.sqrt(
-                    (playerPos.x - first.x) ** 2 + (playerPos.y - first.y) ** 2
-                ),
-            };
+            let closestEnemy = null;
+            let minDist = Infinity;
 
-            for (let i = 1; i < this.#container.length; i++) {
+            for (let i = 0; i < this.#container.length; i++) {
                 const enemy = this.#container[i];
+                if (enemy.isSpawning || (!enemy.model && !enemy.mesh)) continue;
+
                 const dist = Math.sqrt(
                     (playerPos.x - enemy.x) ** 2 + (playerPos.y - enemy.y) ** 2
                 );
 
-                if (dist < closestEnemy.dist) {
+                if (dist < minDist) {
+                    minDist = dist;
                     closestEnemy = { instance: enemy, dist };
                 }
             }
 
-            return closestEnemy;
+            return closestEnemy || false;
         }
 
         return false;
@@ -222,7 +250,7 @@ export default class Enemies {
         const bossRawPosition = { x: 5, y: -2 };
 
         const bossModel = await loader.loadAsync(
-            "/asset/game_assets/yameter.glb",
+            "/asset/game_assets/models/yameter.glb",
             (bossGltf) => bossGltf
         );
 
@@ -242,7 +270,7 @@ export default class Enemies {
         );
         this.#container.push(this.#boss);
 
-        this.boss.mesh.position.set(this.boss.x, 0, this.boss.y);
+        this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
     }
 }
 

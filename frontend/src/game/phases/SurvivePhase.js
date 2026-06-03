@@ -6,39 +6,60 @@ import Keyboard from "../managers/Keyboard.js";
 import Player from "../models/actors/Player.js";
 import Projectile from "../models/Projectile.js";
 import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
+import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
+import { DialogueBox } from "../ui/DialogueBox.js";
 
 const loader = new GLTFLoader();
 
-/**
- * Represents the survive phase of the game where the player defends against enemies.
- */
 export class SurvivePhase extends GamePhase {
-    /**
-     * Creates an instance of SurvivePhase.
-     * @param {GameEngine} gameEngine - The game engine instance.
-     */
-    constructor(gameEngine) {
+    constructor(gameEngine, options = {}) {
         super(gameEngine);
+        this.options = options;
+        
+        if (typeof options === "string") {
+            this.decorType = options;
+            this.duration = 60;
+            this.spawnInterval = 3;
+            this.maxEnemies = Infinity;
+            this.storyEvents = [];
+        } else {
+            this.decorType = options.decorType || "default";
+            this.duration = options.duration !== undefined ? options.duration : 60;
+            this.spawnInterval = options.spawnInterval !== undefined ? options.spawnInterval : null;
+            this.maxEnemies = options.maxEnemies !== undefined ? options.maxEnemies : 0;
+            this.storyEvents = (options.storyEvents || []).map(evt => ({ ...evt, isTriggered: false }));
+        }
+
+        this.decor = null;
         this.keyboard = null;
         this.player = null;
         this.enemies = null;
         this.projectiles = [];
         this.bonks = [];
         this.elCurrentWord = null;
+        this.spawnTimer = 0;
+        this.survivalTime = 0;
+        this.isPhaseEnded = false;
+        this.enemiesKilled = 0;
+        this.isTransitioningToNextLevel = false;
     }
 
-    /**
-     * Initializes the survive phase, including the player, enemies, and keyboard.
-     * @returns {Promise<void>}
-     */
     async init() {
         const scene = this.gameEngine.scene;
 
-        this.keyboard = Keyboard.init(scene, KEYBOARD_LAYOUT);
+        this.worldGroupPivot = new THREE.Group();
+        this.worldGroupPivot.position.set(16, 0, 3.2);
+        scene.add(this.worldGroupPivot);
 
-        const enemyGltf = await loader.loadAsync("/asset/game_assets/bug.glb");
+        this.worldGroup = new THREE.Group();
+        this.worldGroup.position.set(-16, 0, -3.2);
+        this.worldGroupPivot.add(this.worldGroup);
+
+        this.keyboard = Keyboard.init(this.worldGroup, KEYBOARD_LAYOUT, this.decorType);
+
+        const enemyGltf = await loader.loadAsync("/asset/game_assets/models/bug.glb");
         const fireballGltf = await loader.loadAsync(
-            "/asset/game_assets/fireball.glb"
+            "/asset/game_assets/models/fireball.glb"
         );
 
         this.enemies = new Enemies(
@@ -49,50 +70,266 @@ export class SurvivePhase extends GamePhase {
 
         this.player = new Player(
             "Héros",
-            100,
-            100,
+            this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
+            this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
             { x: 0, y: 0, z: 5 },
             { width: 0.4, height: 0.4 },
-            scene,
+            this.worldGroup,
             fireballGltf.scene,
-            this.enemies
+            this.enemies,
+            () => this.gameEngine.loadLevel(this.gameEngine.currentLevel)
         );
+        this.lastPlayerKey = "A";
         this.elCurrentWord = document.getElementById("currentWord");
         document
             .getElementById("currentWord")
             .parentElement.classList.remove("none");
 
-        this.draw_bg();
+        const spellListContainer = document.getElementById("spell-list-container");
+        if (spellListContainer && this.player) {
+            spellListContainer.innerHTML = "";
+            const spells = this.player.wordSpells.filter(w => w && w !== "");
+            
+            const title = document.createElement("h3");
+            title.textContent = "Sorts disponibles :";
+            spellListContainer.appendChild(title);
+            
+            const ul = document.createElement("ul");
+            spells.forEach(spell => {
+                const li = document.createElement("li");
+                li.textContent = spell;
+                ul.appendChild(li);
+            });
+            spellListContainer.appendChild(ul);
+            spellListContainer.classList.remove("none");
+        }
+
+        this.decor = SurviveDecorBuilder.buildDecor(this.decorType, scene);
+
+        if (this.options && this.options.boss) {
+            await this.enemies.spawnBoss(this.worldGroup);
+        }
     }
 
-    /**
-     * Updates the game state for the survive phase.
-     * @param {number} deltaTime - The time elapsed since the last update.
-     */
+    executeEventAction(eventToTrigger) {
+        if (eventToTrigger.actionType === "heal") {
+            if (this.player) {
+                this.player.heal(eventToTrigger.healAmount || 50);
+            }
+        } else if (eventToTrigger.actionType === "spawn") {
+            this.spawnEnemy(eventToTrigger.enemyType || eventToTrigger.spawnEnemy || "basic"); 
+        } else if (eventToTrigger.actionType === "spawnBoss") {
+            if (this.enemies) {
+                this.enemies.spawnBoss(this.worldGroup);
+            }
+        } else if (eventToTrigger.actionType === "spawnerConfig") {
+            this.spawnInterval = eventToTrigger.spawnInterval !== undefined ? eventToTrigger.spawnInterval : 3;
+            this.maxEnemies = eventToTrigger.maxEnemies !== undefined ? eventToTrigger.maxEnemies : 20;
+            console.log(`[SurvivePhase] Spawner Config Updated: interval=${this.spawnInterval}, max=${this.maxEnemies}`);
+        }
+    }
+
+    triggerPhaseTransition() {
+        this.isTransitioningToNextLevel = true;
+
+        const overlay = document.createElement("div");
+        overlay.classList.add("phase-transition-overlay");
+        document.body.appendChild(overlay);
+
+        setTimeout(() => {
+            overlay.classList.add("active");
+            
+            setTimeout(async () => {
+                this.isPhaseEnded = true;
+                await this.gameEngine.nextLevel();
+                
+                overlay.classList.remove("active");
+                
+                setTimeout(() => {
+                    overlay.remove();
+                }, 1000);
+            }, 1000);
+        }, 2000);
+    }
+
     update(deltaTime) {
+        if (this.isPhaseEnded) return;
+
+        if (this.enemies && this.enemies.boss && this.enemies.boss.isDead && !this.isTransitioningToNextLevel) {
+            const bossUI = document.getElementById("boss-ui");
+            if (bossUI) {
+                bossUI.classList.add("hidden");
+            }
+            
+            this.triggerPhaseTransition();
+            return;
+        }
+
+        this.gameEngine.camera.position.set(15, 18, 7);
+        this.gameEngine.camera.lookAt(15, 0, 3);
+
+        this.survivalTime += deltaTime;
+
+        if (this.duration !== null) {
+            if (this.survivalTime >= this.duration) {
+                if (!this.enemies || !this.enemies.boss) {
+                    this.isPhaseEnded = true;
+                    this.gameEngine.nextLevel();
+                    return;
+                }
+            }
+        }
+
+        if (this.storyEvents) {
+            const eventToTrigger = this.storyEvents.find(evt => {
+                if (evt.isTriggered) return false;
+                if (evt.triggerType === "time") {
+                    return this.survivalTime >= evt.triggerValue;
+                }
+                if (evt.triggerType === "enemiesKilled") {
+                    return this.enemiesKilled >= evt.triggerValue;
+                }
+                return false;
+            });
+
+            if (eventToTrigger) {
+                eventToTrigger.isTriggered = true;
+                
+                if (eventToTrigger.dialogue && eventToTrigger.dialogue.length > 0 && !(eventToTrigger.dialogue.length === 1 && eventToTrigger.dialogue[0] === 'Hello!')) {
+                    this.gameEngine.isPaused = true;
+                    const dBox = new DialogueBox();
+                    dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/models/player.glb", () => {
+                        dBox.destroy();
+                        this.gameEngine.isPaused = false;
+                        this.executeEventAction(eventToTrigger);
+                    });
+                    return; 
+                } else {
+                    this.executeEventAction(eventToTrigger);
+                }
+            }
+        }
+
         if (this.enemies && this.player) {
-            this.enemies.clearDead();
-            this.enemies.update(
-                this.player.position,
-                this.projectiles,
-                this.bonks,
-                this.player
-            );
+            if (this.player.isAlive()) {
+                if (this.spawnInterval !== null && this.spawnInterval !== undefined && this.spawnInterval > 0 && !this.isTransitioningToNextLevel) {
+                    this.spawnTimer += deltaTime;
+                    if (this.spawnTimer >= this.spawnInterval) {
+                        const regularEnemiesCount = this.enemies.container.filter(e => e !== this.enemies.boss).length;
+                        if (regularEnemiesCount < this.maxEnemies) {
+                            this.spawnTimer = 0;
+                            this.spawnEnemy();
+                        }
+                    }
+                }
+
+                this.pathUpdateTimer = (this.pathUpdateTimer || 0) + deltaTime;
+                if (this.pathUpdateTimer >= 0.5) {
+                    this.pathUpdateTimer = 0;
+                    if (this.lastPlayerKey) {
+                        this.enemies.updatePath(this.lastPlayerKey, this.keyboard);
+                    }
+                }
+
+                const deadCount = this.enemies.clearDead() || 0;
+                this.enemiesKilled += deadCount;
+
+                this.enemies.update(
+                    this.player.position,
+                    this.projectiles,
+                    this.bonks,
+                    this.player,
+                    deltaTime
+                );
+            }
         }
         if (this.player) {
-            this.player.update();
+            this.player.update(deltaTime);
+            
+            if (this.pendingSpell && !this.player.isMoving) {
+                const closestEnemy = this.enemies.findClosestEnemy(
+                    this.player.position
+                );
+
+                const spellResult = this.player.attack(this.pendingSpell, closestEnemy);
+
+                if (spellResult instanceof Projectile) {
+                    this.projectiles.push(spellResult);
+                }
+                
+                if (this.elCurrentWord) {
+                    this.elCurrentWord.textContent = this.pendingSpell;
+                    setTimeout(() => {
+                        if (this.elCurrentWord) {
+                            this.elCurrentWord.textContent = this.player.currentWord;
+                        }
+                    }, 100);
+                }
+                
+                this.pendingSpell = null;
+            }
+        }
+        
+        for (let i = this.projectiles.length - 1; i >= 0; i--) {
+            const p = this.projectiles[i];
+            p.update(null, deltaTime * 1000);
+            
+            if (p.team === "player") {
+                if (this.enemies && this.enemies.container) {
+                    for (const enemy of this.enemies.container) {
+                        if (!enemy.isDead && !enemy.isSpawning && (enemy.model || enemy.mesh) && p.checkCollision(enemy)) {
+                            enemy.takeDamage(p.damage || 50);
+                            p.die();
+                            break;
+                        }
+                    }
+                }
+            } else {
+                if (this.player && this.player.isAlive() && p.checkCollision(this.player)) {
+                    this.player.damage(p.damage || 10, "Touché par une boule de feu du boss");
+                    p.die();
+                }
+            }
+            
+            if (p.position && (Math.abs(p.position.x) > 50 || Math.abs(p.position.y) > 50)) {
+                p.die();
+            }
+            
+            if (p.isDead) {
+                this.projectiles.splice(i, 1);
+            }
+        }
+
+        for (let i = this.bonks.length - 1; i >= 0; i--) {
+            const bonk = this.bonks[i];
+            bonk.update(deltaTime * 1000, this.player);
+            
+            if (bonk.isDead) {
+                this.bonks.splice(i, 1);
+            }
+        }
+
+        if (this.decor) {
+            const waveData = this.decor.update(deltaTime) || { y: 0, rotationX: 0, rotationZ: 0 };
+            if (this.worldGroupPivot) {
+                if (typeof waveData === 'number') {
+                    this.worldGroupPivot.position.y = waveData;
+                } else {
+                    this.worldGroupPivot.position.y = waveData.y;
+                    this.worldGroupPivot.rotation.x = waveData.rotationX;
+                    this.worldGroupPivot.rotation.z = waveData.rotationZ;
+                }
+            }
         }
     }
 
-    /**
-     * Draws the elements of the survive phase, updating positions and states.
-     */
     draw() {
         if (this.keyboard && this.player) {
             this.keyboard.keyboardLayout.forEach((tile) => {
                 const isPlayerOnTile =
-                    Math.abs(this.player.position.x * 3.2 - tile.x) < 0.4 &&
-                    Math.abs(this.player.position.y * 3.2 - tile.y) < 0.4;
+                    this.player.targetPosition.x === tile.rawPosition.x &&
+                    this.player.targetPosition.y === tile.rawPosition.y &&
+                    this.player.isAlive();
 
                 tile.isPressed = isPlayerOnTile;
             });
@@ -100,36 +337,44 @@ export class SurvivePhase extends GamePhase {
             this.keyboard.update();
         }
 
-        if (this.player && this.player.mesh) {
-            const spacing = 3.2;
-            const targetX = this.player.position.x;
-            const targetY = this.player.position.y;
-
-            this.player.mesh.position.set(
-                targetX * spacing,
-                1.5,
-                targetY * spacing
-            );
-            
-            if (this.playerLight) {
-                this.playerLight.position.set(targetX * spacing, 7, targetY * spacing);
-            }
-        }
     }
 
     /**
-     * Sets up the background and lighting for the scene.
+     * Spawns a new random enemy on a random key (avoiding the player's current key).
      */
-    draw_bg() {
-        this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
-        this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
+    spawnEnemy(type = null) {
+        if (!this.keyboard || !this.enemies) return;
+
+        const keys = this.keyboard.keyboardLayout;
+        let randomKey;
+        let attempts = 0;
+        let dist = 1000;
         
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.02);
-        this.gameEngine.scene.add(ambientLight);
+        do {
+            randomKey = keys[Math.floor(Math.random() * keys.length)];
+            attempts++;
+            
+            if (this.player) {
+                const dx = randomKey.rawPosition.x - this.player.x;
+                const dy = randomKey.rawPosition.y - this.player.y;
+                dist = Math.sqrt(dx * dx + dy * dy);
+            }
+        } while (
+            dist < 2 &&
+            attempts < 20
+        );
+
+        const types = ["basic", "speedy", "tank"];
+        let randomType = type || types[Math.floor(Math.random() * types.length)];
+        if (!types.includes(randomType)) {
+            randomType = "basic";
+        }
         
-        this.playerLight = new THREE.PointLight(0xffddaa, 500, 120);
-        this.playerLight.position.set(0, 7, 0);
-        this.gameEngine.scene.add(this.playerLight);
+        this.enemies.spawnAt(randomKey, this.worldGroup, randomType);
+        
+        if (this.lastPlayerKey) {
+            this.enemies.updatePath(this.lastPlayerKey, this.keyboard);
+        }
     }
 
     /**
@@ -137,6 +382,8 @@ export class SurvivePhase extends GamePhase {
      * @param {KeyboardEvent} event - The keyboard event.
      */
     handleKeyDown(event) {
+        if (!this.player || !this.player.isAlive() || this.isTransitioningToNextLevel) return;
+
         const keyName = event.key.toUpperCase();
         const target = this.keyboard?.find(keyName);
         if (!target) {
@@ -144,9 +391,9 @@ export class SurvivePhase extends GamePhase {
         }
 
         target.isPressed = true;
+        this.lastPlayerKey = target.key;
 
         if (this.player && this.enemies) {
-            this.enemies.updatePath(target.key, this.keyboard);
             this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
@@ -155,22 +402,8 @@ export class SurvivePhase extends GamePhase {
         let word = this.player.handleKeyPress(event.key);
 
         if (word) {
-            const closestEnemy = this.enemies.findClosestEnemy(
-                this.player.position
-            );
-
-            const spellResult = this.player.attack(word, closestEnemy);
-
-            if (spellResult instanceof Projectile) {
-                this.projectiles.push(spellResult);
-            }
-            if (this.elCurrentWord) {
-                this.elCurrentWord.textContent = word;
-                setTimeout(() => {
-                    this.elCurrentWord.textContent = this.player.currentWord;
-                }, 100);
-            }
-        } else if (this.elCurrentWord) {
+            this.pendingSpell = word;
+        } else if (this.elCurrentWord && !this.pendingSpell) {
             this.elCurrentWord.textContent = this.player.currentWord;
         }
     }
@@ -179,11 +412,26 @@ export class SurvivePhase extends GamePhase {
      * Cleans up resources used by the survive phase.
      */
     cleanup() {
-        if (this.keyboard) {
-            this.gameEngine.scene.remove(this.keyboard.group);
+        if (this.keyboard && this.worldGroup) {
+            this.worldGroup.remove(this.keyboard.group);
         }
-        if (this.player && this.player.mesh) {
-            this.gameEngine.scene.remove(this.player.mesh);
+        if (this.player && this.player.mesh && this.worldGroup) {
+            this.worldGroup.remove(this.player.mesh);
+        }
+        if (this.worldGroupPivot) {
+            this.gameEngine.scene.remove(this.worldGroupPivot);
+        }
+        if (this.decor) {
+            this.decor.cleanup();
+        }
+        const spellListContainer = document.getElementById("spell-list-container");
+        if (spellListContainer) {
+            spellListContainer.classList.add("none");
+            spellListContainer.innerHTML = "";
+        }
+        const bossUI = document.getElementById("boss-ui");
+        if (bossUI) {
+            bossUI.classList.add("hidden");
         }
     }
 }

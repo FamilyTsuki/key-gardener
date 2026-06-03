@@ -5,16 +5,8 @@ import { createWordlLayout } from "../utilities/WORLD_LAYOUT.js";
 import Player from "../models/actors/Player.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
 
-/**
- * Represents the world exploration phase of the game.
- */
 export class WorldPhase extends GamePhase {
-    /**
-     * Creates an instance of WorldPhase.
-     * @param {GameEngine} gameEngine - The game engine instance.
-     * @param {Array<Object>} [events=[]] - Array of events to handle in this phase.
-     */
-    constructor(gameEngine, events = []) {
+    constructor(gameEngine, options = {}) {
         super(gameEngine);
         this.worldMap = null;
         this.player = null;
@@ -27,57 +19,70 @@ export class WorldPhase extends GamePhase {
         );
 
         this.isTransitioning = false;
-        this.events = events || []; 
+        this.isPlayingIntro = false;
+        this.isStunnedAfterFall = false;
+        this.stunTimer = 0;
+        this.dropSpeed = 0;
+        this.arrivalX = 0;
+        this.arrivalZ = 0;
+        this.targetY = 0;
+        this.activeIntroType = null;
+        
+        if (Array.isArray(options)) {
+            this.options = {};
+            this.events = options;
+            this.introType = "random";
+            this.dialogue = ["Testing the new reusable dialogue box!", "Here is a 3D model next to it."];
+            this.dialogueModel = "/asset/game_assets/models/player.glb";
+            this.storyEvents = [];
+        } else {
+            this.options = options;
+            this.events = options.events || [];
+            this.introType = options.introType || "random";
+            this.dialogue = options.dialogue || [];
+            this.dialogueModel = options.dialogueModel || null;
+            this.storyEvents = (options.storyEvents || []).map(evt => ({ ...evt, isTriggered: false }));
+        }
+        
+        this.elapsedTime = 0;
     }
 
-    /**
-     * Initializes the world phase, setting up the map, player, and events.
-     * @returns {Promise<void>}
-     */
     async init() {
         const scene = this.gameEngine.scene;
-        const hasDoorEvent = this.events.some(e => e.constructor.name === "DoorEvent");
-        const hasBridgeEvent = this.events.some(e => e.constructor.name === "BridgeWordEvent");
-        
-        const introType = Math.random() > 0.5 ? "skyfall" : "staircase";
-        const worldLayout = createWordlLayout(hasBridgeEvent, introType);
+        this.activeIntroType = this.introType === "random" ? (Math.random() > 0.5 ? "skyfall" : "staircase") : this.introType;
+        const worldLayout = createWordlLayout(this.activeIntroType);
+
+        for (const event of this.events) {
+            if (event.modifyLayout) {
+                event.modifyLayout(worldLayout);
+            }
+        }
 
         this.worldMap = await WorldMap.init(
             this.gameEngine.scene,
-            worldLayout,
-            hasDoorEvent
+            worldLayout
         );
         console.log(this.worldMap);
         this.draw_bg();
 
-        this.dialogueTimeout = setTimeout(() => {
-            this.dBox = new DialogueBox();
-            this.dBox.show(
-                ["Testing the new reusable dialogue box!", "Here is a 3D model next to it."], 
-                "/asset/game_assets/player.glb", 
-                () => {
-                    if (this.dBox) {
-                        this.dBox.destroy();
-                        this.dBox = null;
-                    }
-                }
-            );
-        }, 1500);
-
-        const spawnTile = this.worldMap.mapLayout.find(t => t.isSpawn) || this.worldMap.mapLayout[1];
+        const spawnTile = this.worldMap.mapLayout.find(t => t.role === "spawn") || this.worldMap.mapLayout[1];
 
         this.player = new Player(
             "Héros",
-            100,
-            100,
+            this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
+            this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
             {
                 x: spawnTile.rawPosition.x,
                 y: spawnTile.rawPosition.y,
                 z: 5,
             },
             { width: 0.4, height: 0.4 },
-            scene
+            scene,
+            undefined,
+            undefined,
+            () => this.gameEngine.loadLevel(this.gameEngine.currentLevel)
         );
+        this.player.allowSpeedUp = false;
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
@@ -94,26 +99,130 @@ export class WorldPhase extends GamePhase {
             await this.player.loadPromise;
         }
 
-        this.runIntroAnimation(introType, spawnTile);
+        this.runIntroAnimation(this.activeIntroType, spawnTile);
     }
 
-    /**
-     * Updates the game state for the world phase.
-     * @param {number} deltaTime - The time elapsed since the last update.
-     */
+    executeEventAction(eventToTrigger) {
+        if (eventToTrigger.actionType === "heal") {
+            if (this.player) {
+                this.player.heal(eventToTrigger.healAmount || 50);
+            }
+        } else if (eventToTrigger.actionType === "spawn") {
+            console.log("Spawn action triggered in WorldPhase, but not fully supported here yet.");
+        }
+    }
+
     update(deltaTime) {
         if (!this.player) {
             return;
         }
+
+        this.elapsedTime += deltaTime;
+
+        if (this.isPlayingIntro && this.activeIntroType === "skyfall") {
+            this.dropSpeed += 25 * deltaTime;
+            this.player.offsetY -= this.dropSpeed * deltaTime;
+
+            this.camera.position.set(
+                this.arrivalX + 5,
+                this.targetY + 21,
+                this.arrivalZ + 14
+            );
+            this.camera.lookAt(this.arrivalX, this.player.offsetY, this.arrivalZ);
+
+            if (this.player.offsetY <= this.targetY) {
+                this.player.offsetY = this.targetY;
+                this.camera.lookAt(this.arrivalX, this.targetY, this.arrivalZ);
+                this.player.jumpSound.currentTime = 0;
+                const playPromise = this.player.jumpSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => console.warn("Autoplay prevented:", error));
+                }
+
+                const loader = new THREE.TextureLoader();
+                loader.load('/asset/game_assets/textures/break.png', (texture) => {
+                    const geometry = new THREE.PlaneGeometry(2.5, 2.5);
+                    const material = new THREE.MeshBasicMaterial({ 
+                        map: texture, 
+                        transparent: true, 
+                        depthWrite: false,
+                        opacity: 0.8
+                    });
+                    const crackMesh = new THREE.Mesh(geometry, material);
+                    crackMesh.rotation.x = -Math.PI / 2;
+                    crackMesh.position.set(this.arrivalX, this.targetY - 0.89, this.arrivalZ);
+                    this.gameEngine.scene.add(crackMesh);
+                    this.crackMesh = crackMesh;
+                    this.crackTilePos = { x: this.player.x, y: this.player.y };
+                });
+
+                this.isPlayingIntro = false;
+                this.isStunnedAfterFall = true;
+                this.stunTimer = 0.8;
+                this.cameraShakeTime = 0.4;
+            }
+        }
+
+        if (this.isStunnedAfterFall) {
+            this.stunTimer -= deltaTime;
+            if (this.stunTimer <= 0) {
+                this.isStunnedAfterFall = false;
+                this.isTransitioning = false;
+                this.startIntroDialogue();
+            }
+        }
+
+        if (this.storyEvents) {
+            const eventToTrigger = this.storyEvents.find(evt => {
+                if (evt.isTriggered) return false;
+                if (evt.triggerType === "time") {
+                    return this.elapsedTime >= evt.triggerValue;
+                } else if (evt.triggerType === "distance") {
+                    return Math.abs(this.player.y) >= evt.triggerValue;
+                }
+                return false;
+            });
+
+            if (eventToTrigger) {
+                eventToTrigger.isTriggered = true;
+                
+                if (eventToTrigger.dialogue && eventToTrigger.dialogue.length > 0) {
+                    this.gameEngine.isPaused = true;
+                    
+                    const dBox = new DialogueBox();
+                    dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/models/player.glb", () => {
+                        dBox.destroy();
+                        this.gameEngine.isPaused = false;
+                        this.executeEventAction(eventToTrigger);
+                    });
+                    return;
+                } else {
+                    this.executeEventAction(eventToTrigger);
+                }
+            }
+        }
+
         this.player.update();
         if (this.player && this.player.mesh) {
             const playerPos = this.player.mesh.position;
 
-            if (!this.isTransitioning) {
+            if (!this.isPlayingIntro) {
+                let shakeX = 0;
+                let shakeY = 0;
+                let shakeZ = 0;
+                
+                if (this.cameraShakeTime > 0) {
+                    this.cameraShakeTime -= deltaTime;
+                    const intensity = Math.max(0, (this.cameraShakeTime / 0.4)) * 1.5; 
+                    shakeX = (Math.random() - 0.5) * intensity;
+                    shakeY = (Math.random() - 0.5) * intensity;
+                    shakeZ = (Math.random() - 0.5) * intensity;
+                }
+
                 this.camera.position.set(
-                    playerPos.x + 5,
-                    playerPos.y + 21,
-                    playerPos.z + 14
+                    playerPos.x + 5 + shakeX,
+                    playerPos.y + 21 + shakeY,
+                    playerPos.z + 14 + shakeZ
                 );
                 this.camera.lookAt(playerPos.x, playerPos.y, playerPos.z);
             }
@@ -128,9 +237,6 @@ export class WorldPhase extends GamePhase {
         }
     }
 
-    /**
-     * Draws the elements of the world phase.
-     */
     draw() {
         if (this.player && this.player.mesh && this.playerLight) {
             const pos = this.player.mesh.position;
@@ -142,11 +248,25 @@ export class WorldPhase extends GamePhase {
                 this.player ? { x: this.player.x, y: this.player.y } : null
             );
         }
+        
+        if (this.crackMesh && this.crackTilePos && this.player) {
+            const dx = this.crackTilePos.x - this.player.x;
+            const dy = this.crackTilePos.y - this.player.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            let intensity = 1.0;
+            if (dist > 4) {
+                intensity = 0.05;
+            } else if (dist > 2.0) {
+                intensity = 1.0 - ((dist - 2.0) / 2.0) * 0.95;
+            }
+            
+            const r = Math.floor(255 * intensity);
+            const hex = (r << 16) | (r << 8) | r;
+            this.crackMesh.material.color.setHex(hex);
+        }
     }
 
-    /**
-     * Sets up the background and lighting for the scene.
-     */
     draw_bg() {
         this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
         this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
@@ -159,18 +279,31 @@ export class WorldPhase extends GamePhase {
         this.gameEngine.scene.add(this.playerLight);
     }
 
-    /**
-     * Runs the introduction animation.
-     * @param {string} introType 
-     * @param {Object} spawnTile 
-     */
+    startIntroDialogue() {
+        if (this.dialogue && this.dialogue.length > 0) {
+            this.gameEngine.isPaused = true;
+            this.dBox = new DialogueBox();
+            this.dBox.show(
+                this.dialogue, 
+                this.dialogueModel, 
+                () => {
+                    if (this.dBox) {
+                        this.dBox.destroy();
+                        this.dBox = null;
+                    }
+                    this.gameEngine.isPaused = false;
+                }
+            );
+        }
+    }
+
     async runIntroAnimation(introType, spawnTile) {
         this.isPlayingIntro = true;
         this.isTransitioning = true;
 
         let arrivalTile = spawnTile;
         if (introType === "staircase") {
-            const normalTiles = this.worldMap.mapLayout.filter(t => !t.isStairs && t.rawPosition.y <= 0);
+            const normalTiles = this.worldMap.mapLayout.filter(t => t.role !== "stairs" && t.rawPosition.y <= 0);
             const firstNormalTile = normalTiles[1] || normalTiles[0];
             if (firstNormalTile) {
                 arrivalTile = firstNormalTile;
@@ -181,6 +314,10 @@ export class WorldPhase extends GamePhase {
         const arrivalZ = arrivalTile.rawPosition.y * 1.5 * 1.5;
         const arrivalY = 2.9 + (arrivalTile.baseY || 0);
 
+        this.arrivalX = arrivalX;
+        this.arrivalZ = arrivalZ;
+        this.targetY = arrivalY;
+
         this.camera.position.set(
             arrivalX + 5,
             arrivalY + 21,
@@ -189,46 +326,21 @@ export class WorldPhase extends GamePhase {
         this.camera.lookAt(arrivalX, arrivalY, arrivalZ);
 
         if (introType === "skyfall") {
-            const targetY = this.player.offsetY;
-            this.player.offsetY = targetY + 40;
+            this.isPlayingIntro = true;
+            this.isTransitioning = true;
+            this.dropSpeed = 0;
+            this.player.offsetY = arrivalY + 40;
             this.player.update();
             this.draw();
-            
-            return new Promise(resolve => {
-                let dropSpeed = 0;
-                const animateDrop = () => {
-                    dropSpeed += 0.02; 
-                    this.player.offsetY -= dropSpeed;
-
-                    this.camera.lookAt(arrivalX, this.player.offsetY, arrivalZ);
-
-                    if (this.player.offsetY <= targetY) {
-                        this.player.offsetY = targetY;
-                        this.camera.lookAt(arrivalX, targetY, arrivalZ);
-                        this.player.jumpSound.currentTime = 0;
-                        const playPromise = this.player.jumpSound.play();
-                        if (playPromise !== undefined) {
-                            playPromise.catch(error => console.warn("Autoplay prevented:", error));
-                        }
-                        
-                        this.isPlayingIntro = false;
-                        this.isTransitioning = false;
-                        resolve();
-                    } else {
-                        requestAnimationFrame(animateDrop);
-                    }
-                };
-                requestAnimationFrame(animateDrop);
-            });
         } else if (introType === "staircase") {
-            const stairsTiles = this.worldMap.mapLayout.filter(t => t.isStairs).sort((a, b) => b.baseY - a.baseY);
+            const stairsTiles = this.worldMap.mapLayout.filter(t => t.role === "stairs").sort((a, b) => b.baseY - a.baseY);
             
             this.player.update();
             this.draw();
 
             const stepDown = async (index) => {
                 if (index >= stairsTiles.length) {
-                    const normalTiles = this.worldMap.mapLayout.filter(t => !t.isStairs && t.rawPosition.y <= 0);
+                    const normalTiles = this.worldMap.mapLayout.filter(t => t.role !== "stairs" && t.rawPosition.y <= 0);
                     const firstNormalTile = normalTiles[1] || normalTiles[0];
                     if (firstNormalTile) {
                         this.player.move({
@@ -240,6 +352,7 @@ export class WorldPhase extends GamePhase {
                     }
                     this.isPlayingIntro = false;
                     this.isTransitioning = false;
+                    this.startIntroDialogue();
                     return;
                 }
                 
@@ -259,10 +372,6 @@ export class WorldPhase extends GamePhase {
         }
     }
 
-    /**
-     * Handles keyboard events for movement and interaction.
-     * @param {KeyboardEvent} event - The keyboard event.
-     */
     handleKeyDown(event) {
         if (this.isPlayingIntro) return;
 
@@ -279,7 +388,7 @@ export class WorldPhase extends GamePhase {
 
         let target = null;
         if (this.worldMap) {
-            target = this.worldMap.find(keyName, this.player.position.y);
+            target = this.worldMap.find(keyName, this.player.y);
         }
         if (!target) {
             return;
@@ -296,9 +405,6 @@ export class WorldPhase extends GamePhase {
         }
     }
 
-    /**
-     * Cleans up resources used by the world phase.
-     */
     cleanup() {
         if (this.dialogueTimeout) {
             clearTimeout(this.dialogueTimeout);
@@ -331,6 +437,14 @@ export class WorldPhase extends GamePhase {
         if (this.playerLight) {
             this.gameEngine.scene.remove(this.playerLight);
             this.playerLight.dispose && this.playerLight.dispose();
+        }
+        
+        if (this.crackMesh) {
+            this.gameEngine.scene.remove(this.crackMesh);
+            if (this.crackMesh.material.map) this.crackMesh.material.map.dispose();
+            this.crackMesh.material.dispose();
+            this.crackMesh.geometry.dispose();
+            this.crackMesh = null;
         }
     }
 }

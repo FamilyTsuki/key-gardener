@@ -5,6 +5,7 @@ import RegisterView from "../website/views/RegisterView.js";
 import SaveView from "../website/views/SaveView.js";
 import GameView from "../website/views/GameView.js";
 import AccountView from "../website/views/AccountView.js";
+import { AdminView } from "../website/views/AdminView.js";
 import { AuthService } from "./services/auth.service.js";
 import { FlashMessageManager } from "./utils/FlashMessageManager.js";
 import { LanguageManager } from "./utils/LanguageManager.js";
@@ -25,6 +26,7 @@ export default class Router {
             { path: "/save", view: SaveView, requiresAuth: true },
             { path: "/game", view: GameView, requiresAuth: true },
             { path: "/account", view: AccountView, requiresAuth: true },
+            { path: "/admin", view: AdminView, requiresAuth: true },
         ];
 
         window.addEventListener("popstate", () => {

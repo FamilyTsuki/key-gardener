@@ -3,7 +3,7 @@ import { WorldPhase } from "../phases/WorldPhase.js";
 import { IntroPhase } from "../phases/IntroPhase.js";
 import { SurvivePhase } from "../phases/SurvivePhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
-import { TempoEvent } from "../events/TempoEvent.js";
+import { HoleEvent } from "../events/HoleEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
 import { BridgeWordEvent } from "../events/BridgeWordEvent.js";
 
@@ -38,21 +38,28 @@ export class GameEngine {
         this.renderer.setClearColor(0x0a0c10, 1);
 
         this.isRunning = false;
+        this.isPaused = false;
         this.lastTime = 0;
         this.gamePhase = null;
         this.currentLevel = 1;
+        this.shakeIntensity = 0;
+        this.shakeDecay = 0.9;
 
         this.resize();
 
         this.onResize = () => this.resize();
         this.onKeyDown = (e) => {
-            if (this.gamePhase) {
+            if (this.gamePhase && typeof this.gamePhase.handleKeyDown === "function" && !this.isPaused) {
                 this.gamePhase.handleKeyDown(e);
             }
         };
 
         window.addEventListener("resize", this.onResize);
         window.addEventListener("keydown", this.onKeyDown);
+
+        window.startShake = (intensity) => {
+            this.shakeIntensity = intensity;
+        };
     }
 
     /**
@@ -76,10 +83,8 @@ export class GameEngine {
             console.error("Failed to parse activeSaveData", e);
         }
 
-        if (initialPhaseName === "game") {
+        if (initialPhaseName === "game" || initialPhaseName === "survive") {
             await this.loadLevel(this.currentLevel);
-        } else if (initialPhaseName === "survive") {
-            await this.setPhase(new SurvivePhase(this));
         } else {
             await this.setPhase(new IntroPhase(this));
         }
@@ -93,15 +98,40 @@ export class GameEngine {
     async loadLevel(level) {
         this.currentLevel = level;
         
-        if (level === 1) {
-            await this.setPhase(new SurvivePhase(this));
-        } else if (level === 2) {
-            await this.setPhase(new WorldPhase(this, [new TempoEvent(), new DoorEvent()]));
-        } else if (level === 3) {
-            await this.setPhase(new WorldPhase(this, [new FlameWallEvent(), new DoorEvent()]));
-        } else if (level >= 4) {
-            await this.setPhase(new SurvivePhase(this));
+        try {
+            const response = await fetch(`/api/levels/${level}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.config) {
+                    const phaseType = data.config.phase_type;
+                    const options = data.config.options || {};
+                    
+                    if (phaseType === "survive") {
+                        await this.setPhase(new SurvivePhase(this, options));
+                        return;
+                    } else if (phaseType === "world") {
+                        const eventMap = {
+                            "BridgeWordEvent": BridgeWordEvent,
+                            "DoorEvent": DoorEvent,
+                            "HoleEvent": HoleEvent,
+                            "FlameWallEvent": FlameWallEvent
+                        };
+                        const eventInstances = (options.events || []).map(evtName => {
+                            const EventClass = eventMap[evtName];
+                            return EventClass ? new EventClass() : null;
+                        }).filter(Boolean);
+                        
+                        options.events = eventInstances;
+                        await this.setPhase(new WorldPhase(this, options));
+                        return;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("Could not fetch level config, using defaults", e);
         }
+        
+        console.warn(`Level ${level} not found or failed to load. Halting progression.`);
     }
 
     /**
@@ -133,6 +163,8 @@ export class GameEngine {
         }
 
         if (loader) loader.classList.add("hidden");
+
+        this.lastTime = performance.now();
     }
 
     /**
@@ -188,6 +220,9 @@ export class GameEngine {
         this.stop();
         window.removeEventListener("resize", this.onResize);
         window.removeEventListener("keydown", this.onKeyDown);
+        if (window.startShake) {
+            delete window.startShake;
+        }
         if (this.gamePhase && this.gamePhase.cleanup) {
             this.gamePhase.cleanup();
         }
@@ -200,11 +235,17 @@ export class GameEngine {
     loop(currentTime) {
         if (!this.isRunning) return;
 
-        const deltaTime = (currentTime - this.lastTime) / 1000;
+        let deltaTime = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
 
+        if (deltaTime > 0.1) {
+            deltaTime = 0.1;
+        }
+
         if (this.gamePhase) {
-            this.gamePhase.update(deltaTime);
+            if (!this.isPaused) {
+                this.gamePhase.update(deltaTime);
+            }
             this.gamePhase.draw();
         }
 
@@ -226,6 +267,21 @@ export class GameEngine {
 
         if (!activeCamera) return;
 
+        let savedPosition = null;
+        if (this.shakeIntensity > 0.05) {
+            savedPosition = activeCamera.position.clone();
+            activeCamera.position.x += (Math.random() - 0.5) * this.shakeIntensity;
+            activeCamera.position.y += (Math.random() - 0.5) * this.shakeIntensity;
+            activeCamera.position.z += (Math.random() - 0.5) * this.shakeIntensity;
+            this.shakeIntensity *= this.shakeDecay;
+        } else {
+            this.shakeIntensity = 0;
+        }
+
         this.renderer.render(this.scene, activeCamera);
+
+        if (savedPosition) {
+            activeCamera.position.copy(savedPosition);
+        }
     }
 }

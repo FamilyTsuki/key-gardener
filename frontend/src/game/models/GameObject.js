@@ -11,8 +11,8 @@ export default class GameObject {
    * @param {Object} position = {x: Number, y: Number}
    */
   constructor(rawPosition, position) {
-    this.rawPosition = rawPosition;
-    this.position = position;
+    this.rawPosition = { ...rawPosition };
+    this.position = { ...position };
   }
 
   get rawPosition() {

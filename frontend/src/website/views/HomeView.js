@@ -1,5 +1,5 @@
 import AbstractView from "../../core/views/AbstractView.js";
-import { TunnelAnimation } from "../components/TunnelAnimation.js";
+import { CaveAnimation } from "../components/CaveAnimation.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
@@ -30,14 +30,13 @@ export default class HomeView extends AbstractView {
         const container = el(
             "div",
             {},
-            el("canvas", { id: "bg-canvas" }),
             tunnelContainer,
             el(
                 "div",
                 { className: "content" },
                 el(
                     "div",
-                    { className: "home-contaner-1" },
+                    { className: "home-section-row home-contaner-1" },
                     el(
                         "div",
                         { className: "home-presantation-container" },
@@ -64,18 +63,13 @@ export default class HomeView extends AbstractView {
                                 LanguageManager.t("home.startGame")
                             )
                         )
-                    ),
-                    el("img", {
-                        src: "/asset/img/home.jpg",
-                        alt: "Game Image",
-                        className: "first-home-img",
-                    })
+                    )
                 ),
                 el(
                     "div",
-                    { className: "home-contaner-2" },
+                    { className: "home-section-row home-contaner-2" },
                     el("img", {
-                        src: "/asset/img/home.jpg",
+                        src: "/asset/img/home_battle.png",
                         alt: "Game Image",
                         className: "first-home-img",
                     }),
@@ -87,63 +81,106 @@ export default class HomeView extends AbstractView {
                             "p",
                             { className: "home-info" },
                             LanguageManager.t("home.whyDesc")
+                        ),
+                        el("h3", { style: "color: var(--primary-color); margin-top: 1rem;" }, LanguageManager.t("home.feature1Title")),
+                        el("p", { className: "home-info" }, LanguageManager.t("home.feature1Desc"))
+                    )
+                ),
+                el(
+                    "div",
+                    { className: "home-section-row home-contaner-3" },
+                    el(
+                        "div",
+                        { className: "home-presantation-container" },
+                        el("h2", { className: "home-title" }, LanguageManager.t("home.feature2Title")),
+                        el(
+                            "p",
+                            { className: "home-description" },
+                            LanguageManager.t("home.feature2Desc")
                         )
+                    ),
+                    el("img", {
+                        src: "/asset/img/home.jpg",
+                        alt: "Cave Exploration",
+                        className: "first-home-img",
+                    })
+                ),
+                el(
+                    "div",
+                    { className: "home-section-col home-contaner-4" },
+                    el(
+                        "div",
+                        { className: "home-info-container", style: "text-align: center; width: 60vw; margin: 0 auto;" },
+                        el("h2", { className: "home-title" }, LanguageManager.t("home.motivationTitle")),
+                        el(
+                            "p",
+                            { className: "home-description" },
+                            LanguageManager.t("home.motivationDesc")
+                        )
+                    )
+                ),
+                el(
+                    "div",
+                    { className: "home-section-col home-contaner-5" },
+                    el(
+                        "div",
+                        { className: "home-presantation-container", style: "width: 100%; text-align: center;" },
+                        el("h2", { className: "home-title", style: "margin-bottom: 2rem;" }, LanguageManager.t("home.roadmapTitle")),
+                        el(
+                            "ul",
+                            { style: "list-style: none; padding: 0; font-size: clamp(18px, 3vw, 24px); color: var(--text-color); display: flex; flex-direction: column; gap: 2rem;" },
+                            el("li", {}, "✓ " + LanguageManager.t("home.roadmapDesc1")),
+                            el("li", {}, "✓ " + LanguageManager.t("home.roadmapDesc2")),
+                            el("li", {}, "✓ " + LanguageManager.t("home.roadmapDesc3"))
+                        )
+                    )
+                ),
+                el(
+                    "div",
+                    { className: "home-section-col home-contaner-6" },
+                    el("h2", { className: "home-title" }, LanguageManager.t("home.callToAction")),
+                    el(
+                        "a",
+                        {
+                            href: "/game",
+                            dataset: { link: true },
+                            className: "start-btn big-btn",
+                        },
+                        LanguageManager.t("home.startGame")
                     )
                 ),
                 el(
                     "div",
                     { className: "home-footer" },
                     el(
-                        "p",
-                        { className: "home-footer-info" },
-                        LanguageManager.t("home.contactUs"),
+                        "div",
+                        { className: "footer-grid" },
                         el(
-                            "a",
-                            { href: "mailto:info@keyboard-survivor.com" },
-                            "info@keyboard-survivor.com"
+                            "div",
+                            { className: "footer-column" },
+                            el("h3", {}, LanguageManager.t("home.contactUs")),
+                            el("a", { href: "mailto:info@keyboard-survivor.com" }, "info@keyboard-survivor.com")
+                        ),
+                        el(
+                            "div",
+                            { className: "footer-column" },
+                            el("h3", {}, LanguageManager.t("home.followUs")),
+                            el("a", { href: "https://www.facebook.com/keyboardsurvivor", target: "_blank" }, "Facebook"),
+                            el("a", { href: "https://www.twitter.com/keyboardsurvivor", target: "_blank" }, "Twitter"),
+                            el("a", { href: "https://www.instagram.com/keyboardsurvivor", target: "_blank" }, "Instagram")
+                        ),
+                        el(
+                            "div",
+                            { className: "footer-column" },
+                            el("h3", {}, "Credits"),
+                            el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
+                            el("p", { className: "footer-thx" }, LanguageManager.t("home.thankSupporters"))
                         )
                     ),
                     el(
-                        "p",
-                        { className: "home-footer-info" },
-                        LanguageManager.t("home.followUs"),
-                        el(
-                            "a",
-                            {
-                                href: "https://www.facebook.com/keyboardsurvivor",
-                                target: "_blank",
-                            },
-                            "Facebook"
-                        ),
-                        ", ",
-                        el(
-                            "a",
-                            {
-                                href: "https://www.twitter.com/keyboardsurvivor",
-                                target: "_blank",
-                            },
-                            "Twitter"
-                        ),
-                        ", ",
-                        el(
-                            "a",
-                            {
-                                href: "https://www.instagram.com/keyboardsurvivor",
-                                target: "_blank",
-                            },
-                            "Instagram"
-                        )
-                    ),
-                    el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
-                    el(
-                        "p",
-                        { className: "home-footer-info" },
-                        LanguageManager.t("home.thankSupporters")
-                    ),
-                    el(
-                        "p",
-                        { className: "home-footer-info" },
-                        LanguageManager.t("home.rights")
+                        "div",
+                        { className: "footer-bottom" },
+                        el("p", { className: "home-footer-info" }, LanguageManager.t("home.rights"))
                     )
                 )
             )
@@ -160,7 +197,8 @@ export default class HomeView extends AbstractView {
      */
     async init() {
         if (this.tunnelContainer) {
-            TunnelAnimation.init(this.tunnelContainer);
+            const caveAnimation = new CaveAnimation(this.tunnelContainer);
+            caveAnimation.init();
         }
         const deviceDetector = new DeviceCapabilitiesDetector("start-btn");
         deviceDetector.initialize();
@@ -172,6 +210,6 @@ export default class HomeView extends AbstractView {
      * @returns {Array<string>} List of CSS file paths.
      */
     getCss() {
-        return ["/asset/css/home.css"];
+        return ["/asset/css/home.css", "/asset/css/footer.css"];
     }
 }

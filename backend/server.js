@@ -10,6 +10,8 @@ const errorHandler = require("./src/middlewares/error.middleware");
 const authRoutes = require("./src/routes/auth.routes");
 const postsRoutes = require("./src/routes/posts.routes");
 const savesRoutes = require("./src/routes/saves.routes");
+const levelsRoutes = require("./src/routes/levels.routes");
+const statisticsRoutes = require("./src/routes/statistics.routes");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -44,6 +46,8 @@ app.use("/api/", apiLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/saves", savesRoutes);
+app.use("/api/levels", levelsRoutes);
+app.use("/api/stats", statisticsRoutes);
 
 app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "OK", message: "API is running securely" });
@@ -62,6 +66,15 @@ const startServer = async () => {
         await db.testConnection();
         console.log("🐘 [DB] PostgreSQL connection successful.");
 
+        await db.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE");
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS levels_config (
+                level_number INTEGER PRIMARY KEY,
+                phase_type VARCHAR(50) NOT NULL,
+                options JSONB NOT NULL
+            )
+        `);
+        
         await db.query("ALTER TABLE posts ADD COLUMN IF NOT EXISTS image_url VARCHAR(255) DEFAULT NULL");
         await db.query("ALTER TABLE posts ADD COLUMN IF NOT EXISTS downvotes INTEGER DEFAULT 0");
         await db.query(`

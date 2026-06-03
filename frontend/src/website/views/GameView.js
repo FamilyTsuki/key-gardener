@@ -49,7 +49,54 @@ export default class GameView extends AbstractView {
                 { className: "word-container none" },
                 el("span", { id: "currentWord" }),
                 el("span", { className: "clignotant" }, "_")
-            )
+            ),
+            el("div", { className: "spell-list-container none", id: "spell-list-container" }),
+            el(
+                "div",
+                { id: "boss-ui", className: "boss-ui hidden" },
+                el(
+                    "div",
+                    { className: "boss-info" },
+                    el("span", { className: "boss-name" }, "OCTOPUS"),
+                    el(
+                        "div",
+                        { className: "boss-hp-text" },
+                        el("span", { id: "boss-hp-current" }, "0"),
+                        " / ",
+                        el("span", { id: "boss-hp-max" }, "0")
+                    )
+                ),
+                el(
+                    "div",
+                    { className: "boss-hp-bar" },
+                    el("div", { id: "boss-hp-fill", className: "boss-hp-fill" })
+                )
+            ),
+            el(
+                "div",
+                { id: "player-hud", className: "player-hud", style: "display: none;" },
+                el(
+                    "div",
+                    { className: "hud-tech-ring" },
+                    el("div", { className: "hud-tech-core" })
+                ),
+                el(
+                    "div",
+                    { className: "hud-bar-wrapper" },
+                        el(
+                            "div",
+                            { className: "player-hp-bar" },
+                            el("div", { id: "player-hp-fill", className: "player-hp-fill" }),
+                            el(
+                                "div",
+                                { className: "player-hp-text" },
+                                el("span", { id: "player-hp-current" }, "100"),
+                                " / ",
+                                el("span", { id: "player-hp-max" }, "100")
+                            )
+                        )
+                    )
+                )
         );
     }
 
@@ -140,7 +187,8 @@ export default class GameView extends AbstractView {
             "/asset/css/game.css",
             "/asset/css/intro.css",
             "/asset/css/tempo.css",
-            "/asset/css/flame-wall.css"
+            "/asset/css/flame-wall.css",
+            "/asset/css/game-over.css"
         ];
     }
 }

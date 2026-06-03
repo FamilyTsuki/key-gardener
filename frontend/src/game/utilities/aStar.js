@@ -100,7 +100,10 @@ function findPath(current, path = []) {
  */
 function findCost(node, goalNode) {
   if (node.parent) {
-    node.cost.g = node.parent.cost.g + 1;
+    const distToParent = Math.sqrt(
+      (node.x - node.parent.x) ** 2 + (node.y - node.parent.y) ** 2
+    );
+    node.cost.g = node.parent.cost.g + distToParent;
   } else {
     node.cost.g = 0;
   }
