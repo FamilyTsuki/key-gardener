@@ -5,7 +5,6 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     position: relative;
-    overscroll-behavior-y: none;
 }
 
 .content {
@@ -67,10 +66,9 @@ body {
     text-align: center;
 }
 
-/* Phase 1: Pure Dirt (Top) */
 .home-contaner-1 {
-    margin-top: 10dvh;
-    margin-bottom: 100dvh; /* Distance to Phase 2 */
+    margin-top: 20dvh;
+    margin-bottom: 100dvh;
 }
 
 .home-description {
@@ -86,30 +84,25 @@ body {
     margin: 0;
 }
 
-/* Phase 2: Compressed Dirt */
 .home-contaner-2 {
-    margin-bottom: 250dvh; /* Distance to Phase 3 */
+    margin-bottom: 250dvh;
 }
 
-/* Phase 3: Transition (Pebbles) */
 .home-contaner-3 {
-    margin-bottom: 300dvh; /* Distance to Phase 4 */
+    margin-bottom: 300dvh;
 }
 
-/* Phase 4: Pure Stone */
 .home-contaner-4 {
-    margin-bottom: 400dvh; /* Distance to Phase 5 */
+    margin-bottom: 400dvh;
     gap: 4vh;
 }
 
-/* Phase 5: Deep Stone & Minerals */
 .home-contaner-5 {
-    margin-bottom: 250dvh; /* Distance to Final Section */
+    margin-bottom: 250dvh;
 }
 
-/* Deepest part of Phase 5 */
 .home-contaner-6 {
-    margin-bottom: 150dvh; /* Distance to Footer */
+    margin-bottom: 150dvh;
     gap: 4vh;
 }
 

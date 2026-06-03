@@ -66,6 +66,22 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: -1;
+    --primary-translucent-hover: rgba(0, 255, 102, 0.08);
+    --danger-translucent: rgba(239, 68, 68, 0.15);
+    --danger-translucent-hover: rgba(239, 68, 68, 0.08);
+    --success-translucent: #10b981;
+    --danger-translucent-toast: #ef4444;
+    --warning-translucent: #f59e0b;
+    --matrix-glow: none;
+}
+
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
 }
 
 .hidden {

@@ -1,6 +1,7 @@
 import * as THREE from "/node_modules/three/build/three.module.js";
 import { gsap } from "/node_modules/gsap/index.js";
 import { ScrollTrigger } from "/node_modules/gsap/ScrollTrigger.js";
+import { GLTFLoader } from "/node_modules/three/examples/jsm/loaders/GLTFLoader.js";
 
 export class CaveAnimation {
     constructor(containerElement) {
@@ -13,6 +14,8 @@ export class CaveAnimation {
         this.caveMesh = null;
         this.instancedPebbles = null;
         this.animationFrameId = null;
+        
+        this.mixers = [];
     }
 
     initializeConfiguration() {
@@ -20,11 +23,11 @@ export class CaveAnimation {
             fogDensity: 0.0025,
             fogColor: 0x0a0a14,
             ambientLightColor: 0x404040,
-            ambientLightIntensity: 3.0,
+            ambientLightIntensity: 8.0,
             caveHeight: 1000,
             caveRadius: 75,
-            holeRadius: 26.0,
-            holePosition: new THREE.Vector3(31.7, 450, -67.9),
+            holeRadius: 30.0,
+            holePosition: new THREE.Vector3(21.7, 450, -67.9),
             colors: {
                 dirt: new THREE.Color(0x4d3b2e),
                 compactDirt: new THREE.Color(0x261C14),
@@ -40,15 +43,24 @@ export class CaveAnimation {
         };
     }
 
-    init() {
+    async init() {
+        const loaderEl = document.getElementById("global-loader");
+        if (loaderEl) loaderEl.classList.remove("hidden");
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         gsap.registerPlugin(ScrollTrigger);
         this.setupEnvironment();
         this.setupLights();
-        this.buildCaveEnvironment();
+        await this.buildCaveEnvironment();
         this.setupRenderer();
         this.setupScrollTrigger();
         this.attachEvents();
         this.startRendering();
+
+        if (loaderEl) loaderEl.classList.add("hidden");
+
+        this.generateDetailsProgressively();
     }
 
     setupEnvironment() {
@@ -70,12 +82,318 @@ export class CaveAnimation {
         this.scene.add(midLight);
     }
 
-    buildCaveEnvironment() {
+    async buildCaveEnvironment() {
         this.caveMesh = this.createCaveMesh();
         this.scene.add(this.caveMesh);
 
-        this.instancedPebbles = this.createPebbles();
-        this.scene.add(this.instancedPebbles);
+        this.createSpace();
+        this.createStalactites();
+
+        await this.loadModels();
+    }
+
+    loadModels() {
+        return new Promise((resolve) => {
+            const loader = new GLTFLoader();
+            let loadedCount = 0;
+            const checkDone = () => {
+                loadedCount++;
+                if (loadedCount === 3) resolve();
+            };
+            
+            loader.load('/asset/game_assets/models/bone.glb', (gltf) => {
+                const boneModel = gltf.scene;
+                
+                for (let i = 0; i < 20; i++) { 
+
+                    const s = 1.2 + (i / 15);
+                    boneModel.scale.set(s, s, s);
+                    const bone = boneModel.clone();
+
+                    this.positionModelOnWall(bone, 0.8, 1.0, i);
+                    this.scene.add(bone);
+                }
+
+                checkDone();
+            });
+            
+            loader.load('/asset/game_assets/models/player.glb', (gltf) => {
+                const playerMesh = gltf.scene;
+                
+                const absoluteHolePos = this.config.holePosition.clone();
+                absoluteHolePos.y += -this.config.caveHeight / 2 + 150;
+                const dir = new THREE.Vector3(this.config.holePosition.x, 0, this.config.holePosition.z).normalize();
+
+                const right = dir.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
+
+                const dioramaCenter = absoluteHolePos.clone().add(dir.clone().multiplyScalar(50));
+
+                const playerPos = dioramaCenter.clone().add(right.clone().multiplyScalar(14));
+                const bugPos = dioramaCenter.clone().add(right.clone().multiplyScalar(-14));
+
+                const eyeGeo = new THREE.SphereGeometry(2.5, 16, 16);
+                const eyeMat = new THREE.MeshBasicMaterial({ color: 0x850000, fog: false }); 
+                
+                const eyesGroup = new THREE.Group();
+                
+                const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+                leftEye.position.set(-5, 0, 0);
+                leftEye.scale.set(0.4, 2, 2); 
+                
+                const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+                rightEye.position.set(5, 0, 0);
+                rightEye.scale.set(0.4, 2, 2);
+                
+                eyesGroup.add(leftEye);
+                eyesGroup.add(rightEye);
+
+                const depth = 400; 
+                const basePos = absoluteHolePos.clone().add(dir.clone().multiplyScalar(depth));
+
+                eyesGroup.position.copy(basePos);
+
+                eyesGroup.lookAt(absoluteHolePos.x, absoluteHolePos.y, absoluteHolePos.z);
+
+                const eyeLight = new THREE.PointLight(0xff0000, 100, 40);
+                eyesGroup.add(eyeLight);
+                
+                this.scene.add(eyesGroup);
+
+                const keycapGroup = new THREE.Group();
+                const keyBaseMat = new THREE.MeshStandardMaterial({color: 0x333333, roughness: 0.6, flatShading: true});
+                const keyTopMat = new THREE.MeshStandardMaterial({color: 0x111111, roughness: 0.8});
+
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#111111';
+                ctx.fillRect(0, 0, 256, 256);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 160px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('A', 128, 140);
+                const letterTexture = new THREE.CanvasTexture(canvas);
+
+                const letterMat = new THREE.MeshStandardMaterial({map: letterTexture, roughness: 0.8, color: 0xffffff});
+                const keyTopMaterials = [
+                    keyTopMat, keyTopMat,
+                    letterMat, keyTopMat,
+                    keyTopMat, keyTopMat
+                ];
+                
+                const keyBase = new THREE.Mesh(new THREE.BoxGeometry(16, 6, 16), keyBaseMat);
+                const keyTop = new THREE.Mesh(new THREE.BoxGeometry(12, 1.5, 12), keyTopMaterials);
+                keyTop.position.y = 3.5;
+                
+                keycapGroup.add(keyBase);
+                keycapGroup.add(keyTop);
+                
+                keycapGroup.position.copy(playerPos);
+                keycapGroup.position.y -= 3;
+
+                keycapGroup.rotation.set(Math.random() * 0.2, Math.random() * 0.5, Math.random() * 0.2);
+                this.scene.add(keycapGroup);
+
+                const playerContainer = new THREE.Group();
+                playerContainer.scale.set(8, 8, 8);
+                playerContainer.position.copy(playerPos);
+                playerContainer.position.y += 8;
+                
+                playerContainer.lookAt(bugPos);
+
+                playerMesh.rotation.y = 0;
+                playerMesh.rotation.x = Math.PI / 12;
+                playerMesh.rotation.z = 0;
+                
+                playerContainer.add(playerMesh);
+                this.scene.add(playerContainer);
+
+                const spellOrbGroup = new THREE.Group();
+                spellOrbGroup.position.copy(dioramaCenter);
+                spellOrbGroup.position.y += 5;
+                
+                const spellGeo = new THREE.SphereGeometry(1.5, 16, 16);
+                const spellMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.9 });
+                const spellOrb = new THREE.Mesh(spellGeo, spellMat);
+
+                const glowGeo = new THREE.SphereGeometry(2.5, 16, 16);
+                const glowMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.3 });
+                const spellGlow = new THREE.Mesh(glowGeo, glowMat);
+                spellOrbGroup.add(spellOrb);
+                spellOrbGroup.add(spellGlow);
+
+                const spellLight = new THREE.PointLight(0x00ff88, 2000, 250);
+                spellOrbGroup.add(spellLight);
+                
+                this.scene.add(spellOrbGroup);
+
+                checkDone();
+            });
+            
+            loader.load('/asset/game_assets/models/bug.glb', (gltf) => {
+                const bug = gltf.scene;
+                bug.scale.set(12, 12, 12);
+                
+                const absoluteHolePos = this.config.holePosition.clone();
+                absoluteHolePos.y += -this.config.caveHeight / 2 + 150;
+                const dir = new THREE.Vector3(this.config.holePosition.x, 0, this.config.holePosition.z).normalize();
+                
+                const right = dir.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
+                const dioramaCenter = absoluteHolePos.clone().add(dir.clone().multiplyScalar(50));
+                
+                const playerPos = dioramaCenter.clone().add(right.clone().multiplyScalar(14));
+                const bugPos = dioramaCenter.clone().add(right.clone().multiplyScalar(-14));
+
+                bug.position.copy(bugPos);
+                bug.position.y += 2;
+                
+                bug.lookAt(playerPos);
+
+                bug.rotateX(-Math.PI / 6);
+                bug.rotateZ((Math.random() - 0.5) * Math.PI / 4);
+                
+                this.scene.add(bug);
+
+                const impactGroup = new THREE.Group();
+                impactGroup.position.copy(bugPos);
+                impactGroup.position.y += 6;
+
+                const toPlayer = playerPos.clone().sub(bugPos).normalize();
+                impactGroup.position.add(toPlayer.multiplyScalar(5));
+                impactGroup.position.add(dir.clone().multiplyScalar(-4));
+
+                const impactLight = new THREE.PointLight(0x00ff88, 1000, 150);
+                impactGroup.add(impactLight);
+                
+                const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
+
+                const tiltY = -Math.PI / 8;
+                const tiltX = -Math.PI / 8;
+
+                const mainRingGeo = new THREE.TorusGeometry(8, 0.1, 8, 64);
+                const mainRing = new THREE.Mesh(mainRingGeo, ringMat);
+                mainRing.lookAt(toPlayer);
+                mainRing.rotateY(tiltY);
+                mainRing.rotateX(tiltX);
+                impactGroup.add(mainRing);
+
+                const secRingGeo = new THREE.TorusGeometry(3, 0.4, 16, 64);
+                const secRingMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
+                const secRing = new THREE.Mesh(secRingGeo, secRingMat);
+                secRing.lookAt(toPlayer);
+                secRing.rotateY(tiltY);
+                secRing.rotateX(tiltX);
+                impactGroup.add(secRing);
+
+                const coreGeo = new THREE.SphereGeometry(1.5, 16, 16);
+                const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
+                const impactCore = new THREE.Mesh(coreGeo, coreMat);
+                impactCore.scale.set(1.5, 0.8, 1.5);
+                impactCore.lookAt(toPlayer);
+                impactCore.rotateY(tiltY);
+                impactCore.rotateX(tiltX);
+                impactGroup.add(impactCore);
+
+                const sparkGeo = new THREE.TetrahedronGeometry(0.3, 0);
+                const sparkMat = new THREE.MeshBasicMaterial({ color: 0xffffff, blending: THREE.AdditiveBlending });
+                const numSparks = 20;
+                for(let i = 0; i < numSparks; i++) {
+                    const spark = new THREE.Mesh(sparkGeo, sparkMat);
+
+                    const radius = 2 + (i / numSparks) * 6;
+                    const phi = Math.acos(1 - 2 * (i + 0.5) / numSparks);
+                    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+                    
+                    spark.position.x = radius * Math.sin(phi) * Math.cos(theta);
+                    spark.position.y = radius * Math.sin(phi) * Math.sin(theta);
+                    spark.position.z = radius * Math.cos(phi);
+
+                    spark.lookAt(0, 0, 0);
+                    spark.scale.set(0.2, 0.2, 3.0);
+                    
+                    impactGroup.add(spark);
+                }
+                
+                this.scene.add(impactGroup);
+
+                checkDone();
+            });
+        });
+    }
+
+    positionModelOnWall(model, minNormY = 0, maxNormY = 1, seed = -1, isBone = true) {
+
+        const prng = (s) => {
+            let x = Math.sin(s * 12.9898 + 78.233) * 43758.5453;
+            return x - Math.floor(x);
+        };
+
+        let y, normalizedY, vx, vy, vz, theta, currentRadius;
+        const { caveHeight, caveRadius, holePosition, holeRadius } = this.config;
+        
+        let validPosition = false;
+        let attempt = 0;
+
+        while (!validPosition && attempt < 50) {
+            const r1 = seed >= 0 ? prng(seed * 13 + attempt * 3 + 1) : Math.random();
+            const r2 = seed >= 0 ? prng(seed * 13 + attempt * 3 + 2) : Math.random();
+            
+            normalizedY = minNormY + r1 * (maxNormY - minNormY);
+            y = (normalizedY * caveHeight) - caveHeight / 2;
+            theta = r2 * Math.PI * 2;
+            
+            currentRadius = caveRadius * normalizedY + (caveRadius - 20) * (1 - normalizedY);
+            vx = Math.cos(theta) * currentRadius;
+            vy = y;
+            vz = Math.sin(theta) * currentRadius;
+            
+            const dx = vx - holePosition.x;
+            const dy = vy - holePosition.y;
+            const dz = vz - holePosition.z;
+            const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+            
+            if (dist > holeRadius + 20) {
+                validPosition = true;
+            }
+            attempt++;
+        }
+
+        let defMult = 1.0;
+        if (normalizedY > 0.5) {
+            defMult += (normalizedY - 0.5) * 1.5; 
+        }
+        
+        const nx = vx / currentRadius;
+        const nz = vz / currentRadius;
+        const nX = (Math.sin(vx * 0.05 + vy * 0.03) * 6 + Math.sin(vx * 0.15 - vy * 0.12) * 2.5) * defMult;
+        const nZ = (Math.cos(vx * 0.04 - vy * 0.05) * 7.5 + Math.sin(vx * 0.12 + y * 0.08) * 3.5) * defMult;
+        const nY = (Math.cos(vx * 0.06 + vy * 0.04) * 5 + Math.cos(vx * 0.18 - vy * 0.15) * 2) * defMult;
+
+        const embedDepth = 0.0;
+        vx += nx * (nX - embedDepth);
+        vy += nY;
+        vz += nz * (nZ - embedDepth);
+
+        vy += -this.config.caveHeight / 2 + 150;
+
+        model.position.set(vx, vy, vz);
+        
+        if (isBone) {
+
+            model.lookAt(0, vy, 0);
+            model.rotateX(Math.PI / 2);
+
+            const r3 = seed >= 0 ? prng(seed * 7 + 1) : Math.random();
+            model.rotateY(r3 * Math.PI * 2);
+
+            model.rotateX(15 * Math.PI / 180);
+        } else {
+
+            model.lookAt(0, vy, 0); 
+
+        }
     }
 
     createCaveMesh() {
@@ -83,36 +401,68 @@ export class CaveAnimation {
             this.config.caveRadius,
             this.config.caveRadius - 20,
             this.config.caveHeight,
-            100,
-            300,
+            400,
+            800,
             true
         );
 
         this.applyDeformationAndColors(geometry);
 
+        const textureLoader = new THREE.TextureLoader();
+        const soilTexture = textureLoader.load('/asset/game_assets/textures/soil.jpg');
+        soilTexture.wrapS = THREE.RepeatWrapping;
+        soilTexture.wrapT = THREE.RepeatWrapping;
+        soilTexture.repeat.set(15, 60);
+
         const material = new THREE.MeshStandardMaterial({
+            map: soilTexture,
             vertexColors: true,
             roughness: 1.0,
             metalness: 0.0,
-            side: THREE.BackSide,
-            flatShading: true 
+            side: THREE.DoubleSide,
+            flatShading: false 
         });
 
-        const modifiedMaterial = this.applyHoleShader(material);
-        const mesh = new THREE.Mesh(geometry, modifiedMaterial);
+        material.onBeforeCompile = (shader) => {
+            shader.vertexShader = `
+                varying vec3 vLocalPos;
+                varying vec3 vLocalNorm;
+                ${shader.vertexShader}
+            `.replace(
+                '#include <begin_vertex>',
+                `
+                #include <begin_vertex>
+                vLocalPos = position;
+                vLocalNorm = normal;
+                `
+            );
 
-        const edgesMaterial = new THREE.LineBasicMaterial({
-            color: 0x000000,
-            transparent: true,
-            opacity: 0.4,
-        });
+            shader.fragmentShader = `
+                varying vec3 vLocalPos;
+                varying vec3 vLocalNorm;
+                ${shader.fragmentShader}
+            `.replace(
+                '#include <map_fragment>',
+                `
+                #ifdef USE_MAP
+                    vec3 blend = abs(vLocalNorm);
+                    blend = normalize(max(blend, 0.00001));
+                    float b = blend.x + blend.y + blend.z;
+                    blend /= b;
+                    
+                    float texScale = 0.02;
+                    vec4 tx = texture2D(map, vLocalPos.yz * texScale);
+                    vec4 ty = texture2D(map, vLocalPos.xz * texScale);
+                    vec4 tz = texture2D(map, vLocalPos.xy * texScale);
+                    
+                    vec4 texColor = tx * blend.x + ty * blend.y + tz * blend.z;
+                    diffuseColor *= texColor;
+                #endif
+                `
+            );
+        };
 
-        const modifiedEdgesMaterial = this.applyHoleShader(edgesMaterial);
-        const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), modifiedEdgesMaterial);
-        mesh.add(edges);
-
-        const holeSphere = this.createHoleSphere(material, edgesMaterial);
-        mesh.add(holeSphere);
+        const mesh = new THREE.Mesh(geometry, material);
 
         mesh.position.y = -this.config.caveHeight / 2 + 150;
         
@@ -139,9 +489,20 @@ export class CaveAnimation {
                 deformationMultiplier += (normalizedY - 0.5) * 1.5; 
             }
             
-            const noiseX = (Math.sin(x * 0.05 + y * 0.03) * 6 + Math.sin(x * 0.15 - y * 0.12) * 2.5) * deformationMultiplier;
-            const noiseZ = (Math.cos(x * 0.04 - y * 0.05) * 7.5 + Math.sin(x * 0.12 + y * 0.08) * 3.5) * deformationMultiplier;
-            const noiseY = (Math.cos(x * 0.06 + y * 0.04) * 5 + Math.cos(x * 0.18 - y * 0.15) * 2) * deformationMultiplier;
+            const dx = x - holePosition.x;
+            const dy = y - holePosition.y;
+            const dz = z - holePosition.z;
+            const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+            let holeNoiseMultiplier = 1.0;
+            if (dist < holeRadius + 15) {
+
+                holeNoiseMultiplier = 0.15 + 0.85 * (dist / (holeRadius + 15));
+            }
+
+            const noiseX = (Math.sin(x * 0.05 + y * 0.03) * 6 + Math.sin(x * 0.15 - y * 0.12) * 2.5) * deformationMultiplier * holeNoiseMultiplier;
+            const noiseZ = (Math.cos(x * 0.04 - y * 0.05) * 7.5 + Math.sin(x * 0.12 + y * 0.08) * 3.5) * deformationMultiplier * holeNoiseMultiplier;
+            const noiseY = (Math.cos(x * 0.06 + y * 0.04) * 5 + Math.cos(x * 0.18 - y * 0.15) * 2) * deformationMultiplier * holeNoiseMultiplier;
 
             let finalColor = new THREE.Color();
 
@@ -166,19 +527,27 @@ export class CaveAnimation {
             const dirX = holePosition.x / this.config.caveRadius;
             const dirZ = holePosition.z / this.config.caveRadius;
 
-            const dx = x - holePosition.x;
-            const dy = y - holePosition.y;
-            const dz = z - holePosition.z;
-            const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+            if (dist < holeRadius) {
 
-            const rimThickness = 14;
+                const maxDepth = 500; 
+                const progress = dist / holeRadius;
+                
+                let cavityDepth;
+                if (progress < 0.7) {
 
-            if (dist >= holeRadius && dist < holeRadius + rimThickness) {
-                const progress = (dist - holeRadius) / rimThickness;
-                const bump = Math.sin(progress * Math.PI);
-                const rimHeight = -12;
-                caveOffsetX = dirX * (bump * rimHeight);
-                caveOffsetZ = dirZ * (bump * rimHeight);
+                    cavityDepth = maxDepth;
+                } else {
+
+                    const edgeProgress = (progress - 0.7) / 0.3;
+                    cavityDepth = maxDepth * (Math.cos(edgeProgress * Math.PI) + 1) / 2;
+                }
+
+                caveOffsetX = dirX * cavityDepth;
+                caveOffsetZ = dirZ * cavityDepth;
+
+                const depthRatio = cavityDepth / maxDepth;
+                const caveDarkness = new THREE.Color(0x050508);
+                finalColor.lerp(caveDarkness, depthRatio * 0.9);
             }
 
             x += nx * noiseX + caveOffsetX;
@@ -193,81 +562,110 @@ export class CaveAnimation {
         geometry.setAttribute('color', new THREE.Float32BufferAttribute(vertexColors, 3));
     }
 
-    applyHoleShader(baseMaterial) {
-        const material = baseMaterial.clone();
+    createSpace() {
+        const starsGeometry = new THREE.BufferGeometry();
+        const count = 5000;
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
+        const color = new THREE.Color();
         
-        material.onBeforeCompile = (shader) => {
-            shader.uniforms.holeCenter = { value: this.config.holePosition };
-            shader.uniforms.holeRadius = { value: this.config.holeRadius };
+        for (let i = 0; i < count; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 6000;
+            positions[i * 3 + 1] = -800 - Math.random() * 4000;
+            positions[i * 3 + 2] = -1500 + (Math.random() - 0.5) * 6000;
             
-            shader.vertexShader = shader.vertexShader.replace(
-                '#include <common>',
-                `#include <common>\nvarying vec3 vLocalPos;`
-            ).replace(
-                '#include <begin_vertex>',
-                `#include <begin_vertex>\nvLocalPos = position;`
-            );
-
-            shader.fragmentShader = shader.fragmentShader.replace(
-                '#include <common>',
-                `#include <common>\nuniform vec3 holeCenter;\nuniform float holeRadius;\nvarying vec3 vLocalPos;`
-            ).replace(
-                'void main() {',
-                `void main() {\nif (distance(vLocalPos, holeCenter) < holeRadius) discard;`
-            );
-        };
-
-        return material;
-    }
-
-    createHoleSphere(baseMaterial, edgesMaterial) {
-        const sphereRadius = this.config.holeRadius + 1.5;
-        const geometry = new THREE.SphereGeometry(sphereRadius, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        
-        const positionAttribute = geometry.attributes.position;
-        const bowlColors = [];
-        const bowlRimColor = new THREE.Color(0x2a1f18);
-        const bowlDepthColor = new THREE.Color(0x080605);
-        
-        for (let i = 0; i < positionAttribute.count; i++) {
-            let x = positionAttribute.getX(i);
-            let y = positionAttribute.getY(i);
-            let z = positionAttribute.getZ(i);
-            
-            const noise = Math.sin(x * 0.2 + y * 0.1) * 1.5 + Math.cos(z * 0.2 - x * 0.1) * 1.5;
-            
-            const length = Math.sqrt(x*x + y*y + z*z);
-            const nx = x / length;
-            const ny = y / length;
-            const nz = z / length;
-            
-            positionAttribute.setXYZ(i, x + nx * noise, y + ny * noise, z + nz * noise);
-
-            const t = y / sphereRadius;
-            bowlColors.push(...bowlRimColor.clone().lerp(bowlDepthColor, t).toArray());
+            color.setHSL(Math.random() * 0.2 + 0.5, 0.8, Math.random() * 0.5 + 0.5);
+            colors[i * 3] = color.r;
+            colors[i * 3 + 1] = color.g;
+            colors[i * 3 + 2] = color.b;
         }
         
-        geometry.setAttribute('color', new THREE.Float32BufferAttribute(bowlColors, 3));
-        geometry.computeVertexNormals();
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        
+        const starsMaterial = new THREE.PointsMaterial({
+            size: 4,
+            vertexColors: true,
+            transparent: true,
+            opacity: 1.0,
+            sizeAttenuation: false,
+            fog: false
+        });
+        
+        const starField = new THREE.Points(starsGeometry, starsMaterial);
+        this.scene.add(starField);
 
-        const material = baseMaterial.clone();
-        material.vertexColors = true;
-        material.side = THREE.BackSide;
-        material.flatShading = true;
-        
-        const mesh = new THREE.Mesh(geometry, material);
-        const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), edgesMaterial);
-        mesh.add(edges);
+        const planetGeo = new THREE.SphereGeometry(400, 64, 64);
+        const planetMat = new THREE.MeshBasicMaterial({ 
+            color: 0x4422ff, 
+            transparent: true, 
+            opacity: 0.8,
+            fog: false 
+        });
+        const planet = new THREE.Mesh(planetGeo, planetMat);
+        planet.position.set(0, -1000, -1800);
+        this.scene.add(planet);
 
-        mesh.position.copy(this.config.holePosition);
-        
-        const dir = new THREE.Vector3(this.config.holePosition.x, 0, this.config.holePosition.z).normalize();
-        mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-        
-        return mesh;
+        const ringGeo = new THREE.TorusGeometry(650, 15, 2, 64);
+        const ringMat = new THREE.MeshBasicMaterial({ 
+            color: 0x88aaff, 
+            transparent: true, 
+            opacity: 0.6,
+            fog: false,
+            side: THREE.DoubleSide
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.copy(planet.position);
+        ring.rotation.x = Math.PI / 2.2;
+        ring.rotation.y = Math.PI / 8;
+        this.scene.add(ring);
     }
 
-    createPebbles() {
+    createStalactites() {
+        const count = 300;
+        const geometry = new THREE.CylinderGeometry(8, 0, 100, 8);
+        geometry.translate(0, -50, 0);
+        
+        const material = new THREE.MeshStandardMaterial({
+            color: this.config.colors.deep,
+            roughness: 0.9,
+            flatShading: true
+        });
+        
+        const instancedMesh = new THREE.InstancedMesh(geometry, material, count);
+        const dummy = new THREE.Object3D();
+        const bottomY = this.caveMesh.position.y - this.config.caveHeight / 2;
+        const radius = this.config.caveRadius;
+        
+        for (let i = 0; i < count; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const r = radius - 5 + Math.random() * 25; 
+            const x = Math.cos(theta) * r;
+            const z = Math.sin(theta) * r;
+            
+            const yOffset = Math.random() * 40;
+            
+            dummy.position.set(x, bottomY + yOffset, z);
+            
+            dummy.rotation.set(
+                (Math.random() - 0.5) * 0.2,
+                Math.random() * Math.PI,
+                (Math.random() - 0.5) * 0.2
+            );
+            
+            const scaleY = 0.5 + Math.random() * 2.0;
+            const scaleXZ = 0.5 + Math.random() * 1.5;
+            dummy.scale.set(scaleXZ, scaleY, scaleXZ);
+            
+            dummy.updateMatrix();
+            instancedMesh.setMatrixAt(i, dummy.matrix);
+        }
+        
+        instancedMesh.instanceMatrix.needsUpdate = true;
+        this.scene.add(instancedMesh);
+    }
+
+    async generateDetailsProgressively() {
         const geometry = new THREE.IcosahedronGeometry(1.5, 0);
         const material = new THREE.MeshStandardMaterial({
             roughness: 0.9,
@@ -275,25 +673,64 @@ export class CaveAnimation {
             flatShading: true
         });
         
-        const instancedMesh = new THREE.InstancedMesh(geometry, material, this.config.pebbleCount);
+        const pebblesData = [];
+        const rocksData = [];
+        const mineralsData = [];
+
         const dummy = new THREE.Object3D();
+        let iterations = 0;
         
         for (let i = 0; i < this.config.pebbleCount; i++) {
-            this.positionPebble(dummy, instancedMesh, i);
+            const data = this.calculatePebbleData(dummy);
+            if (data.type === 'mineral') {
+                mineralsData.push(data);
+            } else if (data.type === 'rock') {
+                rocksData.push(data);
+            } else {
+                pebblesData.push(data);
+            }
+
+            iterations++;
+            if (iterations % 1500 === 0) {
+
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 400));
+        this.addInstancedMeshFromData(pebblesData, geometry, material);
+
+        await new Promise(resolve => setTimeout(resolve, 600));
+        this.addInstancedMeshFromData(rocksData, geometry, material);
+
+        await new Promise(resolve => setTimeout(resolve, 600));
+        this.addInstancedMeshFromData(mineralsData, geometry, material);
+    }
+
+    addInstancedMeshFromData(dataArray, geometry, material) {
+        if (dataArray.length === 0) return;
+        const instancedMesh = new THREE.InstancedMesh(geometry, material, dataArray.length);
+        
+        for (let i = 0; i < dataArray.length; i++) {
+            const data = dataArray[i];
+            instancedMesh.setMatrixAt(i, data.matrix);
+            instancedMesh.setColorAt(i, data.color);
         }
 
         instancedMesh.instanceMatrix.needsUpdate = true;
         instancedMesh.instanceColor.needsUpdate = true;
         instancedMesh.position.y = this.caveMesh.position.y;
         
-        return instancedMesh;
+        this.scene.add(instancedMesh);
     }
 
-    positionPebble(dummy, instancedMesh, index) {
+    calculatePebbleData(dummy) {
         let y, normalizedY, isMineral;
         let color = new THREE.Color();
         let scale = 1.0;
         const { caveHeight, caveRadius, colors } = this.config;
+
+        let type = 'pebble';
 
         while (true) {
             y = (Math.random() - 0.5) * caveHeight;
@@ -310,11 +747,13 @@ export class CaveAnimation {
                 const bottomColor = new THREE.Color(0x5a5c60);
                 color.copy(topColor).lerp(bottomColor, progress);
                 scale = Math.random() * 2.0 + 1.0 + (progress * 6.0);
+                type = scale > 4.5 ? 'rock' : 'pebble';
                 break;
             } else if (normalizedY > 0.45) {
                 isMineral = false;
                 color.setHex(0x4a4c50);
                 scale = Math.random() * 3.0 + 7.0;
+                type = 'rock';
                 break;
             } else {
                 isMineral = Math.random() < 0.008;
@@ -322,9 +761,11 @@ export class CaveAnimation {
                     const mineralIndex = Math.floor(Math.random() * colors.minerals.length);
                     color.copy(colors.minerals[mineralIndex]);
                     scale = Math.random() * 2.0 + 7.0;
+                    type = 'mineral';
                 } else {
                     color.setHex(0x2a2c30);
                     scale = Math.random() * 3.0 + 7.0;
+                    type = 'rock';
                 }
                 break;
             }
@@ -358,8 +799,11 @@ export class CaveAnimation {
         dummy.scale.set(scale, scale, scale);
         dummy.updateMatrix();
 
-        instancedMesh.setMatrixAt(index, dummy.matrix);
-        instancedMesh.setColorAt(index, color);
+        return {
+            matrix: dummy.matrix.clone(),
+            color: color.clone(),
+            type: type
+        };
     }
 
     setupRenderer() {
@@ -382,14 +826,25 @@ export class CaveAnimation {
     }
 
     setupScrollTrigger() {
-        const deltaY = 900;
+        const deltaY = 1050;
         
         gsap.to(this.camera.position, {
             y: this.camera.position.y - deltaY,
             ease: "none",
             scrollTrigger: {
                 trigger: ".content",
-                start: "top top",
+                start: 0,
+                end: "bottom bottom",
+                scrub: true,
+            },
+        });
+
+        gsap.to(this.camera.rotation, {
+            x: Math.PI / 16, 
+            ease: "power1.inOut",
+            scrollTrigger: {
+                trigger: ".content",
+                start: "85% bottom",
                 end: "bottom bottom",
                 scrub: true,
             },
