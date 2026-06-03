@@ -119,36 +119,7 @@ export default class HomeView extends AbstractView {
                         )
                     )
                 ),
-                el(
-                    "div",
-                    { className: "home-section-col home-contaner-5" },
-                    el(
-                        "div",
-                        { className: "home-presantation-container", style: "width: 100%; text-align: center;" },
-                        el("h2", { className: "home-title", style: "margin-bottom: 2rem;" }, LanguageManager.t("home.roadmapTitle")),
-                        el(
-                            "ul",
-                            { style: "list-style: none; padding: 0; font-size: clamp(18px, 3vw, 24px); color: var(--text-color); display: flex; flex-direction: column; gap: 2rem;" },
-                            el("li", {}, "✓ " + LanguageManager.t("home.roadmapDesc1")),
-                            el("li", {}, "✓ " + LanguageManager.t("home.roadmapDesc2")),
-                            el("li", {}, "✓ " + LanguageManager.t("home.roadmapDesc3"))
-                        )
-                    )
-                ),
-                el(
-                    "div",
-                    { className: "home-section-col home-contaner-6" },
-                    el("h2", { className: "home-title" }, LanguageManager.t("home.callToAction")),
-                    el(
-                        "a",
-                        {
-                            href: "/game",
-                            dataset: { link: true },
-                            className: "start-btn big-btn",
-                        },
-                        LanguageManager.t("home.startGame")
-                    )
-                ),
+                
                 el(
                     "div",
                     { className: "home-footer" },
