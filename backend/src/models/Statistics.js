@@ -29,7 +29,7 @@ class Statistics {
                 [
                     userId,
                     wpm,
-                    wpm, // initial average is just the first wpm
+                    wpm,
                     accuracy,
                     wordsTyped,
                     enemiesDefeated,
@@ -40,12 +40,7 @@ class Statistics {
             return result.rows[0];
         } else {
             const highestWpm = Math.max(currentStats.highest_wpm, wpm);
-            // Simple moving average or cumulative calculation for average WPM
-            // Ideally we'd need total matches, but since we don't have it, we'll do a simple moving average
-            // A better way is: (current average + new) / 2 as an approximation for now.
             const newAverageWpm = Math.round((currentStats.average_wpm + wpm) / 2);
-            
-            // For accuracy, similar logic: average out
             const newAccuracy = (parseFloat(currentStats.accuracy) + parseFloat(accuracy)) / 2;
 
             const newWordsTyped = currentStats.total_words_typed + wordsTyped;
