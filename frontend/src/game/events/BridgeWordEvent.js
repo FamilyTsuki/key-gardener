@@ -213,7 +213,7 @@ export class BridgeWordEvent extends WorldEvent {
                     anim.worldPhase.player.move({ 
                         x: anim.tile.rawPosition.x, 
                         y: anim.tile.rawPosition.y,
-                        offsetY: 2.9 + anim.tile.baseY
+                        offsetY: 2.0 + anim.tile.baseY
                     });
                 }
             }

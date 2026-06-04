@@ -48,9 +48,9 @@ export class WorldMapBuilder {
     static createBeveledHexagon(sideMaterial, topMaterial) {
         const group = new THREE.Group();
 
-        const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 30.0, 6);
+        const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 120.0, 6);
         const bodyMesh = new THREE.Mesh(bodyGeometry, sideMaterial);
-        bodyMesh.position.y = -13.4;
+        bodyMesh.position.y = -58.4;
 
         const bevelGeometry = new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6);
         const bevelMesh = new THREE.Mesh(bevelGeometry, [

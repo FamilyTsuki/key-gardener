@@ -80,6 +80,7 @@ export class SurvivePhase extends GamePhase {
             () => this.gameEngine.loadLevel(this.gameEngine.currentLevel),
             this.gameEngine.stats
         );
+        this.player.offsetY = 0.225;
         this.lastPlayerKey = "A";
         this.elCurrentWord = document.getElementById("currentWord");
         document

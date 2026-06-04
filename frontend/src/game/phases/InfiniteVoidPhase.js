@@ -56,7 +56,7 @@ export class InfiniteVoidPhase extends GamePhase {
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
-        this.player.offsetY = 2.9 + (spawnTile.baseY || 0);
+        this.player.offsetY = 2.0 + (spawnTile.baseY || 0);
         this.player.offsetZ = 0;
         this.player.updateHpBar = () => {};
         const hudEl = document.getElementById("player-hud");
@@ -68,7 +68,7 @@ export class InfiniteVoidPhase extends GamePhase {
             await this.player.loadPromise;
         }
 
-        this.player.offsetY = 2.9 + (spawnTile.baseY || 0);
+        this.player.offsetY = 2.0 + (spawnTile.baseY || 0);
         this.isPlayingIntro = true;
         this.introTime = 0;
         if (this.playerLight) {
@@ -505,7 +505,7 @@ export class InfiniteVoidPhase extends GamePhase {
             this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
-                offsetY: 2.9 + (target.baseY || 0)
+                offsetY: 2.0 + (target.baseY || 0)
             });
         }
     }

@@ -87,7 +87,7 @@ export class WorldPhase extends GamePhase {
         this.player.spacingX = Math.sqrt(3) * 1.5;
         this.player.spacingZ = 1.5 * 1.5;
         this.player.offsetX = 12;
-        this.player.offsetY = 2.9 + (spawnTile.baseY || 0);
+        this.player.offsetY = 2.0 + (spawnTile.baseY || 0);
         this.player.offsetZ = 0;
 
         for (const event of this.events) {
@@ -313,7 +313,7 @@ export class WorldPhase extends GamePhase {
 
         const arrivalX = arrivalTile.rawPosition.x * Math.sqrt(3) * 1.5 + 12;
         const arrivalZ = arrivalTile.rawPosition.y * 1.5 * 1.5;
-        const arrivalY = 2.9 + (arrivalTile.baseY || 0);
+        const arrivalY = 2.0 + (arrivalTile.baseY || 0);
 
         this.arrivalX = arrivalX;
         this.arrivalZ = arrivalZ;
@@ -347,7 +347,7 @@ export class WorldPhase extends GamePhase {
                         this.player.move({
                             x: firstNormalTile.rawPosition.x,
                             y: firstNormalTile.rawPosition.y,
-                            offsetY: 2.9 + (firstNormalTile.baseY || 0)
+                            offsetY: 2.0 + (firstNormalTile.baseY || 0)
                         });
                         await new Promise(r => setTimeout(r, this.player.movementDuration * 16.6));
                     }
@@ -361,7 +361,7 @@ export class WorldPhase extends GamePhase {
                 this.player.move({
                     x: nextTile.rawPosition.x,
                     y: nextTile.rawPosition.y,
-                    offsetY: 2.9 + (nextTile.baseY || 0)
+                    offsetY: 2.0 + (nextTile.baseY || 0)
                 });
                 
                 await new Promise(r => setTimeout(r, this.player.movementDuration * 16.6));
@@ -401,7 +401,7 @@ export class WorldPhase extends GamePhase {
             this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
-                offsetY: 2.9 + (target.baseY || 0),
+                offsetY: 2.0 + (target.baseY || 0),
             });
         }
     }
