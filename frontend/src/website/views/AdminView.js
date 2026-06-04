@@ -22,9 +22,9 @@ export class AdminView {
             <div class="admin-view-container">
                 <h1 class="admin-title">Tableau de bord Administrateur</h1>
                 <p class="admin-subtitle">Gérez les configurations des niveaux du jeu.</p>
-                <div id="admin-error" style="color: #ff4d4d; margin-bottom: 20px; font-weight: 500;"></div>
+                <div id="admin-error" class="admin-error-msg"></div>
                 <div id="levels-container">
-                    <div style="text-align: center; color: #a3b3cc; padding: 40px;">Chargement des niveaux...</div>
+                    <div class="admin-loading">Chargement des niveaux...</div>
                 </div>
             </div>
         `;
@@ -65,21 +65,21 @@ export class AdminView {
         allLevels.forEach((level) => {
             const card = document.createElement("div");
             card.className = "admin-card";
-            
-            const bodyId = `level-body-${level.level_number}`;
+
+                        const bodyId = `level-body-${level.level_number}`;
             const isCollapsed = !level.isNew;
 
             const options = level.options || {};
             const isSurvive = level.phase_type === "survive";
-            
-            const surviveFormHtml = this.buildSurviveFormHtml(options, isSurvive);
+
+                        const surviveFormHtml = this.buildSurviveFormHtml(options, isSurvive);
             const worldFormHtml = this.buildWorldFormHtml(options, isSurvive);
             const storyEventsHtml = this.buildStoryEventsHtml(level.level_number);
 
             card.innerHTML = this.buildCardHtml(level, isCollapsed, surviveFormHtml, worldFormHtml, storyEventsHtml);
             container.appendChild(card);
-            
-            this.attachCardEventListeners(card, level, options, bodyId);
+
+                        this.attachCardEventListeners(card, level, options, bodyId);
         });
     }
 
@@ -88,8 +88,8 @@ export class AdminView {
         if (toggleHeader) {
             toggleHeader.addEventListener('click', (e) => {
                 if (e.target.closest('.btn-delete-level')) return;
-                
-                const bodyEl = document.getElementById(bodyId);
+
+                                const bodyEl = document.getElementById(bodyId);
                 const iconEl = document.getElementById(`icon-${level.level_number}`);
                 if (bodyEl.classList.contains('none')) {
                     bodyEl.classList.remove('none');
@@ -100,8 +100,8 @@ export class AdminView {
                 }
             });
         }
-        
-        const deleteBtn = card.querySelector('.btn-delete-level');
+
+                const deleteBtn = card.querySelector('.btn-delete-level');
         if (deleteBtn) {
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation(); 
@@ -115,8 +115,8 @@ export class AdminView {
         const typeSelect = card.querySelector('.phase-type-select');
 
         const initialStoryEvents = [];
-        
-        if (level.phase_type === 'world') {
+
+                if (level.phase_type === 'world') {
             const eventsArray = options.events || [];
             options.outroType = 'DoorEvent';
             eventsArray.forEach(eType => {
@@ -138,8 +138,8 @@ export class AdminView {
                 });
             }
         }
-        
-        (options.storyEvents || []).forEach(evt => initialStoryEvents.push(evt));
+
+                (options.storyEvents || []).forEach(evt => initialStoryEvents.push(evt));
 
         initialStoryEvents.forEach(evt => this.createStoryEventBlock(storyContainer, typeSelect, evt));
 
@@ -149,8 +149,8 @@ export class AdminView {
 
         const surviveDiv = card.querySelector('.survive-form');
         const worldDiv = card.querySelector('.world-form');
-        
-        typeSelect.addEventListener('change', (e) => {
+
+                typeSelect.addEventListener('change', (e) => {
             if (e.target.value === 'survive') {
                 surviveDiv.classList.remove('none');
                 worldDiv.classList.add('none');
@@ -165,8 +165,8 @@ export class AdminView {
         saveBtn.addEventListener("click", () => {
             const phaseType = typeSelect.value;
             let parsedOptions = {};
-            
-            const gatheredStoryEvents = Array.from(storyContainer.querySelectorAll('.story-event-block')).map(block => {
+
+                        const gatheredStoryEvents = Array.from(storyContainer.querySelectorAll('.story-event-block')).map(block => {
                 const actionType = block.querySelector('.evt-action-type').value || 'dialogue';
                 const dText = block.querySelector('.evt-dialogue').value;
                 return {
@@ -195,8 +195,8 @@ export class AdminView {
             } else {
                 const eventsList = [];
                 const filteredStoryEvents = [];
-                
-                gatheredStoryEvents.forEach(evt => {
+
+                                gatheredStoryEvents.forEach(evt => {
                     if (evt.actionType === 'bridge') eventsList.push('BridgeWordEvent');
                     else if (evt.actionType === 'flamewall') eventsList.push('FlameWallEvent');
                     else filteredStoryEvents.push(evt);
@@ -208,8 +208,8 @@ export class AdminView {
                 let globalDialogue = [];
                 let globalDialogueModel = null;
                 const finalStoryEvents = [];
-                
-                filteredStoryEvents.forEach(evt => {
+
+                                filteredStoryEvents.forEach(evt => {
                     if (evt.actionType === 'dialogue' && Number(evt.triggerValue) === 0 && globalDialogue.length === 0) {
                         globalDialogue = evt.dialogue;
                         globalDialogueModel = evt.dialogueModel;
@@ -227,8 +227,8 @@ export class AdminView {
                     storyEvents: finalStoryEvents
                 };
             }
-            
-            this.saveLevel(level.level_number, phaseType, parsedOptions);
+
+                        this.saveLevel(level.level_number, phaseType, parsedOptions);
         });
 
         const spawnIntervalInput = card.querySelector('.survive-spawn-interval');
@@ -284,15 +284,15 @@ export class AdminView {
         const currentPhaseType = typeSelect.value;
         const div = document.createElement("div");
         div.className = "story-event-block";
-        
-        if (evt.actionType === 'heal') div.classList.add("block-heal");
+
+                if (evt.actionType === 'heal') div.classList.add("block-heal");
         else if (evt.actionType === 'spawn' || evt.actionType === 'spawnBoss') div.classList.add("block-spawn");
         else if (evt.actionType === 'spawnerConfig') div.classList.add("block-spawn");
         else if (evt.actionType === 'bridge') div.classList.add("block-bridge");
         else if (evt.actionType === 'flamewall') div.classList.add("block-flamewall");
         else div.classList.add("block-dialogue");
-        
-        let optionsHtml = '';
+
+                let optionsHtml = '';
         if (currentPhaseType === 'survive') {
             optionsHtml = `
                 <option value="dialogue" ${evt.actionType === 'dialogue' || !evt.actionType ? 'selected' : ''}>💬 Lancer un Dialogue</option>
@@ -315,7 +315,7 @@ export class AdminView {
         div.innerHTML = `
             <button class="remove-evt-btn">X</button>
             
-            <div class="block-row" style="margin-bottom: 15px;">
+            <div class="block-row mb-15">
                 <strong>Action :</strong>
                 <select class="evt-action-type block-select">
                     ${optionsHtml}
@@ -328,15 +328,15 @@ export class AdminView {
                     <option value="time" ${evt.triggerType === 'time' ? 'selected' : ''}>Après Temps (sec)</option>
                     <option value="distance" ${evt.triggerType === 'distance' ? 'selected' : ''}>À Distance (cases)</option>
                 </select>
-                <input type="number" class="evt-trigger-value block-input" value="${evt.triggerValue !== undefined ? evt.triggerValue : 10}" style="width: 80px;">
+                <input type="number" class="evt-trigger-value block-input width-80" value="${evt.triggerValue !== undefined ? evt.triggerValue : 10}">
             </div>
             
-            <div class="evt-fields-dialogue block-row" style="flex-direction: column; align-items: stretch;">
-                <div style="display: flex; gap: 10px; align-items: center;">
+            <div class="evt-fields-dialogue block-row flex-col-stretch">
+                <div class="flex-row-gap10 flex-center">
                     <label>Modèle 3D (.glb):</label>
-                    <input type="text" class="evt-model block-input" value="${evt.dialogueModel || '/asset/game_assets/models/player.glb'}" style="flex: 1;">
+                    <input type="text" class="evt-model block-input flex-1" value="${evt.dialogueModel || '/asset/game_assets/models/player.glb'}">
                 </div>
-                <div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;">
+                <div class="flex-row-gap10 flex-start mt-10">
                     <label>Dialogues:</label>
                     <textarea class="evt-dialogue block-textarea" rows="3" placeholder="1 bulle par ligne...">${(evt.dialogue || []).join('\n')}</textarea>
                 </div>
@@ -344,30 +344,30 @@ export class AdminView {
 
             <div class="evt-fields-heal block-row">
                 <label>Points de vie (PV) :</label>
-                <input type="number" class="evt-heal-amount block-input" value="${evt.healAmount || 50}" style="width: 100px;">
+                <input type="number" class="evt-heal-amount block-input width-100" value="${evt.healAmount || 50}">
             </div>
 
             <div class="evt-fields-spawn block-row">
                 <label>Type d'ennemi :</label>
-                <input type="text" class="evt-spawn-type block-input" value="${evt.spawnEnemy || 'boss'}" style="width: 150px;">
+                <input type="text" class="evt-spawn-type block-input width-150" value="${evt.spawnEnemy || 'boss'}">
             </div>
 
             <div class="evt-fields-spawnerConfig block-row">
                 <label>Intervalle Spawn (sec) :</label>
-                <input type="number" step="0.1" class="evt-spawn-interval block-input" value="${evt.spawnInterval !== undefined ? evt.spawnInterval : 3}" style="width: 80px; margin-right: 15px;">
+                <input type="number" step="0.1" class="evt-spawn-interval block-input width-80 mr-15" value="${evt.spawnInterval !== undefined ? evt.spawnInterval : 3}">
                 
                 <label>Max Ennemis :</label>
                 <input type="number" class="evt-spawn-max block-input" value="${evt.maxEnemies !== undefined ? evt.maxEnemies : 20}">
             </div>
         `;
-        
-        div.querySelector('.remove-evt-btn').addEventListener('click', () => div.remove());
-        
-        const selectAction = div.querySelector('.evt-action-type');
+
+                div.querySelector('.remove-evt-btn').addEventListener('click', () => div.remove());
+
+                const selectAction = div.querySelector('.evt-action-type');
         selectAction.addEventListener('change', (e) => {
             const newType = e.target.value;
-            
-            div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-bridge', 'block-flamewall');
+
+                        div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-bridge', 'block-flamewall');
             if (newType === 'heal') div.classList.add("block-heal");
             else if (newType === 'spawn' || newType === 'spawnBoss' || newType === 'spawnerConfig') div.classList.add("block-spawn");
             else if (newType === 'bridge') div.classList.add("block-bridge");
@@ -381,12 +381,12 @@ export class AdminView {
 
     init3DPreview(container, phaseType, options, card) {
         const { scene, camera, renderer } = this._setupPreviewScene(container);
-        
-        let currentDecor = null;
+
+                let currentDecor = null;
         let keyboardGroup = null;
         let playerMesh = null;
-        
-        const loader = new GLTFLoader();
+
+                const loader = new GLTFLoader();
         loader.load("/asset/game_assets/models/player.glb", (gltf) => {
             playerMesh = gltf.scene;
             playerMesh.scale.set(1.3, 1.3, 1.3);
@@ -411,8 +411,8 @@ export class AdminView {
                 scene.remove(keyboardGroup);
                 keyboardGroup = null;
             }
-            
-            if (phaseType === "survive") {
+
+                        if (phaseType === "survive") {
                 camera.position.set(15, 18, 7);
                 camera.lookAt(15, 0, 3);
 
@@ -420,13 +420,13 @@ export class AdminView {
                 const decorObj = SurviveDecorBuilder.buildDecor(decorType, scene);
                 currentDecor = decorObj.decorGroup;
                 currentDecor.position.set(0, 0, 0);
-                
-                keyboardGroup = new THREE.Group();
+
+                                keyboardGroup = new THREE.Group();
                 Keyboard.init(keyboardGroup, KEYBOARD_LAYOUT, decorType);
                 keyboardGroup.position.set(0, 0, 0); 
                 scene.add(keyboardGroup);
-                
-                if (playerMesh) playerMesh.position.set(15, 1.35, 5);
+
+                                if (playerMesh) playerMesh.position.set(15, 1.35, 5);
 
             } else {
                 const introType = card.querySelector('.world-intro').value || "staircase";
@@ -434,21 +434,21 @@ export class AdminView {
                 const stContainer = card.querySelector('div[class*="story-events-container-"]');
                 const bubbles = stContainer ? Array.from(stContainer.querySelectorAll('.evt-action-type')).map(sel => sel.value) : [];
                 const hasBridge = bubbles.includes('bridge');
-                
-                WorldMap.init(scene, createWordlLayout(hasBridge, introType)).then((wMap) => {
+
+                                WorldMap.init(scene, createWordlLayout(hasBridge, introType)).then((wMap) => {
                     currentDecor = wMap.group;
                     const spawnTile = wMap.mapLayout.find(t => t.isSpawn) || wMap.mapLayout[1] || wMap.mapLayout[0];
                     const spawnPos = spawnTile.mesh.position;
-                    
-                    if (playerMesh) {
+
+                                        if (playerMesh) {
                         playerMesh.position.set(spawnPos.x, spawnPos.y + 1.35, spawnPos.z);
                     }
-                    
-                    camera.position.set(spawnPos.x, spawnPos.y + 25, spawnPos.z + 10);
+
+                                        camera.position.set(spawnPos.x, spawnPos.y + 25, spawnPos.z + 10);
                     camera.lookAt(spawnPos.x, spawnPos.y, spawnPos.z);
 
-    
-                });
+
+                    });
             }
         };
 
@@ -473,8 +473,8 @@ export class AdminView {
                 if (!currentDecor) {
                     renderDecor();
                 } else {
-    
-                }
+
+                    }
             }
         });
         resizeObserver.observe(container);
@@ -483,11 +483,11 @@ export class AdminView {
     buildCardHtml(level, isCollapsed, surviveFormHtml, worldFormHtml, storyEventsHtml) {
         const bodyId = `level-body-${level.level_number}`;
         return `
-            <div class="card-header collapse-toggle" style="cursor: pointer;">
-                <h3 class="card-title">Niveau ${level.level_number} ${level.isNew ? "<span style='color: #4ade80;'>(Nouveau)</span>" : ""}</h3>
-                <div style="display: flex; gap: 20px; align-items: center;">
-                    ${!level.isNew ? `<button class="btn-delete-level" data-level="${level.level_number}" style="background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 4px; padding: 2px 8px; font-size: 12px; cursor: pointer;">Supprimer</button>` : ''}
-                    <span id="icon-${level.level_number}" style="color: #8b949e; font-size: 14px;">${isCollapsed ? '▶' : '▼'}</span>
+            <div class="card-header collapse-toggle cursor-pointer">
+                <h3 class="card-title">Niveau ${level.level_number} ${level.isNew ? "<span class='admin-new-level'>(Nouveau)</span>" : ""}</h3>
+                <div class="admin-card-header-actions">
+                    ${!level.isNew ? `<button class="btn-delete-level" data-level="${level.level_number}">Supprimer</button>` : ''}
+                    <span id="icon-${level.level_number}" class="admin-collapse-icon">${isCollapsed ? '▶' : '▼'}</span>
                 </div>
             </div>
             
@@ -496,9 +496,9 @@ export class AdminView {
                     <div class="preview-badge">Aperçu 3D</div>
                 </div>
 
-                <div style="display: flex; gap: 15px; margin-bottom: 25px; align-items: center;">
-                    <label class="admin-label" style="margin: 0;">Type de Phase:</label>
-                    <select class="phase-type-select admin-select" style="max-width: 250px;">
+                <div class="admin-phase-row">
+                    <label class="admin-label m-0">Type de Phase:</label>
+                    <select class="phase-type-select admin-select max-w-250">
                         <option value="survive" ${level.phase_type === "survive" ? "selected" : ""}>Survie (Combat)</option>
                         <option value="world" ${level.phase_type === "world" ? "selected" : ""}>World (Exploration)</option>
                     </select>
@@ -518,7 +518,7 @@ export class AdminView {
             <div class="survive-form story-event-block block-survive ${isSurvive ? '' : 'none'}">
                 <div class="block-title">⚙️ Paramètres de Survie</div>
                 <div class="block-row">
-                    <div style="flex: 1; min-width: 150px;">
+                    <div class="flex-1 min-w-150">
                         <label class="admin-label">Décor :</label>
                         <select class="survive-decor block-select">
                             <option value="default" ${options.decorType === 'default' ? 'selected' : ''}>Défaut</option>
@@ -526,21 +526,21 @@ export class AdminView {
                             <option value="styx" ${options.decorType === 'styx' ? 'selected' : ''}>Styx</option>
                         </select>
                     </div>
-                    <div style="flex: 1; min-width: 100px;">
+                    <div class="flex-1 min-w-100">
                         <label class="admin-label">Durée (sec) :</label>
                         <input type="number" class="survive-duration block-input" value="${options.duration || ''}" placeholder="Infini" />
                     </div>
-                    <div style="flex: 1; min-width: 100px;">
+                    <div class="flex-1 min-w-100">
                         <label class="admin-label">PV Joueur :</label>
                         <input type="number" class="survive-hp block-input" value="${options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : ''}" placeholder="Immortel" />
                     </div>
                 </div>
-                <div class="block-row" style="margin-top: 15px;">
-                    <div style="flex: 1; min-width: 150px;">
+                <div class="block-row mt-15">
+                    <div class="flex-1 min-w-150">
                         <label class="admin-label">Intervalle de Spawn (sec) :</label>
                         <input type="number" step="0.1" class="survive-spawn-interval block-input" value="${options.spawnInterval !== undefined && options.spawnInterval !== null ? options.spawnInterval : ''}" placeholder="Désactivé" />
                     </div>
-                    <div style="flex: 1; min-width: 150px;">
+                    <div class="flex-1 min-w-150">
                         <label class="admin-label">Max Ennemis :</label>
                         <input type="number" class="survive-max-enemies block-input" value="${options.maxEnemies !== undefined && options.maxEnemies !== null ? options.maxEnemies : ''}" placeholder="Désactivé" />
                     </div>
@@ -554,21 +554,21 @@ export class AdminView {
             <div class="world-form story-event-block block-world ${!isSurvive ? '' : 'none'}">
                 <div class="block-title">⚙️ Paramètres d'Exploration</div>
                 <div class="block-row">
-                    <div style="flex: 1; min-width: 200px;">
+                    <div class="flex-1 min-w-200">
                         <label class="admin-label">Type d'Intro :</label>
                         <select class="world-intro block-select">
                             <option value="staircase" ${options.introType === 'staircase' ? 'selected' : ''}>Escaliers (Staircase)</option>
                             <option value="skyfall" ${options.introType === 'skyfall' ? 'selected' : ''}>Chute du Ciel (Skyfall)</option>
                         </select>
                     </div>
-                    <div style="flex: 1; min-width: 200px;">
+                    <div class="flex-1 min-w-200">
                         <label class="admin-label">Type de Fin :</label>
                         <select class="world-outro block-select">
                             <option value="DoorEvent" ${options.outroType === 'DoorEvent' ? 'selected' : ''}>🚪 Porte (DoorEvent)</option>
                             <option value="HoleEvent" ${options.outroType === 'HoleEvent' ? 'selected' : ''}>🕳️ Trou (HoleEvent)</option>
                         </select>
                     </div>
-                    <div style="flex: 1; min-width: 100px;">
+                    <div class="flex-1 min-w-100">
                         <label class="admin-label">PV Joueur :</label>
                         <input type="number" class="world-hp block-input" value="${options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : ''}" placeholder="Immortel" />
                     </div>
@@ -579,9 +579,9 @@ export class AdminView {
 
     buildStoryEventsHtml(levelNumber) {
         return `
-            <div style="margin-top: 30px;">
+            <div class="admin-story-events">
                 <div class="events-section-title">🧩 Événements Narratifs (Bulles)</div>
-                <div class="story-events-container-${levelNumber}" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;">
+                <div class="story-events-container-${levelNumber} events-list">
                 </div>
                 <button class="add-story-event-btn btn-secondary" data-level="${levelNumber}">+ Ajouter un événement narratif</button>
             </div>
@@ -591,22 +591,22 @@ export class AdminView {
     _setupPreviewScene(container) {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0a0c10);
-        
-        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+
+                const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
         camera.position.set(15, 18, 7);
         camera.lookAt(15, 0, 3);
-        
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
-        
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
         const directionalLight = new THREE.DirectionalLight(0xffddaa, 1.5);
         directionalLight.position.set(10, 20, 10);
         scene.add(directionalLight);
-        
-        return { scene, camera, renderer };
+
+                return { scene, camera, renderer };
     }
 
     async saveLevel(levelNumber, phaseType, options) {

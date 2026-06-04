@@ -37,7 +37,7 @@ export default class HomeView extends AbstractView {
 
         const svgFilter = document.createElement("div");
         svgFilter.innerHTML = `
-            <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" width="0" height="0">
+            <svg class="hologram-svg-filter" width="0" height="0">
                 <filter id="hologram-distortion-filter">
                     <feTurbulence type="fractalNoise" baseFrequency="0.001 0.2" numOctaves="1" result="noise" />
                     <feDisplacementMap id="displacement-map" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="A" />
@@ -103,7 +103,7 @@ export default class HomeView extends AbstractView {
                             { className: "home-info" },
                             LanguageManager.t("home.whyDesc")
                         ),
-                        el("h3", { style: "color: var(--primary-color); margin-top: 1rem;" }, LanguageManager.t("home.feature1Title")),
+                        el("h3", { className: "home-feature-title" }, LanguageManager.t("home.feature1Title")),
                         el("p", { className: "home-info" }, LanguageManager.t("home.feature1Desc"))
                     )
                 ),
@@ -127,7 +127,7 @@ export default class HomeView extends AbstractView {
                     { className: "home-section-col home-contaner-4" },
                     el(
                         "div",
-                        { className: "home-info-container", style: "text-align: center; width: 60vw; margin: 0 auto;" },
+                        { className: "home-info-container home-motivation-container" },
                         el("h2", { className: "home-title" }, LanguageManager.t("home.motivationTitle")),
                         el(
                             "p",
@@ -136,8 +136,8 @@ export default class HomeView extends AbstractView {
                         )
                     )
                 ),
-                
-                el(
+
+                                el(
                     "div",
                     { className: "home-footer" },
                     el(
@@ -224,8 +224,8 @@ export default class HomeView extends AbstractView {
     startGlitchLoop() {
         const displacementMap = document.getElementById("displacement-map");
         if (!displacementMap) return;
-        
-        const wrappers = document.querySelectorAll(".hologram-wrapper");
+
+                const wrappers = document.querySelectorAll(".hologram-wrapper");
         const mouseMap = document.getElementById("mouse-displacement-map");
         let lastDisplacementScale = "0";
         let lastMouseScale = "0";
@@ -241,8 +241,8 @@ export default class HomeView extends AbstractView {
                         wrapper.currentHoverIntensity = wrapper.targetHoverIntensity;
                     }
                     wrapper.style.setProperty("--hover-intensity", wrapper.currentHoverIntensity.toFixed(3));
-                    
-                    if (wrapper.currentHoverIntensity > 0.01) {
+
+                                        if (wrapper.currentHoverIntensity > 0.01) {
                         wrapper.style.setProperty("--hologram-filter", "url(#hologram-distortion-filter)");
                         wrapper.style.setProperty("--hologram-mouse-filter", "url(#hologram-mouse-filter)");
                     } else {
@@ -250,8 +250,8 @@ export default class HomeView extends AbstractView {
                         wrapper.style.setProperty("--hologram-mouse-filter", "none");
                     }
                 }
-                
-                if (wrapper.currentHoverIntensity > maxIntensity) {
+
+                                if (wrapper.currentHoverIntensity > maxIntensity) {
                     maxIntensity = wrapper.currentHoverIntensity;
                 }
             });
@@ -269,8 +269,8 @@ export default class HomeView extends AbstractView {
                     displacementMap.setAttribute("scale", newScale);
                     lastDisplacementScale = newScale;
                 }
-                
-                if (mouseMap) {
+
+                                if (mouseMap) {
                     let newMouseScale;
                     if (Math.random() > 0.90) {
                         newMouseScale = String((Math.random() * 60 + 20) * maxIntensity);

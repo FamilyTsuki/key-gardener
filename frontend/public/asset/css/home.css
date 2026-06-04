@@ -321,6 +321,24 @@ body {
     color: var(--text-color);
 }
 
+.hologram-svg-filter {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.home-feature-title {
+    color: var(--primary-color);
+    margin-top: 1rem;
+}
+
+.home-motivation-container {
+    text-align: center;
+    width: 60vw;
+    margin: 0 auto;
+}
+
 
 /* =============== RESPONSIVE =============== */
 @media (max-width: 768px) {
