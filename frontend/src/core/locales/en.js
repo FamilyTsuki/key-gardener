@@ -1,4 +1,18 @@
 export const en = {
+    faq: {
+        title: "FAQ & Tips",
+        description: "Learn how to improve your typing speed and master Keyboard Survivor with these helpful tips and answers to common questions.",
+        mainTitle: "Frequently Asked Questions & Typing Tips",
+        intro: "Mastering Keyboard Survivor means mastering your keyboard. Here are answers to common questions and tips to boost your Words Per Minute (WPM).",
+        q1: "How can I improve my typing speed?",
+        a1: "The most important rule is to use all ten fingers and avoid looking at your keyboard (touch typing). Start slowly to build muscle memory, and speed will naturally follow as you play Keyboard Survivor.",
+        q2: "Why is Keyboard Survivor good for learning?",
+        a2: "Unlike traditional typing tutors, Keyboard Survivor forces you to type under pressure while managing game mechanics. This gamification keeps you engaged and accelerates your learning process through adrenaline.",
+        q3: "How are the spells triggered?",
+        a3: "Each spell requires a specific sequence of letters. The faster and more accurately you type the sequence, the more powerful the spell. Keep an eye on your combo meter!",
+        q4: "Is there a leaderboard?",
+        a4: "Yes! The Community Hub features global leaderboards. You can compare your WPM (Words Per Minute) and survival time against players worldwide."
+    },
     // Router / Auth
     auth: {
         loginRequired: "You must be logged in to access this page.",

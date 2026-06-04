@@ -1,0 +1,1 @@
+import GameObject from"./GameObject.js";export default class Key extends GameObject{#e;#s;#t;constructor(e,s,t,i,r){super({x:s,y:t},{x:3.2*s,y:3.2*t}),this.#e=e,this.#s=i,this.#t=r,this.mesh=null,this.lightUpTimer=0}get key(){return this.#e}set isPressed(e){this.#s=e}get isPressed(){return this.#s}set isPressed(e){this.#s=e}}

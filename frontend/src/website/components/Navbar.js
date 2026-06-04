@@ -17,15 +17,16 @@ export default class Navbar {
         const container = document.getElementById("nav-container");
         if (!container) return;
 
-        let userComponent = el("a", { href: "/login", dataset: { link: true }, className: "login" }, LanguageManager.t("nav.login"));
+        let userComponent = el("a", { href: "/login", dataset: { link: true }, className: "login", "aria-label": "Log in to your account" }, LanguageManager.t("nav.login"));
         let saveComponent = null;
 
         if (AuthService.isAuthenticated()) {
             
             
-            this.usernameSpan = el("a", { href: "/account", dataset: { link: true }, id: "nav-username" });
+            this.usernameSpan = el("a", { href: "/account", dataset: { link: true }, id: "nav-username", "aria-label": "View your account profile" });
             this.personalPictureImg = el("img", { 
                 className: "nav-user-avatar",
+                alt: "Your user avatar",
                 onclick: () => {
                     history.pushState(null, null, "/account");
                     window.dispatchEvent(new Event("popstate"));
@@ -55,9 +56,9 @@ export default class Navbar {
             navPageChildren.push(sep2, saveComponent);
         }
 
-        this.navPage = el("div", { className: "nav-page" }, ...navPageChildren);
+        this.navPage = el("div", { className: "nav-page", role: "menubar" }, ...navPageChildren);
 
-        const nav = el("nav", {},
+        const nav = el("nav", { "aria-label": "Main Navigation" },
             this.navPage,
             userComponent
         );

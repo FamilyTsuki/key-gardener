@@ -1,0 +1,1 @@
+import Router from"./core/Router.js";import Navbar from"./website/components/Navbar.js";import{EasterEgg}from"./website/components/EasterEgg.js";console.log("Website UI initialized"),Navbar.render(),EasterEgg.init();const appRouter=new Router;

@@ -5,6 +5,7 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
+const compression = require("compression");
 const { apiLimiter } = require("./src/middlewares/rateLimiter.middleware");
 const errorHandler = require("./src/middlewares/error.middleware");
 const authRoutes = require("./src/routes/auth.routes");
@@ -34,9 +35,14 @@ app.use(
 app.use(cors());
 app.use(express.json({ limit: "10kb" }));
 app.use(xss());
+app.use(compression());
 
-app.use(express.static(path.join(__dirname, "../frontend/public")));
-app.use("/src", express.static(path.join(__dirname, "../frontend/src")));
+const isProd = process.env.NODE_ENV === "production";
+const frontendDir = isProd ? path.join(__dirname, "../dist/public") : path.join(__dirname, "../frontend/public");
+const srcDir = isProd ? path.join(__dirname, "../dist/src") : path.join(__dirname, "../frontend/src");
+
+app.use(express.static(frontendDir));
+app.use("/src", express.static(srcDir));
 app.use(
     "/node_modules",
     express.static(path.join(__dirname, "../node_modules"))
@@ -53,8 +59,44 @@ app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "OK", message: "API is running securely" });
 });
 
+const fs = require('fs');
+
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/public/index.html"));
+    const indexPath = path.join(frontendDir, "index.html");
+    fs.readFile(indexPath, 'utf8', (err, htmlData) => {
+        if (err) {
+            console.error("Error reading index.html", err);
+            return res.status(500).send("Error loading application");
+        }
+        
+        let title = "Keyboard Survivor";
+        let desc = "Your keyboard is your only weapon. Plunge into the abyss, type fast to cast spells, and survive hordes of relentless monsters in this adrenaline-fueled typing RPG.";
+        
+        if (req.path === "/hub") {
+            title = "Community Hub - Keyboard Survivor";
+            desc = "Share your progress, discuss strategies, and interact with other Keyboard Survivor players.";
+        } else if (req.path === "/login") {
+            title = "Login - Keyboard Survivor";
+            desc = "Log in to your Keyboard Survivor account to save your progress and access the community hub.";
+        } else if (req.path === "/register") {
+            title = "Register - Keyboard Survivor";
+            desc = "Create a new Keyboard Survivor account to start your typing adventure.";
+        }
+
+        // Inject dynamic meta tags
+        htmlData = htmlData.replace(/<title>.*<\/title>/, `<title>${title}</title>`);
+        htmlData = htmlData.replace(/<meta name="description" content="[^"]*"/, `<meta name="description" content="${desc}"`);
+        htmlData = htmlData.replace(/<meta property="og:title" content="[^"]*"/, `<meta property="og:title" content="${title}"`);
+        htmlData = htmlData.replace(/<meta property="og:description" content="[^"]*"/, `<meta property="og:description" content="${desc}"`);
+        htmlData = htmlData.replace(/<meta property="twitter:title" content="[^"]*"/, `<meta property="twitter:title" content="${title}"`);
+        htmlData = htmlData.replace(/<meta property="twitter:description" content="[^"]*"/, `<meta property="twitter:description" content="${desc}"`);
+        
+        // Inject Canonical URL dynamically
+        const canonicalUrl = `https://keyboardsurvivor.com${req.path === '/' ? '' : req.path}`;
+        htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" />\n</head>`);
+        
+        res.send(htmlData);
+    });
 });
 
 app.use(errorHandler);
@@ -94,7 +136,7 @@ const startServer = async () => {
                 `🚀 [BACKEND] Secure Server listening on port ${port}.`
             );
             console.log(
-                `🌐 [FRONTEND] Static files served from /frontend/public and /frontend/src.`
+                `🌐 [FRONTEND] Static files served from ${isProd ? '/dist' : '/frontend'} (Compression: ON).`
             );
             console.log(
                 "✅ [STATUS] All systems operational. No errors detected."

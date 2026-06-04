@@ -1,4 +1,18 @@
 export const fr = {
+    faq: {
+        title: "FAQ & Astuces",
+        description: "Apprenez à améliorer votre vitesse de frappe et maîtrisez Keyboard Survivor grâce à nos astuces et aux réponses aux questions fréquentes.",
+        mainTitle: "Questions Fréquentes & Astuces de Frappe",
+        intro: "Maîtriser Keyboard Survivor, c'est maîtriser son clavier. Voici nos réponses aux questions courantes et des conseils pour booster votre MPM (Mots Par Minute).",
+        q1: "Comment améliorer ma vitesse de frappe ?",
+        a1: "La règle d'or est d'utiliser ses dix doigts et de ne pas regarder son clavier (frappe à l'aveugle). Commencez lentement pour développer la mémoire musculaire, la vitesse suivra naturellement en jouant à Keyboard Survivor.",
+        q2: "Pourquoi Keyboard Survivor est-il efficace pour apprendre ?",
+        a2: "Contrairement aux logiciels de dactylographie classiques, Keyboard Survivor vous force à taper sous la pression d'ennemis. Cette gamification vous maintient engagé et accélère l'apprentissage grâce à l'adrénaline.",
+        q3: "Comment déclencher les sorts ?",
+        a3: "Chaque sort requiert une séquence précise de lettres. Plus vous tapez vite et sans erreur, plus le sort est dévastateur. Gardez un œil sur votre jauge de combo !",
+        q4: "Y a-t-il un classement mondial ?",
+        a4: "Oui ! Le Hub Communautaire intègre des classements mondiaux. Vous pouvez comparer votre MPM et votre temps de survie avec les joueurs du monde entier."
+    },
     // Router / Auth
     auth: {
         loginRequired: "Vous devez être connecté pour accéder à cette page.",

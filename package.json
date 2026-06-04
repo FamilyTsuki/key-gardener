@@ -4,8 +4,10 @@
   "private": true,
   "main": "backend/server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js"
+    "start": "cross-env NODE_ENV=production node backend/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon backend/server.js",
+    "build": "node scripts/build.js",
+    "prerender": "node scripts/prerender.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

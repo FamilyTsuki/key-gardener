@@ -57,17 +57,17 @@ export default class HomeView extends AbstractView {
             tunnelContainer,
             svgFilter,
             el(
-                "div",
-                { className: "content" },
+                "main",
+                { className: "content", role: "main" },
                 el(
-                    "div",
-                    { className: "home-section-row home-contaner-1" },
+                    "section",
+                    { className: "home-section-row home-contaner-1", "aria-labelledby": "home-main-title" },
                     el(
                         "div",
                         { className: "home-presantation-container" },
                         el(
                             "h1",
-                            { className: "home-title" },
+                            { className: "home-title", id: "home-main-title" },
                             LanguageManager.t("home.title")
                         ),
                         el(
@@ -108,7 +108,7 @@ export default class HomeView extends AbstractView {
                     )
                 ),
                 el(
-                    "div",
+                    "section",
                     { className: "home-section-row home-contaner-3" },
                     el(
                         "div",
@@ -123,7 +123,7 @@ export default class HomeView extends AbstractView {
                     this.renderHologram("/asset/img/home.jpg", "Cave Exploration")
                 ),
                 el(
-                    "div",
+                    "section",
                     { className: "home-section-col home-contaner-4" },
                     el(
                         "div",
@@ -138,8 +138,8 @@ export default class HomeView extends AbstractView {
                 ),
 
                                 el(
-                    "div",
-                    { className: "home-footer" },
+                    "footer",
+                    { className: "home-footer", role: "contentinfo" },
                     el(
                         "div",
                         { className: "footer-grid" },
@@ -153,9 +153,9 @@ export default class HomeView extends AbstractView {
                             "div",
                             { className: "footer-column" },
                             el("h3", {}, LanguageManager.t("home.followUs")),
-                            el("a", { href: "https://www.facebook.com/keyboardsurvivor", target: "_blank" }, "Facebook"),
-                            el("a", { href: "https://www.twitter.com/keyboardsurvivor", target: "_blank" }, "Twitter"),
-                            el("a", { href: "https://www.instagram.com/keyboardsurvivor", target: "_blank" }, "Instagram")
+                            el("a", { href: "https://www.facebook.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Facebook" }, "Facebook"),
+                            el("a", { href: "https://www.twitter.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Twitter" }, "Twitter"),
+                            el("a", { href: "https://www.instagram.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Instagram" }, "Instagram")
                         ),
                         el(
                             "div",

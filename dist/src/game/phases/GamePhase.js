@@ -1,0 +1,1 @@
+export class GamePhase{constructor(a){this.gameEngine=a}async init(){}draw(){}handleKeyDown(a){}update(a){}cleanup(){}}

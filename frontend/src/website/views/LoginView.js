@@ -52,8 +52,8 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The login form element.
      */
     createLoginForm() {
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", id: "email" });
-        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "form-input", id: "password" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", id: "email", "aria-label": "Email Address" });
+        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "form-input", id: "password", "aria-label": "Password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -110,7 +110,7 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The forgot password form element.
      */
     createForgotForm() {
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", "aria-label": "Email Address" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -155,8 +155,8 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The reset password form element.
      */
     createResetForm() {
-        const codeInput = el("input", { type: "text", placeholder: LanguageManager.t("login.codePlaceholder"), required: true, className: "form-input", maxLength: 6 });
-        const newPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "form-input" });
+        const codeInput = el("input", { type: "text", placeholder: LanguageManager.t("login.codePlaceholder"), required: true, className: "form-input", maxLength: 6, "aria-label": "Reset Code" });
+        const newPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "form-input", "aria-label": "New Password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();

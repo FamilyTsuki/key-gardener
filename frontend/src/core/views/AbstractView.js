@@ -21,6 +21,20 @@ export default class AbstractView {
     }
 
     /**
+     * Sets the meta description for SEO.
+     * @param {string} description - The description for the page.
+     */
+    setMetaDescription(description) {
+        let meta = document.querySelector('meta[name="description"]');
+        if (!meta) {
+            meta = document.createElement('meta');
+            meta.name = "description";
+            document.head.appendChild(meta);
+        }
+        meta.content = description;
+    }
+
+    /**
      * Renders the view's HTML content.
      * @returns {Promise<Element>} A promise resolving to the view's DOM element.
      */

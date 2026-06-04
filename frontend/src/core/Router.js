@@ -5,6 +5,7 @@ import RegisterView from "../website/views/RegisterView.js";
 import SaveView from "../website/views/SaveView.js";
 import GameView from "../website/views/GameView.js";
 import AccountView from "../website/views/AccountView.js";
+import FaqView from "../website/views/FaqView.js";
 import { AdminView } from "../website/views/AdminView.js";
 import { AuthService } from "./services/auth.service.js";
 import { FlashMessageManager } from "./utils/FlashMessageManager.js";
@@ -26,6 +27,7 @@ export default class Router {
             { path: "/save", view: SaveView, requiresAuth: true },
             { path: "/game", view: GameView, requiresAuth: true },
             { path: "/account", view: AccountView, requiresAuth: true },
+            { path: "/faq", view: FaqView, requiresAuth: false },
             { path: "/admin", view: AdminView, requiresAuth: true },
         ];
 
@@ -98,6 +100,14 @@ export default class Router {
             this.navigateTo("/");
             return;
         }
+
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+            canonical = document.createElement('link');
+            canonical.rel = 'canonical';
+            document.head.appendChild(canonical);
+        }
+        canonical.href = window.location.origin + window.location.pathname;
 
         const view = new match.view();
         const appContainer = document.querySelector("#app");
