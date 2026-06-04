@@ -226,6 +226,9 @@ export default class HomeView extends AbstractView {
         if (!displacementMap) return;
         
         const wrappers = document.querySelectorAll(".hologram-wrapper");
+        const mouseMap = document.getElementById("mouse-displacement-map");
+        let lastDisplacementScale = "0";
+        let lastMouseScale = "0";
 
         const animate = () => {
             if (!this.isCurrentView) return;
@@ -254,31 +257,41 @@ export default class HomeView extends AbstractView {
             });
 
             if (maxIntensity > 0) {
+                let newScale;
                 if (Math.random() > 0.94) {
-                    displacementMap.setAttribute("scale", (Math.random() * 25 + 5) * maxIntensity);
+                    newScale = String((Math.random() * 25 + 5) * maxIntensity);
                 } else if (Math.random() > 0.85) {
-                    displacementMap.setAttribute("scale", (Math.random() * 5) * maxIntensity);
+                    newScale = String((Math.random() * 5) * maxIntensity);
                 } else {
-                    displacementMap.setAttribute("scale", "0");
+                    newScale = "0";
+                }
+                if (newScale !== lastDisplacementScale) {
+                    displacementMap.setAttribute("scale", newScale);
+                    lastDisplacementScale = newScale;
                 }
                 
-                const mouseMap = document.getElementById("mouse-displacement-map");
                 if (mouseMap) {
+                    let newMouseScale;
                     if (Math.random() > 0.90) {
-                        mouseMap.setAttribute("scale", (Math.random() * 60 + 20) * maxIntensity);
+                        newMouseScale = String((Math.random() * 60 + 20) * maxIntensity);
                     } else if (Math.random() > 0.75) {
-                        mouseMap.setAttribute("scale", (Math.random() * 15) * maxIntensity);
+                        newMouseScale = String((Math.random() * 15) * maxIntensity);
                     } else {
-                        mouseMap.setAttribute("scale", "0");
+                        newMouseScale = "0";
+                    }
+                    if (newMouseScale !== lastMouseScale) {
+                        mouseMap.setAttribute("scale", newMouseScale);
+                        lastMouseScale = newMouseScale;
                     }
                 }
             } else {
-                if (displacementMap.getAttribute("scale") !== "0") {
+                if (lastDisplacementScale !== "0") {
                     displacementMap.setAttribute("scale", "0");
+                    lastDisplacementScale = "0";
                 }
-                const mouseMap = document.getElementById("mouse-displacement-map");
-                if (mouseMap && mouseMap.getAttribute("scale") !== "0") {
+                if (mouseMap && lastMouseScale !== "0") {
                     mouseMap.setAttribute("scale", "0");
+                    lastMouseScale = "0";
                 }
             }
 

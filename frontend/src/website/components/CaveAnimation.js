@@ -9,7 +9,7 @@ export class CaveAnimation {
         this.config = this.initializeConfiguration();
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
-        this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, powerPreference: "high-performance" });
         
         this.caveMesh = null;
         this.instancedPebbles = null;
@@ -41,7 +41,7 @@ export class CaveAnimation {
                     new THREE.Color(0xff2222)
                 ]
             },
-            pebbleCount: 30000
+            pebbleCount: 15000
         };
     }
 
@@ -403,8 +403,8 @@ export class CaveAnimation {
             this.config.caveRadius,
             this.config.caveRadius - 20,
             this.config.caveHeight,
+            200,
             400,
-            800,
             true
         );
 
