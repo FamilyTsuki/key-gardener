@@ -1,1 +1,0 @@
-import Spell from"../Spell.js";export default class Undefined extends Spell{constructor(){super("undefined",void 0,10)}effect(e){e&&e.dist<=this.range&&(e.instance.hp=void 0)}}

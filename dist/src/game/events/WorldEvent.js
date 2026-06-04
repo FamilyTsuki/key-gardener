@@ -1,1 +1,0 @@
-export class WorldEvent{constructor(){}modifyLayout(n){}async init(n,o){}update(n,o){}handleKeyDown(n,o){}cleanup(n){}}

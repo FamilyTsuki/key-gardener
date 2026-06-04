@@ -1,1 +1,0 @@
-import GameObject from"./GameObject.js";export default class HexTile extends GameObject{#e;#s;#t;#i;constructor(e,s,t,i,r,h){super({x:s,y:t},{x:s*(1.5*Math.sqrt(3))+12,y:2.25*t}),this.#e=e,this.#s=i,this.#t=r,this.#i=h,this.renderMesh=!0,this.role=null,this.mesh=null}get id(){return this.#e}get isPressed(){return this.#s}set isPressed(e){this.#s=e}get letter(){return this.#i}}

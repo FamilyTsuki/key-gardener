@@ -1,1 +1,0 @@
-export default class Spell{word;damage;range;constructor(e,t,r){this.word=e,this.damage=t,this.range=r}get word(){return this.word}get damage(){return this.damage}get range(){return this.range}effect(){console.log("Do the spell effect.")}}

@@ -1,1 +1,0 @@
-export default class GameObject{rawPosition;position;constructor(t,i){this.rawPosition={...t},this.position={...i}}get rawPosition(){return this.rawPosition}get position(){return this.position}get x(){return this.position.x}get y(){return this.position.y}get z(){return this.position.z}set x(t){this.position.x=t}set y(t){this.position.y=t}draw(){console.log("Drawing")}}
