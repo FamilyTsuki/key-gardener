@@ -364,3 +364,24 @@
     pointer-events: none;
     letter-spacing: 1px;
 }
+
+.typing-minigame {
+    font-family: monospace;
+}
+
+.typing-minigame-word {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.typing-minigame-char {
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    color: white;
+}
+
+.typing-minigame-char.typed {
+    color: #f39c12;
+}

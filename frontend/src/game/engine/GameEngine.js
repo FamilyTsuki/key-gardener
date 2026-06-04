@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { WorldPhase } from "../phases/WorldPhase.js";
 import { IntroPhase } from "../phases/IntroPhase.js";
 import { SurvivePhase } from "../phases/SurvivePhase.js";
+import { InfiniteVoidPhase } from "../phases/InfiniteVoidPhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
 import { HoleEvent } from "../events/HoleEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
@@ -113,6 +114,9 @@ export class GameEngine {
                     
                     if (phaseType === "survive") {
                         await this.setPhase(new SurvivePhase(this, options));
+                        return;
+                    } else if (phaseType === "void") {
+                        await this.setPhase(new InfiniteVoidPhase(this, options));
                         return;
                     } else if (phaseType === "world") {
                         const eventMap = {

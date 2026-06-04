@@ -73,10 +73,11 @@ export class AdminView {
             const isSurvive = level.phase_type === "survive";
 
                         const surviveFormHtml = this.buildSurviveFormHtml(options, isSurvive);
-            const worldFormHtml = this.buildWorldFormHtml(options, isSurvive);
+            const worldFormHtml = this.buildWorldFormHtml(options, level.phase_type === "world");
+            const voidFormHtml = this.buildVoidFormHtml(level.phase_type === "void");
             const storyEventsHtml = this.buildStoryEventsHtml(level.level_number);
 
-            card.innerHTML = this.buildCardHtml(level, isCollapsed, surviveFormHtml, worldFormHtml, storyEventsHtml);
+            card.innerHTML = this.buildCardHtml(level, isCollapsed, surviveFormHtml, worldFormHtml, voidFormHtml, storyEventsHtml);
             container.appendChild(card);
 
                         this.attachCardEventListeners(card, level, options, bodyId);
@@ -149,14 +150,21 @@ export class AdminView {
 
         const surviveDiv = card.querySelector('.survive-form');
         const worldDiv = card.querySelector('.world-form');
+        const voidDiv = card.querySelector('.void-form');
 
-                typeSelect.addEventListener('change', (e) => {
+        typeSelect.addEventListener('change', (e) => {
             if (e.target.value === 'survive') {
                 surviveDiv.classList.remove('none');
                 worldDiv.classList.add('none');
-            } else {
+                voidDiv.classList.add('none');
+            } else if (e.target.value === 'world') {
                 surviveDiv.classList.add('none');
                 worldDiv.classList.remove('none');
+                voidDiv.classList.add('none');
+            } else if (e.target.value === 'void') {
+                surviveDiv.classList.add('none');
+                worldDiv.classList.add('none');
+                voidDiv.classList.remove('none');
             }
             storyContainer.innerHTML = '';
         });
@@ -192,6 +200,8 @@ export class AdminView {
                     maxEnemies: card.querySelector('.survive-max-enemies').value ? Number(card.querySelector('.survive-max-enemies').value) : 0,
                     storyEvents: gatheredStoryEvents
                 };
+            } else if (phaseType === 'void') {
+                parsedOptions = {};
             } else {
                 const eventsList = [];
                 const filteredStoryEvents = [];
@@ -426,8 +436,18 @@ export class AdminView {
                 keyboardGroup.position.set(0, 0, 0); 
                 scene.add(keyboardGroup);
 
-                                if (playerMesh) playerMesh.position.set(15, 1.35, 5);
+                if (playerMesh) playerMesh.position.set(15, 1.35, 5);
 
+            } else if (phaseType === "void") {
+                camera.position.set(20, 20, 10);
+                camera.lookAt(0, 0, 0);
+                // Simple representation
+                const geo = new THREE.BoxGeometry(2, 2, 2);
+                const mat = new THREE.MeshBasicMaterial({ color: 0x8a2be2 });
+                const mesh = new THREE.Mesh(geo, mat);
+                currentDecor = mesh;
+                scene.add(currentDecor);
+                if (playerMesh) playerMesh.position.set(0, 1.35, 0);
             } else {
                 const introType = card.querySelector('.world-intro').value || "staircase";
                 const outroType = card.querySelector('.world-outro').value || "DoorEvent";
@@ -480,7 +500,7 @@ export class AdminView {
         resizeObserver.observe(container);
     }
 
-    buildCardHtml(level, isCollapsed, surviveFormHtml, worldFormHtml, storyEventsHtml) {
+    buildCardHtml(level, isCollapsed, surviveFormHtml, worldFormHtml, voidFormHtml, storyEventsHtml) {
         const bodyId = `level-body-${level.level_number}`;
         return `
             <div class="card-header collapse-toggle cursor-pointer">
@@ -501,11 +521,13 @@ export class AdminView {
                     <select class="phase-type-select admin-select max-w-250">
                         <option value="survive" ${level.phase_type === "survive" ? "selected" : ""}>Survie (Combat)</option>
                         <option value="world" ${level.phase_type === "world" ? "selected" : ""}>World (Exploration)</option>
+                        <option value="void" ${level.phase_type === "void" ? "selected" : ""}>Vide Infini</option>
                     </select>
                 </div>
                 
                 ${surviveFormHtml}
                 ${worldFormHtml}
+                ${voidFormHtml}
                 ${storyEventsHtml}
 
                 <button class="save-btn btn-primary">Sauvegarder le niveau ${level.level_number}</button>
@@ -572,6 +594,17 @@ export class AdminView {
                         <label class="admin-label">PV Joueur :</label>
                         <input type="number" class="world-hp block-input" value="${options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : ''}" placeholder="Immortel" />
                     </div>
+                </div>
+            </div>
+        `;
+    }
+
+    buildVoidFormHtml(isVoid) {
+        return `
+            <div class="void-form story-event-block block-void ${isVoid ? '' : 'none'}">
+                <div class="block-title">🌌 Paramètres du Vide Infini</div>
+                <div class="block-row">
+                    <p style="color: #ccc;">Cette phase spéciale génère un monde infini et un boss caché automatiquement. Aucun paramètre supplémentaire n'est requis.</p>
                 </div>
             </div>
         `;

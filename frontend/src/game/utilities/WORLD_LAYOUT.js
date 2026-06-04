@@ -54,14 +54,25 @@ export function createWordlLayout(introType = "none") {
     }
 
     let test = 0;
+    let recentlyUsed = [];
     let lastCenterIndex = 0;
     for (let y = 0; y < tab_width.length; y++) {
         if (y % 2 === 0) test += 1;
 
         for (let x = 0; x < tab_width[y]; x++) {
             let min_decal = 0;
-            let genere_leter = tab_lettre[Math.floor(Math.random() * 26)];
             if (y % 2 === 1) min_decal = 0.5;
+
+            let availableLetters = tab_lettre.filter(l => !recentlyUsed.includes(l));
+            if (availableLetters.length === 0) { 
+                availableLetters = tab_lettre; 
+                recentlyUsed = []; 
+            }
+            let genere_leter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
+            recentlyUsed.push(genere_leter);
+            if (recentlyUsed.length > 24) {
+                recentlyUsed.shift();
+            }
 
             let posX = x + min_decal + test + tab_decalage[y];
 

@@ -66,6 +66,11 @@ const seedLevels = async () => {
                     maxEnemies: 0,
                     boss: true
                 }
+            },
+            {
+                level_number: 6,
+                phase_type: "void",
+                options: {}
             }
         ];
 
