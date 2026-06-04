@@ -225,13 +225,32 @@ export default class HomeView extends AbstractView {
         const displacementMap = document.getElementById("displacement-map");
         if (!displacementMap) return;
 
-                const wrappers = document.querySelectorAll(".hologram-wrapper");
+        const wrappers = document.querySelectorAll(".hologram-wrapper");
         const mouseMap = document.getElementById("mouse-displacement-map");
         let lastDisplacementScale = "0";
         let lastMouseScale = "0";
 
+        let isScrolling = false;
+        let scrollTimeout = null;
+        const onScroll = () => {
+            isScrolling = true;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+            }, 150);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+
         const animate = () => {
-            if (!this.isCurrentView) return;
+            if (!this.isCurrentView) {
+                window.removeEventListener('scroll', onScroll);
+                return;
+            }
+
+            if (isScrolling) {
+                this.glitchFrameId = requestAnimationFrame(animate);
+                return;
+            }
 
             let maxIntensity = 0;
             wrappers.forEach(wrapper => {

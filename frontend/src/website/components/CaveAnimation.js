@@ -41,7 +41,7 @@ export class CaveAnimation {
                     new THREE.Color(0xff2222)
                 ]
             },
-            pebbleCount: 15000
+            pebbleCount: 4000
         };
     }
 
@@ -893,7 +893,7 @@ export class CaveAnimation {
     }
 
     setupRenderer() {
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         const canvas = this.renderer.domElement;
