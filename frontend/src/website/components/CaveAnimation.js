@@ -405,7 +405,7 @@ export class CaveAnimation {
             this.config.caveHeight,
             400,
             800,
-            false
+            true
         );
 
         this.applyDeformationAndColors(geometry);
@@ -482,8 +482,8 @@ export class CaveAnimation {
             let z = positionAttribute.getZ(i);
 
             const length = Math.sqrt(x * x + z * z);
-            const nx = x / length;
-            const nz = z / length;
+            const nx = length > 0 ? x / length : 0;
+            const nz = length > 0 ? z / length : 0;
             const normalizedY = (y + caveHeight / 2) / caveHeight;
 
             let r = length;

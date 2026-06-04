@@ -1,36 +1,56 @@
 import AbstractView from "../../core/views/AbstractView.js";
 import { CaveAnimation } from "../components/CaveAnimation.js";
-import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
-/**
- * View for the home landing page.
- */
 export default class HomeView extends AbstractView {
-    /**
-     * Creates an instance of HomeView.
-     *
-     * @param {Object} params - The route parameters.
-     */
     constructor(params) {
         super(params);
         this.setTitle("Home - Keyboard Survivor");
+        this.isCurrentView = false;
+        this.hologramListeners = [];
+        this.glitchFrameId = null;
     }
 
-    /**
-     * Renders the home view content including animations and descriptions.
-     *
-     * @returns {Promise<HTMLElement>} The home view container element.
-     */
+    renderHologram(imgSrc, altText) {
+        return el(
+            "div",
+            {
+                className: "hologram-wrapper",
+                style: `--img-url: url('${imgSrc}')`
+            },
+            el("img", {
+                src: imgSrc,
+                alt: altText,
+                className: "first-home-img",
+            }),
+            el("div", { className: "hologram-scanlines" }),
+            el("div", { className: "hologram-noise" }),
+            el("div", { className: "hologram-glitch-layer cyan-layer" }),
+            el("div", { className: "hologram-glitch-layer blue-layer" })
+        );
+    }
+
     async render() {
+        this.isCurrentView = true;
         const tunnelContainer = el("div", { id: "tunnel-container" });
+
+        const svgFilter = document.createElement("div");
+        svgFilter.innerHTML = `
+            <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" width="0" height="0">
+                <filter id="hologram-distortion-filter">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.001 0.2" numOctaves="1" result="noise" />
+                    <feDisplacementMap id="displacement-map" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="A" />
+                </filter>
+            </svg>
+        `;
 
         const container = el(
             "div",
             {},
             tunnelContainer,
+            svgFilter,
             el(
                 "div",
                 { className: "content" },
@@ -68,11 +88,7 @@ export default class HomeView extends AbstractView {
                 el(
                     "div",
                     { className: "home-section-row home-contaner-2" },
-                    el("img", {
-                        src: "/asset/img/home_battle.png",
-                        alt: "Game Image",
-                        className: "first-home-img",
-                    }),
+                    this.renderHologram("/asset/img/home_battle.png", "Game Image"),
                     el(
                         "div",
                         { className: "home-info-container" },
@@ -99,11 +115,7 @@ export default class HomeView extends AbstractView {
                             LanguageManager.t("home.feature2Desc")
                         )
                     ),
-                    el("img", {
-                        src: "/asset/img/home.jpg",
-                        alt: "Cave Exploration",
-                        className: "first-home-img",
-                    })
+                    this.renderHologram("/asset/img/home.jpg", "Cave Exploration")
                 ),
                 el(
                     "div",
@@ -161,11 +173,6 @@ export default class HomeView extends AbstractView {
         return container;
     }
 
-    /**
-     * Initializes the home view, starting tunnel animation and checking device capabilities.
-     *
-     * @returns {Promise<void>}
-     */
     async init() {
         if (this.tunnelContainer) {
             const caveAnimation = new CaveAnimation(this.tunnelContainer);
@@ -173,13 +180,111 @@ export default class HomeView extends AbstractView {
         }
         const deviceDetector = new DeviceCapabilitiesDetector("start-btn");
         deviceDetector.initialize();
+
+        this.setupHologramListeners();
+        this.startGlitchLoop();
     }
 
-    /**
-     * Retrieves the CSS files specific to this view.
-     *
-     * @returns {Array<string>} List of CSS file paths.
-     */
+    setupHologramListeners() {
+        this.hologramListeners = [];
+        const wrappers = document.querySelectorAll(".hologram-wrapper");
+        wrappers.forEach((wrapper) => {
+            wrapper.targetHoverIntensity = 0;
+            wrapper.currentHoverIntensity = 0;
+
+            const handleMouseMove = (e) => {
+                const rect = wrapper.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top) / rect.height;
+                wrapper.style.setProperty("--mouse-x", x);
+                wrapper.style.setProperty("--mouse-y", y);
+            };
+
+            const handleMouseEnter = () => {
+                wrapper.targetHoverIntensity = 1;
+            };
+
+            const handleMouseLeave = () => {
+                wrapper.targetHoverIntensity = 0;
+            };
+
+            wrapper.addEventListener("mousemove", handleMouseMove);
+            wrapper.addEventListener("mouseenter", handleMouseEnter);
+            wrapper.addEventListener("mouseleave", handleMouseLeave);
+
+            this.hologramListeners.push({ wrapper, handleMouseMove, handleMouseEnter, handleMouseLeave });
+        });
+    }
+
+    startGlitchLoop() {
+        const displacementMap = document.getElementById("displacement-map");
+        if (!displacementMap) return;
+        
+        const wrappers = document.querySelectorAll(".hologram-wrapper");
+
+        const animate = () => {
+            if (!this.isCurrentView) return;
+
+            let maxIntensity = 0;
+            wrappers.forEach(wrapper => {
+                if (Math.abs(wrapper.targetHoverIntensity - wrapper.currentHoverIntensity) > 0.001) {
+                    wrapper.currentHoverIntensity += (wrapper.targetHoverIntensity - wrapper.currentHoverIntensity) * 0.05;
+                    if (Math.abs(wrapper.targetHoverIntensity - wrapper.currentHoverIntensity) < 0.002) {
+                        wrapper.currentHoverIntensity = wrapper.targetHoverIntensity;
+                    }
+                    wrapper.style.setProperty("--hover-intensity", wrapper.currentHoverIntensity.toFixed(3));
+                    
+                    if (wrapper.currentHoverIntensity > 0.01) {
+                        wrapper.style.setProperty("--hologram-filter", "url(#hologram-distortion-filter)");
+                    } else {
+                        wrapper.style.setProperty("--hologram-filter", "none");
+                    }
+                }
+                
+                if (wrapper.currentHoverIntensity > maxIntensity) {
+                    maxIntensity = wrapper.currentHoverIntensity;
+                }
+            });
+
+            if (maxIntensity > 0) {
+                if (Math.random() > 0.94) {
+                    displacementMap.setAttribute("scale", (Math.random() * 25 + 5) * maxIntensity);
+                } else if (Math.random() > 0.85) {
+                    displacementMap.setAttribute("scale", (Math.random() * 5) * maxIntensity);
+                } else {
+                    displacementMap.setAttribute("scale", "0");
+                }
+            } else {
+                if (displacementMap.getAttribute("scale") !== "0") {
+                    displacementMap.setAttribute("scale", "0");
+                }
+            }
+
+            this.glitchFrameId = requestAnimationFrame(animate);
+        };
+        this.glitchFrameId = requestAnimationFrame(animate);
+    }
+
+    cleanupHologramListeners() {
+        if (this.hologramListeners) {
+            this.hologramListeners.forEach(({ wrapper, handleMouseMove, handleMouseEnter, handleMouseLeave }) => {
+                wrapper.removeEventListener("mousemove", handleMouseMove);
+                wrapper.removeEventListener("mouseenter", handleMouseEnter);
+                wrapper.removeEventListener("mouseleave", handleMouseLeave);
+            });
+            this.hologramListeners = [];
+        }
+    }
+
+    destroy() {
+        this.isCurrentView = false;
+        if (this.glitchFrameId) {
+            cancelAnimationFrame(this.glitchFrameId);
+            this.glitchFrameId = null;
+        }
+        this.cleanupHologramListeners();
+    }
+
     getCss() {
         return ["/asset/css/home.css", "/asset/css/footer.css"];
     }
