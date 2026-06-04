@@ -46,103 +46,153 @@ export class EasterEgg {
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambientLight);
         
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-        dirLight.position.set(5, 10, 10);
-        scene.add(dirLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        directionalLight.position.set(5, 10, 10);
+        scene.add(directionalLight);
 
-        const texCanvas = document.createElement("canvas");
-        texCanvas.width = 1024;
-        texCanvas.height = 512;
-        const ctx = texCanvas.getContext("2d");
+        const textureCanvas = document.createElement("canvas");
+        textureCanvas.width = 1024;
+        textureCanvas.height = 512;
+        const textureContext = textureCanvas.getContext("2d");
         
-        ctx.fillStyle = "#707070";
-        ctx.fillRect(0, 0, 1024, 512);
+        textureContext.fillStyle = "#707070";
+        textureContext.fillRect(0, 0, 1024, 512);
 
         for(let i = 0; i < 2000; i++) {
-            ctx.fillStyle = Math.random() > 0.5 ? "#606060" : "#808080";
-            ctx.beginPath();
-            ctx.arc(Math.random() * 1024, Math.random() * 512, Math.random() * 8, 0, Math.PI * 2);
-            ctx.fill();
+            textureContext.fillStyle = Math.random() > 0.5 ? "#606060" : "#808080";
+            textureContext.beginPath();
+            textureContext.arc(Math.random() * 1024, Math.random() * 512, Math.random() * 8, 0, Math.PI * 2);
+            textureContext.fill();
         }
 
-        ctx.fillStyle = "#111111";
-        ctx.strokeStyle = "#111111";
-        
-        ctx.beginPath();
-        ctx.arc(194, 200, 25, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(318, 200, 25, 0, Math.PI * 2);
-        ctx.fill();
-        
-        ctx.beginPath();
-        ctx.arc(256, 256, 90, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.lineWidth = 18;
-        ctx.lineCap = "round";
-        ctx.stroke();
+        textureContext.fillStyle = "#111111";
 
-        const combinedTexture = new THREE.CanvasTexture(texCanvas);
+        textureContext.beginPath();
+        textureContext.ellipse(180, 210, 30, 28, -0.2, 0, Math.PI * 2);
+        textureContext.fill();
+
+        textureContext.beginPath();
+        textureContext.ellipse(330, 215, 28, 26, 0.15, 0, Math.PI * 2);
+        textureContext.fill();
+
+        textureContext.strokeStyle = "#111111";
+        textureContext.lineWidth = 18;
+        textureContext.lineCap = "round";
+        textureContext.lineJoin = "round";
+
+        textureContext.beginPath();
+        textureContext.moveTo(230, 220);
+        textureContext.quadraticCurveTo(256, 310, 282, 220);
+        textureContext.stroke();
+
+        const combinedTexture = new THREE.CanvasTexture(textureCanvas);
         
-        const rockGeo = new THREE.SphereGeometry(2.5, 32, 24);
-        const positions = rockGeo.attributes.position;
-        for (let i = 0; i < positions.count; i++) {
-            const v = new THREE.Vector3().fromBufferAttribute(positions, i);
-            v.x *= 1 + (Math.random() * 0.04 - 0.02);
-            v.y *= 1 + (Math.random() * 0.04 - 0.02);
-            v.z *= 1 + (Math.random() * 0.04 - 0.02);
-            positions.setXYZ(i, v.x, v.y, v.z);
+        const sphereRadius = 2.5;
+        const eggGeometry = new THREE.SphereGeometry(sphereRadius, 64, 48);
+        const vertexPositions = eggGeometry.attributes.position;
+        
+        for (let i = 0; i < vertexPositions.count; i++) {
+            const vertexVector = new THREE.Vector3().fromBufferAttribute(vertexPositions, i);
+            
+            const normalizedY = vertexVector.y / sphereRadius;
+            
+            const taperFactor = 1.0 - 0.15 * Math.max(0, normalizedY);
+            vertexVector.x *= taperFactor;
+            vertexVector.z *= taperFactor;
+            
+            vertexVector.y *= 1.0 + 0.30 * Math.max(0, normalizedY);
+
+            const noiseMultiplierX = 1 + (Math.random() * 0.02 - 0.01);
+            const noiseMultiplierY = 1 + (Math.random() * 0.02 - 0.01);
+            const noiseMultiplierZ = 1 + (Math.random() * 0.02 - 0.01);
+            
+            vertexVector.x *= noiseMultiplierX;
+            vertexVector.y *= noiseMultiplierY;
+            vertexVector.z *= noiseMultiplierZ;
+            
+            vertexPositions.setXYZ(i, vertexVector.x, vertexVector.y, vertexVector.z);
         }
-        rockGeo.computeVertexNormals();
+        
+        eggGeometry.computeVertexNormals();
 
-        const rockMaterial = new THREE.MeshStandardMaterial({ 
+        const eggMaterial = new THREE.MeshStandardMaterial({ 
             map: combinedTexture,
             roughness: 0.5,
             metalness: 0.1,
             flatShading: false
         });
-        const rock = new THREE.Mesh(rockGeo, rockMaterial);
-        rock.position.set(-20, -3, 0);
-        rock.scale.z = 0.35;
         
-        scene.add(rock);
+        const eggMesh = new THREE.Mesh(eggGeometry, eggMaterial);
+        eggMesh.position.set(-20, -2.713, 0);
+        eggMesh.scale.z = 0.35;
+        
+        scene.add(eggMesh);
 
-        let animationId;
-        let lastTime = performance.now();
-        let elapsedAngle = 0;
+        const profileSamples = 360;
+        const profileRadii = [];
+        for (let s = 0; s < profileSamples; s++) {
+            const angle = (s / profileSamples) * Math.PI * 2;
+            const sinA = Math.sin(angle);
+            const cosA = Math.cos(angle);
+            const nY = cosA;
 
-        const handleResize = () => {
+            let px, py;
+            if (nY > 0) {
+                const taper = 1.0 - 0.15 * nY;
+                px = sphereRadius * sinA * taper;
+                py = sphereRadius * cosA * (1.0 + 0.30 * nY);
+            } else {
+                px = sphereRadius * sinA;
+                py = sphereRadius * cosA;
+            }
+
+            profileRadii.push(Math.sqrt(px * px + py * py));
+        }
+
+        const getProfileRadius = (angle) => {
+            const normalized = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+            const index = Math.floor((normalized / (Math.PI * 2)) * profileSamples) % profileSamples;
+            return profileRadii[index];
+        };
+
+        let animationFrameId;
+        let lastTimestamp = performance.now();
+        let elapsedRotationAngle = 0;
+        let cumulativeX = 0;
+        const groundY = -6.213;
+
+        const handleWindowResize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         };
-        window.addEventListener("resize", handleResize);
+        window.addEventListener("resize", handleWindowResize);
 
-        const animate = () => {
-            animationId = requestAnimationFrame(animate);
-            const time = performance.now();
-            const delta = (time - lastTime) / 1000;
-            lastTime = time;
+        const animateScene = () => {
+            animationFrameId = requestAnimationFrame(animateScene);
+            const currentTimestamp = performance.now();
+            const deltaTime = (currentTimestamp - lastTimestamp) / 1000;
+            lastTimestamp = currentTimestamp;
 
-            const angleDelta = (12 / 2.5) * delta;
-            elapsedAngle += angleDelta;
+            const contactRadius = getProfileRadius(elapsedRotationAngle);
+            const angularSpeed = (4 / contactRadius) * deltaTime;
+            elapsedRotationAngle += angularSpeed;
 
-            rock.rotation.z = -elapsedAngle;
-            
-            const k = 0.22;
-            const R = 2.5;
-            
-            rock.position.x = -20 + R * (elapsedAngle - k * Math.sin(elapsedAngle));
-            rock.position.y = -3 + R * k * Math.cos(elapsedAngle);
+            cumulativeX += contactRadius * angularSpeed;
+
+            eggMesh.rotation.z = Math.PI - elapsedRotationAngle;
+            eggMesh.position.x = -20 + cumulativeX;
+            eggMesh.position.y = groundY + contactRadius;
 
             renderer.render(scene, camera);
 
-            if (rock.position.x > 20) {
-                cancelAnimationFrame(animationId);
-                window.removeEventListener("resize", handleResize);
+            if (eggMesh.position.x > 20) {
+                cancelAnimationFrame(animationFrameId);
+                window.removeEventListener("resize", handleWindowResize);
                 canvas.remove();
             }
         };
 
-        animate();
+        animateScene();
     }
 }

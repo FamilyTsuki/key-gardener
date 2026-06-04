@@ -56,20 +56,6 @@ body {
     position: relative;
     z-index: 2;
     filter: var(--hologram-filter, none);
-    mask-image: radial-gradient(
-        150% 120px at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
-        rgba(0, 0, 0, calc(1 - 0.7 * var(--hover-intensity, 0))) 0%,
-        rgba(0, 0, 0, calc(1 - 0.5 * var(--hover-intensity, 0))) 30%,
-        rgba(0, 0, 0, calc(1 - 0.2 * var(--hover-intensity, 0))) 75%,
-        rgba(0, 0, 0, 1) 100%
-    );
-    -webkit-mask-image: radial-gradient(
-        150% 120px at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
-        rgba(0, 0, 0, calc(1 - 0.7 * var(--hover-intensity, 0))) 0%,
-        rgba(0, 0, 0, calc(1 - 0.5 * var(--hover-intensity, 0))) 30%,
-        rgba(0, 0, 0, calc(1 - 0.2 * var(--hover-intensity, 0))) 75%,
-        rgba(0, 0, 0, 1) 100%
-    );
 }
 
 .hologram-glitch-layer {
@@ -179,7 +165,33 @@ body {
     opacity: calc(1 * var(--hover-intensity, 0));
 }
 
-
+.hologram-tear-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: var(--img-url);
+    background-size: cover;
+    background-position: center;
+    border-radius: 2vw;
+    pointer-events: none;
+    z-index: 4;
+    filter: var(--hologram-mouse-filter, none);
+    opacity: calc(1 * var(--hover-intensity, 0));
+    mask-image: radial-gradient(
+        circle 120px at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.6) 40%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    -webkit-mask-image: radial-gradient(
+        circle 120px at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.6) 40%,
+        rgba(0, 0, 0, 0) 100%
+    );
+}
 
 @keyframes glitch-cyan-layer {
     0% { transform: translate(-1.5px, 0); mask-position: 0 0, 0 0; -webkit-mask-position: 0 0, 0 0; }

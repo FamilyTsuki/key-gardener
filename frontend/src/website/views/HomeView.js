@@ -27,8 +27,7 @@ export default class HomeView extends AbstractView {
             }),
             el("div", { className: "hologram-scanlines" }),
             el("div", { className: "hologram-noise" }),
-            el("div", { className: "hologram-glitch-layer cyan-layer" }),
-            el("div", { className: "hologram-glitch-layer blue-layer" })
+            el("div", { className: "hologram-tear-layer" })
         );
     }
 
@@ -42,6 +41,12 @@ export default class HomeView extends AbstractView {
                 <filter id="hologram-distortion-filter">
                     <feTurbulence type="fractalNoise" baseFrequency="0.001 0.2" numOctaves="1" result="noise" />
                     <feDisplacementMap id="displacement-map" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="A" />
+                </filter>
+                <filter id="hologram-mouse-filter">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.001 0.2" numOctaves="1" result="noise2">
+                        <animate attributeName="seed" values="1;100" dur="2s" repeatCount="indefinite" />
+                    </feTurbulence>
+                    <feDisplacementMap id="mouse-displacement-map" in="SourceGraphic" in2="noise2" scale="0" xChannelSelector="R" yChannelSelector="A" />
                 </filter>
             </svg>
         `;
@@ -236,8 +241,10 @@ export default class HomeView extends AbstractView {
                     
                     if (wrapper.currentHoverIntensity > 0.01) {
                         wrapper.style.setProperty("--hologram-filter", "url(#hologram-distortion-filter)");
+                        wrapper.style.setProperty("--hologram-mouse-filter", "url(#hologram-mouse-filter)");
                     } else {
                         wrapper.style.setProperty("--hologram-filter", "none");
+                        wrapper.style.setProperty("--hologram-mouse-filter", "none");
                     }
                 }
                 
@@ -254,9 +261,24 @@ export default class HomeView extends AbstractView {
                 } else {
                     displacementMap.setAttribute("scale", "0");
                 }
+                
+                const mouseMap = document.getElementById("mouse-displacement-map");
+                if (mouseMap) {
+                    if (Math.random() > 0.90) {
+                        mouseMap.setAttribute("scale", (Math.random() * 60 + 20) * maxIntensity);
+                    } else if (Math.random() > 0.75) {
+                        mouseMap.setAttribute("scale", (Math.random() * 15) * maxIntensity);
+                    } else {
+                        mouseMap.setAttribute("scale", "0");
+                    }
+                }
             } else {
                 if (displacementMap.getAttribute("scale") !== "0") {
                     displacementMap.setAttribute("scale", "0");
+                }
+                const mouseMap = document.getElementById("mouse-displacement-map");
+                if (mouseMap && mouseMap.getAttribute("scale") !== "0") {
+                    mouseMap.setAttribute("scale", "0");
                 }
             }
 
