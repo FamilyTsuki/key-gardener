@@ -34,7 +34,7 @@ const seedLevels = async () => {
                     introType: "skyfall",
                     dialogue: ["Attention !", "Ce pont est gardé par des flammes."],
                     dialogueModel: "/asset/game_assets/models/player.glb",
-                    events: ["FlameWallEvent", "HoleEvent"]
+                    events: ["FlameWallEvent", "JumpWordEvent", "HoleEvent"]
                 }
             },
             {

@@ -7,6 +7,7 @@ import { DoorEvent } from "../events/DoorEvent.js";
 import { HoleEvent } from "../events/HoleEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
 import { BridgeWordEvent } from "../events/BridgeWordEvent.js";
+import { JumpWordEvent } from "../events/JumpWordEvent.js";
 import { StatisticsManager } from "../managers/StatisticsManager.js";
 import { StatisticsService } from "../../core/services/statistics.service.js";
 
@@ -121,6 +122,7 @@ export class GameEngine {
                     } else if (phaseType === "world") {
                         const eventMap = {
                             "BridgeWordEvent": BridgeWordEvent,
+                            "JumpWordEvent": JumpWordEvent,
                             "DoorEvent": DoorEvent,
                             "HoleEvent": HoleEvent,
                             "FlameWallEvent": FlameWallEvent

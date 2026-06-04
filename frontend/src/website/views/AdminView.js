@@ -125,6 +125,8 @@ export class AdminView {
                     options.outroType = eType;
                 } else if (eType === 'BridgeWordEvent') {
                     initialStoryEvents.push({ actionType: 'bridge' });
+                } else if (eType === 'JumpWordEvent') {
+                    initialStoryEvents.push({ actionType: 'jumpword' });
                 } else if (eType === 'FlameWallEvent') {
                     initialStoryEvents.push({ actionType: 'flamewall' });
                 }
@@ -208,6 +210,7 @@ export class AdminView {
 
                                 gatheredStoryEvents.forEach(evt => {
                     if (evt.actionType === 'bridge') eventsList.push('BridgeWordEvent');
+                    else if (evt.actionType === 'jumpword') eventsList.push('JumpWordEvent');
                     else if (evt.actionType === 'flamewall') eventsList.push('FlameWallEvent');
                     else filteredStoryEvents.push(evt);
                 });
@@ -299,6 +302,7 @@ export class AdminView {
         else if (evt.actionType === 'spawn' || evt.actionType === 'spawnBoss') div.classList.add("block-spawn");
         else if (evt.actionType === 'spawnerConfig') div.classList.add("block-spawn");
         else if (evt.actionType === 'bridge') div.classList.add("block-bridge");
+        else if (evt.actionType === 'jumpword') div.classList.add("block-bridge");
         else if (evt.actionType === 'flamewall') div.classList.add("block-flamewall");
         else div.classList.add("block-dialogue");
 
@@ -316,11 +320,12 @@ export class AdminView {
                 <option value="dialogue" ${evt.actionType === 'dialogue' || !evt.actionType ? 'selected' : ''}>💬 Lancer un Dialogue</option>
                 <option value="heal" ${evt.actionType === 'heal' ? 'selected' : ''}>💚 Soigner le Joueur</option>
                 <option value="bridge" ${evt.actionType === 'bridge' ? 'selected' : ''}>⏳ Placer un Pont de Mots (Bridge)</option>
+                <option value="jumpword" ${evt.actionType === 'jumpword' ? 'selected' : ''}>🦘 Placer un Saut de Puissance (Jump)</option>
                 <option value="flamewall" ${evt.actionType === 'flamewall' ? 'selected' : ''}>🔥 Placer un Mur de Flammes</option>
             `;
         }
 
-        const hideTriggerClass = ['bridge', 'flamewall'].includes(evt.actionType) ? 'none' : '';
+        const hideTriggerClass = ['bridge', 'jumpword', 'flamewall'].includes(evt.actionType) ? 'none' : '';
 
         div.innerHTML = `
             <button class="remove-evt-btn">X</button>
@@ -380,7 +385,7 @@ export class AdminView {
                         div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-bridge', 'block-flamewall');
             if (newType === 'heal') div.classList.add("block-heal");
             else if (newType === 'spawn' || newType === 'spawnBoss' || newType === 'spawnerConfig') div.classList.add("block-spawn");
-            else if (newType === 'bridge') div.classList.add("block-bridge");
+            else if (newType === 'bridge' || newType === 'jumpword') div.classList.add("block-bridge");
             else if (newType === 'flamewall') div.classList.add("block-flamewall");
             else div.classList.add("block-dialogue");
 
@@ -453,9 +458,19 @@ export class AdminView {
                 const outroType = card.querySelector('.world-outro').value || "DoorEvent";
                 const stContainer = card.querySelector('div[class*="story-events-container-"]');
                 const bubbles = stContainer ? Array.from(stContainer.querySelectorAll('.evt-action-type')).map(sel => sel.value) : [];
-                const hasBridge = bubbles.includes('bridge');
+                const hasBridge = bubbles.includes('bridge') || bubbles.includes('jumpword');
 
-                                WorldMap.init(scene, createWordlLayout(hasBridge, introType)).then((wMap) => {
+                const layout = createWordlLayout(introType);
+                if (hasBridge) {
+                    layout.forEach(tile => {
+                        if (tile.y <= -15 && tile.y > -20) {
+                            tile.renderMesh = false;
+                            tile.letter = null;
+                        }
+                    });
+                }
+
+                WorldMap.init(scene, layout).then((wMap) => {
                     currentDecor = wMap.group;
                     const spawnTile = wMap.mapLayout.find(t => t.isSpawn) || wMap.mapLayout[1] || wMap.mapLayout[0];
                     const spawnPos = spawnTile.mesh.position;
@@ -466,9 +481,7 @@ export class AdminView {
 
                                         camera.position.set(spawnPos.x, spawnPos.y + 25, spawnPos.z + 10);
                     camera.lookAt(spawnPos.x, spawnPos.y, spawnPos.z);
-
-
-                    });
+                });
             }
         };
 
