@@ -72,6 +72,7 @@ export class DialogueBox {
     handleKeyDown(e) {
         if (!this.container.classList.contains("visible")) return;
         if (e.code === "Space" || e.code === "Enter") {
+            e.preventDefault();
             this.advanceDialogue();
         }
     }

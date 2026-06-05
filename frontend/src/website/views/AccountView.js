@@ -94,8 +94,7 @@ export default class AccountView extends AbstractView {
         );
         const currentLang = LanguageManager.getLanguage();
         const langSelect = el("select", {
-            className: "form-input",
-            style: "margin-top: 10px; width: 100%; box-sizing: border-box;",
+            className: "form-input lang-select",
             onchange: (e) => {
                 LanguageManager.setLanguage(e.target.value);
             }

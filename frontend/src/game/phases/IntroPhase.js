@@ -7,11 +7,14 @@ import { LanguageManager } from "../../core/utils/LanguageManager.js";
  * Represents the introductory cinematic phase of the game.
  */
 export class IntroPhase extends GamePhase {
-    static GLITCH_DELAY_MS = 38000;
-    static RIFT_OPENING_DELAY_MS = 40000;
-    static STATIC_STATE_DELAY_MS = 41000;
-    static DIALOGUE_DELAY_MS = 43000;
-    static RIFT_TRANSITION_DELAY_MS = 1000;
+    static ONE_SECOND_MS = 1000;
+    static GLITCH_DELAY_MS = IntroPhase.ONE_SECOND_MS * 15.2;
+    static RIFT_OPENING_DELAY_MS = IntroPhase.GLITCH_DELAY_MS + IntroPhase.ONE_SECOND_MS * 0.8;
+    static STATIC_STATE_DELAY_MS = IntroPhase.RIFT_OPENING_DELAY_MS + IntroPhase.ONE_SECOND_MS * 0.4;
+    static DIALOGUE_DELAY_MS = IntroPhase.STATIC_STATE_DELAY_MS + IntroPhase.ONE_SECOND_MS * 0.8;
+    static RIFT_TRANSITION_DELAY_MS = IntroPhase.ONE_SECOND_MS * 1;
+    static IDLE_REMINDER_DELAY_MS = IntroPhase.ONE_SECOND_MS * 10;
+    static MIN_AUTO_SKIP_DELAY_MS = IntroPhase.ONE_SECOND_MS * 3;
 
     /**
      * Creates an instance of IntroPhase.
@@ -34,6 +37,8 @@ export class IntroPhase extends GamePhase {
         this.dialogues = [LanguageManager.t("engine.introDialogue1"), LanguageManager.t("engine.introDialogue2")];
         this.dialogueTimeout = null;
         this.typewriterInterval = null;
+        this.idleTimeout = null;
+        this.isIdleDialogueActive = false;
     }
 
     /**
@@ -213,7 +218,7 @@ export class IntroPhase extends GamePhase {
                     clearInterval(this.typewriterInterval);
                     this.typewriterInterval = null;
                     
-                    const autoSkipDelay = Math.max(3000, fullText.length * 80);
+                    const autoSkipDelay = Math.max(IntroPhase.MIN_AUTO_SKIP_DELAY_MS, fullText.length * 80);
                     this.dialogueTimeout = setTimeout(() => {
                         this.advanceDialogue();
                     }, autoSkipDelay);
@@ -235,7 +240,7 @@ export class IntroPhase extends GamePhase {
             this.dialogueText.textContent = fullText;
 
             if (this.dialogueTimeout) clearTimeout(this.dialogueTimeout);
-            const autoSkipDelay = Math.max(3000, (fullText || '').length * 80);
+            const autoSkipDelay = Math.max(IntroPhase.MIN_AUTO_SKIP_DELAY_MS, (fullText || '').length * 80);
             this.dialogueTimeout = setTimeout(() => {
                 this.advanceDialogue();
             }, autoSkipDelay);
@@ -255,12 +260,57 @@ export class IntroPhase extends GamePhase {
             this.rift.classList.add("clickable");
             this.rift.addEventListener("click", this.onRiftClick);
         }
+        this.idleTimeout = setTimeout(() => {
+            this.triggerIdleDialogue();
+        }, IntroPhase.IDLE_REMINDER_DELAY_MS);
+    }
+
+    /**
+     * Triggers the idle reminder dialogue after 10 seconds of inaction.
+     */
+    triggerIdleDialogue() {
+        this.isIdleDialogueActive = true;
+        if (this.dialogueContainer) {
+            this.dialogueContainer.classList.add("visible");
+        }
+        const fullText = LanguageManager.t("engine.introDialogueIdle");
+        this.dialogueText.textContent = "";
+        let charIndex = 0;
+
+        this.typewriterInterval = setInterval(() => {
+            this.dialogueText.textContent += fullText[charIndex];
+            charIndex++;
+            if (charIndex >= fullText.length) {
+                clearInterval(this.typewriterInterval);
+                this.typewriterInterval = null;
+            }
+        }, 50);
+    }
+
+    /**
+     * Instantly finishes typing or starts the game if the idle text is fully typed.
+     */
+    advanceIdleDialogue() {
+        if (this.typewriterInterval) {
+            clearInterval(this.typewriterInterval);
+            this.typewriterInterval = null;
+            this.dialogueText.textContent = LanguageManager.t("engine.introDialogueIdle");
+        } else {
+            this.handleRiftClick();
+        }
     }
 
     /**
      * Handles clicking on the rift, transitioning to the next phase.
      */
     handleRiftClick() {
+        if (this.idleTimeout) {
+            clearTimeout(this.idleTimeout);
+            this.idleTimeout = null;
+        }
+        if (this.dialogueContainer) {
+            this.dialogueContainer.classList.remove("visible");
+        }
         this.rift.removeEventListener("click", this.onRiftClick);
         this.rift.classList.remove("clickable");
         this.container.classList.add("transitioning");
@@ -290,10 +340,16 @@ export class IntroPhase extends GamePhase {
             this.dialogueContainer.classList.contains("visible")
         ) {
             if (_event.code === "Space" || _event.code === "Enter") {
-                this.advanceDialogue();
+                _event.preventDefault();
+                if (this.isIdleDialogueActive) {
+                    this.advanceIdleDialogue();
+                } else {
+                    this.advanceDialogue();
+                }
             }
         } else if (this.rift && this.rift.classList.contains("clickable")) {
             if (_event.code === "Space" || _event.code === "Enter") {
+                _event.preventDefault();
                 this.handleRiftClick();
             }
         }
@@ -316,6 +372,10 @@ export class IntroPhase extends GamePhase {
         if (this.dialogueTimeout) {
             clearTimeout(this.dialogueTimeout);
             this.dialogueTimeout = null;
+        }
+        if (this.idleTimeout) {
+            clearTimeout(this.idleTimeout);
+            this.idleTimeout = null;
         }
         if (this.typewriterInterval) {
             clearInterval(this.typewriterInterval);

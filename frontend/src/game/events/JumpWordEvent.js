@@ -1,12 +1,14 @@
 import { WorldEvent } from "./WorldEvent.js";
 import * as THREE from "three";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 export class JumpWordEvent extends WorldEvent {
     constructor() {
         super();
         this.isActive = false;
         this.isCompleted = false;
-        this.wordDictionary = [
+        const words = LanguageManager.t("game.jumpWords");
+        this.wordDictionary = Array.isArray(words) ? words : [
             "JUMP", "LEAP", "BOOST", "FLY", "SOAR", "POWER", "FORCE", "ENERGY", "LAUNCH", "SPEED", "THRUST", 
             "ACTION", "HEIGHT", "FLIGHT", "VELOCITY", "MOMENTUM", "DYNAMICS", "IMPULSE", "SPRINT", "GRAVITY", 
             "VIGOR", "BOUNCE", "CHARGE", "STRENGTH"
@@ -381,7 +383,7 @@ export class JumpWordEvent extends WorldEvent {
 
         const instructionDisplay = document.createElement("div");
         instructionDisplay.classList.add("mission-instruction");
-        instructionDisplay.innerText = "CHARGEZ LA JAUGE POUR S'AUTO-PROPULSER !";
+        instructionDisplay.innerText = LanguageManager.t("game.jumpInstruction");
 
         const gaugeContainer = document.createElement("div");
         gaugeContainer.classList.add("jump-gauge-container");
@@ -391,7 +393,7 @@ export class JumpWordEvent extends WorldEvent {
 
         this.gaugeTextEl = document.createElement("div");
         this.gaugeTextEl.classList.add("jump-gauge-text");
-        this.gaugeTextEl.innerText = "ENERGIE : 0%";
+        this.gaugeTextEl.innerText = LanguageManager.t("game.jumpEnergy", { percentage: 0 });
 
         gaugeContainer.appendChild(this.gaugeFillEl);
         gaugeContainer.appendChild(this.gaugeTextEl);
@@ -412,7 +414,7 @@ export class JumpWordEvent extends WorldEvent {
         if (!this.gaugeFillEl || !this.gaugeTextEl) return;
         const percentage = Math.min(100, Math.floor((this.completedCount / this.targetCompletedCount) * 100));
         this.gaugeFillEl.style.width = percentage + "%";
-        this.gaugeTextEl.innerText = `ENERGIE : ${percentage}%`;
+        this.gaugeTextEl.innerText = LanguageManager.t("game.jumpEnergy", { percentage: percentage });
 
         if (percentage >= 100) {
             this.gaugeFillEl.parentElement.classList.add("full");

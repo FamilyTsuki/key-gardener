@@ -138,11 +138,11 @@ export default class Player extends Actor {
             fillEl.style.width = `${ratio * 100}%`;
             
             if (ratio > 0.3) {
-                fillEl.style.background = "linear-gradient(90deg, #27ae60, var(--success-color))";
-                fillEl.style.boxShadow = "0 0 10px var(--success-color)";
+                fillEl.classList.remove("low-hp");
+                fillEl.classList.add("high-hp");
             } else {
-                fillEl.style.background = "linear-gradient(90deg, var(--danger-hover), var(--danger-color))";
-                fillEl.style.boxShadow = "0 0 10px var(--danger-color)";
+                fillEl.classList.remove("high-hp");
+                fillEl.classList.add("low-hp");
             }
         }
     }

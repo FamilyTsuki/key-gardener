@@ -1,5 +1,6 @@
 import { WorldEvent } from "./WorldEvent.js";
 import * as THREE from "three";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 export class FlameWallEvent extends WorldEvent {
     /**
@@ -173,7 +174,7 @@ export class FlameWallEvent extends WorldEvent {
     triggerGameOver(worldPhase) {
         this.isGameOver = true;
         if (worldPhase.player) {
-            worldPhase.player.damage(worldPhase.player.hp, "Brûlé par le mur de flammes.");
+            worldPhase.player.damage(worldPhase.player.hp, LanguageManager.t("game.flameWallDeath"));
         }
     }
 

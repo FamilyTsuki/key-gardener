@@ -28,13 +28,6 @@ export class EasterEgg {
 
         const canvas = document.createElement("canvas");
         canvas.id = "easter-egg-canvas";
-        canvas.style.position = "fixed";
-        canvas.style.top = "0";
-        canvas.style.left = "0";
-        canvas.style.width = "100vw";
-        canvas.style.height = "100vh";
-        canvas.style.pointerEvents = "none";
-        canvas.style.zIndex = "9999";
         document.body.appendChild(canvas);
 
         const scene = new THREE.Scene();

@@ -74,7 +74,7 @@ export default class GameView extends AbstractView {
             ),
             el(
                 "div",
-                { id: "player-hud", className: "player-hud", style: "display: none;" },
+                { id: "player-hud", className: "player-hud" },
                 el(
                     "div",
                     { className: "hud-tech-ring" },

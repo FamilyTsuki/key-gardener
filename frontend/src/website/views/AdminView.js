@@ -735,7 +735,7 @@ export class AdminView {
             <div class="void-form story-event-block block-void ${isVoid ? '' : 'none'}">
                 <div class="block-title">🌌 Paramètres du Vide Infini</div>
                 <div class="block-row">
-                    <p style="color: #ccc;">Cette phase spéciale génère un monde infini et un boss caché automatiquement. Aucun paramètre supplémentaire n'est requis.</p>
+                    <p class="admin-void-desc">Cette phase spéciale génère un monde infini et un boss caché automatiquement. Aucun paramètre supplémentaire n'est requis.</p>
                 </div>
             </div>
         `;

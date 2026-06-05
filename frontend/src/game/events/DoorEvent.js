@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { WorldEvent } from "./WorldEvent.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * Event for handling interaction with a door in the world phase.
@@ -11,7 +12,8 @@ export class DoorEvent extends WorldEvent {
     constructor() {
         super();
         this.isDoorSequenceActive = false;
-        this.doorSequence = ["O", "P", "E", "N"];
+        const seq = LanguageManager.t("game.doorSequence");
+        this.doorSequence = Array.isArray(seq) ? seq : ["O", "P", "E", "N"];
         this.doorSequenceIndex = 0;
         this.isDoorOpen = false;
         this.isOpeningDoor = false;
@@ -80,8 +82,15 @@ export class DoorEvent extends WorldEvent {
         const arch = new THREE.Mesh(archGeo, pillarMat);
         arch.position.set(0, 13, 0);
 
+        const textureLoader = new THREE.TextureLoader();
+        const woodTexture = textureLoader.load('/asset/game_assets/textures/wood.jpg');
+        woodTexture.wrapS = THREE.RepeatWrapping;
+        woodTexture.wrapT = THREE.RepeatWrapping;
+        woodTexture.repeat.set(1, 4);
+
         const doorMat = new THREE.MeshStandardMaterial({
-            color: 0x5c4033,
+            map: woodTexture,
+            color: 0xffffff,
             roughness: 0.9,
             metalness: 0.1,
         });
@@ -118,6 +127,45 @@ export class DoorEvent extends WorldEvent {
             tunnelTexture.needsUpdate = true;
         }
 
+        const triplanarMapping = (shader) => {
+            shader.vertexShader = `
+                varying vec3 vLocalPos;
+                varying vec3 vLocalNorm;
+                ${shader.vertexShader}
+            `.replace(
+                '#include <begin_vertex>',
+                `
+                #include <begin_vertex>
+                vLocalPos = position;
+                vLocalNorm = normal;
+                `
+            );
+
+            shader.fragmentShader = `
+                varying vec3 vLocalPos;
+                varying vec3 vLocalNorm;
+                ${shader.fragmentShader}
+            `.replace(
+                '#include <map_fragment>',
+                `
+                #ifdef USE_MAP
+                    vec3 blend = abs(vLocalNorm);
+                    blend = normalize(max(blend, 0.00001));
+                    float b = blend.x + blend.y + blend.z;
+                    blend /= b;
+                    
+                    float texScale = 0.05;
+                    vec4 tx = texture2D(map, vLocalPos.yz * texScale);
+                    vec4 ty = texture2D(map, vLocalPos.xz * texScale);
+                    vec4 tz = texture2D(map, vLocalPos.xy * texScale);
+                    
+                    vec4 texColor = tx * blend.x + ty * blend.y + tz * blend.z;
+                    diffuseColor *= texColor;
+                #endif
+                `
+            );
+        };
+
         const caveMat = new THREE.MeshStandardMaterial({
             map: wallTexture,
             color: 0x555566,
@@ -125,6 +173,7 @@ export class DoorEvent extends WorldEvent {
             metalness: 0.1,
             flatShading: true
         });
+        caveMat.onBeforeCompile = triplanarMapping;
 
         const rockLineMat = new THREE.LineBasicMaterial({
             color: 0x000000,
@@ -207,6 +256,7 @@ export class DoorEvent extends WorldEvent {
             flatShading: true,
             side: THREE.BackSide
         });
+        tunnelMat.onBeforeCompile = triplanarMapping;
         const tunnelMesh = new THREE.Mesh(tunnelGeo, tunnelMat);
         tunnelMesh.position.set(0, 6.0, -10.5);
         
@@ -486,7 +536,7 @@ export class DoorEvent extends WorldEvent {
 
         const titleDiv = document.createElement("div");
         titleDiv.classList.add("enter-prompt-title");
-        titleDiv.innerText = "Entrer dans le portail";
+        titleDiv.innerText = LanguageManager.t("game.enterPortal");
 
         this.enterPromptOverlay.appendChild(titleDiv);
         this.enterPromptOverlay.appendChild(enterKey);

@@ -148,7 +148,30 @@ export const en = {
         saveQuitBtn: "Save & Quit",
         saveSuccess: "Game saved successfully!",
         saveFailed: "Failed to save game to server.",
-        savedLocally: "Saved locally (not logged in)."
+        savedLocally: "Saved locally (not logged in).",
+        bridgeInstruction: "TYPE THE WORDS TO BUILD THE BRIDGE!",
+        bridgeWords: [
+            "BRIDGE", "WOOD", "ROPE", "NAIL", "BEAM", "BOARD", "STONE", "HAMMER", "SAW",
+            "IRON", "STEEL", "CONCRETE", "PILLAR", "ARCH", "FOUNDATION", "CABLE", "RIVET", "PULLEY",
+            "TENSIONER", "CHAIN", "CEMENT", "SAND", "GRAVEL", "BRICK", "RUBBLE", "FRAMING",
+            "BUILD", "CONSTRUCT", "ASSEMBLE", "NAIL", "SAW", "FORGE", "WELD", "MOUNT",
+            "DRILL", "POUR", "HOIST", "FASTEN", "LIFT", "PULL", "PUSH", "REPAIR"
+        ],
+        jumpInstruction: "CHARGE THE GAUGE TO AUTO-PROPEL!",
+        jumpEnergy: "ENERGY: {percentage}%",
+        jumpWords: [
+            "POWER", "FORCE", "COURAGE", "JUMP", "ABILITY", "VALOR", "SPIRIT", "MIGHT", "GLORY", "FAITH",
+            "HONOR", "BRAVERY", "WILL", "FURY", "DRIVE", "GRIT", "STEEL", "NERVE", "PRIDE", "SPARK",
+            "BLAZE", "SURGE", "BOLT", "DASH", "RUSH", "BURST", "STORM", "FLAME", "ROAR", "HEART"
+        ],
+        voidTargetWord: "FIRE",
+        voidTitle: "DESTROY THE VOID",
+        voidDescription: "Type the word to cast a spell!",
+        doorSequence: ["O", "P", "E", "N"],
+        enterPortal: "Enter the portal",
+        jumpIntoHole: "Jump into the hole",
+        flameWallDeath: "Burned by the flame wall.",
+        tempoTitle: "KEEP THE RHYTHM!"
     },
     
     // AccountView
@@ -175,7 +198,8 @@ export const en = {
     // Game Engine (IntroPhase etc.)
     engine: {
         introDialogue1: "...",
-        introDialogue2: "Is anyone there?"
+        introDialogue2: "Is anyone there?",
+        introDialogueIdle: "Well, aren't you coming? Go ahead, click on the rift or press Enter once I'm done speaking to start."
     },
     common: {
         confirm: "Confirm",

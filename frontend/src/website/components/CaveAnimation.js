@@ -924,13 +924,6 @@ export class CaveAnimation {
 
         const canvas = this.renderer.domElement;
         canvas.classList.add("tunnel-canvas");
-        canvas.style.position = "fixed";
-        canvas.style.top = "0";
-        canvas.style.left = "0";
-        canvas.style.zIndex = "-1";
-        canvas.style.pointerEvents = "none";
-        canvas.style.opacity = "0";
-        canvas.style.transition = "opacity 2s ease";
 
         if (this.containerElement) {
             this.containerElement.appendChild(canvas);

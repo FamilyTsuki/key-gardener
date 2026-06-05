@@ -148,7 +148,30 @@ export const fr = {
         saveQuitBtn: "Sauvegarder & Quitter",
         saveSuccess: "Partie sauvegardée avec succès !",
         saveFailed: "Échec de la sauvegarde sur le serveur.",
-        savedLocally: "Sauvegardé localement (hors ligne)."
+        savedLocally: "Sauvegardé localement (hors ligne).",
+        bridgeInstruction: "FRAPPEZ LES MOTS POUR CONSTRUIRE LE PONT !",
+        bridgeWords: [
+            "PONT", "BOIS", "CORDE", "CLOU", "POUTRE", "PLANCHE", "PIERRE", "MARTEAU", "SCIE", 
+            "FER", "ACIER", "BETON", "PILIER", "ARCHE", "FONDATION", "CABLE", "RIVET", "POULIE", 
+            "TENDEUR", "CHAINE", "CIMENT", "SABLE", "GRAVIER", "BRIQUE", "MOELLON", "CHARPENTE",
+            "CONSTRUIRE", "BATIR", "ASSEMBLER", "CLOUER", "SCIER", "FORGER", "SOUDER", "MONTER", 
+            "PERCER", "COULER", "HISSER", "FIXER", "LEVER", "TIRER", "POUSSER", "REPARER"
+        ],
+        jumpInstruction: "CHARGEZ LA JAUGE POUR S'AUTO-PROPULSER !",
+        jumpEnergy: "ÉNERGIE : {percentage}%",
+        jumpWords: [
+            "PUISSANCE", "FORCE", "COURAGE", "SAUT", "CAPACITE", "VALEUR", "ESPRIT", "VIGUEUR", "GLOIRE", "FOI",
+            "HONNEUR", "BRAVOURE", "VOLONTE", "FURIE", "AUDACE", "TENACITE", "ACIER", "NERF", "FIERTE", "ETINCELLE",
+            "FLAMME", "ELAN", "ECLAIR", "FONCE", "CHARGE", "ECLAT", "TEMPETE", "BRASIER", "RUGIR", "COEUR"
+        ],
+        voidTargetWord: "FEU",
+        voidTitle: "DÉTRUISEZ LE VIDE",
+        voidDescription: "Tapez le mot pour lancer un sort !",
+        doorSequence: ["O", "U", "V", "R", "I", "R"],
+        enterPortal: "Entrer dans le portail",
+        jumpIntoHole: "Sauter dans le trou",
+        flameWallDeath: "Brûlé par le mur de flammes.",
+        tempoTitle: "GARDEZ LE RYTHME !"
     },
     
     // AccountView
@@ -175,7 +198,8 @@ export const fr = {
     // Game Engine (IntroPhase etc.)
     engine: {
         introDialogue1: "...",
-        introDialogue2: "Il y a quelqu'un ?"
+        introDialogue2: "Il y a quelqu'un ?",
+        introDialogueIdle: "Bah alors, tu viens pas ? Vas-y, clique sur la faille ou appuie sur Entrée une fois que j'aurai fini de parler pour commencer."
     },
     common: {
         confirm: "Confirmer",

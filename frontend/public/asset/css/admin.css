@@ -434,6 +434,10 @@
     display: none !important;
 }
 
+.admin-void-desc {
+    color: #8b949e;
+}
+
 .admin-error-msg {
     color: var(--danger-color);
     margin-bottom: 20px;

@@ -1,5 +1,6 @@
 import { WorldEvent } from "./WorldEvent.js";
 import * as THREE from "three";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * Event for the bridge building typing challenge.
@@ -14,14 +15,14 @@ export class BridgeWordEvent extends WorldEvent {
         this.isActive = false;
         this.isCompleted = false;
         
-        const words = [
+        const words = LanguageManager.t("game.bridgeWords");
+        this.wordDictionary = Array.isArray(words) ? words : [
             "PONT", "BOIS", "CORDE", "CLOU", "POUTRE", "PLANCHE", "PIERRE", "MARTEAU", "SCIE", 
             "FER", "ACIER", "BETON", "PILIER", "ARCHE", "FONDATION", "CABLE", "RIVET", "POULIE", 
             "TENDEUR", "CHAINE", "CIMENT", "SABLE", "GRAVIER", "BRIQUE", "MOELLON", "CHARPENTE",
             "CONSTRUIRE", "BATIR", "ASSEMBLER", "CLOUER", "SCIER", "FORGER", "SOUDER", "MONTER", 
             "PERCER", "COULER", "HISSER", "FIXER", "LEVER", "TIRER", "POUSSER", "REPARER"
         ];
-        this.wordDictionary = words;
         this.activeWords = [];
         this.baseSpawnDelay = 3.0; 
         this.wordSpawnTimer = 0;
@@ -693,7 +694,7 @@ export class BridgeWordEvent extends WorldEvent {
 
         const instructionDisplay = document.createElement("div");
         instructionDisplay.classList.add("mission-instruction");
-        instructionDisplay.innerText = "FRAPPEZ LES MOTS POUR CONSTRUIRE LE PONT !";
+        instructionDisplay.innerText = LanguageManager.t("game.bridgeInstruction");
 
         this.wordDisplay = document.createElement("div");
         this.wordDisplay.classList.add("mission-word-container");

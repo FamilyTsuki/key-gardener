@@ -1,4 +1,5 @@
 import { WorldEvent } from "./WorldEvent.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 export class TempoEvent extends WorldEvent {
     /**
@@ -35,7 +36,7 @@ export class TempoEvent extends WorldEvent {
         this.uiOverlay.classList.add("tempo-overlay");
 
         const title = document.createElement("div");
-        title.innerText = "KEEP THE RHYTHM!";
+        title.innerText = LanguageManager.t("game.tempoTitle");
         title.classList.add("tempo-title");
 
         this.barContainer = document.createElement("div");

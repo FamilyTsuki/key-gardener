@@ -4,6 +4,7 @@ import WorldMap from "../managers/WorldMap.js";
 import Player from "../models/actors/Player.js";
 import { VoidCreature } from "../models/actors/VoidCreature.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 export class InfiniteVoidPhase extends GamePhase {
     constructor(gameEngine, options = {}) {
@@ -18,7 +19,7 @@ export class InfiniteVoidPhase extends GamePhase {
         this.isEncounterTriggered = false;
         this.voidCreature = null;
         this.typingMinigameActive = false;
-        this.targetWord = "FIRE";
+        this.targetWord = LanguageManager.t("game.voidTargetWord");
         this.typedWord = "";
         this.isBossDefeated = false;
         this.isTransitioning = false;
@@ -346,7 +347,7 @@ export class InfiniteVoidPhase extends GamePhase {
 
         const titleDiv = document.createElement("div");
         titleDiv.classList.add("enter-prompt-title");
-        titleDiv.innerText = "Sauter dans le trou";
+        titleDiv.innerText = LanguageManager.t("game.jumpIntoHole");
 
         this.enterPromptOverlay.appendChild(titleDiv);
         this.enterPromptOverlay.appendChild(enterKey);
@@ -409,10 +410,10 @@ export class InfiniteVoidPhase extends GamePhase {
         this.typingContainer = document.createElement("div");
         this.typingContainer.className = "typing-minigame glass-panel";
         this.typingContainer.innerHTML = `
-            <h2>DESTROY THE VOID</h2>
+            <h2>${LanguageManager.t("game.voidTitle")}</h2>
             <div class="word-container typing-minigame-word">
             </div>
-            <p>Type the word to cast a spell!</p>
+            <p>${LanguageManager.t("game.voidDescription")}</p>
         `;
         document.body.appendChild(this.typingContainer);
         this.updateTypingUI();

@@ -1,5 +1,6 @@
 import { WorldEvent } from "./WorldEvent.js";
 import * as THREE from "three";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * Event for handling interaction with a hole in the world phase.
@@ -214,7 +215,7 @@ export class HoleEvent extends WorldEvent {
 
         const titleDiv = document.createElement("div");
         titleDiv.classList.add("enter-prompt-title");
-        titleDiv.innerText = "Sauter dans le trou";
+        titleDiv.innerText = LanguageManager.t("game.jumpIntoHole");
 
         this.enterPromptOverlay.appendChild(titleDiv);
         this.enterPromptOverlay.appendChild(enterKey);

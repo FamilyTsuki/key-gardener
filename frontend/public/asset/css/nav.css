@@ -88,6 +88,10 @@ nav a.active {
     color: var(--text-muted);
 }
 
+nav a.admin-link {
+    color: #f39c12;
+}
+
 /* =============== RESPONSIVE =============== */
 @media (max-width: 768px) {
     nav {

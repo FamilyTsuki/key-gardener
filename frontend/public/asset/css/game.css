@@ -291,7 +291,7 @@
     position: fixed;
     bottom: 5%;
     left: 2%;
-    display: flex;
+    display: none;
     align-items: center;
     gap: 0;
     z-index: 9999;
@@ -349,6 +349,16 @@
     box-shadow: inset 0 0 10px rgba(255,255,255,0.3);
     border-radius: 2px;
     transition: width 0.3s ease-out;
+}
+
+.player-hp-fill.high-hp {
+    background: linear-gradient(90deg, #27ae60, var(--success-color)) !important;
+    box-shadow: 0 0 10px var(--success-color) !important;
+}
+
+.player-hp-fill.low-hp {
+    background: linear-gradient(90deg, var(--danger-hover), var(--danger-color)) !important;
+    box-shadow: 0 0 10px var(--danger-color) !important;
 }
 
 .player-hp-text {

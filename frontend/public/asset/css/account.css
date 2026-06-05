@@ -123,6 +123,12 @@
     text-align: center;
 }
 
+.lang-select {
+    margin-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 
 
 .nav-logout {
