@@ -24,15 +24,15 @@ export class CaveAnimation {
         return {
             fogDensity: 0.0025,
             fogColor: 0x0a0a14,
-            ambientLightColor: 0x404040,
-            ambientLightIntensity: 8.0,
+            ambientLightColor: 0x505055,
+            ambientLightIntensity: 12.0,
             caveHeight: 1000,
             caveRadius: 75,
             holeRadius: 30.0,
             holePosition: new THREE.Vector3(21.7, 450, -67.9),
             colors: {
-                dirt: new THREE.Color(0x4d3b2e),
-                compactDirt: new THREE.Color(0x261C14),
+                dirt: new THREE.Color(0x6b5341),
+                compactDirt: new THREE.Color(0x3d2f25),
                 stone: new THREE.Color(0x2a2c30),
                 deep: new THREE.Color(0x110502),
                 minerals: [
@@ -75,11 +75,11 @@ export class CaveAnimation {
         const ambientLight = new THREE.AmbientLight(this.config.ambientLightColor, this.config.ambientLightIntensity);
         this.scene.add(ambientLight);
 
-        const flashLight = new THREE.PointLight(0xffeedd, 8000, 1000);
+        const flashLight = new THREE.PointLight(0xffeedd, 15000, 1000);
         flashLight.position.set(0, 0, 0);
         this.camera.add(flashLight);
 
-        const midLight = new THREE.PointLight(0x5577aa, 5000, 600);
+        const midLight = new THREE.PointLight(0x5577aa, 9000, 600);
         midLight.position.set(0, -400, 0);
         this.scene.add(midLight);
     }
