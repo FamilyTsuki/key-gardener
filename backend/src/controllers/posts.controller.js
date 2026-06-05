@@ -134,7 +134,8 @@ exports.createPost = async (req, res, next) => {
             }
         }
 
-        const post = await Post.create(userId, textContent, imageUrl);
+        const createdPost = await Post.create(userId, textContent, imageUrl);
+        const post = await Post.findById(createdPost.id, userId);
         res.status(201).json({ success: true, post });
     } catch (err) {
         next(err);
@@ -264,7 +265,7 @@ exports.upvotePost = async (req, res, next) => {
             await Post.incrementUpvotes(postId);
         }
 
-        const updatedPost = await Post.findById(postId);
+        const updatedPost = await Post.findById(postId, userId);
         res.status(200).json({ success: true, post: updatedPost });
     } catch (err) {
         next(err);
@@ -298,7 +299,7 @@ exports.downvotePost = async (req, res, next) => {
             await Post.incrementDownvotes(postId);
         }
 
-        const updatedPost = await Post.findById(postId);
+        const updatedPost = await Post.findById(postId, userId);
         res.status(200).json({ success: true, post: updatedPost });
     } catch (err) {
         next(err);

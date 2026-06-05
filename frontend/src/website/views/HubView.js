@@ -151,10 +151,89 @@ export default class HubView extends AbstractView {
     }
 
     /**
-     * Submits the new post containing text and/or media to the server.
-     *
-     * @returns {Promise<void>}
+     * Creates and returns a DOM element for a post.
+     * @param {Object} post - The post data object.
+     * @returns {HTMLElement} The post DOM element.
      */
+    createPostElement(post) {
+        let mediaElement = null;
+        if (post.image_url) {
+            const isVideo = this.isVideo(post.image_url);
+            if (isVideo) {
+                mediaElement = el("video", {
+                    src: post.image_url,
+                    controls: true,
+                    className: "post-media"
+                });
+            } else {
+                mediaElement = el("img", {
+                    src: post.image_url,
+                    className: "post-media"
+                });
+            }
+        }
+
+        const upvoteBtn = el("button", {
+            className: `vote-btn upvote-btn${post.user_vote === 1 ? " active" : ""}`,
+            onclick: async () => this.handleVote(post.id, "upvote")
+        }, `▲ ${post.upvotes || 0}`);
+
+        const downvoteBtn = el("button", {
+            className: `vote-btn downvote-btn${post.user_vote === -1 ? " active" : ""}`,
+            onclick: async () => this.handleVote(post.id, "downvote")
+        }, `▼ ${post.downvotes || 0}`);
+
+        const commentsToggleBtn = el("button", {
+            className: "vote-btn comments-toggle-btn",
+            onclick: () => this.toggleComments(post.id)
+        }, el("span", { style: "font-family: 'Noto Color Emoji', sans-serif;" }, "💬 "), LanguageManager.t("hub.comments"));
+
+        const voteContainer = el("div", { className: "post-votes" },
+            upvoteBtn,
+            downvoteBtn,
+            commentsToggleBtn
+        );
+
+        const isSelfPost = this.currentUserId && post.user_id === this.currentUserId;
+
+        let postActions = null;
+        if (isSelfPost) {
+            const postDate = new Date(post.created_at.endsWith("Z") ? post.created_at : post.created_at + "Z");
+            const diffMinutes = (new Date() - postDate) / (1000 * 60);
+            const canEdit = diffMinutes <= 5;
+
+            const editBtn = canEdit ? el("button", { 
+                className: "action-btn edit-btn",
+                onclick: () => this.handleEdit(post)
+            }, LanguageManager.t("hub.edit")) : null;
+
+            const deleteBtn = el("button", {
+                className: "action-btn delete-btn",
+                onclick: () => this.handleDelete(post.id)
+            }, LanguageManager.t("hub.delete"));
+
+            postActions = el("div", { className: "post-actions-container" }, editBtn, deleteBtn);
+        }
+
+        const postFooter = el("div", { className: "post-footer" }, voteContainer, postActions);
+
+        const commentsSection = el("div", { className: "comments-section hidden", id: `comments-${post.id}` },
+            el("div", { className: "comments-list", id: `comments-list-${post.id}` }),
+            AuthService.isAuthenticated() ? el("div", { className: "add-comment-form" },
+                el("textarea", { className: "form-input comment-input", id: `comment-input-${post.id}`, placeholder: LanguageManager.t("hub.addComment") }),
+                el("button", { className: "btn-primary btn-small post-comment-btn", onclick: () => this.submitComment(post.id) }, LanguageManager.t("hub.postComment"))
+            ) : null
+        );
+
+        return el("div", { className: `hub-post${isSelfPost ? " self-post" : ""}`, id: `post-${post.id}` },
+            el("strong", {}, post.username + ": "),
+            el("p", { className: "post-content" }, post.content),
+            mediaElement,
+            postFooter,
+            commentsSection
+        );
+    }
+
     async addPost() {
         const postTextarea = document.getElementById("post-content");
         if (!postTextarea) return;
@@ -163,10 +242,15 @@ export default class HubView extends AbstractView {
 
         try {
             const data = await PostsService.createPost(content, this.selectedMediaFile);
-            if (data.success) {
+            if (data.success && data.post) {
                 postTextarea.value = "";
                 this.clearSelectedMedia();
-                await this.init();
+                const noPostsText = this.postsContainer.querySelector("p");
+                if (noPostsText && noPostsText.textContent === LanguageManager.t("hub.noPostsYet")) {
+                    this.postsContainer.innerHTML = "";
+                }
+                const newPostEl = this.createPostElement(data.post);
+                this.postsContainer.prepend(newPostEl);
             }
         } catch (error) {
             console.error("Error creating post:", error);
@@ -178,11 +262,6 @@ export default class HubView extends AbstractView {
         }
     }
 
-    /**
-     * Initializes the hub view by fetching and rendering all posts.
-     *
-     * @returns {Promise<void>}
-     */
     async init() {
         if (!this.postsContainer) return;
 
@@ -208,84 +287,7 @@ export default class HubView extends AbstractView {
             }
 
             data.posts.forEach((post) => {
-                let mediaElement = null;
-                if (post.image_url) {
-                    const isVideo = this.isVideo(post.image_url);
-                    if (isVideo) {
-                        mediaElement = el("video", {
-                            src: post.image_url,
-                            controls: true,
-                            className: "post-media"
-                        });
-                    } else {
-                        mediaElement = el("img", {
-                            src: post.image_url,
-                            className: "post-media"
-                        });
-                    }
-                }
-
-                const upvoteBtn = el("button", {
-                    className: `vote-btn upvote-btn${post.user_vote === 1 ? " active" : ""}`,
-                    onclick: async () => this.handleVote(post.id, "upvote")
-                }, `▲ ${post.upvotes || 0}`);
-
-                const downvoteBtn = el("button", {
-                    className: `vote-btn downvote-btn${post.user_vote === -1 ? " active" : ""}`,
-                    onclick: async () => this.handleVote(post.id, "downvote")
-                }, `▼ ${post.downvotes || 0}`);
-
-                const commentsToggleBtn = el("button", {
-                    className: "vote-btn comments-toggle-btn",
-                    onclick: () => this.toggleComments(post.id)
-                }, el("span", { style: "font-family: 'Noto Color Emoji', sans-serif;" }, "💬 "), LanguageManager.t("hub.comments"));
-
-                const voteContainer = el("div", { className: "post-votes" },
-                    upvoteBtn,
-                    downvoteBtn,
-                    commentsToggleBtn
-                );
-
-                const isSelfPost = currentUserId && post.user_id === currentUserId;
-
-                let postActions = null;
-                if (isSelfPost) {
-                    const postDate = new Date(post.created_at.endsWith("Z") ? post.created_at : post.created_at + "Z");
-                    const diffMinutes = (new Date() - postDate) / (1000 * 60);
-                    const canEdit = diffMinutes <= 5;
-
-                    const editBtn = canEdit ? el("button", { 
-                        className: "action-btn edit-btn",
-                        onclick: () => this.handleEdit(post)
-                    }, LanguageManager.t("hub.edit")) : null;
-
-                    const deleteBtn = el("button", {
-                        className: "action-btn delete-btn",
-                        onclick: () => this.handleDelete(post.id)
-                    }, LanguageManager.t("hub.delete"));
-
-                    postActions = el("div", { className: "post-actions-container" }, editBtn, deleteBtn);
-                }
-
-                const postFooter = el("div", { className: "post-footer" }, voteContainer, postActions);
-
-                const commentsSection = el("div", { className: "comments-section hidden", id: `comments-${post.id}` },
-                    el("div", { className: "comments-list", id: `comments-list-${post.id}` }),
-                    AuthService.isAuthenticated() ? el("div", { className: "add-comment-form" },
-                        el("textarea", { className: "form-input comment-input", id: `comment-input-${post.id}`, placeholder: LanguageManager.t("hub.addComment") }),
-                        el("button", { className: "btn-primary btn-small post-comment-btn", onclick: () => this.submitComment(post.id) }, LanguageManager.t("hub.postComment"))
-                    ) : null
-                );
-
-                this.postsContainer.appendChild(
-                    el("div", { className: `hub-post${isSelfPost ? " self-post" : ""}`, id: `post-${post.id}` },
-                        el("strong", {}, post.username + ": "),
-                        el("p", { className: "post-content" }, post.content),
-                        mediaElement,
-                        postFooter,
-                        commentsSection
-                    )
-                );
+                this.postsContainer.appendChild(this.createPostElement(post));
             });
 
         } catch (error) {
@@ -295,35 +297,49 @@ export default class HubView extends AbstractView {
         }
     }
 
-    /**
-     * Handles casting an upvote or downvote on a post.
-     *
-     * @param {number} postId - The ID of the post.
-     * @param {string} type - The type of vote ('upvote' or 'downvote').
-     * @returns {Promise<void>}
-     */
     async handleVote(postId, type) {
         if (!AuthService.isAuthenticated()) {
             FlashMessageManager.show(LanguageManager.t("hub.loginToVote"), "error");
             return;
         }
         try {
+            let data;
             if (type === "upvote") {
-                await PostsService.upvotePost(postId);
+                data = await PostsService.upvotePost(postId);
             } else {
-                await PostsService.downvotePost(postId);
+                data = await PostsService.downvotePost(postId);
             }
-            await this.init();
+            if (data && data.success && data.post) {
+                const post = data.post;
+                const postElement = document.getElementById(`post-${post.id}`);
+                if (postElement) {
+                    const upvoteBtn = postElement.querySelector(".upvote-btn");
+                    const downvoteBtn = postElement.querySelector(".downvote-btn");
+                    
+                    if (upvoteBtn) {
+                        upvoteBtn.textContent = `▲ ${post.upvotes || 0}`;
+                        if (post.user_vote === 1) {
+                            upvoteBtn.classList.add("active");
+                        } else {
+                            upvoteBtn.classList.remove("active");
+                        }
+                    }
+                    if (downvoteBtn) {
+                        downvoteBtn.textContent = `▼ ${post.downvotes || 0}`;
+                        if (post.user_vote === -1) {
+                            downvoteBtn.classList.add("active");
+                        } else {
+                            downvoteBtn.classList.remove("active");
+                        }
+                    }
+                }
+            }
         } catch (error) {
             console.error(`Error casting ${type}:`, error);
             FlashMessageManager.show(error.message || LanguageManager.t("hub.voteFailed"), "error");
         }
     }
 
-    /**
-     * Replaces post content with a textarea for inline editing.
-     * @param {Object} post - The post object.
-     */
     handleEdit(post) {
         const postElement = document.getElementById(`post-${post.id}`);
         if (!postElement) return;
@@ -342,7 +358,12 @@ export default class HubView extends AbstractView {
 
         const cancelBtn = el("button", {
             className: "action-btn cancel-btn",
-            onclick: () => this.init()
+            onclick: () => {
+                const currentPostEl = document.getElementById(`post-${post.id}`);
+                if (currentPostEl) {
+                    currentPostEl.replaceWith(this.createPostElement(post));
+                }
+            }
         }, LanguageManager.t("hub.cancel"));
 
         contentP.replaceWith(textarea);
@@ -352,35 +373,48 @@ export default class HubView extends AbstractView {
         actionsContainer.appendChild(cancelBtn);
     }
 
-    /**
-     * Saves the edited post content.
-     * @param {number} postId - The post ID.
-     * @param {string} newContent - The new content.
-     */
     async handleSaveEdit(postId, newContent) {
         if (!newContent || newContent.trim().length === 0) return;
         try {
-            await PostsService.updatePost(postId, newContent);
-            await this.init();
+            const data = await PostsService.updatePost(postId, newContent);
+            if (data.success && data.post) {
+                const postElement = document.getElementById(`post-${postId}`);
+                if (postElement) {
+                    const newPostEl = this.createPostElement(data.post);
+                    postElement.replaceWith(newPostEl);
+                }
+            }
         } catch (error) {
             if (error.isModerated) {
                 WarningPopupManager.show(newContent, error.flaggedType, error.warningCount);
             } else {
                 FlashMessageManager.show(error.message || LanguageManager.t("hub.editExpired"), "error");
             }
-            await this.init();
+            try {
+                const data = await PostsService.getPostById(postId);
+                if (data.success && data.post) {
+                    const postElement = document.getElementById(`post-${postId}`);
+                    if (postElement) {
+                        postElement.replaceWith(this.createPostElement(data.post));
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to restore original post:", err);
+            }
         }
     }
 
-    /**
-     * Deletes a post after user confirmation.
-     * @param {number} postId - The post ID.
-     */
     async handleDelete(postId) {
         if (!confirm(LanguageManager.t("hub.deleteConfirm"))) return;
         try {
             await PostsService.deletePost(postId);
-            await this.init();
+            const postEl = document.getElementById(`post-${postId}`);
+            if (postEl) {
+                postEl.remove();
+            }
+            if (this.postsContainer.children.length === 0) {
+                this.postsContainer.appendChild(el("p", {}, LanguageManager.t("hub.noPostsYet")));
+            }
         } catch (error) {
             FlashMessageManager.show(error.message || "Failed to delete post", "error");
         }

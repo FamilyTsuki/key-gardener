@@ -18,15 +18,9 @@ class Post {
             `SELECT p.id, p.content, p.image_url, p.upvotes, p.downvotes, p.created_at, u.username, u.id as user_id,
                     COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $1), 0) AS user_vote,
                     (
-                        LOG(GREATEST(1, ABS(p.upvotes - p.downvotes))) 
+                        (p.upvotes * 1.0) - (p.downvotes * 0.75) 
                         + 
-                        (CASE 
-                            WHEN (p.upvotes - p.downvotes) > 0 THEN 1 
-                            WHEN (p.upvotes - p.downvotes) < 0 THEN -1 
-                            ELSE 0 
-                        END) 
-                        * 
-                        (EXTRACT(EPOCH FROM p.created_at) - 1134028003) / 45000
+                        (10.0 * EXP(- EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - p.created_at)) / 86400.0))
                     ) AS hot_score
              FROM posts p
              JOIN users u ON p.user_id = u.id
