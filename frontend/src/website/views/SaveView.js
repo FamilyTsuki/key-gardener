@@ -2,7 +2,6 @@ import AbstractView from "../../core/views/AbstractView.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { SaveService } from "../../core/services/save.service.js";
 import { AuthService } from "../../core/services/auth.service.js";
-import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
@@ -76,8 +75,6 @@ export default class SaveView extends AbstractView {
         }
 
         await this.loadSaves();
-        const deviceDetector = new DeviceCapabilitiesDetector(".require-keyboard");
-        deviceDetector.initialize();
     }
 
     /**
@@ -149,7 +146,7 @@ export default class SaveView extends AbstractView {
                 { className: "save-actions" },
                 el(
                     "button",
-                    { className: "play-btn require-keyboard", onclick: launchGame },
+                    { className: "play-btn", onclick: launchGame },
                     LanguageManager.t("save.playBtn")
                 ),
                 el(
@@ -167,7 +164,7 @@ export default class SaveView extends AbstractView {
 
             const playItem = el(
                 "button",
-                { className: "context-item require-keyboard", onclick: launchGame },
+                { className: "context-item", onclick: launchGame },
                 LanguageManager.t("save.playBtn")
             );
             const renameItem = el(
@@ -219,7 +216,7 @@ export default class SaveView extends AbstractView {
                 { className: "save-actions" },
                 el(
                     "button",
-                    { className: "play-btn require-keyboard", onclick: newGame },
+                    { className: "play-btn", onclick: newGame },
                     LanguageManager.t("save.newGameBtn")
                 )
             );

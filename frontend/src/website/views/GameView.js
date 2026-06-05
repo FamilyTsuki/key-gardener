@@ -122,18 +122,21 @@ export default class GameView extends AbstractView {
         const token = AuthService.getToken();
         const activeSlot = localStorage.getItem("activeSaveSlot") || "1";
 
-        let phase = "init";
+        let phase = "intro";
         if (this.engine && this.engine.gamePhase) {
             const phaseName = this.engine.gamePhase.constructor.name;
             if (phaseName === "WorldPhase") {
-                phase = "game";
+                phase = "world";
             } else if (phaseName === "SurvivePhase") {
                 phase = "survive";
+            } else if (phaseName === "InfiniteVoidPhase") {
+                phase = "void";
             }
         }
 
         const currentGameState = {
             phase: phase,
+            level: this.engine ? this.engine.currentLevel : 1,
             score: 0,
         };
 

@@ -159,6 +159,7 @@ export default class Router {
             const node = await view.render();
             appContainer.appendChild(node);
             oldLinks.forEach((link) => link.remove());
+            window.scrollTo(0, 0);
 
             document.querySelectorAll("#nav-container a[data-link]").forEach(link => {
                 if (link.getAttribute("href") === location.pathname) {

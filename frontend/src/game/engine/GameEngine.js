@@ -10,6 +10,8 @@ import { BridgeWordEvent } from "../events/BridgeWordEvent.js";
 import { JumpWordEvent } from "../events/JumpWordEvent.js";
 import { StatisticsManager } from "../managers/StatisticsManager.js";
 import { StatisticsService } from "../../core/services/statistics.service.js";
+import { SaveService } from "../../core/services/save.service.js";
+import { AuthService } from "../../core/services/auth.service.js";
 
 /**
  * Represents the main game engine that manages scenes, phases, and the render loop.
@@ -73,7 +75,7 @@ export class GameEngine {
      * @returns {Promise<void>}
      */
     async init() {
-        let initialPhaseName = "init";
+        let initialPhaseName = "intro";
         try {
             const savedData = localStorage.getItem("activeSaveData");
             if (savedData) {
@@ -89,7 +91,11 @@ export class GameEngine {
             console.error("Failed to parse activeSaveData", e);
         }
 
-        if (initialPhaseName === "game" || initialPhaseName === "survive") {
+        if (
+            initialPhaseName === "world" ||
+            initialPhaseName === "survive" ||
+            initialPhaseName === "void"
+        ) {
             await this.loadLevel(this.currentLevel);
         } else {
             await this.setPhase(new IntroPhase(this));
@@ -151,6 +157,7 @@ export class GameEngine {
      */
     async nextLevel() {
         this.currentLevel++;
+        await this.autoSave();
         await this.loadLevel(this.currentLevel);
     }
 
@@ -250,6 +257,42 @@ export class GameEngine {
         } catch (e) {
             console.error("Failed to save statistics:", e);
         }
+    }
+
+    async autoSave() {
+        const token = AuthService.getToken();
+        const activeSlot = localStorage.getItem("activeSaveSlot") || "1";
+
+        let phase = "intro";
+        if (this.gamePhase) {
+            const phaseName = this.gamePhase.constructor.name;
+            if (phaseName === "WorldPhase") {
+                phase = "world";
+            } else if (phaseName === "SurvivePhase") {
+                phase = "survive";
+            } else if (phaseName === "InfiniteVoidPhase") {
+                phase = "void";
+            }
+        }
+
+        const currentGameState = {
+            phase: phase,
+            level: this.currentLevel,
+            score: 0,
+        };
+
+        if (token) {
+            try {
+                await SaveService.saveGame(activeSlot, currentGameState);
+            } catch (err) {
+                console.error("Auto-save failed:", err);
+            }
+        }
+
+        localStorage.setItem(
+            "activeSaveData",
+            JSON.stringify(currentGameState)
+        );
     }
 
     /**
