@@ -51,7 +51,7 @@ exports.createPost = async (req, res, next) => {
         const { content } = req.body;
         const userId = req.user.id;
 
-        if (req.user && req.user.warning_count >= 4) {
+        if (req.user && req.user.warning_count >= 40) {
             return res.status(403).json({
                 success: false,
                 message: "Your account has been suspended from the hub due to repeated violations."
@@ -198,7 +198,8 @@ exports.updatePost = async (req, res, next) => {
             }
         }
 
-        const updatedPost = await Post.update(id, textContent, post.image_url);
+        await Post.update(id, textContent, post.image_url);
+        const updatedPost = await Post.findById(id, userId);
         res.status(200).json({ success: true, post: updatedPost });
     } catch (err) {
         next(err);

@@ -186,7 +186,7 @@ export default class HubView extends AbstractView {
         const commentsToggleBtn = el("button", {
             className: "vote-btn comments-toggle-btn",
             onclick: () => this.toggleComments(post.id)
-        }, el("span", { style: "font-family: 'Noto Color Emoji', sans-serif;" }, "💬 "), LanguageManager.t("hub.comments"));
+        }, el("span", { className: "comment-emoji" }, "💬 "), el("span", { className: "comment-count" }, String(post.comment_count || 0)));
 
         const voteContainer = el("div", { className: "post-votes" },
             upvoteBtn,
@@ -478,6 +478,11 @@ export default class HubView extends AbstractView {
             if (data.success) {
                 input.value = "";
                 await this.loadComments(postId);
+                const countEl = document.querySelector(`#post-${postId} .comment-count`);
+                if (countEl) {
+                    const currentCount = parseInt(countEl.textContent, 10) || 0;
+                    countEl.textContent = String(currentCount + 1);
+                }
             }
         } catch (error) {
             if (error.isModerated) {
@@ -493,6 +498,11 @@ export default class HubView extends AbstractView {
         try {
             await PostsService.deleteComment(commentId);
             await this.loadComments(postId);
+            const countEl = document.querySelector(`#post-${postId} .comment-count`);
+            if (countEl) {
+                const currentCount = parseInt(countEl.textContent, 10) || 0;
+                countEl.textContent = String(Math.max(0, currentCount - 1));
+            }
         } catch (error) {
             FlashMessageManager.show(error.message, "error");
         }

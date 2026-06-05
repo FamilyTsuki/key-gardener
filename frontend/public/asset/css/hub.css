@@ -374,3 +374,7 @@
 .post-comment-btn {
     align-self: flex-end;
 }
+
+.comment-emoji {
+    font-family: 'Noto Color Emoji', sans-serif;
+}

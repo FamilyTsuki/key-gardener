@@ -4,7 +4,8 @@ class Post {
     static async findById(id, currentUserId = null) {
         const result = await db.query(
             `SELECT p.*, u.username,
-                    COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $2), 0) AS user_vote
+                    COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $2), 0) AS user_vote,
+                    COALESCE((SELECT COUNT(*) FROM comments WHERE post_id = p.id), 0)::integer AS comment_count
              FROM posts p 
              JOIN users u ON p.user_id = u.id 
              WHERE p.id = $1`,
@@ -17,6 +18,7 @@ class Post {
         const result = await db.query(
             `SELECT p.id, p.content, p.image_url, p.upvotes, p.downvotes, p.created_at, u.username, u.id as user_id,
                     COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $1), 0) AS user_vote,
+                    COALESCE((SELECT COUNT(*) FROM comments WHERE post_id = p.id), 0)::integer AS comment_count,
                     (
                         (p.upvotes * 1.0) - (p.downvotes * 0.75) 
                         + 
@@ -33,7 +35,8 @@ class Post {
     static async getPostsByUserId(userId, currentUserId = null) {
         const result = await db.query(
             `SELECT p.id, p.content, p.image_url, p.upvotes, p.downvotes, p.created_at, u.username,
-                    COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $2), 0) AS user_vote
+                    COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $2), 0) AS user_vote,
+                    COALESCE((SELECT COUNT(*) FROM comments WHERE post_id = p.id), 0)::integer AS comment_count
              FROM posts p
              JOIN users u ON p.user_id = u.id
              WHERE p.user_id = $1

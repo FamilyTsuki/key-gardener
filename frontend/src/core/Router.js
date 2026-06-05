@@ -19,6 +19,9 @@ export default class Router {
      * Initializes the router and sets up event listeners.
      */
     constructor() {
+        if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual";
+        }
         this.routes = [
             { path: "/", view: HomeView },
             { path: "/hub", view: HubView },
@@ -172,6 +175,7 @@ export default class Router {
             if (typeof view.init === "function") {
                 await view.init();
             }
+            window.scrollTo(0, 0);
 
             if (isEnteringGame) {
                 await this.fadeFromBlack();
