@@ -104,6 +104,14 @@ class Post {
         );
         return result.rows[0];
     }
+
+    static async getLastPostTimestamp(userId) {
+        const result = await db.query(
+            "SELECT created_at FROM posts WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1",
+            [userId]
+        );
+        return result.rows[0]?.created_at || null;
+    }
 }
 
 module.exports = Post;

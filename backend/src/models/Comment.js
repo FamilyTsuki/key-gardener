@@ -50,6 +50,14 @@ class Comment {
         );
         return result.rows[0];
     }
+
+    static async getLastCommentTimestamp(userId) {
+        const result = await db.query(
+            "SELECT created_at FROM comments WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1",
+            [userId]
+        );
+        return result.rows[0]?.created_at || null;
+    }
 }
 
 module.exports = Comment;

@@ -86,6 +86,14 @@ class User {
         );
         return result.rows[0];
     }
+
+    static async incrementWarningCount(id) {
+        const result = await db.query(
+            "UPDATE users SET warning_count = warning_count + 1 WHERE id = $1 RETURNING warning_count",
+            [id]
+        );
+        return result.rows[0]?.warning_count || 0;
+    }
 }
 
 module.exports = User;

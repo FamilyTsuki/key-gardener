@@ -47,6 +47,7 @@ router.delete("/comments/:commentId", verifyToken, postsController.deleteComment
 
 router.get("/:id", verifyToken.optional, postsController.getPostById);
 
+router.post("/contest", verifyToken, postsController.contestModeration);
 router.post("/", verifyToken, upload.single("media"), postsController.createPost);
 router.put("/:id", verifyToken, postsController.updatePost);
 router.delete("/:id", verifyToken, postsController.deletePost);

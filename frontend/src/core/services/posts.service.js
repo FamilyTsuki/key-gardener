@@ -25,7 +25,11 @@ export class PostsService {
         }
 
         if (!response.ok) {
-            throw new Error(data.message || defaultError);
+            const error = new Error(data.message || defaultError);
+            error.isModerated = data.isModerated;
+            error.flaggedType = data.flaggedType;
+            error.warningCount = data.warningCount;
+            throw error;
         }
 
         return data;
@@ -253,5 +257,20 @@ export class PostsService {
             },
         });
         return this.handleResponse(response, "Failed to delete comment");
+    }
+
+    static async contestModeration(content, flaggedType) {
+        const token = AuthService.getToken();
+        if (!token) throw new Error("Not authenticated");
+
+        const response = await fetch(`${this.API_URL}/contest`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ content, flaggedType }),
+        });
+        return this.handleResponse(response, "Failed to send contest report");
     }
 }

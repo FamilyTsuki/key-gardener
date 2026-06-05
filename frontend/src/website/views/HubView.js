@@ -4,6 +4,7 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { PostsService } from "../../core/services/posts.service.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { WarningPopupManager } from "../../core/utils/ModerationWarning.js";
 
 /**
  * View for the community hub displaying posts and interactions.
@@ -59,9 +60,16 @@ export default class HubView extends AbstractView {
 
         this.previewContainer = el("div", { id: "media-preview" });
 
+        const postTextarea = el("textarea", {
+            id: "post-content",
+            className: "form-input",
+            placeholder: LanguageManager.t("hub.shareProgress")
+        });
+        postTextarea.addEventListener("paste", (e) => this.handlePaste(e));
+
         return el("div", { className: "add-post-form glass-panel" },
             el("h3", {}, LanguageManager.t("hub.addPostTitle")),
-            el("textarea", { id: "post-content", className: "form-input", placeholder: LanguageManager.t("hub.shareProgress") }),
+            postTextarea,
             fileInput,
             this.previewContainer,
             el("div", { className: "form-actions" },
@@ -75,16 +83,31 @@ export default class HubView extends AbstractView {
         );
     }
 
-    /**
-     * Handles the selection of a media file (image or video) for a post.
-     *
-     * @param {Event} e - The change event from the file input.
-     */
     handleMediaSelection(e) {
         const file = e.target.files[0];
         if (!file) return;
 
         this.selectedMediaFile = file;
+        this.showMediaPreview(file);
+    }
+
+    handlePaste(e) {
+        const clipboardItems = e.clipboardData?.items;
+        if (!clipboardItems) return;
+
+        for (const item of clipboardItems) {
+            if (item.type.startsWith("image/")) {
+                const file = item.getAsFile();
+                if (file) {
+                    this.selectedMediaFile = file;
+                    this.showMediaPreview(file);
+                    break;
+                }
+            }
+        }
+    }
+
+    showMediaPreview(file) {
         this.previewContainer.innerHTML = "";
 
         const previewWrapper = el("div", { className: "preview-wrapper" });
@@ -147,6 +170,11 @@ export default class HubView extends AbstractView {
             }
         } catch (error) {
             console.error("Error creating post:", error);
+            if (error.isModerated) {
+                WarningPopupManager.show(content, error.flaggedType, error.warningCount);
+            } else {
+                FlashMessageManager.show(error.message, "error");
+            }
         }
     }
 
@@ -335,7 +363,11 @@ export default class HubView extends AbstractView {
             await PostsService.updatePost(postId, newContent);
             await this.init();
         } catch (error) {
-            FlashMessageManager.show(error.message || LanguageManager.t("hub.editExpired"), "error");
+            if (error.isModerated) {
+                WarningPopupManager.show(newContent, error.flaggedType, error.warningCount);
+            } else {
+                FlashMessageManager.show(error.message || LanguageManager.t("hub.editExpired"), "error");
+            }
             await this.init();
         }
     }
@@ -414,7 +446,11 @@ export default class HubView extends AbstractView {
                 await this.loadComments(postId);
             }
         } catch (error) {
-            FlashMessageManager.show(error.message, "error");
+            if (error.isModerated) {
+                WarningPopupManager.show(content, error.flaggedType, error.warningCount);
+            } else {
+                FlashMessageManager.show(error.message, "error");
+            }
         }
     }
 

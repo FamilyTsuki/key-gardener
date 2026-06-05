@@ -4,6 +4,8 @@ const Vote = require("../models/Votes");
 const Comment = require("../models/Comment");
 const fs = require("fs");
 const path = require("path");
+const imageModerator = require("../utils/imageModerator");
+const textModerator = require("../utils/textModerator");
 
 exports.getAllPosts = async (req, res, next) => {
     try {
@@ -49,18 +51,90 @@ exports.createPost = async (req, res, next) => {
         const { content } = req.body;
         const userId = req.user.id;
 
+        if (req.user && req.user.warning_count >= 4) {
+            return res.status(403).json({
+                success: false,
+                message: "Your account has been suspended from the hub due to repeated violations."
+            });
+        }
+
+        const lastPostTime = await Post.getLastPostTimestamp(userId);
+        if (lastPostTime) {
+            const timeDiff = (new Date() - new Date(lastPostTime)) / 1000;
+            if (timeDiff < 10) {
+                return res.status(429).json({
+                    success: false,
+                    message: "You are posting too fast. Please wait a few seconds."
+                });
+            }
+        }
+
         let imageUrl = null;
         if (req.file) {
+            if (await textModerator.hasInappropriateContent(req.file.originalname)) {
+                if (fs.existsSync(req.file.path)) {
+                    fs.unlinkSync(req.file.path);
+                }
+                const newWarningCount = await User.incrementWarningCount(userId);
+                return res.status(400).json({
+                    success: false,
+                    isModerated: true,
+                    flaggedType: "text",
+                    warningCount: newWarningCount,
+                    message: "Inappropriate language detected in the file name."
+                });
+            }
+
+            if (req.file.mimetype.startsWith("image/")) {
+                try {
+                    const safeSearchData = await imageModerator.analyzeImage(req.file.path);
+                    const isFlagged = imageModerator.isImageInappropriate(safeSearchData);
+
+                    if (isFlagged) {
+                        if (fs.existsSync(req.file.path)) {
+                            fs.unlinkSync(req.file.path);
+                        }
+                        const newWarningCount = await User.incrementWarningCount(userId);
+                        return res.status(400).json({
+                            success: false,
+                            isModerated: true,
+                            flaggedType: "image",
+                            warningCount: newWarningCount,
+                            message: "Inappropriate content detected in the image."
+                        });
+                    }
+                } catch (error) {
+                    console.error("Image moderation failed:", error);
+                }
+            }
             imageUrl = `/asset/uploads/posts/${req.file.filename}`;
         }
 
-        if (!content || content.trim().length === 0) {
+        const textContent = content ? content.trim() : "";
+
+        if (textContent.length === 0 && !req.file) {
             return res
                 .status(400)
-                .json({ success: false, message: "Content is required" });
+                .json({ success: false, message: "Content or image is required" });
         }
 
-        const post = await Post.create(userId, content, imageUrl);
+        if (textContent.length > 0) {
+            if (await textModerator.hasInappropriateContent(textContent)) {
+                if (req.file && fs.existsSync(req.file.path)) {
+                    fs.unlinkSync(req.file.path);
+                }
+                const newWarningCount = await User.incrementWarningCount(userId);
+                return res.status(400).json({
+                    success: false,
+                    isModerated: true,
+                    flaggedType: "text",
+                    warningCount: newWarningCount,
+                    message: "Inappropriate language detected in the content."
+                });
+            }
+        }
+
+        const post = await Post.create(userId, textContent, imageUrl);
         res.status(201).json({ success: true, post });
     } catch (err) {
         next(err);
@@ -73,10 +147,11 @@ exports.updatePost = async (req, res, next) => {
         const { content } = req.body;
         const userId = req.user.id;
 
-        if (!content || content.trim().length === 0) {
-            return res
-                .status(400)
-                .json({ success: false, message: "Content is required" });
+        if (req.user && req.user.warning_count >= 4) {
+            return res.status(403).json({
+                success: false,
+                message: "Your account has been suspended from the hub due to repeated violations."
+            });
         }
 
         const post = await Post.findById(id);
@@ -92,6 +167,13 @@ exports.updatePost = async (req, res, next) => {
                 .json({ success: false, message: "You can only edit your own posts" });
         }
 
+        const textContent = content ? content.trim() : "";
+        if (textContent.length === 0 && !post.image_url) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Content or image is required" });
+        }
+
         const now = new Date();
         const postTime = new Date(post.created_at);
         const diffMinutes = (now - postTime) / (1000 * 60);
@@ -102,7 +184,20 @@ exports.updatePost = async (req, res, next) => {
                 .json({ success: false, message: "You can only edit a post within 5 minutes of creation" });
         }
 
-        const updatedPost = await Post.update(id, content);
+        if (textContent.length > 0) {
+            if (await textModerator.hasInappropriateContent(textContent)) {
+                const newWarningCount = await User.incrementWarningCount(userId);
+                return res.status(400).json({
+                    success: false,
+                    isModerated: true,
+                    flaggedType: "text",
+                    warningCount: newWarningCount,
+                    message: "Inappropriate language detected in the content."
+                });
+            }
+        }
+
+        const updatedPost = await Post.update(id, textContent, post.image_url);
         res.status(200).json({ success: true, post: updatedPost });
     } catch (err) {
         next(err);
@@ -226,13 +321,42 @@ exports.addComment = async (req, res, next) => {
         const { content } = req.body;
         const userId = req.user.id;
 
+        if (req.user && req.user.warning_count >= 4) {
+            return res.status(403).json({
+                success: false,
+                message: "Your account has been suspended from the hub due to repeated violations."
+            });
+        }
+
         if (!content || content.trim().length === 0) {
             return res.status(400).json({ success: false, message: "Comment content is required" });
+        }
+
+        const lastCommentTime = await Comment.getLastCommentTimestamp(userId);
+        if (lastCommentTime) {
+            const timeDiff = (new Date() - new Date(lastCommentTime)) / 1000;
+            if (timeDiff < 10) {
+                return res.status(429).json({
+                    success: false,
+                    message: "You are commenting too fast. Please wait a few seconds."
+                });
+            }
         }
 
         const post = await Post.findById(id);
         if (!post) {
             return res.status(404).json({ success: false, message: "Post not found" });
+        }
+
+        if (await textModerator.hasInappropriateContent(content)) {
+            const newWarningCount = await User.incrementWarningCount(userId);
+            return res.status(400).json({
+                success: false,
+                isModerated: true,
+                flaggedType: "text",
+                warningCount: newWarningCount,
+                message: "Inappropriate language detected in the content."
+            });
         }
 
         const comment = await Comment.create(id, userId, content);
@@ -253,6 +377,31 @@ exports.deleteComment = async (req, res, next) => {
         }
 
         res.status(200).json({ success: true, message: "Comment deleted" });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.contestModeration = async (req, res, next) => {
+    try {
+        const { content, flaggedType } = req.body;
+        const userEmail = req.user.email;
+
+        if (!content || !flaggedType) {
+            return res.status(400).json({ success: false, message: "Missing content or flaggedType" });
+        }
+
+        const logsDir = path.join(__dirname, "../../logs");
+        if (!fs.existsSync(logsDir)) {
+            fs.mkdirSync(logsDir, { recursive: true });
+        }
+
+        const logPath = path.join(logsDir, "contested_reports.log");
+        const logEntry = `[${new Date().toISOString()}] Email: ${userEmail} | Type: ${flaggedType} | Content: "${content.replace(/\r?\n|\r/g, " ")}"\n`;
+
+        fs.appendFileSync(logPath, logEntry, "utf8");
+
+        res.status(200).json({ success: true, message: "Contest report registered successfully" });
     } catch (err) {
         next(err);
     }
