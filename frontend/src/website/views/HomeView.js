@@ -278,9 +278,9 @@ export default class HomeView extends AbstractView {
             if (maxIntensity > 0) {
                 let newScale;
                 if (Math.random() > 0.94) {
-                    newScale = String((Math.random() * 25 + 5) * maxIntensity);
+                    newScale = String((Math.random() * 5 + 5) * maxIntensity);
                 } else if (Math.random() > 0.85) {
-                    newScale = String((Math.random() * 5) * maxIntensity);
+                    newScale = String((Math.random() * 1) * maxIntensity);
                 } else {
                     newScale = "0";
                 }

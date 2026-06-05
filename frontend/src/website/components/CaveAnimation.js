@@ -107,14 +107,41 @@ export class CaveAnimation {
                 const boneModel = gltf.scene;
                 
                 for (let i = 0; i < 20; i++) { 
-
                     const s = 1.2 + (i / 15);
                     boneModel.scale.set(s, s, s);
                     const bone = boneModel.clone();
-
                     this.positionModelOnWall(bone, 0.8, 1.0, i);
                     this.scene.add(bone);
                 }
+
+                const arrowGroup = new THREE.Group();
+                const arrowScale = 2.0;
+
+                const stemBone = boneModel.clone();
+                stemBone.scale.set(arrowScale, arrowScale, arrowScale);
+                stemBone.position.set(0, 3, 0);
+                stemBone.rotation.reorder("ZYX");
+                stemBone.rotation.set(Math.PI / 2, -Math.PI / 11, Math.PI / 2);
+                arrowGroup.add(stemBone);
+
+                const rightWing = boneModel.clone();
+                rightWing.scale.set(arrowScale/1.8, arrowScale/1.5, arrowScale/1.5);
+                rightWing.position.set(3.2, 0.6, -0.5);
+                rightWing.rotation.reorder("ZYX");
+                rightWing.rotation.set(Math.PI / 3, -Math.PI / 9, Math.PI / 4);
+                arrowGroup.add(rightWing);
+
+                const leftWing = boneModel.clone();
+                leftWing.scale.set(arrowScale/1.8, arrowScale/1.8, arrowScale/1.8);
+                leftWing.position.set(-3, 1.2, 1);
+                leftWing.rotation.reorder("ZYX");
+                leftWing.rotation.set(Math.PI / 2, 0, -Math.PI / 4);
+                arrowGroup.add(leftWing);
+
+                arrowGroup.position.set(33, 68, -71);
+                arrowGroup.rotation.set(0, -0.3, 0);
+                this.scene.add(arrowGroup);
+                this.scrollArrowGroup = arrowGroup;
 
                 checkDone();
             });
@@ -953,12 +980,12 @@ export class CaveAnimation {
             return;
         }
 
+        const scrollTop = window.scrollY;
         const containerData = containers.map(container => {
             const rect = container.getBoundingClientRect();
-            const scrollTop = window.scrollY;
-            const absoluteTop = rect.top + scrollTop;
-            const absoluteBottom = absoluteTop + rect.height;
-            return { absoluteTop, absoluteBottom };
+            const topEdge = rect.top + scrollTop;
+            const bottomEdge = rect.bottom + scrollTop;
+            return { topEdge, bottomEdge };
         });
 
         const numSamples = 100;
@@ -968,12 +995,39 @@ export class CaveAnimation {
 
         for (let j = 1; j <= numSamples; j++) {
             const y = (j / numSamples) * maxScroll;
-            
-            const isAnyVisible = containerData.some(data => {
-                return data.absoluteBottom >= y && data.absoluteTop <= y + window.innerHeight;
+            const viewportCenter = y + window.innerHeight / 2;
+
+            let minDistance = Infinity;
+            containerData.forEach(data => {
+                let dist = 0;
+                if (viewportCenter < data.topEdge) {
+                    dist = data.topEdge - viewportCenter;
+                } else if (viewportCenter > data.bottomEdge) {
+                    dist = viewportCenter - data.bottomEdge;
+                } else {
+                    dist = 0;
+                }
+                if (dist < minDistance) {
+                    minDistance = dist;
+                }
             });
 
-            const localSpeed = isAnyVisible ? 350 : 1400;
+            let localSpeed = 1400;
+            if (containerData.length > 0) {
+                const minThreshold = 150;
+                const maxThreshold = 600;
+                if (minDistance <= minThreshold) {
+                    localSpeed = 350;
+                } else if (minDistance >= maxThreshold) {
+                    localSpeed = 1400;
+                } else {
+                    const t = (minDistance - minThreshold) / (maxThreshold - minThreshold);
+                    localSpeed = 350 + t * (1400 - 350);
+                }
+            } else {
+                localSpeed = 350;
+            }
+
             cumulativeIntegral += localSpeed * (maxScroll / numSamples);
             integrals.push(cumulativeIntegral);
         }
@@ -1026,7 +1080,7 @@ export class CaveAnimation {
             if (this.starsMaterial && this.starsMaterial.userData.uniforms) {
                 this.starsMaterial.userData.uniforms.uTime.value = time;
             }
-            
+
             this.renderer.render(this.scene, this.camera);
         };
         renderLoop();
