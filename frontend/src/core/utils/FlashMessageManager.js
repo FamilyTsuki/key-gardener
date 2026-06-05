@@ -1,10 +1,70 @@
 import { el } from "./DOMBuilder.js";
 import { Icons } from "./Icons.js";
+import { LanguageManager } from "./LanguageManager.js";
 
 /**
  * Manager to handle flash message notifications in the UI.
  */
 export const FlashMessageManager = {
+    /**
+     * Shows a confirmation flash message.
+     * @param {string} message - The message content.
+     * @returns {Promise<boolean>}
+     */
+    confirm(message) {
+        return new Promise((resolve) => {
+            const container = this._getOrCreateContainer();
+
+            const confirmBtn = el(
+                "button",
+                {
+                    className: "flash-btn flash-btn-confirm",
+                },
+                LanguageManager.t("common.confirm")
+            );
+
+            const cancelBtn = el(
+                "button",
+                {
+                    className: "flash-btn flash-btn-cancel",
+                },
+                LanguageManager.t("common.cancel")
+            );
+
+            const buttonsContainer = el(
+                "div",
+                { className: "flash-buttons" },
+                cancelBtn,
+                confirmBtn
+            );
+
+            const messageEl = el(
+                "div",
+                {
+                    className: "flash-message flash-confirm flash-persistent",
+                },
+                el("div", { className: "flash-confirm-wrapper" },
+                    el("span", { className: "flash-text" }, message),
+                    buttonsContainer
+                )
+            );
+
+            confirmBtn.onclick = (e) => {
+                e.stopPropagation();
+                this._remove(messageEl);
+                resolve(true);
+            };
+
+            cancelBtn.onclick = (e) => {
+                e.stopPropagation();
+                this._remove(messageEl);
+                resolve(false);
+            };
+
+            container.appendChild(messageEl);
+        });
+    },
+
     /**
      * Shows a flash message.
      * @param {string} message - The message content.

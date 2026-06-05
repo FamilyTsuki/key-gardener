@@ -46,6 +46,11 @@ export class DialogueBox {
         this.textElement.className = "dialogue-box-text";
         this.bubble.appendChild(this.textElement);
 
+        this.skipIndicator = document.createElement("div");
+        this.skipIndicator.className = "dialogue-skip-indicator";
+        this.skipIndicator.innerHTML = "↵ Enter / Space";
+        this.bubble.appendChild(this.skipIndicator);
+
         this.speakerContainer = document.createElement("div");
         this.speakerContainer.className = "dialogue-box-speaker";
 
@@ -164,9 +169,10 @@ export class DialogueBox {
                     clearInterval(this.typewriterInterval);
                     this.typewriterInterval = null;
                     
+                    const autoSkipDelay = Math.max(3000, fullText.length * 80);
                     this.dialogueTimeout = setTimeout(() => {
                         this.advanceDialogue();
-                    }, 8000);
+                    }, autoSkipDelay);
                 }
             }, 30);
         } else {
@@ -181,12 +187,14 @@ export class DialogueBox {
         if (this.typewriterInterval) {
             clearInterval(this.typewriterInterval);
             this.typewriterInterval = null;
-            this.textElement.textContent = this.dialogues[this.dialogueStep - 1];
+            const fullText = this.dialogues[this.dialogueStep - 1];
+            this.textElement.textContent = fullText;
 
             if (this.dialogueTimeout) clearTimeout(this.dialogueTimeout);
+            const autoSkipDelay = Math.max(3000, (fullText || '').length * 80);
             this.dialogueTimeout = setTimeout(() => {
                 this.advanceDialogue();
-            }, 8000);
+            }, autoSkipDelay);
         } else {
             this.showNextDialogue();
         }

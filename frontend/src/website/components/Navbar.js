@@ -83,10 +83,11 @@ export default class Navbar {
         try {
             const user = await AuthService.getCurrentUser();
             this.usernameSpan.textContent = user.username;
-            if (user.personalPicture.startsWith('/')) {
-                this.personalPictureImg.src = user.personalPicture;
+            const avatar = (user.personalPicture && user.personalPicture !== "null") ? user.personalPicture : "default.webp";
+            if (avatar.startsWith('/')) {
+                this.personalPictureImg.src = avatar;
             } else {
-                this.personalPictureImg.src = "/asset/img/users/" + user.personalPicture;
+                this.personalPictureImg.src = "/asset/img/users/" + avatar;
             }
 
             if (user.is_admin && !this.adminLink) {

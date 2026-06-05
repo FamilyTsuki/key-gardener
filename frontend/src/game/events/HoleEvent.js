@@ -88,7 +88,6 @@ export class HoleEvent extends WorldEvent {
      * @returns {boolean} True if the event was intercepted, false otherwise.
      */
     handleKeyDown(worldPhase, event) {
-
         if (worldPhase.isTransitioning) return false;
 
         const keyName = event.key.toUpperCase();

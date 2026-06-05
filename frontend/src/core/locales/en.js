@@ -34,7 +34,7 @@ export const en = {
     home: {
         title: "Keyboard Survivor",
         description: "Your keyboard is your only weapon. Plunge into the abyss, type fast to cast spells, and survive hordes of relentless monsters in this adrenaline-fueled typing RPG.",
-        startGame: "Enter the Cave",
+        startGame: "Start Game",
         whyTitle: "Typing Reimagined",
         whyDesc: "Forget boring typing tutors. Keyboard Survivor fuses rogue-lite progression, intense dungeon crawling, and fast-paced word combat into an unforgiving trial of speed and accuracy.",
         feature1Title: "Type Fast or Die Trying",
@@ -176,5 +176,10 @@ export const en = {
     engine: {
         introDialogue1: "...",
         introDialogue2: "Is anyone there?"
+    },
+    common: {
+        confirm: "Confirm",
+        cancel: "Cancel"
     }
 };
+

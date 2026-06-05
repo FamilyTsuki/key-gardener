@@ -152,7 +152,7 @@
 
 .word-container {
     position: fixed;
-    top: 10%;
+    top: 18%;
     left: 50%;
     transform: translateX(-50%);
     display: inline-flex;
@@ -229,22 +229,22 @@
 /* =============== BOSS UI STYLING =============== */
 .boss-ui {
     position: fixed;
-    bottom: 40px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     width: 60%;
-    max-width: 800px;
+    max-width: 600px;
     background: rgba(10, 12, 16, 0.85);
     backdrop-filter: blur(10px);
     border: 1px solid var(--danger-color);
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
     border-radius: 12px;
-    padding: 16px 24px;
+    padding: 12px 20px;
     z-index: 9999;
     font-family: var(--font-main);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 

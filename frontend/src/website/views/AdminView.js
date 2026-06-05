@@ -5,12 +5,14 @@ import Keyboard from "../../game/managers/Keyboard.js";
 import { KEYBOARD_LAYOUT } from "../../game/utilities/KEYBOARD.js";
 import WorldMap from "../../game/managers/WorldMap.js";
 import { createWordlLayout } from "../../game/utilities/WORLD_LAYOUT.js";
+import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 
 export class AdminView {
     constructor() {
         this.container = document.createElement("div");
         this.container.classList.add("view-container");
         this.levels = [];
+        this.activeLevelNumber = null;
     }
 
     getCss() {
@@ -19,13 +21,22 @@ export class AdminView {
 
     async init() {
         this.container.innerHTML = `
-            <div class="admin-view-container">
-                <h1 class="admin-title">Tableau de bord Administrateur</h1>
-                <p class="admin-subtitle">Gérez les configurations des niveaux du jeu.</p>
-                <div id="admin-error" class="admin-error-msg"></div>
-                <div id="levels-container">
-                    <div class="admin-loading">Chargement des niveaux...</div>
-                </div>
+            <div class="admin-dashboard">
+                <aside class="admin-sidebar">
+                    <h2 class="sidebar-title">Niveaux</h2>
+                    <div id="levels-list" class="levels-list">
+                        <div class="admin-loading">Chargement...</div>
+                    </div>
+                </aside>
+                <main class="admin-main">
+                    <div id="admin-error" class="admin-error-msg"></div>
+                    <div id="level-detail-container">
+                        <div class="admin-welcome-screen">
+                            <h3>Sélectionnez un niveau</h3>
+                            <p>Choisissez un niveau dans la liste latérale pour éditer ses configurations.</p>
+                        </div>
+                    </div>
+                </main>
             </div>
         `;
 
@@ -51,62 +62,145 @@ export class AdminView {
     }
 
     renderLevels() {
-        const container = document.getElementById("levels-container");
-        container.innerHTML = "";
-
-        if (this.levels.length === 0) {
-            container.innerHTML = "<p>Aucun niveau configuré.</p>";
-        }
+        const listContainer = document.getElementById("levels-list");
+        if (!listContainer) return;
+        listContainer.innerHTML = "";
 
         const maxLevel = this.levels.reduce((max, l) => Math.max(max, l.level_number), 0);
-        const newLevel = { level_number: maxLevel + 1, phase_type: "survive", options: { decorType: "styx", duration: 60, spawnInterval: 3, maxEnemies: 20 }, isNew: true };
+        const newLevel = {
+            level_number: maxLevel + 1,
+            phase_type: "survive",
+            options: { decorType: "styx", duration: 60, spawnInterval: 3, maxEnemies: 20 },
+            isNew: true
+        };
         const allLevels = [...this.levels, newLevel];
 
-        allLevels.forEach((level) => {
-            const card = document.createElement("div");
-            card.className = "admin-card";
-
-                        const bodyId = `level-body-${level.level_number}`;
-            const isCollapsed = !level.isNew;
-
-            const options = level.options || {};
-            const isSurvive = level.phase_type === "survive";
-
-                        const surviveFormHtml = this.buildSurviveFormHtml(options, isSurvive);
-            const worldFormHtml = this.buildWorldFormHtml(options, level.phase_type === "world");
-            const voidFormHtml = this.buildVoidFormHtml(level.phase_type === "void");
-            const storyEventsHtml = this.buildStoryEventsHtml(level.level_number);
-
-            card.innerHTML = this.buildCardHtml(level, isCollapsed, surviveFormHtml, worldFormHtml, voidFormHtml, storyEventsHtml);
-            container.appendChild(card);
-
-                        this.attachCardEventListeners(card, level, options, bodyId);
-        });
-    }
-
-    attachCardEventListeners(card, level, options, bodyId) {
-        const toggleHeader = card.querySelector('.collapse-toggle');
-        if (toggleHeader) {
-            toggleHeader.addEventListener('click', (e) => {
-                if (e.target.closest('.btn-delete-level')) return;
-
-                                const bodyEl = document.getElementById(bodyId);
-                const iconEl = document.getElementById(`icon-${level.level_number}`);
-                if (bodyEl.classList.contains('none')) {
-                    bodyEl.classList.remove('none');
-                    if (iconEl) iconEl.textContent = '▼';
-                } else {
-                    bodyEl.classList.add('none');
-                    if (iconEl) iconEl.textContent = '▶';
-                }
-            });
+        if (this.activeLevelNumber === null && allLevels.length > 0) {
+            this.activeLevelNumber = allLevels[0].level_number;
         }
 
-                const deleteBtn = card.querySelector('.btn-delete-level');
+        allLevels.forEach((level) => {
+            const btn = document.createElement("button");
+            btn.className = "level-item-btn";
+            if (level.level_number === this.activeLevelNumber) {
+                btn.classList.add("active");
+            }
+
+            const displayName = level.isNew ? `+ Ajouter un niveau` : `Niveau ${level.level_number}`;
+            const phaseLabel = level.isNew ? "Créer un nouveau niveau" : this.getPhaseLabel(level.phase_type);
+
+            btn.innerHTML = `
+                <span class="level-btn-number">${displayName}</span>
+                <span class="level-btn-type">${phaseLabel}</span>
+            `;
+
+            btn.addEventListener("click", () => {
+                this.selectLevel(level, allLevels);
+            });
+
+            listContainer.appendChild(btn);
+        });
+
+        const activeLevel = allLevels.find(l => l.level_number === this.activeLevelNumber);
+        if (activeLevel) {
+            this.renderLevelEditor(activeLevel);
+        } else {
+            const detailContainer = document.getElementById("level-detail-container");
+            if (detailContainer) {
+                detailContainer.innerHTML = `
+                    <div class="admin-welcome-screen">
+                        <h3>Sélectionnez un niveau</h3>
+                        <p>Choisissez un niveau dans la liste latérale pour éditer ses configurations.</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    getPhaseLabel(phaseType) {
+        switch (phaseType) {
+            case "survive": return "Survie (Combat)";
+            case "world": return "Exploration (World)";
+            case "void": return "Vide Infini";
+            default: return phaseType;
+        }
+    }
+
+    selectLevel(level, allLevels) {
+        this.activeLevelNumber = level.level_number;
+        const buttons = document.querySelectorAll(".level-item-btn");
+        buttons.forEach((btn, idx) => {
+            const lvl = allLevels[idx];
+            if (lvl && lvl.level_number === this.activeLevelNumber) {
+                btn.classList.add("active");
+            } else {
+                btn.classList.remove("active");
+            }
+        });
+
+        this.renderLevelEditor(level);
+    }
+
+    renderLevelEditor(level) {
+        const container = document.getElementById("level-detail-container");
+        if (!container) return;
+
+        const options = level.options || {};
+        const isSurvive = level.phase_type === "survive";
+        const isWorld = level.phase_type === "world";
+        const isVoid = level.phase_type === "void";
+
+        const surviveFormHtml = this.buildSurviveFormHtml(options, isSurvive);
+        const worldFormHtml = this.buildWorldFormHtml(options, isWorld);
+        const voidFormHtml = this.buildVoidFormHtml(isVoid);
+        const storyEventsHtml = this.buildStoryEventsHtml(level.level_number);
+
+        container.innerHTML = `
+            <div class="admin-view-header">
+                <div class="admin-title-group">
+                    <h1 class="admin-title">Niveau ${level.level_number} ${level.isNew ? "<span class='admin-new-level'>(Nouveau)</span>" : ""}</h1>
+                    <p class="admin-subtitle">Éditez les configurations pour ce niveau.</p>
+                </div>
+                <div class="admin-header-actions">
+                    ${!level.isNew ? `<button class="btn-delete-level" data-level="${level.level_number}">Supprimer le niveau</button>` : ""}
+                </div>
+            </div>
+
+            <div class="preview-container-${level.level_number} preview-container">
+                <div class="preview-badge">Aperçu 3D</div>
+            </div>
+
+            <div class="admin-editor-card">
+                <div class="admin-phase-row">
+                    <label class="admin-label m-0">Type de Phase :</label>
+                    <select class="phase-type-select admin-select max-w-250">
+                        <option value="survive" ${isSurvive ? "selected" : ""}>Survie (Combat)</option>
+                        <option value="world" ${isWorld ? "selected" : ""}>Exploration (World)</option>
+                        <option value="void" ${isVoid ? "selected" : ""}>Vide Infini</option>
+                    </select>
+                </div>
+
+                ${surviveFormHtml}
+                ${worldFormHtml}
+                ${voidFormHtml}
+                ${storyEventsHtml}
+
+                <div class="mt-15">
+                    <button class="save-btn btn-primary">Sauvegarder le niveau ${level.level_number}</button>
+                </div>
+            </div>
+        `;
+
+        this.attachCardEventListeners(container, level, options);
+    }
+
+    attachCardEventListeners(card, level, options) {
+        const deleteBtn = card.querySelector('.btn-delete-level');
         if (deleteBtn) {
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                if (confirm(`Êtes-vous sûr de vouloir supprimer le niveau ${level.level_number} ?`)) {
+            deleteBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const confirmed = await FlashMessageManager.confirm(`Êtes-vous sûr de vouloir supprimer le niveau ${level.level_number} ?`);
+                if (confirmed) {
                     this.deleteLevel(level.level_number);
                 }
             });
@@ -117,7 +211,7 @@ export class AdminView {
 
         const initialStoryEvents = [];
 
-                if (level.phase_type === 'world') {
+        if (level.phase_type === 'world') {
             const eventsArray = options.events || [];
             options.outroType = 'DoorEvent';
             eventsArray.forEach(eType => {
@@ -142,7 +236,7 @@ export class AdminView {
             }
         }
 
-                (options.storyEvents || []).forEach(evt => initialStoryEvents.push(evt));
+        (options.storyEvents || []).forEach(evt => initialStoryEvents.push(evt));
 
         initialStoryEvents.forEach(evt => this.createStoryEventBlock(storyContainer, typeSelect, evt));
 
@@ -176,7 +270,7 @@ export class AdminView {
             const phaseType = typeSelect.value;
             let parsedOptions = {};
 
-                        const gatheredStoryEvents = Array.from(storyContainer.querySelectorAll('.story-event-block')).map(block => {
+            const gatheredStoryEvents = Array.from(storyContainer.querySelectorAll('.story-event-block')).map(block => {
                 const actionType = block.querySelector('.evt-action-type').value || 'dialogue';
                 const dText = block.querySelector('.evt-dialogue').value;
                 return {
@@ -208,7 +302,7 @@ export class AdminView {
                 const eventsList = [];
                 const filteredStoryEvents = [];
 
-                                gatheredStoryEvents.forEach(evt => {
+                gatheredStoryEvents.forEach(evt => {
                     if (evt.actionType === 'bridge') eventsList.push('BridgeWordEvent');
                     else if (evt.actionType === 'jumpword') eventsList.push('JumpWordEvent');
                     else if (evt.actionType === 'flamewall') eventsList.push('FlameWallEvent');
@@ -222,7 +316,7 @@ export class AdminView {
                 let globalDialogueModel = null;
                 const finalStoryEvents = [];
 
-                                filteredStoryEvents.forEach(evt => {
+                filteredStoryEvents.forEach(evt => {
                     if (evt.actionType === 'dialogue' && Number(evt.triggerValue) === 0 && globalDialogue.length === 0) {
                         globalDialogue = evt.dialogue;
                         globalDialogueModel = evt.dialogueModel;
@@ -241,7 +335,7 @@ export class AdminView {
                 };
             }
 
-                        this.saveLevel(level.level_number, phaseType, parsedOptions);
+            this.saveLevel(level.level_number, phaseType, parsedOptions);
         });
 
         const spawnIntervalInput = card.querySelector('.survive-spawn-interval');
@@ -293,20 +387,21 @@ export class AdminView {
         this.init3DPreview(previewContainer, level.phase_type, options, card);
     }
 
-    createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: [], dialogueModel: '/asset/game_assets/models/player.glb', healAmount: 50, spawnEnemy: 'skeleton' }) {
+    createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: [], dialogueModel: '/asset/game_assets/models/player.glb', healAmount: 50, spawnEnemy: 'basic' }) {
         const currentPhaseType = typeSelect.value;
         const div = document.createElement("div");
         div.className = "story-event-block";
 
-                if (evt.actionType === 'heal') div.classList.add("block-heal");
-        else if (evt.actionType === 'spawn' || evt.actionType === 'spawnBoss') div.classList.add("block-spawn");
-        else if (evt.actionType === 'spawnerConfig') div.classList.add("block-spawn");
+        if (evt.actionType === 'heal') div.classList.add("block-heal");
+        else if (evt.actionType === 'spawn') div.classList.add("block-spawn");
+        else if (evt.actionType === 'spawnBoss') div.classList.add("block-spawn-boss");
+        else if (evt.actionType === 'spawnerConfig') div.classList.add("block-spawner-config");
         else if (evt.actionType === 'bridge') div.classList.add("block-bridge");
         else if (evt.actionType === 'jumpword') div.classList.add("block-bridge");
         else if (evt.actionType === 'flamewall') div.classList.add("block-flamewall");
         else div.classList.add("block-dialogue");
 
-                let optionsHtml = '';
+        let optionsHtml = '';
         if (currentPhaseType === 'survive') {
             optionsHtml = `
                 <option value="dialogue" ${evt.actionType === 'dialogue' || !evt.actionType ? 'selected' : ''}>💬 Lancer un Dialogue</option>
@@ -364,7 +459,11 @@ export class AdminView {
 
             <div class="evt-fields-spawn block-row">
                 <label>Type d'ennemi :</label>
-                <input type="text" class="evt-spawn-type block-input width-150" value="${evt.spawnEnemy || 'boss'}">
+                <select class="evt-spawn-type block-select width-150">
+                    <option value="basic" ${evt.spawnEnemy === 'basic' ? 'selected' : ''}>Basique</option>
+                    <option value="speedy" ${evt.spawnEnemy === 'speedy' ? 'selected' : ''}>Rapide</option>
+                    <option value="tank" ${evt.spawnEnemy === 'tank' ? 'selected' : ''}>Résistant (Tank)</option>
+                </select>
             </div>
 
             <div class="evt-fields-spawnerConfig block-row">
@@ -376,19 +475,20 @@ export class AdminView {
             </div>
         `;
 
-                div.querySelector('.remove-evt-btn').addEventListener('click', () => div.remove());
+        div.querySelector('.remove-evt-btn').addEventListener('click', () => div.remove());
 
-                const selectAction = div.querySelector('.evt-action-type');
+        const selectAction = div.querySelector('.evt-action-type');
         selectAction.addEventListener('change', (e) => {
             const newType = e.target.value;
 
-                        div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-bridge', 'block-flamewall');
+            div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-spawn-boss', 'block-spawner-config', 'block-bridge', 'block-flamewall');
             if (newType === 'heal') div.classList.add("block-heal");
-            else if (newType === 'spawn' || newType === 'spawnBoss' || newType === 'spawnerConfig') div.classList.add("block-spawn");
+            else if (newType === 'spawn') div.classList.add("block-spawn");
+            else if (newType === 'spawnBoss') div.classList.add("block-spawn-boss");
+            else if (newType === 'spawnerConfig') div.classList.add("block-spawner-config");
             else if (newType === 'bridge' || newType === 'jumpword') div.classList.add("block-bridge");
             else if (newType === 'flamewall') div.classList.add("block-flamewall");
             else div.classList.add("block-dialogue");
-
         });
 
         storyContainer.appendChild(div);
@@ -397,11 +497,11 @@ export class AdminView {
     init3DPreview(container, phaseType, options, card) {
         const { scene, camera, renderer } = this._setupPreviewScene(container);
 
-                let currentDecor = null;
+        let currentDecor = null;
         let keyboardGroup = null;
         let playerMesh = null;
 
-                const loader = new GLTFLoader();
+        const loader = new GLTFLoader();
         loader.load("/asset/game_assets/models/player.glb", (gltf) => {
             playerMesh = gltf.scene;
             playerMesh.scale.set(1.3, 1.3, 1.3);
@@ -427,7 +527,7 @@ export class AdminView {
                 keyboardGroup = null;
             }
 
-                        if (phaseType === "survive") {
+            if (phaseType === "survive") {
                 camera.position.set(15, 18, 7);
                 camera.lookAt(15, 0, 3);
 
@@ -436,9 +536,9 @@ export class AdminView {
                 currentDecor = decorObj.decorGroup;
                 currentDecor.position.set(0, 0, 0);
 
-                                keyboardGroup = new THREE.Group();
+                keyboardGroup = new THREE.Group();
                 Keyboard.init(keyboardGroup, KEYBOARD_LAYOUT, decorType);
-                keyboardGroup.position.set(0, 0, 0); 
+                keyboardGroup.position.set(0, 0, 0);
                 scene.add(keyboardGroup);
 
                 if (playerMesh) playerMesh.position.set(15, 1.35, 5);
@@ -455,18 +555,17 @@ export class AdminView {
             } else {
                 const introType = card.querySelector('.world-intro').value || "staircase";
                 const outroType = card.querySelector('.world-outro').value || "DoorEvent";
-                const stContainer = card.querySelector('div[class*="story-events-container-"]');
-                const bubbles = stContainer ? Array.from(stContainer.querySelectorAll('.evt-action-type')).map(sel => sel.value) : [];
-                const hasBridge = bubbles.includes('bridge') || bubbles.includes('jumpword');
-
                 const layout = createWordlLayout(introType);
-                if (hasBridge) {
-                    layout.forEach(tile => {
-                        if (tile.y <= -15 && tile.y > -20) {
-                            tile.renderMesh = false;
-                            tile.letter = null;
+
+                if (outroType === "HoleEvent") {
+                    const doorRow = layout.filter((t) => t.y === -34);
+                    if (doorRow.length > 0) {
+                        doorRow.sort((a, b) => a.x - b.x);
+                        const centerTile = doorRow[Math.floor(doorRow.length / 2)];
+                        if (centerTile) {
+                            centerTile.renderMesh = false;
                         }
-                    });
+                    }
                 }
 
                 WorldMap.init(scene, layout).then((wMap) => {
@@ -474,12 +573,57 @@ export class AdminView {
                     const spawnTile = wMap.mapLayout.find(t => t.isSpawn) || wMap.mapLayout[1] || wMap.mapLayout[0];
                     const spawnPos = spawnTile.mesh.position;
 
-                                        if (playerMesh) {
+                    if (playerMesh) {
                         playerMesh.position.set(spawnPos.x, spawnPos.y + 1.35, spawnPos.z);
                     }
 
-                                        camera.position.set(spawnPos.x, spawnPos.y + 25, spawnPos.z + 10);
-                    camera.lookAt(spawnPos.x, spawnPos.y, spawnPos.z);
+                    const doorRow = wMap.mapLayout.filter((t) => t.rawPosition.y === -34);
+                    if (doorRow.length > 0) {
+                        doorRow.sort((a, b) => a.rawPosition.x - b.rawPosition.x);
+                        const exitTile = doorRow[Math.floor(doorRow.length / 2)];
+                        if (exitTile && exitTile.mesh) {
+                            if (outroType === "DoorEvent") {
+                                const doorGroup = new THREE.Group();
+                                const pillarMat = new THREE.MeshStandardMaterial({
+                                    map: wMap.stoneTexture,
+                                    color: 0x888888,
+                                    roughness: 0.9,
+                                    metalness: 0.1,
+                                });
+                                const pillarGeo = new THREE.BoxGeometry(1.5, 12, 1.5);
+                                const leftPillar = new THREE.Mesh(pillarGeo, pillarMat);
+                                leftPillar.position.set(-3, 6, 0);
+                                const rightPillar = new THREE.Mesh(pillarGeo, pillarMat);
+                                rightPillar.position.set(3, 6, 0);
+                                const archGeo = new THREE.BoxGeometry(7.5, 2, 1.5);
+                                const arch = new THREE.Mesh(archGeo, pillarMat);
+                                arch.position.set(0, 13, 0);
+                                const doorMat = new THREE.MeshStandardMaterial({
+                                    color: 0x5c4033,
+                                    roughness: 0.9,
+                                    metalness: 0.1,
+                                });
+                                const doorGeo = new THREE.BoxGeometry(2.25, 12, 0.5);
+                                const leftDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+                                leftDoorMesh.position.set(-1.125, 6, 0);
+                                const rightDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+                                rightDoorMesh.position.set(1.125, 6, 0);
+                                doorGroup.add(leftPillar, rightPillar, arch, leftDoorMesh, rightDoorMesh);
+                                doorGroup.position.set(0, 2, 0);
+                                doorGroup.rotation.y = -Math.PI / 6;
+                                exitTile.mesh.add(doorGroup);
+                            } else if (outroType === "HoleEvent") {
+                                const holeGeo = new THREE.CylinderGeometry(1.3, 1.3, 15, 32);
+                                const holeMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
+                                const holeMesh = new THREE.Mesh(holeGeo, holeMat);
+                                holeMesh.position.set(exitTile.mesh.position.x, (exitTile.baseY || 0) - 7.5, exitTile.mesh.position.z);
+                                currentDecor.add(holeMesh);
+                            }
+                        }
+                    }
+
+                    camera.position.set(30, 85, 5);
+                    camera.lookAt(12, 0, -25);
                 });
             }
         };
@@ -494,6 +638,18 @@ export class AdminView {
                 if (phaseType === 'survive') renderDecor();
             });
         }
+        const introSelect = card.querySelector('.world-intro');
+        if (introSelect) {
+            introSelect.addEventListener('change', () => {
+                if (phaseType === 'world') renderDecor();
+            });
+        }
+        const outroSelect = card.querySelector('.world-outro');
+        if (outroSelect) {
+            outroSelect.addEventListener('change', () => {
+                if (phaseType === 'world') renderDecor();
+            });
+        }
 
         const resizeObserver = new ResizeObserver(() => {
             const w = container.clientWidth;
@@ -504,47 +660,10 @@ export class AdminView {
                 renderer.setSize(w, h);
                 if (!currentDecor) {
                     renderDecor();
-                } else {
-
-                    }
+                }
             }
         });
         resizeObserver.observe(container);
-    }
-
-    buildCardHtml(level, isCollapsed, surviveFormHtml, worldFormHtml, voidFormHtml, storyEventsHtml) {
-        const bodyId = `level-body-${level.level_number}`;
-        return `
-            <div class="card-header collapse-toggle cursor-pointer">
-                <h3 class="card-title">Niveau ${level.level_number} ${level.isNew ? "<span class='admin-new-level'>(Nouveau)</span>" : ""}</h3>
-                <div class="admin-card-header-actions">
-                    ${!level.isNew ? `<button class="btn-delete-level" data-level="${level.level_number}">Supprimer</button>` : ''}
-                    <span id="icon-${level.level_number}" class="admin-collapse-icon">${isCollapsed ? '▶' : '▼'}</span>
-                </div>
-            </div>
-            
-            <div id="${bodyId}" class="${isCollapsed ? 'none' : ''}">
-                <div class="preview-container-${level.level_number} preview-container">
-                    <div class="preview-badge">Aperçu 3D</div>
-                </div>
-
-                <div class="admin-phase-row">
-                    <label class="admin-label m-0">Type de Phase:</label>
-                    <select class="phase-type-select admin-select max-w-250">
-                        <option value="survive" ${level.phase_type === "survive" ? "selected" : ""}>Survie (Combat)</option>
-                        <option value="world" ${level.phase_type === "world" ? "selected" : ""}>World (Exploration)</option>
-                        <option value="void" ${level.phase_type === "void" ? "selected" : ""}>Vide Infini</option>
-                    </select>
-                </div>
-                
-                ${surviveFormHtml}
-                ${worldFormHtml}
-                ${voidFormHtml}
-                ${storyEventsHtml}
-
-                <button class="save-btn btn-primary">Sauvegarder le niveau ${level.level_number}</button>
-            </div>
-        `;
     }
 
     buildSurviveFormHtml(options, isSurvive) {
@@ -583,9 +702,9 @@ export class AdminView {
         `;
     }
 
-    buildWorldFormHtml(options, isSurvive) {
+    buildWorldFormHtml(options, isWorld) {
         return `
-            <div class="world-form story-event-block block-world ${!isSurvive ? '' : 'none'}">
+            <div class="world-form story-event-block block-world ${isWorld ? '' : 'none'}">
                 <div class="block-title">⚙️ Paramètres d'Exploration</div>
                 <div class="block-row">
                     <div class="flex-1 min-w-200">
@@ -637,27 +756,27 @@ export class AdminView {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0a0c10);
 
-                const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+        const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
         camera.position.set(15, 18, 7);
         camera.lookAt(15, 0, 3);
 
-                const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
 
-                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
         const directionalLight = new THREE.DirectionalLight(0xffddaa, 1.5);
         directionalLight.position.set(10, 20, 10);
         scene.add(directionalLight);
 
-                return { scene, camera, renderer };
+        return { scene, camera, renderer };
     }
 
     async saveLevel(levelNumber, phaseType, options) {
         const token = localStorage.getItem("authToken");
         if (!token) {
-            alert("Vous devez être connecté.");
+            FlashMessageManager.show("Vous devez être connecté.", "error");
             return;
         }
 
@@ -674,21 +793,21 @@ export class AdminView {
             const data = await response.json();
 
             if (data.success) {
-                alert("Niveau sauvegardé avec succès !");
+                FlashMessageManager.show("Niveau sauvegardé avec succès !", "success");
                 await this.loadLevels();
             } else {
-                alert("Erreur : " + data.message);
+                FlashMessageManager.show("Erreur : " + data.message, "error");
             }
         } catch (e) {
             console.error(e);
-            alert("Erreur de connexion au serveur.");
+            FlashMessageManager.show("Erreur de connexion au serveur.", "error");
         }
     }
 
     async deleteLevel(levelNumber) {
         const token = localStorage.getItem("authToken");
         if (!token) {
-            alert("Vous devez être connecté.");
+            FlashMessageManager.show("Vous devez être connecté.", "error");
             return;
         }
 
@@ -703,14 +822,17 @@ export class AdminView {
             const data = await response.json();
 
             if (data.success) {
-                alert("Niveau supprimé avec succès !");
+                FlashMessageManager.show("Niveau supprimé avec succès !", "success");
+                if (this.activeLevelNumber === levelNumber) {
+                    this.activeLevelNumber = null;
+                }
                 await this.loadLevels();
             } else {
-                alert("Erreur : " + data.message);
+                FlashMessageManager.show("Erreur : " + data.message, "error");
             }
         } catch (e) {
             console.error(e);
-            alert("Erreur de connexion au serveur.");
+            FlashMessageManager.show("Erreur de connexion au serveur.", "error");
         }
     }
 

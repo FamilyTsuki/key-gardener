@@ -120,35 +120,29 @@ export default class Player extends Actor {
         const separatorNode = maxEl ? maxEl.previousSibling : null;
 
         const hudEl = document.getElementById("player-hud");
+
+        if (this.hp === Infinity) {
+            if (hudEl) hudEl.style.display = "none";
+            return;
+        }
+
         if (hudEl) hudEl.style.display = "flex";
 
         if (fillEl && currentEl && maxEl) {
+            const ratio = Math.max(0, this.hp / this.hpMax);
+            currentEl.textContent = Math.ceil(Math.max(0, this.hp));
+            maxEl.textContent = this.hpMax;
+            if (separatorNode && separatorNode.nodeType === Node.TEXT_NODE) {
+                separatorNode.textContent = " / ";
+            }
+            fillEl.style.width = `${ratio * 100}%`;
             
-            if (this.hp === Infinity) {
-                currentEl.textContent = "";
-                maxEl.textContent = "";
-                if (separatorNode && separatorNode.nodeType === Node.TEXT_NODE) {
-                    separatorNode.textContent = "";
-                }
-                fillEl.style.width = "100%";
-                fillEl.style.background = "linear-gradient(90deg, #f1c40f, #f39c12)";
-                fillEl.style.boxShadow = "0 0 10px #f1c40f";
+            if (ratio > 0.3) {
+                fillEl.style.background = "linear-gradient(90deg, #27ae60, var(--success-color))";
+                fillEl.style.boxShadow = "0 0 10px var(--success-color)";
             } else {
-                const ratio = Math.max(0, this.hp / this.hpMax);
-                currentEl.textContent = Math.ceil(Math.max(0, this.hp));
-                maxEl.textContent = this.hpMax;
-                if (separatorNode && separatorNode.nodeType === Node.TEXT_NODE) {
-                    separatorNode.textContent = " / ";
-                }
-                fillEl.style.width = `${ratio * 100}%`;
-                
-                if (ratio > 0.3) {
-                    fillEl.style.background = "linear-gradient(90deg, #27ae60, var(--success-color))";
-                    fillEl.style.boxShadow = "0 0 10px var(--success-color)";
-                } else {
-                    fillEl.style.background = "linear-gradient(90deg, var(--danger-hover), var(--danger-color))";
-                    fillEl.style.boxShadow = "0 0 10px var(--danger-color)";
-                }
+                fillEl.style.background = "linear-gradient(90deg, var(--danger-hover), var(--danger-color))";
+                fillEl.style.boxShadow = "0 0 10px var(--danger-color)";
             }
         }
     }

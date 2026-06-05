@@ -34,7 +34,7 @@ export const fr = {
     home: {
         title: "Keyboard Survivor",
         description: "Votre clavier est votre seule arme. Plongez dans l'abîme, tapez à toute vitesse pour lancer vos sorts et survivez à des hordes de monstres dans ce RPG dactylographique sous haute tension.",
-        startGame: "Entrer dans la Caverne",
+        startGame: "Commencer le jeu",
         whyTitle: "La Dactylographie Réinventée",
         whyDesc: "Oubliez les cours de frappe ennuyeux. Keyboard Survivor fusionne progression rogue-lite, exploration de donjons et combats de mots intenses dans une épreuve impitoyable de vitesse et de précision.",
         feature1Title: "Tapez Vite ou Mourez",
@@ -176,5 +176,10 @@ export const fr = {
     engine: {
         introDialogue1: "...",
         introDialogue2: "Il y a quelqu'un ?"
+    },
+    common: {
+        confirm: "Confirmer",
+        cancel: "Annuler"
     }
 };
+

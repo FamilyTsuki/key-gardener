@@ -6,7 +6,7 @@ export class DeviceCapabilitiesDetector {
      * Initializes the detector for a set of target elements.
      * @param {string} targetElementIdOrSelector - The ID or CSS selector of the target elements to toggle visibility.
      */
-    constructor(targetElementIdOrSelector) {
+    constructor(targetElementIdOrSelector, additionalCheck = () => true) {
         this.targetElements = [];
         const elById = document.getElementById(targetElementIdOrSelector);
         if (elById) {
@@ -26,6 +26,7 @@ export class DeviceCapabilitiesDetector {
         this.handleDeviceChange = this.handleDeviceChange.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.hasKeyboardDetected = false;
+        this.additionalCheck = additionalCheck;
     }
 
     /**
@@ -59,7 +60,7 @@ export class DeviceCapabilitiesDetector {
      */
     updateInterfaceVisibility() {
         this.targetElements.forEach(el => {
-            if (this.mediaQuery.matches || this.hasKeyboardDetected) {
+            if ((this.mediaQuery.matches || this.hasKeyboardDetected) && this.additionalCheck()) {
                 el.classList.remove("hidden");
             } else {
                 el.classList.add("hidden");

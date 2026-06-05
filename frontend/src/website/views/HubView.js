@@ -405,7 +405,8 @@ export default class HubView extends AbstractView {
     }
 
     async handleDelete(postId) {
-        if (!confirm(LanguageManager.t("hub.deleteConfirm"))) return;
+        const confirmed = await FlashMessageManager.confirm(LanguageManager.t("hub.deleteConfirm"));
+        if (!confirmed) return;
         try {
             await PostsService.deletePost(postId);
             const postEl = document.getElementById(`post-${postId}`);
@@ -494,7 +495,8 @@ export default class HubView extends AbstractView {
     }
 
     async deleteComment(commentId, postId) {
-        if (!confirm(LanguageManager.t("hub.deleteConfirm"))) return;
+        const confirmed = await FlashMessageManager.confirm(LanguageManager.t("hub.deleteConfirm"));
+        if (!confirmed) return;
         try {
             await PostsService.deleteComment(commentId);
             await this.loadComments(postId);

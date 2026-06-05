@@ -10,6 +10,7 @@ export class EasterEgg {
         let keyBuffer = [];
 
         window.addEventListener("keydown", (e) => {
+            if (typeof e.key !== "string") return;
             keyBuffer.push(e.key.toLowerCase());
             if (keyBuffer.length > konamiCode.length) {
                 keyBuffer.shift();

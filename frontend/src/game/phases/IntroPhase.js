@@ -56,7 +56,7 @@ export class IntroPhase extends GamePhase {
 
         const video = document.createElement("video");
         video.className = "intro-video";
-        video.src = "/asset/game_assets/bg.mp4";
+        video.src = "/asset/game_assets/videos/bg.mp4";
         video.autoplay = true;
         video.loop = true;
         video.muted = true;
@@ -96,6 +96,12 @@ export class IntroPhase extends GamePhase {
         tail.className = "intro-dialogue-tail";
 
         bubble.appendChild(this.dialogueText);
+
+        const skipIndicator = document.createElement("div");
+        skipIndicator.className = "dialogue-skip-indicator";
+        skipIndicator.innerHTML = "↵ Enter / Space";
+        bubble.appendChild(skipIndicator);
+
         this.dialogueContainer.appendChild(tail);
         this.dialogueContainer.appendChild(bubble);
 
@@ -206,9 +212,11 @@ export class IntroPhase extends GamePhase {
                 if (charIndex >= fullText.length) {
                     clearInterval(this.typewriterInterval);
                     this.typewriterInterval = null;
+                    
+                    const autoSkipDelay = Math.max(3000, fullText.length * 80);
                     this.dialogueTimeout = setTimeout(() => {
                         this.advanceDialogue();
-                    }, 8000);
+                    }, autoSkipDelay);
                 }
             }, 50);
         } else {
@@ -223,13 +231,14 @@ export class IntroPhase extends GamePhase {
         if (this.typewriterInterval) {
             clearInterval(this.typewriterInterval);
             this.typewriterInterval = null;
-            this.dialogueText.textContent =
-                this.dialogues[this.dialogueStep - 1];
+            const fullText = this.dialogues[this.dialogueStep - 1];
+            this.dialogueText.textContent = fullText;
 
             if (this.dialogueTimeout) clearTimeout(this.dialogueTimeout);
+            const autoSkipDelay = Math.max(3000, (fullText || '').length * 80);
             this.dialogueTimeout = setTimeout(() => {
                 this.advanceDialogue();
-            }, 8000);
+            }, autoSkipDelay);
         } else {
             this.showNextDialogue();
         }
@@ -253,6 +262,7 @@ export class IntroPhase extends GamePhase {
      */
     handleRiftClick() {
         this.rift.removeEventListener("click", this.onRiftClick);
+        this.rift.classList.remove("clickable");
         this.container.classList.add("transitioning");
         setTimeout(() => {
             this.gameEngine.loadLevel(this.gameEngine.currentLevel || 1);
@@ -279,7 +289,13 @@ export class IntroPhase extends GamePhase {
             this.dialogueContainer &&
             this.dialogueContainer.classList.contains("visible")
         ) {
-            this.advanceDialogue();
+            if (_event.code === "Space" || _event.code === "Enter") {
+                this.advanceDialogue();
+            }
+        } else if (this.rift && this.rift.classList.contains("clickable")) {
+            if (_event.code === "Space" || _event.code === "Enter") {
+                this.handleRiftClick();
+            }
         }
     }
 

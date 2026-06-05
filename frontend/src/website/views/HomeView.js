@@ -2,6 +2,7 @@ import AbstractView from "../../core/views/AbstractView.js";
 import { CaveAnimation } from "../components/CaveAnimation.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
+import { AuthService } from "../../core/services/auth.service.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 export default class HomeView extends AbstractView {
@@ -83,7 +84,8 @@ export default class HomeView extends AbstractView {
                                 {
                                     href: "/game",
                                     dataset: { link: true },
-                                    className: "start-btn",
+                                    className: "start-btn hidden",
+                                    id: "start-btn",
                                 },
                                 LanguageManager.t("home.startGame")
                             )
@@ -183,7 +185,7 @@ export default class HomeView extends AbstractView {
             const caveAnimation = new CaveAnimation(this.tunnelContainer);
             caveAnimation.init();
         }
-        const deviceDetector = new DeviceCapabilitiesDetector("start-btn");
+        const deviceDetector = new DeviceCapabilitiesDetector("start-btn", () => AuthService.isAuthenticated());
         deviceDetector.initialize();
 
         this.setupHologramListeners();
