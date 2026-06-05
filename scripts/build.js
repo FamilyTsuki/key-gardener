@@ -6,14 +6,12 @@ const CleanCSS = require('clean-css');
 const distDir = path.join(__dirname, '../dist');
 const frontendDir = path.join(__dirname, '../frontend');
 
-// 1. Copy frontend to dist
 if (fs.existsSync(distDir)) {
     fs.rmSync(distDir, { recursive: true, force: true });
 }
 fs.mkdirSync(distDir, { recursive: true });
 fs.cpSync(frontendDir, distDir, { recursive: true });
 
-// 2. Minify JS and CSS
 async function processDirectory(dir) {
     const files = fs.readdirSync(dir);
     for (const file of files) {

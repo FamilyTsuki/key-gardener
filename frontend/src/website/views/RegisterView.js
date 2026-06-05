@@ -50,7 +50,10 @@ export default class RegisterView extends AbstractView {
             try {
                 await AuthService.register(username, email, password);
                 
-                history.pushState(null, null, "/login");
+                const Navbar = (await import("../components/Navbar.js")).default;
+                Navbar.render();
+                
+                history.pushState(null, null, "/");
                 window.dispatchEvent(new Event("popstate"));
                 
                 FlashMessageManager.show(LanguageManager.t("register.registerSuccess"), "success");

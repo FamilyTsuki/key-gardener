@@ -43,7 +43,13 @@ export class AuthService {
             body: JSON.stringify({ username, email, password }),
         });
 
-        return this.handleResponse(response, "Registration failed");
+        const data = await this.handleResponse(response, "Registration failed");
+
+        if (data.token) {
+            localStorage.setItem("authToken", data.token);
+        }
+
+        return data;
     }
 
     /**

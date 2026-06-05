@@ -19,10 +19,15 @@ const port = process.env.PORT || 5000;
 
 app.use(
     helmet({
+        crossOriginOpenerPolicy: false,
+        crossOriginEmbedderPolicy: false,
         contentSecurityPolicy: {
             useDefaults: true,
             directives: {
+                "upgrade-insecure-requests": null,
                 "script-src": ["'self'", "'unsafe-inline'"],
+                "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                "font-src": ["'self'", "data:", "https://fonts.gstatic.com"],
                 "connect-src": ["'self'", "blob:"],
                 "worker-src": ["'self'", "blob:"],
                 "child-src": ["'self'", "blob:"],
@@ -40,6 +45,13 @@ app.use(compression());
 const isProd = process.env.NODE_ENV === "production";
 const frontendDir = isProd ? path.join(__dirname, "../dist/public") : path.join(__dirname, "../frontend/public");
 const srcDir = isProd ? path.join(__dirname, "../dist/src") : path.join(__dirname, "../frontend/src");
+
+if (!isProd) {
+    app.use((req, res, next) => {
+        res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+        next();
+    });
+}
 
 app.use(express.static(frontendDir));
 app.use("/src", express.static(srcDir));
@@ -82,8 +94,6 @@ app.get("*", (req, res) => {
             title = "Register - Keyboard Survivor";
             desc = "Create a new Keyboard Survivor account to start your typing adventure.";
         }
-
-        // Inject dynamic meta tags
         htmlData = htmlData.replace(/<title>.*<\/title>/, `<title>${title}</title>`);
         htmlData = htmlData.replace(/<meta name="description" content="[^"]*"/, `<meta name="description" content="${desc}"`);
         htmlData = htmlData.replace(/<meta property="og:title" content="[^"]*"/, `<meta property="og:title" content="${title}"`);
@@ -91,7 +101,6 @@ app.get("*", (req, res) => {
         htmlData = htmlData.replace(/<meta property="twitter:title" content="[^"]*"/, `<meta property="twitter:title" content="${title}"`);
         htmlData = htmlData.replace(/<meta property="twitter:description" content="[^"]*"/, `<meta property="twitter:description" content="${desc}"`);
         
-        // Inject Canonical URL dynamically
         const canonicalUrl = `https://keyboardsurvivor.com${req.path === '/' ? '' : req.path}`;
         htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" />\n</head>`);
         

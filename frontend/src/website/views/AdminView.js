@@ -446,7 +446,6 @@ export class AdminView {
             } else if (phaseType === "void") {
                 camera.position.set(20, 20, 10);
                 camera.lookAt(0, 0, 0);
-                // Simple representation
                 const geo = new THREE.BoxGeometry(2, 2, 2);
                 const mat = new THREE.MeshBasicMaterial({ color: 0x8a2be2 });
                 const mesh = new THREE.Mesh(geo, mat);

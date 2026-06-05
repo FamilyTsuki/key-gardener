@@ -3,6 +3,14 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { sendResetCodeEmail } = require("../utils/mailer");
 
+const generateToken = (userId) => {
+    return jwt.sign(
+        { id: userId },
+        process.env.JWT_SECRET || "super_secret_key",
+        { expiresIn: "7d" }
+    );
+};
+
 
 exports.register = async (req, res, next) => {
     try {
@@ -39,7 +47,19 @@ exports.register = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create(username, email, hashedPassword);
 
-        res.status(201).json({ success: true, user });
+        const token = generateToken(user.id);
+
+        res.status(201).json({
+            success: true,
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                personalPicture: null,
+                is_admin: false,
+            },
+        });
     } catch (err) {
         next(err);
     }
@@ -74,11 +94,7 @@ exports.login = async (req, res, next) => {
                 .json({ success: false, message: "Invalid email or password" });
         }
 
-        const token = jwt.sign(
-            { id: user.id },
-            process.env.JWT_SECRET || "super_secret_key",
-            { expiresIn: "7d" }
-        );
+        const token = generateToken(user.id);
 
         res.json({
             success: true,

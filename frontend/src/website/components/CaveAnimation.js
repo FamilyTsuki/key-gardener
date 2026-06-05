@@ -46,11 +46,6 @@ export class CaveAnimation {
     }
 
     async init() {
-        const loaderEl = document.getElementById("global-loader");
-        if (loaderEl) loaderEl.classList.remove("hidden");
-
-        await new Promise(resolve => setTimeout(resolve, 50));
-
         gsap.registerPlugin(ScrollTrigger);
         this.setupEnvironment();
         this.setupLights();
@@ -60,9 +55,14 @@ export class CaveAnimation {
         this.attachEvents();
         this.startRendering();
 
-        if (loaderEl) loaderEl.classList.add("hidden");
-
         this.generateDetailsProgressively();
+
+        const canvas = this.renderer.domElement;
+        if (canvas) {
+            requestAnimationFrame(() => {
+                canvas.style.opacity = "1";
+            });
+        }
     }
 
     setupEnvironment() {
@@ -594,7 +594,6 @@ export class CaveAnimation {
         for (let i = 0; i < count; i++) {
             positions[i * 3] = (Math.random() - 0.5) * 12000;
             positions[i * 3 + 1] = 500 - Math.random() * 4300;
-            // Déplacer les étoiles plus loin en augmentant le décalage Z
             positions[i * 3 + 2] = -2500 + (Math.random() - 0.5) * 6000;
             
             color.setHSL(Math.random() * 0.2 + 0.5, 0.8, Math.random() * 0.5 + 0.5);
@@ -647,7 +646,7 @@ export class CaveAnimation {
             fog: false 
         });
         const planet = new THREE.Mesh(planetGeo, planetMat);
-        planet.position.set(0, -1000, -2500); // Planète déplacée plus loin
+        planet.position.set(0, -1000, -2500);
         this.scene.add(planet);
 
         const ringGeo = new THREE.TorusGeometry(650, 15, 2, 64);
@@ -903,6 +902,8 @@ export class CaveAnimation {
         canvas.style.left = "0";
         canvas.style.zIndex = "-1";
         canvas.style.pointerEvents = "none";
+        canvas.style.opacity = "0";
+        canvas.style.transition = "opacity 2s ease";
 
         if (this.containerElement) {
             this.containerElement.appendChild(canvas);
@@ -972,7 +973,7 @@ export class CaveAnimation {
                 return data.absoluteBottom >= y && data.absoluteTop <= y + window.innerHeight;
             });
 
-            const localSpeed = isAnyVisible ? 350 : 1800;
+            const localSpeed = isAnyVisible ? 350 : 1400;
             cumulativeIntegral += localSpeed * (maxScroll / numSamples);
             integrals.push(cumulativeIntegral);
         }

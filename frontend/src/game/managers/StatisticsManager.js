@@ -35,7 +35,6 @@ export class StatisticsManager {
         const totalKeys = this.correctKeystrokes + this.incorrectKeystrokes;
         const accuracy = totalKeys > 0 ? (this.correctKeystrokes / totalKeys) * 100 : 0;
         const playtimeMinutes = this.playtimeSeconds / 60;
-        // WPM: (correct keystrokes / 5) / minutes
         const wpm = playtimeMinutes > 0 ? Math.round((this.correctKeystrokes / 5) / playtimeMinutes) : 0;
 
         return {
