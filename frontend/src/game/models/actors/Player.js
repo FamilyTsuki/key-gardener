@@ -99,7 +99,7 @@ export default class Player extends Actor {
         const loader = new GLTFLoader();
         this.loadPromise = loader.loadAsync("/asset/game_assets/models/player.glb").then((gltf) => {
             this.playerModel = gltf.scene;
-            this.playerModel.scale.set(1.3, 1.3, 1.3);
+            this.playerModel.scale.set(1.7, 1.7, 1.7);
             this.playerModel.position.y = 1.35;
             this.mesh.add(this.playerModel);
         });
@@ -371,13 +371,13 @@ export default class Player extends Actor {
                     const maxStretchZ = Math.max(1, speedFactor * 0.6);
                     
                     const stretchFactor = 1 + (maxStretchZ - 1) * Math.sin(this.movementProgress * Math.PI);
-                    const shrinkFactor = 1.3 / Math.sqrt(stretchFactor);
+                    const shrinkFactor = 1.7 / Math.sqrt(stretchFactor);
                     
-                    this.playerModel.scale.set(shrinkFactor, shrinkFactor, 1.3 * stretchFactor);
+                    this.playerModel.scale.set(shrinkFactor, shrinkFactor, 1.7 * stretchFactor);
                 } else {
                     this.playerModel.position.y = 1.35;
                     this.playerModel.rotation.x = 0;
-                    this.playerModel.scale.set(1.3, 1.3, 1.3);
+                    this.playerModel.scale.set(1.7, 1.7, 1.7);
                 }
 
                 if (this.hpSprite) {

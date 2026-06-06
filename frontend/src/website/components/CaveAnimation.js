@@ -220,20 +220,21 @@ export class CaveAnimation {
                 keycapGroup.add(keyTop);
                 
                 keycapGroup.position.copy(playerPos);
-                keycapGroup.position.y -= 3;
+                keycapGroup.position.y -= 14;
 
                 keycapGroup.rotation.set(Math.random() * 0.2, Math.random() * 0.5, Math.random() * 0.2);
                 this.scene.add(keycapGroup);
 
                 const playerContainer = new THREE.Group();
-                playerContainer.scale.set(8, 8, 8);
+                playerContainer.scale.set(12.5, 12.5, 12.5);
                 playerContainer.position.copy(playerPos);
-                playerContainer.position.y += 8;
-                
+                playerContainer.position.y += 2;
+                playerContainer.position.x += 0;
+
                 playerContainer.lookAt(bugPos);
 
-                playerMesh.rotation.y = 0;
-                playerMesh.rotation.x = Math.PI / 12;
+                playerMesh.rotation.y = Math.PI / 6;
+                playerMesh.rotation.x = Math.PI / 13;
                 playerMesh.rotation.z = 0;
                 
                 playerContainer.add(playerMesh);

@@ -504,7 +504,7 @@ export class AdminView {
         const loader = new GLTFLoader();
         loader.load("/asset/game_assets/models/player.glb", (gltf) => {
             playerMesh = gltf.scene;
-            playerMesh.scale.set(1.3, 1.3, 1.3);
+            playerMesh.scale.set(1.7, 1.7, 1.7);
             playerMesh.position.set(15, 1.35, 3);
             playerMesh.rotation.y = Math.PI / 2;
             scene.add(playerMesh);
