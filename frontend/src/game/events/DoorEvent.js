@@ -83,28 +83,46 @@ export class DoorEvent extends WorldEvent {
         arch.position.set(0, 13, 0);
 
         const textureLoader = new THREE.TextureLoader();
-        const woodTexture = textureLoader.load('/asset/game_assets/textures/wood.jpg');
-        woodTexture.wrapS = THREE.RepeatWrapping;
-        woodTexture.wrapT = THREE.RepeatWrapping;
-        woodTexture.repeat.set(1, 4);
+        const doorTexture = textureLoader.load('/asset/game_assets/textures/door.jpg');
+        
 
         const doorMat = new THREE.MeshStandardMaterial({
-            map: woodTexture,
+            map: doorTexture,
             color: 0xffffff,
-            roughness: 0.9,
-            metalness: 0.1,
+            roughness: 0.8,
+            metalness: 0.3,
         });
         const doorGeo = new THREE.BoxGeometry(2.25, 12, 0.5);
 
+        const leftDoorTexture = doorTexture.clone();
+        leftDoorTexture.wrapS = THREE.RepeatWrapping;
+        leftDoorTexture.repeat.x = -1;
+        leftDoorTexture.needsUpdate = true;
+
+        const leftDoorMat = doorMat.clone();
+        leftDoorMat.map = leftDoorTexture;
+
+        const doorMaterialsLeft = [
+            doorMat, doorMat, doorMat, doorMat,
+            leftDoorMat,
+            doorMat
+        ];
+
+        const doorMaterialsRight = [
+            doorMat, doorMat, doorMat, doorMat,
+            doorMat,
+            leftDoorMat
+        ];
+
         const leftDoorPivot = new THREE.Group();
         leftDoorPivot.position.set(-2.25, 6, 0);
-        const leftDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+        const leftDoorMesh = new THREE.Mesh(doorGeo, doorMaterialsLeft);
         leftDoorMesh.position.set(1.125, 0, 0);
         leftDoorPivot.add(leftDoorMesh);
 
         const rightDoorPivot = new THREE.Group();
         rightDoorPivot.position.set(2.25, 6, 0);
-        const rightDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+        const rightDoorMesh = new THREE.Mesh(doorGeo, doorMaterialsRight);
         rightDoorMesh.position.set(-1.125, 0, 0);
         rightDoorPivot.add(rightDoorMesh);
 

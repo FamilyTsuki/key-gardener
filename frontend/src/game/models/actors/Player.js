@@ -98,9 +98,26 @@ export default class Player extends Actor {
 
         const loader = new GLTFLoader();
         this.loadPromise = loader.loadAsync("/asset/game_assets/models/player.glb").then((gltf) => {
-            this.playerModel = gltf.scene;
-            this.playerModel.scale.set(1.7, 1.7, 1.7);
-            this.playerModel.position.y = 1.35;
+            const rawModel = gltf.scene;
+            
+            const box = new THREE.Box3().setFromObject(rawModel);
+            const center = box.getCenter(new THREE.Vector3());
+            
+            rawModel.position.x = -center.x;
+            rawModel.position.z = -center.z;
+            
+            this.playerModel = new THREE.Group();
+            this.playerModel.add(rawModel);
+
+            rawModel.traverse((child) => {
+                if (child.isBone) {
+                    child.userData.initialPosition = child.position.clone();
+                    child.userData.initialRotation = child.rotation.clone();
+                }
+            });
+
+            this.playerModel.scale.set(1.95, 1.95, 1.95);
+            this.playerModel.position.y = 0;
             this.mesh.add(this.playerModel);
         });
 
@@ -301,7 +318,7 @@ export default class Player extends Actor {
                 if (this.playerModel) {
                     this.playerModel.rotation.x = -Math.PI / 2;
                     this.playerModel.position.y = 0.5;
-                    this.playerModel.scale.set(1.3, 1.3, 1.3);
+                    this.playerModel.scale.set(1.95, 1.95, 1.95);
                 }
                 if (this.hpSprite) this.hpSprite.visible = false;
                 this.deathAnimationPlayed = true;
@@ -364,26 +381,66 @@ export default class Player extends Actor {
                 if (this.isMoving) {
                     const jumpAmplitude = 2.0;
                     this.playerModel.position.y =
-                        1.35 +
+                        0 +
                         Math.sin(this.movementProgress * Math.PI) * jumpAmplitude;
 
-                    const speedFactor = 15 / this.movementDuration;
-                    const maxStretchZ = Math.max(1, speedFactor * 0.6);
+                    const deformation = -Math.cos(this.movementProgress * Math.PI * 2);
+                    const dx = this.targetPosition.x - this.startPosition.x;
+                    const dy = this.targetPosition.y - this.startPosition.y;
+                    const jumpDistance = Math.sqrt(dx * dx + dy * dy);
                     
-                    const stretchFactor = 1 + (maxStretchZ - 1) * Math.sin(this.movementProgress * Math.PI);
-                    const shrinkFactor = 1.7 / Math.sqrt(stretchFactor);
+                    const maxTilt = Math.min(jumpDistance * 0.1, 0.6);
                     
-                    this.playerModel.scale.set(shrinkFactor, shrinkFactor, 1.7 * stretchFactor);
+                    this.playerModel.rotation.x = Math.sin(this.movementProgress * Math.PI) * maxTilt; 
                 } else {
-                    this.playerModel.position.y = 1.35;
+                    this.playerModel.position.y = 0;
                     this.playerModel.rotation.x = 0;
-                    this.playerModel.scale.set(1.7, 1.7, 1.7);
+                    this.playerModel.scale.set(1.95, 1.95, 1.95);
+
+                    this.playerModel.traverse((child) => {
+                        if (child.isBone && child.userData.initialRotation) {
+                            child.position.copy(child.userData.initialPosition);
+                            child.rotation.copy(child.userData.initialRotation);
+                        }
+                    });
                 }
 
                 if (this.hpSprite) {
                     this.hpSprite.position.y = this.playerModel.position.y + 1.65;
                 }
             }
+        }
+    }
+
+    /**
+     * Applies a procedural crouch animation to the player rig.
+     * @param {number} percentage - From 0.0 (standing) to 1.0 (fully crouched)
+     */
+    applyCrouch(percentage) {
+        const model = this.playerModel;
+        if (!model) return;
+        
+        const hips = model.getObjectByName("Hips") || model.getObjectByName("mixamorigHips");
+        const leftUpLeg = model.getObjectByName("LeftUpLeg") || model.getObjectByName("mixamorigLeftUpLeg");
+        const rightUpLeg = model.getObjectByName("RightUpLeg") || model.getObjectByName("mixamorigRightUpLeg");
+        const leftLeg = model.getObjectByName("LeftLeg") || model.getObjectByName("mixamorigLeftLeg");
+        const rightLeg = model.getObjectByName("RightLeg") || model.getObjectByName("mixamorigRightLeg");
+        const spine = model.getObjectByName("Spine") || model.getObjectByName("mixamorigSpine");
+
+        if (hips && leftUpLeg && rightUpLeg && leftLeg && rightLeg && hips.userData.initialPosition) {
+            model.scale.set(1.95, 1.95, 1.95);
+            hips.position.y = hips.userData.initialPosition.y * (1 - percentage * 0.6);
+            leftUpLeg.rotation.x = leftUpLeg.userData.initialRotation.x - percentage * 1.5;
+            rightUpLeg.rotation.x = rightUpLeg.userData.initialRotation.x - percentage * 1.5;
+            leftLeg.rotation.x = leftLeg.userData.initialRotation.x + percentage * 2.2;
+            rightLeg.rotation.x = rightLeg.userData.initialRotation.x + percentage * 2.2;
+            if (spine) {
+                spine.rotation.x = spine.userData.initialRotation.x + percentage * 0.6;
+            }
+        } else {
+            const squashY = 1.95 - (percentage * 1.05);
+            const stretchXZ = 1.95 + (percentage * 0.6);
+            model.scale.set(stretchXZ, squashY, stretchXZ);
         }
     }
 

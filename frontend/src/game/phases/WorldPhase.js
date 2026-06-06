@@ -166,9 +166,11 @@ export class WorldPhase extends GamePhase {
 
         if (this.isStunnedAfterFall) {
             this.stunTimer -= deltaTime;
+            
             if (this.stunTimer <= 0) {
                 this.isStunnedAfterFall = false;
                 this.isTransitioning = false;
+                this.player.applyCrouch(0);
                 this.startIntroDialogue();
             }
         }
@@ -205,6 +207,14 @@ export class WorldPhase extends GamePhase {
 
         this.player.update();
         if (this.player && this.player.mesh) {
+            if (this.isStunnedAfterFall) {
+                let percentage = 1.0;
+                if (this.stunTimer <= 0.3) {
+                    percentage = Math.max(0, this.stunTimer / 0.3);
+                }
+                this.player.applyCrouch(percentage);
+            }
+
             const playerPos = this.player.mesh.position;
 
             if (!this.isPlayingIntro) {

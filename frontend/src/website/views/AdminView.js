@@ -598,15 +598,37 @@ export class AdminView {
                                 const archGeo = new THREE.BoxGeometry(7.5, 2, 1.5);
                                 const arch = new THREE.Mesh(archGeo, pillarMat);
                                 arch.position.set(0, 13, 0);
+                                const textureLoader = new THREE.TextureLoader();
+                                const doorTexture = textureLoader.load('/asset/game_assets/textures/door.jpg');
+                                
                                 const doorMat = new THREE.MeshStandardMaterial({
-                                    color: 0x5c4033,
-                                    roughness: 0.9,
-                                    metalness: 0.1,
+                                    map: doorTexture,
+                                    color: 0xffffff,
+                                    roughness: 0.8,
+                                    metalness: 0.3,
                                 });
                                 const doorGeo = new THREE.BoxGeometry(2.25, 12, 0.5);
-                                const leftDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+                                
+                                const leftDoorTexture = doorTexture.clone();
+                                leftDoorTexture.wrapS = THREE.RepeatWrapping;
+                                leftDoorTexture.repeat.x = -1;
+                                leftDoorTexture.needsUpdate = true;
+                                
+                                const doorMaterialsLeft = [
+                                    doorMat, doorMat, doorMat, doorMat,
+                                    leftDoorMat,
+                                    doorMat
+                                ];
+                                
+                                const doorMaterialsRight = [
+                                    doorMat, doorMat, doorMat, doorMat,
+                                    doorMat,
+                                    leftDoorMat
+                                ];
+
+                                const leftDoorMesh = new THREE.Mesh(doorGeo, doorMaterialsLeft);
                                 leftDoorMesh.position.set(-1.125, 6, 0);
-                                const rightDoorMesh = new THREE.Mesh(doorGeo, doorMat);
+                                const rightDoorMesh = new THREE.Mesh(doorGeo, doorMaterialsRight);
                                 rightDoorMesh.position.set(1.125, 6, 0);
                                 doorGroup.add(leftPillar, rightPillar, arch, leftDoorMesh, rightDoorMesh);
                                 doorGroup.position.set(0, 2, 0);

@@ -159,6 +159,7 @@ export const fr = {
         ],
         jumpInstruction: "CHARGEZ LA JAUGE POUR S'AUTO-PROPULSER !",
         jumpEnergy: "ÉNERGIE : {percentage}%",
+        jumpPowerTitle: "PUISSANCE",
         jumpWords: [
             "PUISSANCE", "FORCE", "COURAGE", "SAUT", "CAPACITE", "VALEUR", "ESPRIT", "VIGUEUR", "GLOIRE", "FOI",
             "HONNEUR", "BRAVOURE", "VOLONTE", "FURIE", "AUDACE", "TENACITE", "ACIER", "NERF", "FIERTE", "ETINCELLE",

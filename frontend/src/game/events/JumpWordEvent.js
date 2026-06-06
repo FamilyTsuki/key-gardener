@@ -79,9 +79,56 @@ export class JumpWordEvent extends WorldEvent {
             return;
         }
 
+        if (this.isLanding) {
+            this.updateLanding(worldPhase, deltaTime);
+            return;
+        }
+
         if (this.isActive) {
-            worldPhase.camera.position.copy(this.eventCameraPos);
+            if (this.isWaitingToJump) {
+                this.waitTimer -= deltaTime;
+                worldPhase.player.applyCrouch(1.0);
+                
+                const maxShake = 0.5;
+                const shakeX = (Math.random() - 0.5) * maxShake;
+                const shakeY = (Math.random() - 0.5) * maxShake;
+                const shakeZ = (Math.random() - 0.5) * maxShake;
+                
+                worldPhase.camera.position.set(
+                    this.eventCameraPos.x + shakeX,
+                    this.eventCameraPos.y + shakeY,
+                    this.eventCameraPos.z + shakeZ
+                );
+                worldPhase.camera.lookAt(this.eventCameraLookAt);
+
+                if (this.waitTimer <= 0) {
+                    this.isWaitingToJump = false;
+                    this.isActive = false;
+                    this.triggerJumpSequence(worldPhase);
+                }
+                return;
+            }
+
+            const percentage = this.completedCount / this.targetCompletedCount;
+            
+            worldPhase.player.applyCrouch(percentage);
+            
+            let shakeX = 0, shakeY = 0, shakeZ = 0;
+            if (percentage > 0.33) {
+                const shakeIntensity = (percentage - 0.33) / 0.67;
+                const maxShake = 0.5 * shakeIntensity;
+                shakeX = (Math.random() - 0.5) * maxShake;
+                shakeY = (Math.random() - 0.5) * maxShake;
+                shakeZ = (Math.random() - 0.5) * maxShake;
+            }
+            
+            worldPhase.camera.position.set(
+                this.eventCameraPos.x + shakeX,
+                this.eventCameraPos.y + shakeY,
+                this.eventCameraPos.z + shakeZ
+            );
             worldPhase.camera.lookAt(this.eventCameraLookAt);
+            
             this.updateWordLifecycle(deltaTime);
             return;
         }
@@ -184,10 +231,18 @@ export class JumpWordEvent extends WorldEvent {
         const t = this.transitionProgress;
         const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-        const startP = intoEvent ? this.startCameraPos : this.eventCameraPos;
-        const targetP = intoEvent ? this.eventCameraPos : this.endCameraPos;
-        const startL = intoEvent ? this.startCameraLookAt : this.eventCameraLookAt;
-        const targetL = intoEvent ? this.eventCameraLookAt : this.endCameraLookAt;
+        const startP = intoEvent ? this.startCameraPos : (this.startTransitionOutPos || this.eventCameraPos);
+        const startL = intoEvent ? this.startCameraLookAt : (this.startTransitionOutLookAt || this.eventCameraLookAt);
+        
+        let targetP, targetL;
+        if (intoEvent) {
+            targetP = this.eventCameraPos;
+            targetL = this.eventCameraLookAt;
+        } else {
+            const playerPos = worldPhase.player.mesh.position;
+            targetP = new THREE.Vector3(playerPos.x + 5, playerPos.y + 21, playerPos.z + 14);
+            targetL = playerPos.clone();
+        }
 
         worldPhase.camera.position.lerpVectors(startP, targetP, ease);
         const currentLookAt = new THREE.Vector3().lerpVectors(startL, targetL, ease);
@@ -350,7 +405,12 @@ export class JumpWordEvent extends WorldEvent {
                 this.updateGaugeUI();
 
                 if (this.completedCount >= this.targetCompletedCount) {
-                    this.triggerJumpSequence(worldPhase);
+                    if (!this.isWaitingToJump) {
+                        this.isWaitingToJump = true;
+                        this.waitTimer = 0.5;
+                        this.activeWords = [];
+                        this.updateWordDisplay();
+                    }
                 }
             }
         } else {
@@ -385,6 +445,13 @@ export class JumpWordEvent extends WorldEvent {
         instructionDisplay.classList.add("mission-instruction");
         instructionDisplay.innerText = LanguageManager.t("game.jumpInstruction");
 
+        const gaugeWrapper = document.createElement("div");
+        gaugeWrapper.classList.add("jump-gauge-wrapper");
+
+        const gaugeTitle = document.createElement("div");
+        gaugeTitle.classList.add("jump-gauge-title");
+        gaugeTitle.innerText = LanguageManager.t("game.jumpPowerTitle");
+
         const gaugeContainer = document.createElement("div");
         gaugeContainer.classList.add("jump-gauge-container");
 
@@ -393,16 +460,19 @@ export class JumpWordEvent extends WorldEvent {
 
         this.gaugeTextEl = document.createElement("div");
         this.gaugeTextEl.classList.add("jump-gauge-text");
-        this.gaugeTextEl.innerText = LanguageManager.t("game.jumpEnergy", { percentage: 0 });
+        this.gaugeTextEl.innerText = "0%";
 
         gaugeContainer.appendChild(this.gaugeFillEl);
         gaugeContainer.appendChild(this.gaugeTextEl);
+
+        gaugeWrapper.appendChild(gaugeTitle);
+        gaugeWrapper.appendChild(gaugeContainer);
 
         this.wordDisplay = document.createElement("div");
         this.wordDisplay.classList.add("mission-word-container");
 
         this.uiOverlay.appendChild(instructionDisplay);
-        this.uiOverlay.appendChild(gaugeContainer);
+        this.uiOverlay.appendChild(gaugeWrapper);
         this.uiOverlay.appendChild(this.wordDisplay);
         document.body.appendChild(this.uiOverlay);
 
@@ -413,8 +483,12 @@ export class JumpWordEvent extends WorldEvent {
     updateGaugeUI() {
         if (!this.gaugeFillEl || !this.gaugeTextEl) return;
         const percentage = Math.min(100, Math.floor((this.completedCount / this.targetCompletedCount) * 100));
-        this.gaugeFillEl.style.width = percentage + "%";
-        this.gaugeTextEl.innerText = LanguageManager.t("game.jumpEnergy", { percentage: percentage });
+        this.gaugeFillEl.style.height = percentage + "%";
+        this.gaugeTextEl.innerText = `${percentage}%`;
+
+        const hue = 120 - (percentage * 1.2); 
+        this.gaugeFillEl.style.background = `hsl(${hue}, 80%, 50%)`;
+        this.gaugeFillEl.style.boxShadow = `0 0 10px hsla(${hue}, 80%, 50%, 0.5)`;
 
         if (percentage >= 100) {
             this.gaugeFillEl.parentElement.classList.add("full");
@@ -557,42 +631,77 @@ export class JumpWordEvent extends WorldEvent {
             player.x = this.targetTileLogicalX;
             player.y = this.targetTileLogicalY;
             player.offsetY = this.jumpTargetY;
-
             player.mesh.position.set(this.jumpTargetX, this.jumpTargetY, this.jumpTargetCenterZ);
-            player.playerModel.rotation.x = 0;
 
-            window.startShake(0.6);
+            const finalCameraPos = new THREE.Vector3(
+                this.jumpTargetX + 5,
+                this.jumpTargetY + 21,
+                this.jumpTargetCenterZ + 14
+            );
+            worldPhase.camera.position.copy(finalCameraPos);
+            worldPhase.camera.lookAt(this.jumpTargetX, this.jumpTargetY, this.jumpTargetCenterZ);
+
+            worldPhase.player.applyCrouch(1.0);
+            
+            window.startShake(1.5);
+            worldPhase.cameraShakeTime = 0.4;
+            
             player.jumpSound.currentTime = 0;
             player.jumpSound.volume = 0.8;
             player.jumpSound.play().catch(() => {});
 
-            this.transitioningToWorld = true;
-            this.transitionProgress = 0;
-
-            const playerPos = player.mesh.position;
-            this.endCameraPos = new THREE.Vector3(
-                playerPos.x + 5,
-                playerPos.y + 21,
-                playerPos.z + 14
-            );
-            this.endCameraLookAt = new THREE.Vector3(
-                playerPos.x,
-                playerPos.y,
-                playerPos.z
-            );
+            this.isLanding = true;
+            this.landingProgress = 0;
         } else {
             const t = this.jumpProgress;
-            const currentX = this.jumpStartX + (this.jumpTargetX - this.jumpStartX) * t;
-            const currentZ = this.jumpStartCenterZ + (this.jumpTargetCenterZ - this.jumpStartCenterZ) * t;
-            const currentY = this.jumpStartY + (this.jumpTargetY - this.jumpStartY) * t + Math.sin(t * Math.PI) * 12.0;
+            const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+            const currentX = this.jumpStartX + (this.jumpTargetX - this.jumpStartX) * ease;
+            const currentZ = this.jumpStartCenterZ + (this.jumpTargetCenterZ - this.jumpStartCenterZ) * ease;
+            const currentY = this.jumpStartY + (this.jumpTargetY - this.jumpStartY) * ease + Math.sin(ease * Math.PI) * 12.0;
 
             player.offsetY = currentY;
             player.mesh.position.set(currentX, currentY, currentZ);
 
-            player.playerModel.rotation.x = t * Math.PI * 4;
+            let crouchPercentage = 0;
+            if (t < 0.2) {
+                crouchPercentage = 1.0 - (t / 0.2);
+            }
+            worldPhase.player.applyCrouch(crouchPercentage);
 
-            worldPhase.camera.lookAt(player.mesh.position);
+            const finalCameraPos = new THREE.Vector3(
+                this.jumpTargetX + 5,
+                this.jumpTargetY + 21,
+                this.jumpTargetCenterZ + 14
+            );
+            const finalCameraLookAt = new THREE.Vector3(
+                this.jumpTargetX,
+                this.jumpTargetY,
+                this.jumpTargetCenterZ
+            );
+
+            worldPhase.camera.position.lerpVectors(this.eventCameraPos, finalCameraPos, ease);
+            
+            const currentLook = new THREE.Vector3().lerpVectors(this.eventCameraLookAt, finalCameraLookAt, ease);
+            worldPhase.camera.lookAt(currentLook);
         }
+    }
+
+    updateLanding(worldPhase, deltaTime) {
+        this.landingProgress += deltaTime / 0.8;
+        if (this.landingProgress >= 1.0) {
+            this.isLanding = false;
+            this.isCompleted = true;
+            worldPhase.isTransitioning = false;
+            worldPhase.player.playerModel.scale.set(1.95, 1.95, 1.95);
+            return;
+        }
+        
+        let percentage = 1.0;
+        if (this.landingProgress >= 0.625) {
+            percentage = 1.0 - (this.landingProgress - 0.625) / 0.375;
+        }
+        worldPhase.player.applyCrouch(percentage);
     }
 
     cleanup(worldPhase) {

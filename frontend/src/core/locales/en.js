@@ -159,6 +159,7 @@ export const en = {
         ],
         jumpInstruction: "CHARGE THE GAUGE TO AUTO-PROPEL!",
         jumpEnergy: "ENERGY: {percentage}%",
+        jumpPowerTitle: "POWER",
         jumpWords: [
             "POWER", "FORCE", "COURAGE", "JUMP", "ABILITY", "VALOR", "SPIRIT", "MIGHT", "GLORY", "FAITH",
             "HONOR", "BRAVERY", "WILL", "FURY", "DRIVE", "GRIT", "STEEL", "NERVE", "PRIDE", "SPARK",
