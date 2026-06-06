@@ -1,0 +1,114 @@
+import { el } from "../../core/utils/DOMBuilder.js";
+import { SettingsManager } from "../../core/utils/SettingsManager.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
+
+export class SettingsModal {
+    /**
+     * @param {GameEngine} engine - The current game engine (to pause/resume).
+     * @param {Function} onClose - Callback when modal is closed.
+     * @param {Function} saveAndQuitCallback - Callback to trigger save and quit.
+     */
+    constructor(engine, onClose, saveAndQuitCallback) {
+        this.engine = engine;
+        this.onClose = onClose;
+        this.saveAndQuitCallback = saveAndQuitCallback;
+        this.modalEl = null;
+    }
+
+    render() {
+        const settings = SettingsManager.getSettings();
+
+        const createSlider = (label, category) => {
+            const currentVol = settings.volume[category] ?? 1.0;
+            const valueDisplay = el("span", { className: "settings-val" }, Math.round(currentVol * 100) + "%");
+            
+            const input = el("input", {
+                type: "range",
+                min: "0",
+                max: "1",
+                step: "0.01",
+                value: currentVol,
+                oninput: (e) => {
+                    const val = parseFloat(e.target.value);
+                    valueDisplay.textContent = Math.round(val * 100) + "%";
+                    SettingsManager.saveSettings({ volume: { [category]: val } });
+                }
+            });
+
+            return el("div", { className: "settings-row" },
+                el("label", {}, label),
+                input,
+                valueDisplay
+            );
+        };
+
+        const globalSlider = createSlider("Volume Global", "global");
+        const musicSlider = createSlider("Musique", "music");
+        const envSlider = createSlider("Environnement", "environment");
+        const enemySlider = createSlider("Ennemis", "enemy");
+        const playerSlider = createSlider("Joueur (Effets)", "player");
+
+        const currentLang = LanguageManager.getLanguage();
+        const langSelect = el("select", {
+            onchange: (e) => {
+                LanguageManager.setLanguage(e.target.value);
+            }
+        }, 
+            el("option", { value: "en", selected: currentLang === "en" ? true : undefined }, "English"),
+            el("option", { value: "fr", selected: currentLang === "fr" ? true : undefined }, "Français")
+        );
+        const langRow = el("div", { className: "settings-row" },
+            el("label", {}, "Langue"),
+            langSelect
+        );
+
+        const closeBtn = el("button", {
+            className: "settings-close-btn",
+            onclick: () => this.close()
+        }, "Fermer");
+
+        const saveAndQuitBtn = el("button", {
+            className: "settings-save-quit-btn",
+            onclick: () => {
+                if (this.saveAndQuitCallback) {
+                    this.saveAndQuitCallback();
+                }
+            }
+        }, LanguageManager.t("game.saveQuitBtn") || "Sauvegarder & Quitter");
+
+        this.modalEl = el("div", { className: "settings-modal-overlay" },
+            el("div", { className: "settings-modal-content" },
+                el("h2", {}, "Paramètres"),
+                globalSlider,
+                musicSlider,
+                envSlider,
+                enemySlider,
+                playerSlider,
+                langRow,
+                closeBtn,
+                saveAndQuitBtn
+            )
+        );
+
+        return this.modalEl;
+    }
+
+    open() {
+        if (this.engine) {
+            this.engine.isPaused = true;
+        }
+        document.body.appendChild(this.render());
+    }
+
+    close() {
+        if (this.modalEl && this.modalEl.parentNode) {
+            this.modalEl.parentNode.removeChild(this.modalEl);
+        }
+        if (this.engine) {
+            this.engine.isPaused = false;
+        }
+        if (this.onClose) {
+            this.onClose();
+        }
+    }
+}

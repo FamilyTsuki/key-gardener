@@ -5,6 +5,7 @@ import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { GameEngine } from "../../game/engine/GameEngine.js";
 import { SaveService } from "../../core/services/save.service.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { SettingsModal } from "../components/SettingsModal.js";
 
 /**
  * View for the main game interface.
@@ -31,19 +32,26 @@ export default class GameView extends AbstractView {
             id: "game-canvas",
             className: "game-canvas",
         });
-        this.saveQuitBtn = el(
+        const settingsBtn = el(
             "button",
             {
-                className: "save-quit-btn",
-                onclick: () => this.saveAndQuit(),
-            },
-            LanguageManager.t("game.saveQuitBtn")
+                className: "settings-btn",
+                onclick: () => this.openSettings(),
+            }
+        );
+        settingsBtn.innerHTML = `<img src="/asset/game_assets/textures/parametre.png" alt="Paramètres" class="settings-icon" />`;
+
+        this.settingsBtnContainer = el(
+            "div",
+            { className: "settings-btn-container" },
+            el("span", { className: "settings-btn-text" }, "Paramètres"),
+            settingsBtn
         );
         return el(
             "div",
             { className: "game-container" },
             this.canvas,
-            this.saveQuitBtn,
+            this.settingsBtnContainer,
             el(
                 "div",
                 { className: "word-container none" },
@@ -114,6 +122,18 @@ export default class GameView extends AbstractView {
     }
 
     /**
+     * Opens the settings modal.
+     */
+    openSettings() {
+        if (!this.settingsModal) {
+            this.settingsModal = new SettingsModal(this.engine, () => {
+                this.settingsModal = null;
+            }, () => this.saveAndQuit());
+            this.settingsModal.open();
+        }
+    }
+
+    /**
      * Saves the current game state and exits to the save menu.
      *
      * @returns {Promise<void>}
@@ -175,6 +195,10 @@ export default class GameView extends AbstractView {
      */
     destroy() {
         document.body.classList.remove("in-game");
+        if (this.settingsModal) {
+            this.settingsModal.close();
+            this.settingsModal = null;
+        }
         if (this.engine) {
             this.engine.destroy();
         }
@@ -193,7 +217,7 @@ export default class GameView extends AbstractView {
             "/asset/css/flame-wall.css",
             "/asset/css/game-over.css",
             "/asset/css/bridgeEvent.css",
-            "/asset/css/jumpEvent.css"
+            "/asset/css/settings.css"
         ];
     }
 }

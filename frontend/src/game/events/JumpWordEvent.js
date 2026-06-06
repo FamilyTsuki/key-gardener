@@ -1,6 +1,7 @@
 import { WorldEvent } from "./WorldEvent.js";
 import * as THREE from "three";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 export class JumpWordEvent extends WorldEvent {
     constructor() {
@@ -611,9 +612,7 @@ export class JumpWordEvent extends WorldEvent {
         this.isJumping = true;
         this.jumpProgress = 0;
 
-        player.jumpSound.currentTime = 0;
-        player.jumpSound.volume = 0.8;
-        player.jumpSound.play().catch(() => {});
+        AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.8);
     }
 
     updateJump(worldPhase, deltaTime) {
@@ -642,9 +641,7 @@ export class JumpWordEvent extends WorldEvent {
             window.startShake(1.5);
             worldPhase.cameraShakeTime = 0.4;
             
-            player.jumpSound.currentTime = 0;
-            player.jumpSound.volume = 0.8;
-            player.jumpSound.play().catch(() => {});
+            AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.8);
 
             this.isLanding = true;
             this.landingProgress = 0;

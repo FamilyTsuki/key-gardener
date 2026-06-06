@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import DamageObject from "./DamageObject.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 /**
  * Represents a projectile in the game.
@@ -86,9 +87,7 @@ export default class Projectile extends DamageObject {
             });
         }
 
-        this.fireSound = new Audio("/asset/game_assets/sounds/fire.wav");
-        this.fireSound.volume = 0.5;
-        this.fireSound.play();
+        AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", this.team === "player" ? "player" : "enemy", 0.5);
 
         if (this.mesh) {
             const hitBoxGeo = new THREE.BoxGeometry(
@@ -121,7 +120,7 @@ export default class Projectile extends DamageObject {
                 if (!this.isFlying) {
                     this.isFlying = true;
                     this.projectileModel.visible = true;
-                    this.fireSound.play();
+                    AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", "enemy", 0.5);
 
                     if (this.lineMesh) {
                         this.scene.remove(this.lineMesh);
@@ -145,7 +144,7 @@ export default class Projectile extends DamageObject {
             if (!this.isFlying) {
                 this.isFlying = true;
                 this.projectileModel.visible = true;
-                this.fireSound.play();
+                AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", "player", 0.5);
             }
             this.position.x += this.velocity.x;
             this.position.y += this.velocity.y;

@@ -5,6 +5,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import ProjectileLuncher from "../spells/ProjectileLuncher.js";
 import HealSpell from "../spells/HealSpells.js";
 import FireCircle from "../spells/FireCircle.js";
+import { AudioManager } from "../../managers/AudioManager.js";
 
 /**
  * Player class representing the main character in the game.
@@ -90,11 +91,7 @@ export default class Player extends Actor {
         this.fireballModel = fireballModel;
         this.playerModel = null;
 
-        this.jumpSound = new Audio("/asset/game_assets/sounds/jump.wav");
-        this.jumpSound.volume = 0.5;
 
-        this.damageSound = new Audio("/asset/game_assets/sounds/ouch.wav");
-        this.damageSound.volume = 0.5;
 
         const loader = new GLTFLoader();
         this.loadPromise = loader.loadAsync("/asset/game_assets/models/player.glb").then((gltf) => {
@@ -257,11 +254,7 @@ export default class Player extends Actor {
                 this.mesh.rotation.set(0, angle, 0);
             }
 
-            this.jumpSound.currentTime = 0;
-            const playPromise = this.jumpSound.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => console.warn("Autoplay prevented for jumpSound:", error));
-            }
+            AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.5);
         }
     }
 
@@ -454,10 +447,7 @@ export default class Player extends Actor {
         if (reason && this.hp <= 0) {
             this.deathReason = reason;
         }
-        const playPromise = this.damageSound.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => console.warn("Autoplay prevented for damageSound:", error));
-        }
+        AudioManager.playSFX("/asset/game_assets/sounds/ouch.wav", "player", 0.5);
 
         if (this.elVignette) {
             this.elVignette.classList.add("flash-red");

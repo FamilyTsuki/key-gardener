@@ -1,6 +1,7 @@
 import Actor from "../Actor.js";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { AudioManager } from "../../managers/AudioManager.js";
 /**
  * Enemy class representing an adversary in the game.
  * Inherits from Actor.
@@ -118,8 +119,6 @@ export default class Enemy extends Actor {
 
         this.hpSprite.scale.set(2, 0.5, 1);
         this.hpSprite.position.y = 2.5;
-        this.jumpSound = new Audio("/asset/game_assets/sounds/jump.wav");
-        this.jumpSound.volume = 0.1;
         this.updateHpBar();
     }
 
@@ -199,14 +198,7 @@ export default class Enemy extends Actor {
             const dy = this.#targetedPosition.y - this.startJumpPos.y;
             this.totalJumpDist = Math.sqrt(dx * dx + dy * dy);
 
-            if (this.jumpSound) {
-                this.jumpSound.currentTime = 0;
-                this.jumpSound.volume = 0.2;
-
-                this.jumpSound
-                    .play()
-                    .catch((e) => console.log("Audio play blocked"));
-            }
+            AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "enemy", 0.2);
         }
     }
     /**
@@ -253,11 +245,7 @@ export default class Enemy extends Actor {
                 }
                 if (this.hpSprite) this.hpSprite.visible = true;
                 
-                if (this.jumpSound) {
-                    this.jumpSound.currentTime = 0;
-                    this.jumpSound.volume = 0.4;
-                    this.jumpSound.play().catch(e => {});
-                }
+                AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "enemy", 0.4);
                 
                 this.jumpDelayTimer = 0.07 / this.speed;
             } else {

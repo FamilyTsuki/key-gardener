@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import DamageObject from "./DamageObject.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 /**
  * Represents a Bonk attack in the game.
@@ -23,8 +24,7 @@ export default class Bonk extends DamageObject {
         this.spacing = spacing;
         const geoWidth = size.width * spacing * 0.9;
         const geoHeight = size.height * spacing * 0.9;
-        this.bonkSound = new Audio("/asset/game_assets/sounds/bonk.wav");
-        this.bonkSound.volume = 0.5;
+
         const geometry = new THREE.PlaneGeometry(geoWidth, geoHeight);
         this.material = new THREE.MeshBasicMaterial({
             color: 0xff0000,
@@ -58,7 +58,7 @@ export default class Bonk extends DamageObject {
                 this.isAttacking = true;
                 this.material.opacity = 0.8;
                 this.material.color.set(0xffffff);
-                this.bonkSound.play();
+                AudioManager.playSFX("/asset/game_assets/sounds/bonk.wav", "enemy", 0.5);
                 if (typeof window.startShake === "function") {
                     window.startShake(1.5);
                 } else {

@@ -1,5 +1,6 @@
 import Spell from "../Spell.js";
 import * as THREE from "three";
+import { AudioManager } from "../../managers/AudioManager.js";
 
 /**
  * HealSpell that restores the player's health points.
@@ -36,9 +37,7 @@ export default class HealSpell extends Spell {
                 }
             }
             
-            const heal = new Audio("/asset/game_assets/sounds/heal.wav");
-            heal.volume = 0.5;
-            heal.play();
+            AudioManager.playSFX("/asset/game_assets/sounds/heal.wav", "player", 0.5);
             this.triggerVisualEffect(player);
             
             return true;

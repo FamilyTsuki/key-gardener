@@ -4,6 +4,7 @@ import WorldMap from "../managers/WorldMap.js";
 import { createWordlLayout } from "../utilities/WORLD_LAYOUT.js";
 import Player from "../models/actors/Player.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 export class WorldPhase extends GamePhase {
     constructor(gameEngine, options = {}) {
@@ -163,11 +164,7 @@ export class WorldPhase extends GamePhase {
             if (this.player.offsetY <= this.targetY) {
                 this.player.offsetY = this.targetY;
                 this.camera.lookAt(this.arrivalX, this.targetY, this.arrivalZ);
-                this.player.jumpSound.currentTime = 0;
-                const playPromise = this.player.jumpSound.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => console.warn("Autoplay prevented:", error));
-                }
+                AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.5);
 
                 const loader = new THREE.TextureLoader();
                 loader.load('/asset/game_assets/textures/break.png', (texture) => {
