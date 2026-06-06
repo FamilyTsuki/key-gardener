@@ -191,7 +191,9 @@ export default class GameView extends AbstractView {
             "/asset/css/intro.css",
             "/asset/css/tempo.css",
             "/asset/css/flame-wall.css",
-            "/asset/css/game-over.css"
+            "/asset/css/game-over.css",
+            "/asset/css/bridgeEvent.css",
+            "/asset/css/jumpEvent.css"
         ];
     }
 }

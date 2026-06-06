@@ -1,5 +1,6 @@
 import { WorldEvent } from "./WorldEvent.js";
-import * as THREE from "three";
+import * as THREE from 'three';
+import { applyTriplanarMapping } from '../utilities/TextureUtils.js';
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
@@ -51,6 +52,10 @@ export class BridgeWordEvent extends WorldEvent {
         this.bridgeMeshes = [];
         this.animatingTiles = [];
         this.triggerTileId = null;
+    }
+
+    get cssFiles() {
+        return ["/asset/css/bridgeEvent.css"];
     }
 
     /**
@@ -319,13 +324,7 @@ export class BridgeWordEvent extends WorldEvent {
      * @param {WorldPhase} worldPhase
      */
     startEvent(worldPhase) {
-        if (!document.getElementById("bridge-event-styles")) {
-            const link = document.createElement("link");
-            link.id = "bridge-event-styles";
-            link.rel = "stylesheet";
-            link.href = "/asset/css/bridgeEvent.css";
-            document.head.appendChild(link);
-        }
+        
 
         worldPhase.isTransitioning = true; 
         this.transitioningToEvent = true;
@@ -566,6 +565,7 @@ export class BridgeWordEvent extends WorldEvent {
                 roughness: 0.8,
                 metalness: 0.2,
             });
+            applyTriplanarMapping(this.sharedSideMaterial);
             
             this.sharedParticleMaterial = new THREE.PointsMaterial({
                 color: 0xa855f7,
@@ -599,6 +599,7 @@ export class BridgeWordEvent extends WorldEvent {
             roughness: 0.8,
             metalness: 0.2,
         });
+        applyTriplanarMapping(sideMaterial);
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0x333333 });
         
         let thickness = 1.5;

@@ -187,6 +187,8 @@ export default class WorldMap {
             stoneTexture = await textureLoader.loadAsync(
                 "/asset/game_assets/textures/stone.jpg"
             );
+            stoneTexture.wrapS = THREE.RepeatWrapping;
+            stoneTexture.wrapT = THREE.RepeatWrapping;
         } catch (e) {
             console.error("Error loading stone texture:", e);
         }

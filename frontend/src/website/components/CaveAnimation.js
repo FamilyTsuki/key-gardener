@@ -2,6 +2,7 @@ import * as THREE from "/node_modules/three/build/three.module.js";
 import { gsap } from "/node_modules/gsap/index.js";
 import { ScrollTrigger } from "/node_modules/gsap/ScrollTrigger.js";
 import { GLTFLoader } from "/node_modules/three/examples/jsm/loaders/GLTFLoader.js";
+import { applyTriplanarMapping } from '../../game/utilities/TextureUtils.js';
 
 export class CaveAnimation {
     constructor(containerElement) {
@@ -453,44 +454,7 @@ export class CaveAnimation {
             flatShading: false 
         });
 
-        material.onBeforeCompile = (shader) => {
-            shader.vertexShader = `
-                varying vec3 vLocalPos;
-                varying vec3 vLocalNorm;
-                ${shader.vertexShader}
-            `.replace(
-                '#include <begin_vertex>',
-                `
-                #include <begin_vertex>
-                vLocalPos = position;
-                vLocalNorm = normal;
-                `
-            );
-
-            shader.fragmentShader = `
-                varying vec3 vLocalPos;
-                varying vec3 vLocalNorm;
-                ${shader.fragmentShader}
-            `.replace(
-                '#include <map_fragment>',
-                `
-                #ifdef USE_MAP
-                    vec3 blend = abs(vLocalNorm);
-                    blend = normalize(max(blend, 0.00001));
-                    float b = blend.x + blend.y + blend.z;
-                    blend /= b;
-                    
-                    float texScale = 0.02;
-                    vec4 tx = texture2D(map, vLocalPos.yz * texScale);
-                    vec4 ty = texture2D(map, vLocalPos.xz * texScale);
-                    vec4 tz = texture2D(map, vLocalPos.xy * texScale);
-                    
-                    vec4 texColor = tx * blend.x + ty * blend.y + tz * blend.z;
-                    diffuseColor *= texColor;
-                #endif
-                `
-            );
-        };
+        applyTriplanarMapping(material, 0.02);
 
         const mesh = new THREE.Mesh(geometry, material);
 

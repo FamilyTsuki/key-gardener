@@ -45,6 +45,10 @@ export class JumpWordEvent extends WorldEvent {
         this.jumpDuration = 1.8;
     }
 
+    get cssFiles() {
+        return ["/asset/css/bridgeEvent.css"];
+    }
+
     modifyLayout(mapLayout) {
         mapLayout.forEach(tile => {
             if (tile.y <= -15 && tile.y > -20) {
@@ -154,14 +158,6 @@ export class JumpWordEvent extends WorldEvent {
     }
 
     startEvent(worldPhase) {
-        if (!document.getElementById("bridge-event-styles")) {
-            const link = document.createElement("link");
-            link.id = "bridge-event-styles";
-            link.rel = "stylesheet";
-            link.href = "/asset/css/bridgeEvent.css";
-            document.head.appendChild(link);
-        }
-
         worldPhase.isTransitioning = true;
         this.transitioningToEvent = true;
         this.transitionProgress = 0;

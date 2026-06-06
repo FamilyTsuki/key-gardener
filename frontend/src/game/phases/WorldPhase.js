@@ -52,6 +52,35 @@ export class WorldPhase extends GamePhase {
         this.activeIntroType = this.introType === "random" ? (Math.random() > 0.5 ? "skyfall" : "staircase") : this.introType;
         const worldLayout = createWordlLayout(this.activeIntroType);
 
+        const cssFiles = new Set();
+        for (const event of this.events) {
+            if (event.cssFiles) {
+                event.cssFiles.forEach(css => cssFiles.add(css));
+            }
+        }
+
+        const loadStyles = Array.from(cssFiles).map((cssPath) => {
+            if (document.querySelector(`link[href="${cssPath}"]`)) {
+                return Promise.resolve();
+            }
+            return new Promise((resolve, reject) => {
+                const linkElement = document.createElement("link");
+                linkElement.rel = "stylesheet";
+                linkElement.href = cssPath;
+                linkElement.setAttribute("data-dynamic-css", "true");
+                
+                linkElement.onload = () => resolve();
+                linkElement.onerror = () => {
+                    console.warn(`Failed to load event CSS: ${cssPath}`);
+                    resolve();
+                };
+                
+                document.head.appendChild(linkElement);
+            });
+        });
+
+        await Promise.all(loadStyles);
+
         for (const event of this.events) {
             if (event.modifyLayout) {
                 event.modifyLayout(worldLayout);
@@ -151,7 +180,7 @@ export class WorldPhase extends GamePhase {
                     });
                     const crackMesh = new THREE.Mesh(geometry, material);
                     crackMesh.rotation.x = -Math.PI / 2;
-                    crackMesh.position.set(this.arrivalX, this.targetY - 0.89, this.arrivalZ);
+                    crackMesh.position.set(this.arrivalX, this.targetY + 0.01, this.arrivalZ);
                     this.gameEngine.scene.add(crackMesh);
                     this.crackMesh = crackMesh;
                     this.crackTilePos = { x: this.player.x, y: this.player.y };

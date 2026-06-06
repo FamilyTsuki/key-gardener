@@ -1,4 +1,5 @@
-import * as THREE from "three";
+import * as THREE from 'three';
+import { applyTriplanarMapping } from './TextureUtils.js';
 
 /**
  * Utility class responsible for constructing the visual elements of the World Map.
@@ -209,44 +210,7 @@ export class WorldMapBuilder {
             side: THREE.DoubleSide,
         });
 
-        floorMaterial.onBeforeCompile = (shader) => {
-            shader.vertexShader = `
-                varying vec3 vLocalPos;
-                varying vec3 vLocalNorm;
-                ${shader.vertexShader}
-            `.replace(
-                '#include <begin_vertex>',
-                `
-                #include <begin_vertex>
-                vLocalPos = position;
-                vLocalNorm = normal;
-                `
-            );
-
-            shader.fragmentShader = `
-                varying vec3 vLocalPos;
-                varying vec3 vLocalNorm;
-                ${shader.fragmentShader}
-            `.replace(
-                '#include <map_fragment>',
-                `
-                #ifdef USE_MAP
-                    vec3 blend = abs(vLocalNorm);
-                    blend = normalize(max(blend, 0.00001));
-                    float b = blend.x + blend.y + blend.z;
-                    blend /= b;
-                    
-                    float texScale = 0.05;
-                    vec4 tx = texture2D(map, vLocalPos.yz * texScale);
-                    vec4 ty = texture2D(map, vLocalPos.xz * texScale);
-                    vec4 tz = texture2D(map, vLocalPos.xy * texScale);
-                    
-                    vec4 texColor = tx * blend.x + ty * blend.y + tz * blend.z;
-                    diffuseColor *= texColor;
-                #endif
-                `
-            );
-        };
+        if (stoneTexture) applyTriplanarMapping(floorMaterial);
 
         const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
 
@@ -283,6 +247,7 @@ export class WorldMapBuilder {
                 roughness: 0.8,
                 metalness: 0.2,
             });
+            if (stoneTexture) applyTriplanarMapping(sideMaterial);
 
             let topMaterial = sideMaterial;
             if (tile.letter) {

@@ -6,6 +6,8 @@ import { KEYBOARD_LAYOUT } from "../../game/utilities/KEYBOARD.js";
 import WorldMap from "../../game/managers/WorldMap.js";
 import { createWordlLayout } from "../../game/utilities/WORLD_LAYOUT.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
+import { LanguageManager } from '../../core/utils/LanguageManager.js';
+import { applyTriplanarMapping } from '../../game/utilities/TextureUtils.js';
 
 export class AdminView {
     constructor() {
@@ -590,6 +592,7 @@ export class AdminView {
                                     roughness: 0.9,
                                     metalness: 0.1,
                                 });
+                                applyTriplanarMapping(pillarMat);
                                 const pillarGeo = new THREE.BoxGeometry(1.5, 12, 1.5);
                                 const leftPillar = new THREE.Mesh(pillarGeo, pillarMat);
                                 leftPillar.position.set(-3, 6, 0);
