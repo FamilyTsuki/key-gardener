@@ -8,6 +8,7 @@ import { createWordlLayout } from "../../game/utilities/WORLD_LAYOUT.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from '../../core/utils/LanguageManager.js';
 import { applyTriplanarMapping } from '../../game/utilities/TextureUtils.js';
+import { el, clear } from '../../core/utils/DOMBuilder.js';
 
 export class AdminView {
     constructor() {
@@ -22,25 +23,26 @@ export class AdminView {
     }
 
     async init() {
-        this.container.innerHTML = `
-            <div class="admin-dashboard">
-                <aside class="admin-sidebar">
-                    <h2 class="sidebar-title">Niveaux</h2>
-                    <div id="levels-list" class="levels-list">
-                        <div class="admin-loading">Chargement...</div>
-                    </div>
-                </aside>
-                <main class="admin-main">
-                    <div id="admin-error" class="admin-error-msg"></div>
-                    <div id="level-detail-container">
-                        <div class="admin-welcome-screen">
-                            <h3>Sélectionnez un niveau</h3>
-                            <p>Choisissez un niveau dans la liste latérale pour éditer ses configurations.</p>
-                        </div>
-                    </div>
-                </main>
-            </div>
-        `;
+        clear(this.container);
+        this.container.appendChild(
+            el("div", { className: "admin-dashboard" },
+                el("aside", { className: "admin-sidebar" },
+                    el("h2", { className: "sidebar-title" }, LanguageManager.t("admin.title")),
+                    el("div", { id: "levels-list", className: "levels-list" },
+                        el("div", { className: "admin-loading" }, LanguageManager.t("admin.loading"))
+                    )
+                ),
+                el("main", { className: "admin-main" },
+                    el("div", { id: "admin-error", className: "admin-error-msg" }),
+                    el("div", { id: "level-detail-container" },
+                        el("div", { className: "admin-welcome-screen" },
+                            el("h3", {}, LanguageManager.t("admin.selectLevelTitle")),
+                            el("p", {}, LanguageManager.t("admin.selectLevelDesc"))
+                        )
+                    )
+                )
+            )
+        );
 
         await this.loadLevels();
     }
@@ -51,7 +53,7 @@ export class AdminView {
             const data = await response.json();
 
             if (!data.success) {
-                document.getElementById("admin-error").textContent = data.message || "Erreur de chargement";
+                document.getElementById("admin-error").textContent = data.message || LanguageManager.t("admin.errorLoad");
                 return;
             }
 
@@ -59,14 +61,14 @@ export class AdminView {
             this.renderLevels();
         } catch (e) {
             console.error(e);
-            document.getElementById("admin-error").textContent = "Impossible de contacter le serveur.";
+            document.getElementById("admin-error").textContent = LanguageManager.t("admin.errorServer");
         }
     }
 
     renderLevels() {
         const listContainer = document.getElementById("levels-list");
         if (!listContainer) return;
-        listContainer.innerHTML = "";
+        clear(listContainer);
 
         const maxLevel = this.levels.reduce((max, l) => Math.max(max, l.level_number), 0);
         const newLevel = {
@@ -88,13 +90,11 @@ export class AdminView {
                 btn.classList.add("active");
             }
 
-            const displayName = level.isNew ? `+ Ajouter un niveau` : `Niveau ${level.level_number}`;
-            const phaseLabel = level.isNew ? "Créer un nouveau niveau" : this.getPhaseLabel(level.phase_type);
+            const displayName = level.isNew ? LanguageManager.t("admin.addLevel") : `${LanguageManager.t("admin.level")} ${level.level_number}`;
+            const phaseLabel = level.isNew ? LanguageManager.t("admin.createNewLevel") : this.getPhaseLabel(level.phase_type);
 
-            btn.innerHTML = `
-                <span class="level-btn-number">${displayName}</span>
-                <span class="level-btn-type">${phaseLabel}</span>
-            `;
+            btn.appendChild(el("span", { className: "level-btn-number" }, displayName));
+            btn.appendChild(el("span", { className: "level-btn-type" }, phaseLabel));
 
             btn.addEventListener("click", () => {
                 this.selectLevel(level, allLevels);
@@ -109,21 +109,22 @@ export class AdminView {
         } else {
             const detailContainer = document.getElementById("level-detail-container");
             if (detailContainer) {
-                detailContainer.innerHTML = `
-                    <div class="admin-welcome-screen">
-                        <h3>Sélectionnez un niveau</h3>
-                        <p>Choisissez un niveau dans la liste latérale pour éditer ses configurations.</p>
-                    </div>
-                `;
+                clear(detailContainer);
+                detailContainer.appendChild(
+                    el("div", { className: "admin-welcome-screen" },
+                        el("h3", {}, LanguageManager.t("admin.selectLevelTitle")),
+                        el("p", {}, LanguageManager.t("admin.selectLevelDesc"))
+                    )
+                );
             }
         }
     }
 
     getPhaseLabel(phaseType) {
         switch (phaseType) {
-            case "survive": return "Survie (Combat)";
-            case "world": return "Exploration (World)";
-            case "void": return "Vide Infini";
+            case "survive": return LanguageManager.t("admin.survivePhase");
+            case "world": return LanguageManager.t("admin.worldPhase");
+            case "void": return LanguageManager.t("admin.voidPhase");
             default: return phaseType;
         }
     }
@@ -152,48 +153,54 @@ export class AdminView {
         const isWorld = level.phase_type === "world";
         const isVoid = level.phase_type === "void";
 
-        const surviveFormHtml = this.buildSurviveFormHtml(options, isSurvive);
-        const worldFormHtml = this.buildWorldFormHtml(options, isWorld);
-        const voidFormHtml = this.buildVoidFormHtml(isVoid);
-        const storyEventsHtml = this.buildStoryEventsHtml(level.level_number);
+        const surviveForm = this.buildSurviveForm(options, isSurvive);
+        const worldForm = this.buildWorldForm(options, isWorld);
+        const voidForm = this.buildVoidForm(isVoid);
+        const storyEvents = this.buildStoryEvents(level.level_number);
 
-        container.innerHTML = `
-            <div class="admin-view-header">
-                <div class="admin-title-group">
-                    <h1 class="admin-title">Niveau ${level.level_number} ${level.isNew ? "<span class='admin-new-level'>(Nouveau)</span>" : ""}</h1>
-                    <p class="admin-subtitle">Éditez les configurations pour ce niveau.</p>
-                </div>
-                <div class="admin-header-actions">
-                    ${!level.isNew ? `<button class="btn-delete-level" data-level="${level.level_number}">Supprimer le niveau</button>` : ""}
-                </div>
-            </div>
+        clear(container);
 
-            <div class="preview-container-${level.level_number} preview-container">
-                <div class="preview-badge">Aperçu 3D</div>
-            </div>
+        const levelTitleText = `${LanguageManager.t("admin.level")} ${level.level_number} `;
+        const newLevelSpan = level.isNew ? el("span", { className: "admin-new-level" }, LanguageManager.t("admin.new")) : null;
+        const deleteBtn = !level.isNew ? el("button", { className: "btn-delete-level", dataset: { level: level.level_number } }, LanguageManager.t("admin.deleteLevel")) : null;
 
-            <div class="admin-editor-card">
-                <div class="admin-phase-row">
-                    <label class="admin-label m-0">Type de Phase :</label>
-                    <select class="phase-type-select admin-select max-w-250">
-                        <option value="survive" ${isSurvive ? "selected" : ""}>Survie (Combat)</option>
-                        <option value="world" ${isWorld ? "selected" : ""}>Exploration (World)</option>
-                        <option value="void" ${isVoid ? "selected" : ""}>Vide Infini</option>
-                    </select>
-                </div>
+        container.appendChild(
+            el("div", { className: "admin-view-header" },
+                el("div", { className: "admin-title-group" },
+                    el("h1", { className: "admin-title" }, levelTitleText, newLevelSpan),
+                    el("p", { className: "admin-subtitle" }, LanguageManager.t("admin.editConfig"))
+                ),
+                el("div", { className: "admin-header-actions" }, deleteBtn)
+            )
+        );
 
-                ${surviveFormHtml}
-                ${worldFormHtml}
-                ${voidFormHtml}
-                ${storyEventsHtml}
+        container.appendChild(
+            el("div", { className: `preview-container-${level.level_number} preview-container` },
+                el("div", { className: "preview-badge" }, LanguageManager.t("admin.preview3D"))
+            )
+        );
 
-                <div class="mt-15">
-                    <button class="save-btn btn-primary">Sauvegarder le niveau ${level.level_number}</button>
-                </div>
-            </div>
-        `;
+        container.appendChild(
+            el("div", { className: "admin-editor-card" },
+                el("div", { className: "admin-phase-row" },
+                    el("label", { className: "admin-label m-0" }, LanguageManager.t("admin.phaseType")),
+                    el("select", { className: "phase-type-select admin-select max-w-250" },
+                        el("option", { value: "survive", selected: isSurvive }, LanguageManager.t("admin.survivePhase")),
+                        el("option", { value: "world", selected: isWorld }, LanguageManager.t("admin.worldPhase")),
+                        el("option", { value: "void", selected: isVoid }, LanguageManager.t("admin.voidPhase"))
+                    )
+                ),
+                surviveForm,
+                worldForm,
+                voidForm,
+                storyEvents,
+                el("div", { className: "mt-15" },
+                    el("button", { className: "save-btn btn-primary" }, `${LanguageManager.t("admin.saveLevel")} ${level.level_number}`)
+                )
+            )
+        );
 
-        this.attachCardEventListeners(container, level, options);
+                this.attachCardEventListeners(container, level, options);
     }
 
     attachCardEventListeners(card, level, options) {
@@ -201,7 +208,7 @@ export class AdminView {
         if (deleteBtn) {
             deleteBtn.addEventListener('click', async (e) => {
                 e.stopPropagation();
-                const confirmed = await FlashMessageManager.confirm(`Êtes-vous sûr de vouloir supprimer le niveau ${level.level_number} ?`);
+                const confirmed = await FlashMessageManager.confirm(`${LanguageManager.t("admin.confirmDelete")} ${level.level_number} ?`);
                 if (confirmed) {
                     this.deleteLevel(level.level_number);
                 }
@@ -391,8 +398,7 @@ export class AdminView {
 
     createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: [], dialogueModel: '/asset/game_assets/models/player.glb', healAmount: 50, spawnEnemy: 'basic' }) {
         const currentPhaseType = typeSelect.value;
-        const div = document.createElement("div");
-        div.className = "story-event-block";
+        const div = el("div", { className: "story-event-block" });
 
         if (evt.actionType === 'heal') div.classList.add("block-heal");
         else if (evt.actionType === 'spawn') div.classList.add("block-spawn");
@@ -403,86 +409,29 @@ export class AdminView {
         else if (evt.actionType === 'flamewall') div.classList.add("block-flamewall");
         else div.classList.add("block-dialogue");
 
-        let optionsHtml = '';
+        const actionOptions = [];
         if (currentPhaseType === 'survive') {
-            optionsHtml = `
-                <option value="dialogue" ${evt.actionType === 'dialogue' || !evt.actionType ? 'selected' : ''}>💬 Lancer un Dialogue</option>
-                <option value="heal" ${evt.actionType === 'heal' ? 'selected' : ''}>💚 Soigner le Joueur</option>
-                <option value="spawn" ${evt.actionType === 'spawn' ? 'selected' : ''}>👹 Faire apparaître un Ennemi</option>
-                <option value="spawnBoss" ${evt.actionType === 'spawnBoss' ? 'selected' : ''}>🐙 Faire apparaître le Boss</option>
-                <option value="spawnerConfig" ${evt.actionType === 'spawnerConfig' ? 'selected' : ''}>⚙️ Configurer le Générateur d'Ennemis</option>
-            `;
+            actionOptions.push(el("option", { value: "dialogue", selected: evt.actionType === 'dialogue' || !evt.actionType }, LanguageManager.t("admin.actionDialogue")));
+            actionOptions.push(el("option", { value: "heal", selected: evt.actionType === 'heal' }, LanguageManager.t("admin.actionHeal")));
+            actionOptions.push(el("option", { value: "spawn", selected: evt.actionType === 'spawn' }, LanguageManager.t("admin.actionSpawn")));
+            actionOptions.push(el("option", { value: "spawnBoss", selected: evt.actionType === 'spawnBoss' }, LanguageManager.t("admin.actionSpawnBoss")));
+            actionOptions.push(el("option", { value: "spawnerConfig", selected: evt.actionType === 'spawnerConfig' }, LanguageManager.t("admin.actionConfigSpawner")));
         } else {
-            optionsHtml = `
-                <option value="dialogue" ${evt.actionType === 'dialogue' || !evt.actionType ? 'selected' : ''}>💬 Lancer un Dialogue</option>
-                <option value="heal" ${evt.actionType === 'heal' ? 'selected' : ''}>💚 Soigner le Joueur</option>
-                <option value="bridge" ${evt.actionType === 'bridge' ? 'selected' : ''}>⏳ Placer un Pont de Mots (Bridge)</option>
-                <option value="jumpword" ${evt.actionType === 'jumpword' ? 'selected' : ''}>🦘 Placer un Saut de Puissance (Jump)</option>
-                <option value="flamewall" ${evt.actionType === 'flamewall' ? 'selected' : ''}>🔥 Placer un Mur de Flammes</option>
-            `;
+            actionOptions.push(el("option", { value: "dialogue", selected: evt.actionType === 'dialogue' || !evt.actionType }, LanguageManager.t("admin.actionDialogue")));
+            actionOptions.push(el("option", { value: "heal", selected: evt.actionType === 'heal' }, LanguageManager.t("admin.actionHeal")));
+            actionOptions.push(el("option", { value: "bridge", selected: evt.actionType === 'bridge' }, LanguageManager.t("admin.actionBridge")));
+            actionOptions.push(el("option", { value: "jumpword", selected: evt.actionType === 'jumpword' }, LanguageManager.t("admin.actionJump")));
+            actionOptions.push(el("option", { value: "flamewall", selected: evt.actionType === 'flamewall' }, LanguageManager.t("admin.actionFlame")));
         }
 
         const hideTriggerClass = ['bridge', 'jumpword', 'flamewall'].includes(evt.actionType) ? 'none' : '';
 
-        div.innerHTML = `
-            <button class="remove-evt-btn">X</button>
-            
-            <div class="block-row mb-15">
-                <strong>Action :</strong>
-                <select class="evt-action-type block-select">
-                    ${optionsHtml}
-                </select>
-            </div>
+        const removeBtn = el("button", { className: "remove-evt-btn" }, "X");
+        removeBtn.addEventListener('click', () => div.remove());
 
-            <div class="evt-trigger-container block-row ${hideTriggerClass}">
-                <label>Quand ?</label>
-                <select class="evt-trigger-type block-select">
-                    <option value="time" ${evt.triggerType === 'time' ? 'selected' : ''}>Après Temps (sec)</option>
-                    <option value="distance" ${evt.triggerType === 'distance' ? 'selected' : ''}>À Distance (cases)</option>
-                </select>
-                <input type="number" class="evt-trigger-value block-input width-80" value="${evt.triggerValue !== undefined ? evt.triggerValue : 10}">
-            </div>
-            
-            <div class="evt-fields-dialogue block-row flex-col-stretch">
-                <div class="flex-row-gap10 flex-center">
-                    <label>Modèle 3D (.glb):</label>
-                    <input type="text" class="evt-model block-input flex-1" value="${evt.dialogueModel || '/asset/game_assets/models/player.glb'}">
-                </div>
-                <div class="flex-row-gap10 flex-start mt-10">
-                    <label>Dialogues:</label>
-                    <textarea class="evt-dialogue block-textarea" rows="3" placeholder="1 bulle par ligne...">${(evt.dialogue || []).join('\n')}</textarea>
-                </div>
-            </div>
-
-            <div class="evt-fields-heal block-row">
-                <label>Points de vie (PV) :</label>
-                <input type="number" class="evt-heal-amount block-input width-100" value="${evt.healAmount || 50}">
-            </div>
-
-            <div class="evt-fields-spawn block-row">
-                <label>Type d'ennemi :</label>
-                <select class="evt-spawn-type block-select width-150">
-                    <option value="basic" ${evt.spawnEnemy === 'basic' ? 'selected' : ''}>Basique</option>
-                    <option value="speedy" ${evt.spawnEnemy === 'speedy' ? 'selected' : ''}>Rapide</option>
-                    <option value="tank" ${evt.spawnEnemy === 'tank' ? 'selected' : ''}>Résistant (Tank)</option>
-                </select>
-            </div>
-
-            <div class="evt-fields-spawnerConfig block-row">
-                <label>Intervalle Spawn (sec) :</label>
-                <input type="number" step="0.1" class="evt-spawn-interval block-input width-80 mr-15" value="${evt.spawnInterval !== undefined ? evt.spawnInterval : 3}">
-                
-                <label>Max Ennemis :</label>
-                <input type="number" class="evt-spawn-max block-input" value="${evt.maxEnemies !== undefined ? evt.maxEnemies : 20}">
-            </div>
-        `;
-
-        div.querySelector('.remove-evt-btn').addEventListener('click', () => div.remove());
-
-        const selectAction = div.querySelector('.evt-action-type');
+        const selectAction = el("select", { className: "evt-action-type block-select" }, ...actionOptions);
         selectAction.addEventListener('change', (e) => {
             const newType = e.target.value;
-
             div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-spawn-boss', 'block-spawner-config', 'block-bridge', 'block-flamewall');
             if (newType === 'heal') div.classList.add("block-heal");
             else if (newType === 'spawn') div.classList.add("block-spawn");
@@ -492,6 +441,65 @@ export class AdminView {
             else if (newType === 'flamewall') div.classList.add("block-flamewall");
             else div.classList.add("block-dialogue");
         });
+
+        div.appendChild(removeBtn);
+        div.appendChild(
+            el("div", { className: "block-row mb-15" },
+                el("strong", {}, LanguageManager.t("admin.action")),
+                selectAction
+            )
+        );
+
+        div.appendChild(
+            el("div", { className: `evt-trigger-container block-row ${hideTriggerClass}` },
+                el("label", {}, LanguageManager.t("admin.when")),
+                el("select", { className: "evt-trigger-type block-select" },
+                    el("option", { value: "time", selected: evt.triggerType === 'time' }, LanguageManager.t("admin.afterTime")),
+                    el("option", { value: "distance", selected: evt.triggerType === 'distance' }, LanguageManager.t("admin.atDistance"))
+                ),
+                el("input", { type: "number", className: "evt-trigger-value block-input width-80", value: evt.triggerValue !== undefined ? evt.triggerValue : 10 })
+            )
+        );
+
+        div.appendChild(
+            el("div", { className: "evt-fields-dialogue block-row flex-col-stretch" },
+                el("div", { className: "flex-row-gap10 flex-center" },
+                    el("label", {}, LanguageManager.t("admin.model3D")),
+                    el("input", { type: "text", className: "evt-model block-input flex-1", value: evt.dialogueModel || '/asset/game_assets/models/player.glb' })
+                ),
+                el("div", { className: "flex-row-gap10 flex-start mt-10" },
+                    el("label", {}, LanguageManager.t("admin.dialogues")),
+                    el("textarea", { className: "evt-dialogue block-textarea", rows: "3", placeholder: LanguageManager.t("admin.dialoguePlaceholder"), value: (evt.dialogue || []).join('\n') })
+                )
+            )
+        );
+
+        div.appendChild(
+            el("div", { className: "evt-fields-heal block-row" },
+                el("label", {}, LanguageManager.t("admin.hp")),
+                el("input", { type: "number", className: "evt-heal-amount block-input width-100", value: evt.healAmount || 50 })
+            )
+        );
+
+        div.appendChild(
+            el("div", { className: "evt-fields-spawn block-row" },
+                el("label", {}, LanguageManager.t("admin.enemyType")),
+                el("select", { className: "evt-spawn-type block-select width-150" },
+                    el("option", { value: "basic", selected: evt.spawnEnemy === 'basic' }, LanguageManager.t("admin.basic")),
+                    el("option", { value: "speedy", selected: evt.spawnEnemy === 'speedy' }, LanguageManager.t("admin.speedy")),
+                    el("option", { value: "tank", selected: evt.spawnEnemy === 'tank' }, LanguageManager.t("admin.tank"))
+                )
+            )
+        );
+
+        div.appendChild(
+            el("div", { className: "evt-fields-spawnerConfig block-row" },
+                el("label", {}, LanguageManager.t("admin.spawnIntervalConfig")),
+                el("input", { type: "number", step: "0.1", className: "evt-spawn-interval block-input width-80 mr-15", value: evt.spawnInterval !== undefined ? evt.spawnInterval : 3 }),
+                el("label", {}, "Max Ennemis :"),
+                el("input", { type: "number", className: "evt-spawn-max block-input", value: evt.maxEnemies !== undefined ? evt.maxEnemies : 20 })
+            )
+        );
 
         storyContainer.appendChild(div);
     }
@@ -691,90 +699,82 @@ export class AdminView {
         resizeObserver.observe(container);
     }
 
-    buildSurviveFormHtml(options, isSurvive) {
-        return `
-            <div class="survive-form story-event-block block-survive ${isSurvive ? '' : 'none'}">
-                <div class="block-title">⚙️ Paramètres de Survie</div>
-                <div class="block-row">
-                    <div class="flex-1 min-w-150">
-                        <label class="admin-label">Décor :</label>
-                        <select class="survive-decor block-select">
-                            <option value="default" ${options.decorType === 'default' ? 'selected' : ''}>Défaut</option>
-                            <option value="mine" ${options.decorType === 'mine' ? 'selected' : ''}>Mine</option>
-                            <option value="styx" ${options.decorType === 'styx' ? 'selected' : ''}>Styx</option>
-                        </select>
-                    </div>
-                    <div class="flex-1 min-w-100">
-                        <label class="admin-label">Durée (sec) :</label>
-                        <input type="number" class="survive-duration block-input" value="${options.duration || ''}" placeholder="Infini" />
-                    </div>
-                    <div class="flex-1 min-w-100">
-                        <label class="admin-label">PV Joueur :</label>
-                        <input type="number" class="survive-hp block-input" value="${options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : ''}" placeholder="Immortel" />
-                    </div>
-                </div>
-                <div class="block-row mt-15">
-                    <div class="flex-1 min-w-150">
-                        <label class="admin-label">Intervalle de Spawn (sec) :</label>
-                        <input type="number" step="0.1" class="survive-spawn-interval block-input" value="${options.spawnInterval !== undefined && options.spawnInterval !== null ? options.spawnInterval : ''}" placeholder="Désactivé" />
-                    </div>
-                    <div class="flex-1 min-w-150">
-                        <label class="admin-label">Max Ennemis :</label>
-                        <input type="number" class="survive-max-enemies block-input" value="${options.maxEnemies !== undefined && options.maxEnemies !== null ? options.maxEnemies : ''}" placeholder="Désactivé" />
-                    </div>
-                </div>
-            </div>
-        `;
+
+    buildSurviveForm(options, isSurvive) {
+        return el("div", { className: `survive-form story-event-block block-survive ${isSurvive ? '' : 'none'}` },
+            el("div", { className: "block-title" }, LanguageManager.t("admin.surviveParams")),
+            el("div", { className: "block-row" },
+                el("div", { className: "flex-1 min-w-150" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.decor")),
+                    el("select", { className: "survive-decor block-select" },
+                        el("option", { value: "default", selected: options.decorType === 'default' }, LanguageManager.t("admin.default")),
+                        el("option", { value: "mine", selected: options.decorType === 'mine' }, LanguageManager.t("admin.mine")),
+                        el("option", { value: "styx", selected: options.decorType === 'styx' }, LanguageManager.t("admin.styx"))
+                    )
+                ),
+                el("div", { className: "flex-1 min-w-100" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.duration")),
+                    el("input", { type: "number", className: "survive-duration block-input", value: options.duration || '', placeholder: LanguageManager.t("admin.infinite") })
+                ),
+                el("div", { className: "flex-1 min-w-100" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.playerHp")),
+                    el("input", { type: "number", className: "survive-hp block-input", value: options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : '', placeholder: LanguageManager.t("admin.immortal") })
+                )
+            ),
+            el("div", { className: "block-row mt-15" },
+                el("div", { className: "flex-1 min-w-150" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.spawnInterval")),
+                    el("input", { type: "number", step: "0.1", className: "survive-spawn-interval block-input", value: options.spawnInterval !== undefined && options.spawnInterval !== null ? options.spawnInterval : '', placeholder: LanguageManager.t("admin.disabled") })
+                ),
+                el("div", { className: "flex-1 min-w-150" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.maxEnemies")),
+                    el("input", { type: "number", className: "survive-max-enemies block-input", value: options.maxEnemies !== undefined && options.maxEnemies !== null ? options.maxEnemies : '', placeholder: LanguageManager.t("admin.disabled") })
+                )
+            )
+        );
     }
 
-    buildWorldFormHtml(options, isWorld) {
-        return `
-            <div class="world-form story-event-block block-world ${isWorld ? '' : 'none'}">
-                <div class="block-title">⚙️ Paramètres d'Exploration</div>
-                <div class="block-row">
-                    <div class="flex-1 min-w-200">
-                        <label class="admin-label">Type d'Intro :</label>
-                        <select class="world-intro block-select">
-                            <option value="staircase" ${options.introType === 'staircase' ? 'selected' : ''}>Escaliers (Staircase)</option>
-                            <option value="skyfall" ${options.introType === 'skyfall' ? 'selected' : ''}>Chute du Ciel (Skyfall)</option>
-                        </select>
-                    </div>
-                    <div class="flex-1 min-w-200">
-                        <label class="admin-label">Type de Fin :</label>
-                        <select class="world-outro block-select">
-                            <option value="DoorEvent" ${options.outroType === 'DoorEvent' ? 'selected' : ''}>🚪 Porte (DoorEvent)</option>
-                            <option value="HoleEvent" ${options.outroType === 'HoleEvent' ? 'selected' : ''}>🕳️ Trou (HoleEvent)</option>
-                        </select>
-                    </div>
-                    <div class="flex-1 min-w-100">
-                        <label class="admin-label">PV Joueur :</label>
-                        <input type="number" class="world-hp block-input" value="${options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : ''}" placeholder="Immortel" />
-                    </div>
-                </div>
-            </div>
-        `;
+    buildWorldForm(options, isWorld) {
+        return el("div", { className: `world-form story-event-block block-world ${isWorld ? '' : 'none'}` },
+            el("div", { className: "block-title" }, LanguageManager.t("admin.worldParams")),
+            el("div", { className: "block-row" },
+                el("div", { className: "flex-1 min-w-200" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.introType")),
+                    el("select", { className: "world-intro block-select" },
+                        el("option", { value: "staircase", selected: options.introType === 'staircase' }, LanguageManager.t("admin.staircase")),
+                        el("option", { value: "skyfall", selected: options.introType === 'skyfall' }, LanguageManager.t("admin.skyfall"))
+                    )
+                ),
+                el("div", { className: "flex-1 min-w-200" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.outroType")),
+                    el("select", { className: "world-outro block-select" },
+                        el("option", { value: "DoorEvent", selected: options.outroType === 'DoorEvent' }, LanguageManager.t("admin.doorEvent")),
+                        el("option", { value: "HoleEvent", selected: options.outroType === 'HoleEvent' }, LanguageManager.t("admin.holeEvent"))
+                    )
+                ),
+                el("div", { className: "flex-1 min-w-100" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.playerHp")),
+                    el("input", { type: "number", className: "world-hp block-input", value: options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : '', placeholder: LanguageManager.t("admin.immortal") })
+                )
+            )
+        );
     }
 
-    buildVoidFormHtml(isVoid) {
-        return `
-            <div class="void-form story-event-block block-void ${isVoid ? '' : 'none'}">
-                <div class="block-title">🌌 Paramètres du Vide Infini</div>
-                <div class="block-row">
-                    <p class="admin-void-desc">Cette phase spéciale génère un monde infini et un boss caché automatiquement. Aucun paramètre supplémentaire n'est requis.</p>
-                </div>
-            </div>
-        `;
+    buildVoidForm(isVoid) {
+        return el("div", { className: `void-form story-event-block block-void ${isVoid ? '' : 'none'}` },
+            el("div", { className: "block-title" }, LanguageManager.t("admin.voidParams")),
+            el("div", { className: "block-row" },
+                el("p", { className: "admin-void-desc" }, LanguageManager.t("admin.voidDesc"))
+            )
+        );
     }
 
-    buildStoryEventsHtml(levelNumber) {
-        return `
-            <div class="admin-story-events">
-                <div class="events-section-title">🧩 Événements Narratifs (Bulles)</div>
-                <div class="story-events-container-${levelNumber} events-list">
-                </div>
-                <button class="add-story-event-btn btn-secondary" data-level="${levelNumber}">+ Ajouter un événement narratif</button>
-            </div>
-        `;
+    buildStoryEvents(levelNumber) {
+        return el("div", { className: "admin-story-events" },
+            el("div", { className: "events-section-title" }, LanguageManager.t("admin.storyEvents")),
+            el("div", { className: `story-events-container-${levelNumber} events-list` }),
+            el("button", { className: "add-story-event-btn btn-secondary", dataset: { level: levelNumber } }, LanguageManager.t("admin.addEvent"))
+        );
     }
 
     _setupPreviewScene(container) {

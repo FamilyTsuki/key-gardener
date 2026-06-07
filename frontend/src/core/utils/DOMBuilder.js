@@ -6,7 +6,7 @@
  * @returns {Element} The created DOM element.
  */
 export function el(tag, attributes = {}, ...children) {
-    const isSVG = ["svg", "path", "circle", "line", "polyline", "rect", "ellipse", "polygon", "g"].includes(tag);
+    const isSVG = ["svg", "path", "circle", "line", "polyline", "rect", "ellipse", "polygon", "g", "filter", "feTurbulence", "feDisplacementMap", "animate"].includes(tag);
     const element = isSVG 
         ? document.createElementNS("http://www.w3.org/2000/svg", tag)
         : document.createElement(tag);
@@ -43,4 +43,15 @@ export function el(tag, attributes = {}, ...children) {
     children.flat(Infinity).forEach(appendChild);
 
     return element;
+}
+
+/**
+ * Removes all child nodes from a given element.
+ * @param {Element} element - The element to clear.
+ */
+export function clear(element) {
+    if (!element) return;
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
 }

@@ -42,11 +42,11 @@ export class SettingsModal {
             );
         };
 
-        const globalSlider = createSlider("Volume Global", "global");
-        const musicSlider = createSlider("Musique", "music");
-        const envSlider = createSlider("Environnement", "environment");
-        const enemySlider = createSlider("Ennemis", "enemy");
-        const playerSlider = createSlider("Joueur (Effets)", "player");
+        const globalSlider = createSlider(LanguageManager.t("settings.volumeGlobal") || "Volume Global", "global");
+        const musicSlider = createSlider(LanguageManager.t("settings.volumeMusic") || "Musique", "music");
+        const envSlider = createSlider(LanguageManager.t("settings.volumeEnvironment") || "Environnement", "environment");
+        const enemySlider = createSlider(LanguageManager.t("settings.volumeEnemy") || "Ennemis", "enemy");
+        const playerSlider = createSlider(LanguageManager.t("settings.volumePlayer") || "Joueur (Effets)", "player");
 
         const currentLang = LanguageManager.getLanguage();
         const langSelect = el("select", {
@@ -58,14 +58,14 @@ export class SettingsModal {
             el("option", { value: "fr", selected: currentLang === "fr" ? true : undefined }, "Français")
         );
         const langRow = el("div", { className: "settings-row" },
-            el("label", {}, "Langue"),
+            el("label", {}, LanguageManager.t("settings.language") || "Langue"),
             langSelect
         );
 
         const closeBtn = el("button", {
             className: "settings-close-btn",
             onclick: () => this.close()
-        }, "Fermer");
+        }, LanguageManager.t("settings.close") || "Fermer");
 
         const saveAndQuitBtn = el("button", {
             className: "settings-save-quit-btn",
@@ -78,7 +78,7 @@ export class SettingsModal {
 
         this.modalEl = el("div", { className: "settings-modal-overlay" },
             el("div", { className: "settings-modal-content" },
-                el("h2", {}, "Paramètres"),
+                el("h2", {}, LanguageManager.t("settings.title") || "Paramètres"),
                 globalSlider,
                 musicSlider,
                 envSlider,

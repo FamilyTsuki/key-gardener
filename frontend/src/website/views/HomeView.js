@@ -36,21 +36,20 @@ export default class HomeView extends AbstractView {
         this.isCurrentView = true;
         const tunnelContainer = el("div", { id: "tunnel-container" });
 
-        const svgFilter = document.createElement("div");
-        svgFilter.innerHTML = `
-            <svg class="hologram-svg-filter" width="0" height="0">
-                <filter id="hologram-distortion-filter">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.001 0.2" numOctaves="1" result="noise" />
-                    <feDisplacementMap id="displacement-map" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="A" />
-                </filter>
-                <filter id="hologram-mouse-filter">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.001 0.2" numOctaves="1" result="noise2">
-                        <animate attributeName="seed" values="1;100" dur="2s" repeatCount="indefinite" />
-                    </feTurbulence>
-                    <feDisplacementMap id="mouse-displacement-map" in="SourceGraphic" in2="noise2" scale="0" xChannelSelector="R" yChannelSelector="A" />
-                </filter>
-            </svg>
-        `;
+        const svgFilter = el("div", {},
+            el("svg", { className: "hologram-svg-filter", width: "0", height: "0" },
+                el("filter", { id: "hologram-distortion-filter" },
+                    el("feTurbulence", { type: "fractalNoise", baseFrequency: "0.001 0.2", numOctaves: "1", result: "noise" }),
+                    el("feDisplacementMap", { id: "displacement-map", in: "SourceGraphic", in2: "noise", scale: "0", xChannelSelector: "R", yChannelSelector: "A" })
+                ),
+                el("filter", { id: "hologram-mouse-filter" },
+                    el("feTurbulence", { type: "fractalNoise", baseFrequency: "0.001 0.2", numOctaves: "1", result: "noise2" },
+                        el("animate", { attributeName: "seed", values: "1;100", dur: "2s", repeatCount: "indefinite" })
+                    ),
+                    el("feDisplacementMap", { id: "mouse-displacement-map", in: "SourceGraphic", in2: "noise2", scale: "0", xChannelSelector: "R", yChannelSelector: "A" })
+                )
+            )
+        );
 
         const container = el(
             "div",

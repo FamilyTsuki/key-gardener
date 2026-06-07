@@ -1,5 +1,5 @@
 import AbstractView from "../../core/views/AbstractView.js";
-import { el } from "../../core/utils/DOMBuilder.js";
+import { el, clear } from "../../core/utils/DOMBuilder.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { PostsService } from "../../core/services/posts.service.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
@@ -108,7 +108,7 @@ export default class HubView extends AbstractView {
     }
 
     showMediaPreview(file) {
-        this.previewContainer.innerHTML = "";
+        clear(this.previewContainer);
 
         const previewWrapper = el("div", { className: "preview-wrapper" });
         const removeBtn = el("button", {
@@ -142,7 +142,7 @@ export default class HubView extends AbstractView {
     clearSelectedMedia() {
         this.selectedMediaFile = null;
         if (this.previewContainer) {
-            this.previewContainer.innerHTML = "";
+            clear(this.previewContainer);
         }
         const fileInput = document.getElementById("post-media");
         if (fileInput) {
@@ -247,7 +247,7 @@ export default class HubView extends AbstractView {
                 this.clearSelectedMedia();
                 const noPostsText = this.postsContainer.querySelector("p");
                 if (noPostsText && noPostsText.textContent === LanguageManager.t("hub.noPostsYet")) {
-                    this.postsContainer.innerHTML = "";
+                    clear(this.postsContainer);
                 }
                 const newPostEl = this.createPostElement(data.post);
                 this.postsContainer.prepend(newPostEl);
@@ -279,7 +279,7 @@ export default class HubView extends AbstractView {
 
             const data = await PostsService.getAllPosts();
 
-            this.postsContainer.innerHTML = "";
+            clear(this.postsContainer);
 
             if (!data.success || data.posts.length === 0) {
                 this.postsContainer.appendChild(el("p", {}, LanguageManager.t("hub.noPostsYet")));
@@ -292,7 +292,7 @@ export default class HubView extends AbstractView {
 
         } catch (error) {
             console.error("Error loading posts:", error);
-            this.postsContainer.innerHTML = "";
+            clear(this.postsContainer);
             this.postsContainer.appendChild(el("p", {}, LanguageManager.t("hub.errorLoading")));
         }
     }
@@ -368,7 +368,7 @@ export default class HubView extends AbstractView {
 
         contentP.replaceWith(textarea);
 
-        actionsContainer.innerHTML = "";
+        clear(actionsContainer);
         actionsContainer.appendChild(saveBtn);
         actionsContainer.appendChild(cancelBtn);
     }
@@ -437,14 +437,14 @@ export default class HubView extends AbstractView {
         const list = document.getElementById(`comments-list-${postId}`);
         if (!list) return;
 
-        list.innerHTML = `<p class="loading-text">${LanguageManager.t("hub.loadingPosts")}</p>`;
+        clear(list); list.appendChild(el("p", { className: "loading-text" }, LanguageManager.t("hub.loadingPosts")));
 
         try {
             const data = await PostsService.getComments(postId);
-            list.innerHTML = "";
+            clear(list);
             
             if (!data.success || data.comments.length === 0) {
-                list.innerHTML = `<p class="no-comments">${LanguageManager.t("hub.noComments")}</p>`;
+                clear(list); list.appendChild(el("p", { className: "no-comments" }, LanguageManager.t("hub.noComments")));
                 return;
             }
 
@@ -464,7 +464,7 @@ export default class HubView extends AbstractView {
                 list.appendChild(bubble);
             });
         } catch (error) {
-            list.innerHTML = `<p class="error">Error loading comments</p>`;
+            clear(list); list.appendChild(el("p", { className: "error" }, "Error loading comments"));
         }
     }
 
