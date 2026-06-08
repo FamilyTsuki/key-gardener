@@ -46,6 +46,8 @@ export class WorldPhase extends GamePhase {
         }
         
         this.elapsedTime = 0;
+        this.worldAmbiance = AudioManager.playAmbiance("/asset/game_assets/sounds/cave.wav", 0.8);
+        AudioManager.setCaveEcho(true);
     }
 
     async init() {
@@ -131,6 +133,10 @@ export class WorldPhase extends GamePhase {
         }
 
         this.runIntroAnimation(this.activeIntroType, spawnTile);
+        await AudioManager.preloadSound("/asset/game_assets/sounds/jump.wav");
+        await AudioManager.preloadSound("/asset/game_assets/sounds/fall.wav");
+        await AudioManager.preloadSound("/asset/game_assets/sounds/impact.wav");
+        await AudioManager.preloadSound("/asset/game_assets/sounds/long-fall.wav");
     }
 
     executeEventAction(eventToTrigger) {
@@ -141,6 +147,7 @@ export class WorldPhase extends GamePhase {
         } else if (eventToTrigger.actionType === "spawn") {
             console.log("Spawn action triggered in WorldPhase, but not fully supported here yet.");
         }
+    
     }
 
     update(deltaTime) {
@@ -151,6 +158,9 @@ export class WorldPhase extends GamePhase {
         this.elapsedTime += deltaTime;
 
         if (this.isPlayingIntro && this.activeIntroType === "skyfall") {
+            if (this.dropSpeed === 0) {
+                AudioManager.playSFX("/asset/game_assets/sounds/long_fall.wav", "player", 1);
+            }
             this.dropSpeed += 25 * deltaTime;
             this.player.offsetY -= this.dropSpeed * deltaTime;
 
@@ -164,8 +174,9 @@ export class WorldPhase extends GamePhase {
             if (this.player.offsetY <= this.targetY) {
                 this.player.offsetY = this.targetY;
                 this.camera.lookAt(this.arrivalX, this.targetY, this.arrivalZ);
-                AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.5);
-
+                
+                
+                AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.5);
                 const loader = new THREE.TextureLoader();
                 loader.load('/asset/game_assets/textures/break.png', (texture) => {
                     const geometry = new THREE.PlaneGeometry(2.5, 2.5);

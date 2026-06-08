@@ -345,6 +345,8 @@ export default class Player extends Actor {
                 this.isMoving = false;
                 this.x = this.targetPosition.x;
                 this.y = this.targetPosition.y;
+
+                AudioManager.playSFX("/asset/game_assets/sounds/fall.wav", "player", 0.4);
             } else {
                 this.x =
                     this.startPosition.x +
@@ -358,8 +360,7 @@ export default class Player extends Actor {
             
             this.offsetY = 
                 this.startOffsetY + 
-                (this.targetOffsetY - this.startOffsetY) * 
-                    this.movementProgress;
+                (this.targetOffsetY - this.startOffsetY) * this.movementProgress;
         }
 
         if (this.mesh) {
@@ -368,8 +369,6 @@ export default class Player extends Actor {
 
             this.mesh.position.set(worldCurrentX, this.offsetY, worldCurrentZ);
 
-
-
             if (this.playerModel) {
                 if (this.isMoving) {
                     const jumpAmplitude = 2.0;
@@ -377,7 +376,6 @@ export default class Player extends Actor {
                         0 +
                         Math.sin(this.movementProgress * Math.PI) * jumpAmplitude;
 
-                    const deformation = -Math.cos(this.movementProgress * Math.PI * 2);
                     const dx = this.targetPosition.x - this.startPosition.x;
                     const dy = this.targetPosition.y - this.startPosition.y;
                     const jumpDistance = Math.sqrt(dx * dx + dy * dy);
@@ -404,7 +402,6 @@ export default class Player extends Actor {
             }
         }
     }
-
     /**
      * Applies a procedural crouch animation to the player rig.
      * @param {number} percentage - From 0.0 (standing) to 1.0 (fully crouched)

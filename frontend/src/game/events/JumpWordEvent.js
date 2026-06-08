@@ -44,6 +44,8 @@ export class JumpWordEvent extends WorldEvent {
         this.isJumping = false;
         this.jumpProgress = 0;
         this.jumpDuration = 1.8;
+        
+        this.hasPlayedJumpSound = false;
     }
 
     get cssFiles() {
@@ -105,6 +107,7 @@ export class JumpWordEvent extends WorldEvent {
                     this.eventCameraPos.z + shakeZ
                 );
                 worldPhase.camera.lookAt(this.eventCameraLookAt);
+                
 
                 if (this.waitTimer <= 0) {
                     this.isWaitingToJump = false;
@@ -153,6 +156,7 @@ export class JumpWordEvent extends WorldEvent {
             if (!this.isActive && !this.transitioningToEvent) {
                 this.triggerX = currentTile.rawPosition.x;
                 this.triggerY = currentTile.rawPosition.y;
+                worldPhase.player.mesh.rotation.y = Math.PI - Math.PI / 6;
                 this.startEvent(worldPhase);
             }
         }
@@ -218,6 +222,7 @@ export class JumpWordEvent extends WorldEvent {
                 this.transitioningToEvent = false;
                 this.isActive = true;
                 this.buildUI();
+                
             } else {
                 this.transitioningToWorld = false;
                 this.isCompleted = true;
@@ -407,6 +412,11 @@ export class JumpWordEvent extends WorldEvent {
                         this.waitTimer = 0.5;
                         this.activeWords = [];
                         this.updateWordDisplay();
+
+                        if (!this.hasPlayedJumpSound) {
+                            AudioManager.playSFX("/asset/game_assets/sounds/big-jump.wav", "player", 0.8);
+                            this.hasPlayedJumpSound = true;
+                        }
                     }
                 }
             }
@@ -612,7 +622,6 @@ export class JumpWordEvent extends WorldEvent {
         this.isJumping = true;
         this.jumpProgress = 0;
 
-        AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.8);
     }
 
     updateJump(worldPhase, deltaTime) {
@@ -641,7 +650,6 @@ export class JumpWordEvent extends WorldEvent {
             window.startShake(1.5);
             worldPhase.cameraShakeTime = 0.4;
             
-            AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.8);
 
             this.isLanding = true;
             this.landingProgress = 0;
