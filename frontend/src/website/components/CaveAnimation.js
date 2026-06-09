@@ -97,22 +97,26 @@ export class CaveAnimation {
 
     loadModels() {
         return new Promise((resolve) => {
-            const loader = new GLTFLoader();
-            let loadedCount = 0;
-            const checkDone = () => {
-                loadedCount++;
-                if (loadedCount === 3) resolve();
+            const gltfLoader = new GLTFLoader();
+            let loadedAssetCount = 0;
+            const totalAssetsToLoad = 4;
+
+            const verifyLoadingStatus = () => {
+                loadedAssetCount++;
+                if (loadedAssetCount === totalAssetsToLoad) {
+                    resolve();
+                }
             };
             
-            loader.load('/asset/game_assets/models/bone.glb', (gltf) => {
+            gltfLoader.load('/asset/game_assets/models/bone.glb', (gltf) => {
                 const boneModel = gltf.scene;
                 
-                for (let i = 0; i < 20; i++) { 
-                    const s = 1.2 + (i / 15);
-                    boneModel.scale.set(s, s, s);
-                    const bone = boneModel.clone();
-                    this.positionModelOnWall(bone, 0.8, 1.0, i);
-                    this.scene.add(bone);
+                for (let index = 0; index < 20; index++) { 
+                    const scaleModifier = 1.2 + (index / 15);
+                    boneModel.scale.set(scaleModifier, scaleModifier, scaleModifier);
+                    const boneObject = boneModel.clone();
+                    this.positionModelOnWall(boneObject, 0.8, 1.0, index);
+                    this.scene.add(boneObject);
                 }
 
                 const arrowGroup = new THREE.Group();
@@ -126,14 +130,14 @@ export class CaveAnimation {
                 arrowGroup.add(stemBone);
 
                 const rightWing = boneModel.clone();
-                rightWing.scale.set(arrowScale/1.8, arrowScale/1.5, arrowScale/1.5);
+                rightWing.scale.set(arrowScale / 1.8, arrowScale / 1.5, arrowScale / 1.5);
                 rightWing.position.set(3.2, 0.6, -0.5);
                 rightWing.rotation.reorder("ZYX");
                 rightWing.rotation.set(Math.PI / 3, -Math.PI / 9, Math.PI / 4);
                 arrowGroup.add(rightWing);
 
                 const leftWing = boneModel.clone();
-                leftWing.scale.set(arrowScale/1.8, arrowScale/1.8, arrowScale/1.8);
+                leftWing.scale.set(arrowScale / 1.8, arrowScale / 1.8, arrowScale / 1.8);
                 leftWing.position.set(-3, 1.2, 1);
                 leftWing.rotation.reorder("ZYX");
                 leftWing.rotation.set(Math.PI / 2, 0, -Math.PI / 4);
@@ -144,212 +148,232 @@ export class CaveAnimation {
                 this.scene.add(arrowGroup);
                 this.scrollArrowGroup = arrowGroup;
 
-                checkDone();
+                verifyLoadingStatus();
             });
             
-            loader.load('/asset/game_assets/models/player.glb', (gltf) => {
+            gltfLoader.load('/asset/game_assets/models/player.glb', (gltf) => {
                 const playerMesh = gltf.scene;
                 
                 const absoluteHolePos = this.config.holePosition.clone();
                 absoluteHolePos.y += -this.config.caveHeight / 2 + 150;
-                const dir = new THREE.Vector3(this.config.holePosition.x, 0, this.config.holePosition.z).normalize();
+                const directionVector = new THREE.Vector3(this.config.holePosition.x, 0, this.config.holePosition.z).normalize();
 
-                const right = dir.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
+                const rightDirection = directionVector.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
 
-                const dioramaCenter = absoluteHolePos.clone().add(dir.clone().multiplyScalar(50));
+                const dioramaCenter = absoluteHolePos.clone().add(directionVector.clone().multiplyScalar(50));
 
-                const playerPos = dioramaCenter.clone().add(right.clone().multiplyScalar(14));
-                const bugPos = dioramaCenter.clone().add(right.clone().multiplyScalar(-14));
+                const playerPosition = dioramaCenter.clone().add(rightDirection.clone().multiplyScalar(14));
+                const bugPosition = dioramaCenter.clone().add(rightDirection.clone().multiplyScalar(-14));
 
-                const eyeGeo = new THREE.SphereGeometry(2.5, 16, 16);
-                const eyeMat = new THREE.MeshBasicMaterial({ color: 0x850000, fog: false }); 
+                const eyeGeometry = new THREE.SphereGeometry(2.5, 16, 16);
+                const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0x850000, fog: false }); 
                 
                 const eyesGroup = new THREE.Group();
                 
-                const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+                const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
                 leftEye.position.set(-5, 0, 0);
                 leftEye.scale.set(0.4, 2, 2); 
                 
-                const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+                const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
                 rightEye.position.set(5, 0, 0);
                 rightEye.scale.set(0.4, 2, 2);
                 
                 eyesGroup.add(leftEye);
                 eyesGroup.add(rightEye);
 
-                const depth = 400; 
-                const basePos = absoluteHolePos.clone().add(dir.clone().multiplyScalar(depth));
+                const lookDepth = 400; 
+                const basePosition = absoluteHolePos.clone().add(directionVector.clone().multiplyScalar(lookDepth));
 
-                eyesGroup.position.copy(basePos);
-
+                eyesGroup.position.copy(basePosition);
                 eyesGroup.lookAt(absoluteHolePos.x, absoluteHolePos.y, absoluteHolePos.z);
 
-                const eyeLight = new THREE.PointLight(0xff0000, 100, 40);
-                eyesGroup.add(eyeLight);
+                const eyePointLight = new THREE.PointLight(0xff0000, 100, 40);
+                eyesGroup.add(eyePointLight);
                 
                 this.scene.add(eyesGroup);
 
                 const keycapGroup = new THREE.Group();
-                const keyBaseMat = new THREE.MeshStandardMaterial({color: 0x333333, roughness: 0.6, flatShading: true});
-                const keyTopMat = new THREE.MeshStandardMaterial({color: 0x111111, roughness: 0.8});
+                const keyBaseMaterial = new THREE.MeshStandardMaterial({color: 0x333333, roughness: 0.6, flatShading: true});
+                const keyTopMaterial = new THREE.MeshStandardMaterial({color: 0x111111, roughness: 0.8});
 
-                const canvas = document.createElement('canvas');
-                canvas.width = 256;
-                canvas.height = 256;
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#111111';
-                ctx.fillRect(0, 0, 256, 256);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 160px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('A', 128, 140);
-                const letterTexture = new THREE.CanvasTexture(canvas);
+                const canvasElement = document.createElement('canvas');
+                canvasElement.width = 256;
+                canvasElement.height = 256;
+                const canvasContext = canvasElement.getContext('2d');
+                canvasContext.fillStyle = '#111111';
+                canvasContext.fillRect(0, 0, 256, 256);
+                canvasContext.fillStyle = '#ffffff';
+                canvasContext.font = 'bold 160px sans-serif';
+                canvasContext.textAlign = 'center';
+                canvasContext.textBaseline = 'middle';
+                canvasContext.fillText('A', 128, 140);
+                const letterCanvasTexture = new THREE.CanvasTexture(canvasElement);
 
-                const letterMat = new THREE.MeshStandardMaterial({map: letterTexture, roughness: 0.8, color: 0xffffff});
-                const keyTopMaterials = [
-                    keyTopMat, keyTopMat,
-                    letterMat, keyTopMat,
-                    keyTopMat, keyTopMat
+                const letterMaterial = new THREE.MeshStandardMaterial({map: letterCanvasTexture, roughness: 0.8, color: 0xffffff});
+                const keyTopMaterialsArray = [
+                    keyTopMaterial, keyTopMaterial,
+                    letterMaterial, keyTopMaterial,
+                    keyTopMaterial, keyTopMaterial
                 ];
                 
-                const keyBase = new THREE.Mesh(new THREE.BoxGeometry(16, 6, 16), keyBaseMat);
-                const keyTop = new THREE.Mesh(new THREE.BoxGeometry(12, 1.5, 12), keyTopMaterials);
-                keyTop.position.y = 3.5;
+                const keyBaseMesh = new THREE.Mesh(new THREE.BoxGeometry(16, 6, 16), keyBaseMaterial);
+                const keyTopMesh = new THREE.Mesh(new THREE.BoxGeometry(12, 1.5, 12), keyTopMaterialsArray);
+                keyTopMesh.position.y = 3.5;
                 
-                keycapGroup.add(keyBase);
-                keycapGroup.add(keyTop);
+                keycapGroup.add(keyBaseMesh);
+                keycapGroup.add(keyTopMesh);
                 
-                keycapGroup.position.copy(playerPos);
+                keycapGroup.position.copy(playerPosition);
                 keycapGroup.position.y -= 14;
 
                 keycapGroup.rotation.set(Math.random() * 0.2, Math.random() * 0.5, Math.random() * 0.2);
                 this.scene.add(keycapGroup);
 
-                const playerContainer = new THREE.Group();
-                playerContainer.scale.set(12.5, 12.5, 12.5);
-                playerContainer.position.copy(playerPos);
-                playerContainer.position.y += 2;
-                playerContainer.position.x += 0;
+                const playerContainerGroup = new THREE.Group();
+                playerContainerGroup.scale.set(12.5, 12.5, 12.5);
+                playerContainerGroup.position.copy(playerPosition);
+                playerContainerGroup.position.y += 2;
+                playerContainerGroup.position.x += 0;
 
-                playerContainer.lookAt(bugPos);
+                playerContainerGroup.lookAt(bugPosition);
 
                 playerMesh.rotation.y = Math.PI / 6;
                 playerMesh.rotation.x = Math.PI / 13;
                 playerMesh.rotation.z = 0;
                 
-                playerContainer.add(playerMesh);
-                this.scene.add(playerContainer);
+                playerContainerGroup.add(playerMesh);
+                this.scene.add(playerContainerGroup);
 
                 const spellOrbGroup = new THREE.Group();
                 spellOrbGroup.position.copy(dioramaCenter);
                 spellOrbGroup.position.y += 5;
                 
-                const spellGeo = new THREE.SphereGeometry(1.5, 16, 16);
-                const spellMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.9 });
-                const spellOrb = new THREE.Mesh(spellGeo, spellMat);
+                const spellOrbGeometry = new THREE.SphereGeometry(1.5, 16, 16);
+                const spellOrbMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.9 });
+                const spellOrbMesh = new THREE.Mesh(spellOrbGeometry, spellOrbMaterial);
 
-                const glowGeo = new THREE.SphereGeometry(2.5, 16, 16);
-                const glowMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.3 });
-                const spellGlow = new THREE.Mesh(glowGeo, glowMat);
-                spellOrbGroup.add(spellOrb);
-                spellOrbGroup.add(spellGlow);
+                const glowOrbGeometry = new THREE.SphereGeometry(2.5, 16, 16);
+                const glowOrbMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.3 });
+                const spellGlowMesh = new THREE.Mesh(glowOrbGeometry, glowOrbMaterial);
+                
+                spellOrbGroup.add(spellOrbMesh);
+                spellOrbGroup.add(spellGlowMesh);
 
-                const spellLight = new THREE.PointLight(0x00ff88, 2000, 250);
-                spellOrbGroup.add(spellLight);
+                const spellPointLight = new THREE.PointLight(0x00ff88, 2000, 250);
+                spellOrbGroup.add(spellPointLight);
                 
                 this.scene.add(spellOrbGroup);
 
-                checkDone();
+                verifyLoadingStatus();
             });
             
-            loader.load('/asset/game_assets/models/bug.glb', (gltf) => {
-                const bug = gltf.scene;
-                bug.scale.set(12, 12, 12);
+            gltfLoader.load('/asset/game_assets/models/bug.glb', (gltf) => {
+                const bugMeshObject = gltf.scene;
+                bugMeshObject.scale.set(12, 12, 12);
                 
                 const absoluteHolePos = this.config.holePosition.clone();
                 absoluteHolePos.y += -this.config.caveHeight / 2 + 150;
-                const dir = new THREE.Vector3(this.config.holePosition.x, 0, this.config.holePosition.z).normalize();
+                const directionVector = new THREE.Vector3(this.config.holePosition.x, 0, this.config.holePosition.z).normalize();
                 
-                const right = dir.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
-                const dioramaCenter = absoluteHolePos.clone().add(dir.clone().multiplyScalar(50));
+                const rightDirection = directionVector.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
+                const dioramaCenter = absoluteHolePos.clone().add(directionVector.clone().multiplyScalar(50));
                 
-                const playerPos = dioramaCenter.clone().add(right.clone().multiplyScalar(14));
-                const bugPos = dioramaCenter.clone().add(right.clone().multiplyScalar(-14));
+                const playerPosition = dioramaCenter.clone().add(rightDirection.clone().multiplyScalar(14));
+                const bugPosition = dioramaCenter.clone().add(rightDirection.clone().multiplyScalar(-14));
 
-                bug.position.copy(bugPos);
-                bug.position.y += 2;
+                bugMeshObject.position.copy(bugPosition);
+                bugMeshObject.position.y += 2;
                 
-                bug.lookAt(playerPos);
-
-                bug.rotateX(-Math.PI / 6);
-                bug.rotateZ((Math.random() - 0.5) * Math.PI / 4);
+                bugMeshObject.lookAt(playerPosition);
+                bugMeshObject.rotateX(-Math.PI / 6);
+                bugMeshObject.rotateZ((Math.random() - 0.5) * Math.PI / 4);
                 
-                this.scene.add(bug);
+                this.scene.add(bugMeshObject);
 
-                const impactGroup = new THREE.Group();
-                impactGroup.position.copy(bugPos);
-                impactGroup.position.y += 6;
+                const impactEffectGroup = new THREE.Group();
+                impactEffectGroup.position.copy(bugPosition);
+                impactEffectGroup.position.y += 6;
 
-                const toPlayer = playerPos.clone().sub(bugPos).normalize();
-                impactGroup.position.add(toPlayer.multiplyScalar(5));
-                impactGroup.position.add(dir.clone().multiplyScalar(-4));
+                const vectorToPlayer = playerPosition.clone().sub(bugPosition).normalize();
+                impactEffectGroup.position.add(vectorToPlayer.multiplyScalar(5));
+                impactEffectGroup.position.add(directionVector.clone().multiplyScalar(-4));
 
-                const impactLight = new THREE.PointLight(0x00ff88, 1000, 150);
-                impactGroup.add(impactLight);
+                const impactPointLight = new THREE.PointLight(0x00ff88, 1000, 150);
+                impactEffectGroup.add(impactPointLight);
                 
-                const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
+                const ringMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
 
-                const tiltY = -Math.PI / 8;
-                const tiltX = -Math.PI / 8;
+                const rotationTiltY = -Math.PI / 8;
+                const rotationTiltX = -Math.PI / 8;
 
-                const mainRingGeo = new THREE.TorusGeometry(8, 0.1, 8, 64);
-                const mainRing = new THREE.Mesh(mainRingGeo, ringMat);
-                mainRing.lookAt(toPlayer);
-                mainRing.rotateY(tiltY);
-                mainRing.rotateX(tiltX);
-                impactGroup.add(mainRing);
+                const mainRingGeometry = new THREE.TorusGeometry(8, 0.1, 8, 64);
+                const mainRingMesh = new THREE.Mesh(mainRingGeometry, ringMaterial);
+                mainRingMesh.lookAt(vectorToPlayer);
+                mainRingMesh.rotateY(rotationTiltY);
+                mainRingMesh.rotateX(rotationTiltX);
+                impactEffectGroup.add(mainRingMesh);
 
-                const secRingGeo = new THREE.TorusGeometry(3, 0.4, 16, 64);
-                const secRingMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
-                const secRing = new THREE.Mesh(secRingGeo, secRingMat);
-                secRing.lookAt(toPlayer);
-                secRing.rotateY(tiltY);
-                secRing.rotateX(tiltX);
-                impactGroup.add(secRing);
+                const secondaryRingGeometry = new THREE.TorusGeometry(3, 0.4, 16, 64);
+                const secondaryRingMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
+                const secondaryRingMesh = new THREE.Mesh(secondaryRingGeometry, secondaryRingMaterial);
+                secondaryRingMesh.lookAt(vectorToPlayer);
+                secondaryRingMesh.rotateY(rotationTiltY);
+                secondaryRingMesh.rotateX(rotationTiltX);
+                impactEffectGroup.add(secondaryRingMesh);
 
-                const coreGeo = new THREE.SphereGeometry(1.5, 16, 16);
-                const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
-                const impactCore = new THREE.Mesh(coreGeo, coreMat);
-                impactCore.scale.set(1.5, 0.8, 1.5);
-                impactCore.lookAt(toPlayer);
-                impactCore.rotateY(tiltY);
-                impactCore.rotateX(tiltX);
-                impactGroup.add(impactCore);
+                const impactCoreGeometry = new THREE.SphereGeometry(1.5, 16, 16);
+                const impactCoreMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
+                const impactCoreMesh = new THREE.Mesh(impactCoreGeometry, impactCoreMaterial);
+                impactCoreMesh.scale.set(1.5, 0.8, 1.5);
+                impactCoreMesh.lookAt(vectorToPlayer);
+                impactCoreMesh.rotateY(rotationTiltY);
+                impactCoreMesh.rotateX(rotationTiltX);
+                impactEffectGroup.add(impactCoreMesh);
 
-                const sparkGeo = new THREE.TetrahedronGeometry(0.3, 0);
-                const sparkMat = new THREE.MeshBasicMaterial({ color: 0xffffff, blending: THREE.AdditiveBlending });
-                const numSparks = 20;
-                for(let i = 0; i < numSparks; i++) {
-                    const spark = new THREE.Mesh(sparkGeo, sparkMat);
+                const sparkGeometry = new THREE.TetrahedronGeometry(0.3, 0);
+                const sparkMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, blending: THREE.AdditiveBlending });
+                const totalSparksCount = 20;
+                
+                for(let index = 0; index < totalSparksCount; index++) {
+                    const sparkMesh = new THREE.Mesh(sparkGeometry, sparkMaterial);
 
-                    const radius = 2 + (i / numSparks) * 6;
-                    const phi = Math.acos(1 - 2 * (i + 0.5) / numSparks);
-                    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+                    const sparkRadius = 2 + (index / totalSparksCount) * 6;
+                    const sparkPhi = Math.acos(1 - 2 * (index + 0.5) / totalSparksCount);
+                    const sparkTheta = Math.PI * (1 + Math.sqrt(5)) * index;
                     
-                    spark.position.x = radius * Math.sin(phi) * Math.cos(theta);
-                    spark.position.y = radius * Math.sin(phi) * Math.sin(theta);
-                    spark.position.z = radius * Math.cos(phi);
+                    sparkMesh.position.x = sparkRadius * Math.sin(sparkPhi) * Math.cos(sparkTheta);
+                    sparkMesh.position.y = sparkRadius * Math.sin(sparkPhi) * Math.sin(sparkTheta);
+                    sparkMesh.position.z = sparkRadius * Math.cos(sparkPhi);
 
-                    spark.lookAt(0, 0, 0);
-                    spark.scale.set(0.2, 0.2, 3.0);
+                    sparkMesh.lookAt(0, 0, 0);
+                    sparkMesh.scale.set(0.2, 0.2, 3.0);
                     
-                    impactGroup.add(spark);
+                    impactEffectGroup.add(sparkMesh);
                 }
                 
-                this.scene.add(impactGroup);
+                this.scene.add(impactEffectGroup);
 
-                checkDone();
+                verifyLoadingStatus();
+            });
+            
+            gltfLoader.load('/asset/game_assets/models/black_hole.glb', (gltf) => {
+                this.blackHoleObject = gltf.scene;
+                
+                this.blackHoleObject.scale.set(1000, 1000, 1000);
+                this.blackHoleObject.position.set(0, -1000, -1000);
+                this.blackHoleObject.rotation.x = Math.PI / 6;
+                this.blackHoleObject.rotation.z = -Math.PI / 8;
+                this.blackHoleObject.rotation.y = Math.PI / 6;
+                
+                this.blackHoleObject.traverse((sceneNode) => {
+                    if (sceneNode.isMesh && sceneNode.material) {
+                        sceneNode.material.fog = false;
+                    }
+                });
+                
+                this.scene.add(this.blackHoleObject);
+                
+                verifyLoadingStatus();
             });
         });
     }
@@ -631,29 +655,7 @@ export class CaveAnimation {
         const starField = new THREE.Points(starsGeometry, this.starsMaterial);
         this.scene.add(starField);
 
-        const planetGeo = new THREE.SphereGeometry(400, 64, 64);
-        const planetMat = new THREE.MeshBasicMaterial({ 
-            color: 0x4422ff, 
-            transparent: false, 
-            fog: false 
-        });
-        const planet = new THREE.Mesh(planetGeo, planetMat);
-        planet.position.set(0, -1000, -2500);
-        this.scene.add(planet);
-
-        const ringGeo = new THREE.TorusGeometry(650, 15, 2, 64);
-        const ringMat = new THREE.MeshBasicMaterial({ 
-            color: 0x88aaff, 
-            transparent: true, 
-            opacity: 0.6,
-            fog: false,
-            side: THREE.DoubleSide
-        });
-        const ring = new THREE.Mesh(ringGeo, ringMat);
-        ring.position.copy(planet.position);
-        ring.rotation.x = Math.PI / 2.2;
-        ring.rotation.y = Math.PI / 8;
-        this.scene.add(ring);
+        
     }
 
     createStalactites() {
@@ -1038,6 +1040,7 @@ export class CaveAnimation {
             if (this.starsMaterial && this.starsMaterial.userData.uniforms) {
                 this.starsMaterial.userData.uniforms.uTime.value = time;
             }
+            this.blackHoleObject.rotateY(0.0003);
 
             this.renderer.render(this.scene, this.camera);
         };

@@ -121,7 +121,7 @@ export default class HomeView extends AbstractView {
                             LanguageManager.t("home.feature2Desc")
                         )
                     ),
-                    this.renderHologram("/asset/img/home.jpg", "Cave Exploration")
+                    this.renderHologram("/asset/img/fond.png", "Cave Exploration")
                 ),
                 el(
                     "section",
