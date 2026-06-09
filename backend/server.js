@@ -102,7 +102,7 @@ app.get("*", (req, res) => {
         htmlData = htmlData.replace(/<meta property="twitter:description" content="[^"]*"/, `<meta property="twitter:description" content="${desc}"`);
         
         const canonicalUrl = `https://keyboardsurvivor.com${req.path === '/' ? '' : req.path}`;
-        htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" />\n</head>`);
+        htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`);
         
         res.send(htmlData);
     });
