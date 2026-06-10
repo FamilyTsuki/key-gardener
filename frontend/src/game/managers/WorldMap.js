@@ -185,7 +185,7 @@ export default class WorldMap {
         let stoneTexture = null;
         try {
             stoneTexture = await textureLoader.loadAsync(
-                "/asset/game_assets/textures/stone.jpg"
+                "/asset/game_assets/textures/stone.webp"
             );
             stoneTexture.wrapS = THREE.RepeatWrapping;
             stoneTexture.wrapT = THREE.RepeatWrapping;

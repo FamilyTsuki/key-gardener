@@ -178,7 +178,7 @@ export class WorldPhase extends GamePhase {
                 
                 AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.5);
                 const loader = new THREE.TextureLoader();
-                loader.load('/asset/game_assets/textures/break.png', (texture) => {
+                loader.load('/asset/game_assets/textures/break.webp', (texture) => {
                     const geometry = new THREE.PlaneGeometry(2.5, 2.5);
                     const material = new THREE.MeshBasicMaterial({ 
                         map: texture, 

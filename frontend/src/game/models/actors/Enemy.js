@@ -79,7 +79,7 @@ export default class Enemy extends Actor {
         scene.add(this.mesh);
 
         const textureLoader = new THREE.TextureLoader();
-        const bugTexture = textureLoader.load("/asset/game_assets/textures/bug.png");
+        const bugTexture = textureLoader.load("/asset/game_assets/textures/bug.webp");
         bugTexture.flipY = false;
         bugTexture.colorSpace = THREE.SRGBColorSpace;
         const loader = new GLTFLoader();

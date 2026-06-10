@@ -72,7 +72,7 @@ export class IntroPhase extends GamePhase {
 
         const rift = document.createElement("img");
         rift.className = "cinematic-rift ";
-        rift.src = "/asset/game_assets/textures/shift.png";
+        rift.src = "/asset/game_assets/textures/shift.webp";
         rift.alt = "rift";
 
         this.container.appendChild(video);

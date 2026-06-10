@@ -624,7 +624,7 @@ export class AdminView {
                                 const arch = new THREE.Mesh(archGeo, pillarMat);
                                 arch.position.set(0, 13, 0);
                                 const textureLoader = new THREE.TextureLoader();
-                                const doorTexture = textureLoader.load('/asset/game_assets/textures/door.jpg');
+                                const doorTexture = textureLoader.load('/asset/game_assets/textures/door.webp');
                                 
                                 const doorMat = new THREE.MeshStandardMaterial({
                                     map: doorTexture,

@@ -103,11 +103,27 @@ exports.createPost = async (req, res, next) => {
                             message: "Inappropriate content detected in the image."
                         });
                     }
+                    
+                    const sharp = require("sharp");
+                    const webpFilename = req.file.filename.substring(0, req.file.filename.lastIndexOf('.')) + '.webp';
+                    const webpPath = path.join(path.dirname(req.file.path), webpFilename);
+
+                    await sharp(req.file.path)
+                        .resize({ width: 1200, withoutEnlargement: true })
+                        .webp({ quality: 80 })
+                        .toFile(webpPath);
+
+                    if (fs.existsSync(req.file.path)) {
+                        fs.unlinkSync(req.file.path);
+                    }
+                    imageUrl = `/asset/uploads/posts/${webpFilename}`;
                 } catch (error) {
-                    console.error("Image moderation failed:", error);
+                    console.error("Image moderation or conversion failed:", error);
+                    imageUrl = `/asset/uploads/posts/${req.file.filename}`;
                 }
+            } else {
+                imageUrl = `/asset/uploads/posts/${req.file.filename}`;
             }
-            imageUrl = `/asset/uploads/posts/${req.file.filename}`;
         }
 
         const textContent = content ? content.trim() : "";

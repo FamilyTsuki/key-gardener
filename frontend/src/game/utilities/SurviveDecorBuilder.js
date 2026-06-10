@@ -48,7 +48,7 @@ export class SurviveDecorBuilder {
         decorGroup.add(raft);
 
         const textureLoader = new THREE.TextureLoader();
-        const woodTexture = textureLoader.load('/asset/game_assets/textures/log.jpg');
+        const woodTexture = textureLoader.load('/asset/game_assets/textures/log.webp');
         woodTexture.wrapS = THREE.RepeatWrapping;
         woodTexture.wrapT = THREE.RepeatWrapping;
         woodTexture.repeat.set(0.5, 1); 
@@ -94,7 +94,7 @@ export class SurviveDecorBuilder {
             originalZ[i] = positionAttribute.getZ(i);
         }
         
-        const waterNorm = textureLoader.load("/asset/game_assets/textures/Water_002_SD/Water_002_NORM.jpg");
+        const waterNorm = textureLoader.load("/asset/game_assets/textures/Water_002_SD/Water_002_NORM.webp");
         waterNorm.wrapS = THREE.RepeatWrapping;
         waterNorm.wrapT = THREE.RepeatWrapping;
         waterNorm.repeat.set(4, 4); 
@@ -405,7 +405,7 @@ export class SurviveDecorBuilder {
 
         const floorGeo = new THREE.PlaneGeometry(42, 42);
         const textureLoader = new THREE.TextureLoader();
-        const woodTexture = textureLoader.load('/asset/game_assets/textures/wood.jpg');
+        const woodTexture = textureLoader.load('/asset/game_assets/textures/wood.webp');
         woodTexture.wrapS = THREE.RepeatWrapping;
         woodTexture.wrapT = THREE.RepeatWrapping;
         woodTexture.repeat.set(1, 4);

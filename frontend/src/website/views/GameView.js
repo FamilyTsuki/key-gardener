@@ -33,7 +33,7 @@ export default class GameView extends AbstractView {
             className: "game-canvas",
         });
         const settingsBtn = el("button", { className: "game-settings-btn", onclick: () => this.openSettings() },
-            el("img", { src: "/asset/game_assets/textures/parametre.png", alt: "Paramètres", className: "settings-icon" })
+            el("img", { src: "/asset/game_assets/textures/parametre.webp", alt: "Paramètres", className: "settings-icon" })
         );
 
         this.settingsBtnContainer = el(

@@ -81,7 +81,7 @@ export class DialogueBox {
     /**
      * Shows the dialogue box with a set of dialogues and a speaker model/image.
      * @param {string[]} dialogues - Array of strings to display sequentially.
-     * @param {string} speakerPath - Path to the image (.png/.jpg) or 3D model (.glb/.gltf).
+     * @param {string} speakerPath - Path to the image (.webp/.webp) or 3D model (.glb/.gltf).
      * @param {Function} [onComplete] - Callback function executed when dialogue ends.
      */
     show(dialogues, speakerPath, onComplete = null) {

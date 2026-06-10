@@ -100,7 +100,7 @@ export default class HomeView extends AbstractView {
                 el(
                     "div",
                     { className: "home-section-row home-contaner-2" },
-                    this.renderHologram("/asset/img/home_battle.png", "Game Image"),
+                    this.renderHologram("/asset/img/home_battle.webp", "Game Image"),
                     el(
                         "div",
                         { className: "home-info-container" },
@@ -127,7 +127,7 @@ export default class HomeView extends AbstractView {
                             LanguageManager.t("home.feature2Desc")
                         )
                     ),
-                    this.renderHologram("/asset/img/fond.png", "Cave Exploration")
+                    this.renderHologram("/asset/img/fond.webp", "Cave Exploration")
                 ),
                 el(
                     "section",

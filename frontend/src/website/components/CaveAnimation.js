@@ -468,7 +468,7 @@ export class CaveAnimation {
         this.applyDeformationAndColors(geometry);
 
         const textureLoader = new THREE.TextureLoader();
-        this.soilTexture = textureLoader.load('/asset/game_assets/textures/soil.jpg');
+        this.soilTexture = textureLoader.load('/asset/game_assets/textures/soil.webp');
         this.soilTexture.wrapS = THREE.RepeatWrapping;
         this.soilTexture.wrapT = THREE.RepeatWrapping;
         this.soilTexture.repeat.set(15, 60);

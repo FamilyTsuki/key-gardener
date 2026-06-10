@@ -126,12 +126,27 @@ exports.uploadAvatar = async (req, res, next) => {
             return res.status(400).json({ success: false, message: "No image file provided" });
         }
 
-        const filename = req.file.filename;
-        await User.updateAvatar(user.id, filename);
+        const sharp = require("sharp");
+        const path = require("path");
+        const fs = require("fs");
+
+        const webpFilename = req.file.filename.substring(0, req.file.filename.lastIndexOf('.')) + '.webp';
+        const webpPath = path.join(path.dirname(req.file.path), webpFilename);
+
+        await sharp(req.file.path)
+            .resize(256, 256, { fit: 'cover', withoutEnlargement: true })
+            .webp({ quality: 80 })
+            .toFile(webpPath);
+
+        if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
+
+        await User.updateAvatar(user.id, webpFilename);
 
         res.json({
             success: true,
-            personalPicture: filename,
+            personalPicture: webpFilename,
             message: "Avatar updated successfully"
         });
     } catch (err) {
