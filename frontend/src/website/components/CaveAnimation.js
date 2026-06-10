@@ -42,7 +42,7 @@ export class CaveAnimation {
                     new THREE.Color(0xff2222)
                 ]
             },
-            pebbleCount: 4000
+            pebbleCount: 1300
         };
     }
 
@@ -399,7 +399,7 @@ export class CaveAnimation {
             
             normalizedY = minNormY + r1 * (maxNormY - minNormY);
             y = (normalizedY * caveHeight) - caveHeight / 2;
-            theta = r2 * Math.PI * 2;
+            theta = (7 * Math.PI / 6) + r2 * (2 * Math.PI / 3);
             
             currentRadius = caveRadius * normalizedY + (caveRadius - 20) * (1 - normalizedY);
             vx = Math.cos(theta) * currentRadius;
@@ -458,9 +458,11 @@ export class CaveAnimation {
             this.config.caveRadius,
             this.config.caveRadius - 20,
             this.config.caveHeight,
-            200,
+            66,
             400,
-            true
+            true,
+            2 * Math.PI / 3,
+            2 * Math.PI / 3
         );
 
         this.applyDeformationAndColors(geometry);
@@ -611,7 +613,7 @@ export class CaveAnimation {
         
         for (let i = 0; i < count; i++) {
             positions[i * 3] = (Math.random() - 0.5) * 12000;
-            positions[i * 3 + 1] = 500 - Math.random() * 4300;
+            positions[i * 3 + 1] = 3000 - Math.random() * 8000; 
             positions[i * 3 + 2] = -2500 + (Math.random() - 0.5) * 6000;
             
             color.setHSL(Math.random() * 0.2 + 0.5, 0.8, Math.random() * 0.5 + 0.5);
@@ -661,7 +663,7 @@ export class CaveAnimation {
     }
 
     createStalactites() {
-        const count = 100;
+        const count = 35;
         const geometry = new THREE.CylinderGeometry(8, 2.0, 60, 10);
         geometry.translate(0, -15, 0);
         
@@ -677,7 +679,7 @@ export class CaveAnimation {
         const caveHeight = this.config.caveHeight;
         
         for (let i = 0; i < count; i++) {
-            const theta = Math.random() * Math.PI * 2;
+            const theta = (7 * Math.PI / 6) + Math.random() * (2 * Math.PI / 3);
             const normalizedY = 0.0 + Math.random() * 0.08;
             const yInit = (normalizedY * caveHeight) - caveHeight / 2;
             
@@ -746,7 +748,6 @@ export class CaveAnimation {
         const mineralsData = [];
 
         const dummy = new THREE.Object3D();
-        let iterations = 0;
         
         for (let i = 0; i < this.config.pebbleCount; i++) {
             const data = this.calculatePebbleData(dummy);
@@ -757,21 +758,10 @@ export class CaveAnimation {
             } else {
                 pebblesData.push(data);
             }
-
-            iterations++;
-            if (iterations % 1500 === 0) {
-
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
         }
 
-        await new Promise(resolve => setTimeout(resolve, 400));
         this.addInstancedMeshFromData(pebblesData, geometry, material);
-
-        await new Promise(resolve => setTimeout(resolve, 600));
         this.addInstancedMeshFromData(rocksData, geometry, material);
-
-        await new Promise(resolve => setTimeout(resolve, 600));
         this.addInstancedMeshFromData(mineralsData, geometry, material);
     }
 
@@ -839,7 +829,7 @@ export class CaveAnimation {
             }
         }
 
-        const theta = Math.random() * Math.PI * 2;
+        const theta = (7 * Math.PI / 6) + Math.random() * (2 * Math.PI / 3);
         let currentRadius = caveRadius * normalizedY + (caveRadius - 20) * (1 - normalizedY);
         if (normalizedY < 0.35) {
             const t = normalizedY / 0.35;
