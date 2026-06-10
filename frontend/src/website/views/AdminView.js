@@ -9,6 +9,7 @@ import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from '../../core/utils/LanguageManager.js';
 import { applyTriplanarMapping } from '../../game/utilities/TextureUtils.js';
 import { el, clear } from '../../core/utils/DOMBuilder.js';
+import { VoidCreature } from "../../game/models/actors/VoidCreature.js";
 
 export class AdminView {
     constructor() {
@@ -510,12 +511,13 @@ export class AdminView {
         let currentDecor = null;
         let keyboardGroup = null;
         let playerMesh = null;
+        let targetPlayerPos = new THREE.Vector3(15, 1.35, 3);
 
         const loader = new GLTFLoader();
         loader.load("/asset/game_assets/models/player.glb", (gltf) => {
             playerMesh = gltf.scene;
             playerMesh.scale.set(1.7, 1.7, 1.7);
-            playerMesh.position.set(15, 1.35, 3);
+            playerMesh.position.copy(targetPlayerPos);
             playerMesh.rotation.y = Math.PI / 2;
             scene.add(playerMesh);
         });
@@ -552,17 +554,22 @@ export class AdminView {
                 scene.add(keyboardGroup);
 
                 if (playerMesh) playerMesh.position.set(15, 1.35, 5);
+                else targetPlayerPos.set(15, 1.35, 5);
 
             } else if (phaseType === "void") {
                 camera.position.set(20, 20, 10);
                 camera.lookAt(0, 0, 0);
-                const geo = new THREE.BoxGeometry(2, 2, 2);
-                const mat = new THREE.MeshBasicMaterial({ color: 0x8a2be2 });
-                const mesh = new THREE.Mesh(geo, mat);
-                currentDecor = mesh;
-                scene.add(currentDecor);
-                if (playerMesh) playerMesh.position.set(0, 1.35, 0);
+                
+                const voidCreature = new VoidCreature(scene, { x: 0, y: -6, z: -30 });
+                voidCreature.init();
+                currentDecor = voidCreature.mesh;
+                
+                if (playerMesh) playerMesh.position.set(0, 1.35, 10);
+                else targetPlayerPos.set(0, 1.35, 10);
             } else {
+                camera.position.set(30, 85, 5);
+                camera.lookAt(12, 0, -25);
+
                 const introType = card.querySelector('.world-intro').value || "staircase";
                 const outroType = card.querySelector('.world-outro').value || "DoorEvent";
                 const layout = createWordlLayout(introType);
@@ -585,6 +592,8 @@ export class AdminView {
 
                     if (playerMesh) {
                         playerMesh.position.set(spawnPos.x, spawnPos.y + 1.35, spawnPos.z);
+                    } else {
+                        targetPlayerPos.set(spawnPos.x, spawnPos.y + 1.35, spawnPos.z);
                     }
 
                     const doorRow = wMap.mapLayout.filter((t) => t.rawPosition.y === -34);
@@ -654,9 +663,6 @@ export class AdminView {
                             }
                         }
                     }
-
-                    camera.position.set(30, 85, 5);
-                    camera.lookAt(12, 0, -25);
                 });
             }
         };
@@ -684,6 +690,7 @@ export class AdminView {
             });
         }
 
+        let hasRendered = false;
         const resizeObserver = new ResizeObserver(() => {
             const w = container.clientWidth;
             const h = container.clientHeight;
@@ -691,7 +698,8 @@ export class AdminView {
                 camera.aspect = w / h;
                 camera.updateProjectionMatrix();
                 renderer.setSize(w, h);
-                if (!currentDecor) {
+                if (!hasRendered) {
+                    hasRendered = true;
                     renderDecor();
                 }
             }
