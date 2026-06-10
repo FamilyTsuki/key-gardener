@@ -269,7 +269,11 @@ export const en = {
         basic: "Basic",
         speedy: "Speedy",
         tank: "Tank (Resistant)",
-        spawnIntervalConfig: "Spawn Interval (sec):"
+        spawnIntervalConfig: "Spawn Interval (sec):",
+        exportLevels: "Export All",
+        importLevels: "Import All",
+        confirmImport: "Overwrite and import levels: ",
+        importSuccess: "Import successful"
     },
     settings: {
         title: "Settings",

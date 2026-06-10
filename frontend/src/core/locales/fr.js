@@ -268,8 +268,12 @@ export const fr = {
         enemyType: "Type d'ennemi :",
         basic: "Basique",
         speedy: "Rapide",
-        tank: "Résistant (Tank)",
-        spawnIntervalConfig: "Intervalle Spawn (sec) :"
+        tank: "Tank (Résistant)",
+        spawnIntervalConfig: "Intervalle d'Apparition (sec) :",
+        exportLevels: "Tout Exporter",
+        importLevels: "Tout Importer",
+        confirmImport: "Écraser et importer les niveaux : ",
+        importSuccess: "Import réussi"
     },
     settings: {
         title: "Paramètres",

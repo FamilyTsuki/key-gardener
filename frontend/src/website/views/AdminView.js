@@ -30,6 +30,10 @@ export class AdminView {
             el("div", { className: "admin-dashboard" },
                 el("aside", { className: "admin-sidebar" },
                     el("h2", { className: "sidebar-title" }, LanguageManager.t("admin.title")),
+                    el("div", { className: "flex-row-gap10 mb-15" },
+                        el("button", { className: "btn-secondary btn-sm flex-1", onclick: () => this.exportLevels() }, LanguageManager.t("admin.exportLevels")),
+                        el("button", { className: "btn-secondary btn-sm flex-1", onclick: () => this.importLevels() }, LanguageManager.t("admin.importLevels"))
+                    ),
                     el("div", { id: "levels-list", className: "levels-list" },
                         el("div", { className: "admin-loading" }, LanguageManager.t("admin.loading"))
                     )
@@ -868,6 +872,71 @@ export class AdminView {
             console.error(e);
             FlashMessageManager.show("Erreur de connexion au serveur.", "error");
         }
+    }
+
+    exportLevels() {
+        if (!this.levels || this.levels.length === 0) return;
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.levels, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "levels_export.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
+    importLevels() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'application/json';
+        input.onchange = e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.readAsText(file, 'UTF-8');
+            reader.onload = async readerEvent => {
+                try {
+                    const content = readerEvent.target.result;
+                    const importedLevels = JSON.parse(content);
+                    if (!Array.isArray(importedLevels)) {
+                        FlashMessageManager.show("Format JSON invalide. Un tableau est attendu.", "error");
+                        return;
+                    }
+                    
+                    const confirmed = await FlashMessageManager.confirm(`${LanguageManager.t("admin.confirmImport")} ${importedLevels.length} ?`);
+                    if (!confirmed) return;
+                    
+                    let successCount = 0;
+                    const token = localStorage.getItem("authToken");
+                    if (!token) return;
+
+                    for (const lvl of importedLevels) {
+                        if (lvl.level_number && lvl.phase_type && lvl.options) {
+                            try {
+                                await fetch(`/api/levels/${lvl.level_number}`, {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Authorization": `Bearer ${token}`
+                                    },
+                                    body: JSON.stringify({ phase_type: lvl.phase_type, options: lvl.options })
+                                });
+                                successCount++;
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }
+                    
+                    FlashMessageManager.show(`${LanguageManager.t("admin.importSuccess")} (${successCount}/${importedLevels.length})`, "success");
+                    await this.loadLevels();
+                } catch (err) {
+                    console.error(err);
+                    FlashMessageManager.show("Erreur lors de la lecture du fichier JSON.", "error");
+                }
+            }
+        }
+        input.click();
     }
 
     async render() {
