@@ -253,3 +253,13 @@ body.in-game #app {
 .btn-primary:active {
     transform: translateY(0);
 }
+
+.btn-primary:disabled,
+.btn-primary:disabled:hover,
+.btn-primary:disabled:active {
+    background-color: var(--card-border);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}

@@ -78,7 +78,7 @@ export default class HubView extends AbstractView {
                     className: "add-media-btn",
                     onclick: () => fileInput.click()
                 }, LanguageManager.t("hub.addImageVideo")),
-                el("button", { onclick: () => this.addPost(), className: "btn-primary" }, LanguageManager.t("hub.postBtn"))
+                el("button", { onclick: (e) => this.addPost(e), className: "btn-primary" }, LanguageManager.t("hub.postBtn"))
             )
         );
     }
@@ -234,11 +234,20 @@ export default class HubView extends AbstractView {
         );
     }
 
-    async addPost() {
+    async addPost(e) {
         const postTextarea = document.getElementById("post-content");
         if (!postTextarea) return;
         const content = postTextarea.value.trim();
         if (!content && !this.selectedMediaFile) return;
+
+        let submitBtn = null;
+        let originalText = "";
+        if (e && e.currentTarget) {
+            submitBtn = e.currentTarget;
+            submitBtn.disabled = true;
+            originalText = submitBtn.textContent;
+            submitBtn.textContent = originalText + "...";
+        }
 
         try {
             const data = await PostsService.createPost(content, this.selectedMediaFile);
@@ -258,6 +267,11 @@ export default class HubView extends AbstractView {
                 WarningPopupManager.show(content, error.flaggedType, error.warningCount);
             } else {
                 FlashMessageManager.show(error.message, "error");
+            }
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
             }
         }
     }
