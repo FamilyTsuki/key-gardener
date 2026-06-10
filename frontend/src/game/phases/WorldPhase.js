@@ -159,7 +159,7 @@ export class WorldPhase extends GamePhase {
 
         if (this.isPlayingIntro && this.activeIntroType === "skyfall") {
             if (this.dropSpeed === 0) {
-                AudioManager.playSFX("/asset/game_assets/sounds/long_fall.wav", "player", 1);
+                AudioManager.playSFX("/asset/game_assets/sounds/long-fall.wav", "player", 1);
             }
             this.dropSpeed += 25 * deltaTime;
             this.player.offsetY -= this.dropSpeed * deltaTime;
@@ -345,6 +345,28 @@ export class WorldPhase extends GamePhase {
         }
     }
 
+    waitForLoader() {
+        return new Promise(resolve => {
+            const loader = document.getElementById("global-loader");
+            if (!loader) return resolve();
+            
+            const checkHidden = setInterval(() => {
+                if (loader.classList.contains("hidden")) {
+                    clearInterval(checkHidden);
+                    const onEnd = () => {
+                        loader.removeEventListener("transitionend", onEnd);
+                        resolve();
+                    };
+                    loader.addEventListener("transitionend", onEnd);
+                    setTimeout(() => {
+                        loader.removeEventListener("transitionend", onEnd);
+                        resolve();
+                    }, 600); 
+                }
+            }, 50);
+        });
+    }
+
     async runIntroAnimation(introType, spawnTile) {
         this.isPlayingIntro = true;
         this.isTransitioning = true;
@@ -374,12 +396,12 @@ export class WorldPhase extends GamePhase {
         this.camera.lookAt(arrivalX, arrivalY, arrivalZ);
 
         if (introType === "skyfall") {
-            this.isPlayingIntro = true;
-            this.isTransitioning = true;
-            this.dropSpeed = 0;
             this.player.offsetY = arrivalY + 40;
             this.player.update();
             this.draw();
+            
+            await this.waitForLoader();
+            this.dropSpeed = 0;
         } else if (introType === "staircase") {
             const stairsTiles = this.worldMap.mapLayout.filter(t => t.role === "stairs").sort((a, b) => b.baseY - a.baseY);
             
@@ -415,7 +437,7 @@ export class WorldPhase extends GamePhase {
                 await stepDown(index + 1);
             };
             
-            await new Promise(r => setTimeout(r, 500));
+            await this.waitForLoader();
             await stepDown(1);
         }
     }

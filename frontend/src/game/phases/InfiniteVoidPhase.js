@@ -28,6 +28,7 @@ export class InfiniteVoidPhase extends GamePhase {
         
         this.tab_lettre = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
         this.recentlyUsed = [];
+        this.isReady = false;
     }
 
     async init() {
@@ -79,6 +80,32 @@ export class InfiniteVoidPhase extends GamePhase {
         this.voidCreature = new VoidCreature(this.gameEngine.scene, this.player.mesh.position);
         await this.voidCreature.init();
         this.voidCreature.mesh.position.z = this.player.mesh.position.z + 100; 
+
+        this.waitForLoader().then(() => {
+            this.isReady = true;
+        });
+    }
+
+    waitForLoader() {
+        return new Promise(resolve => {
+            const loader = document.getElementById("global-loader");
+            if (!loader) return resolve();
+            
+            const checkHidden = setInterval(() => {
+                if (loader.classList.contains("hidden")) {
+                    clearInterval(checkHidden);
+                    const onEnd = () => {
+                        loader.removeEventListener("transitionend", onEnd);
+                        resolve();
+                    };
+                    loader.addEventListener("transitionend", onEnd);
+                    setTimeout(() => {
+                        loader.removeEventListener("transitionend", onEnd);
+                        resolve();
+                    }, 600); 
+                }
+            }, 50);
+        });
     }
 
     generateRow(layoutArray, yIndex) {
@@ -111,7 +138,7 @@ export class InfiniteVoidPhase extends GamePhase {
     }
 
     update(deltaTime) {
-        if (!this.player) return;
+        if (!this.player || !this.isReady) return;
         this.elapsedTime += deltaTime;
 
         if (this.isCameraReturning) {
@@ -452,7 +479,7 @@ export class InfiniteVoidPhase extends GamePhase {
     }
 
     handleKeyDown(event) {
-        if (this.isPlayingIntro) return;
+        if (this.isPlayingIntro || !this.isReady) return;
 
         if (event.key.toUpperCase() === "ENTER" && this.isBossDefeated && !this.isTransitioning) {
             const winTile = this.worldMap.mapLayout.find((t) => t.id === "island-win");

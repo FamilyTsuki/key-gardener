@@ -42,6 +42,7 @@ export class SurvivePhase extends GamePhase {
         this.isPhaseEnded = false;
         this.enemiesKilled = 0;
         this.isTransitioningToNextLevel = false;
+        this.isReady = false;
     }
 
     async init() {
@@ -111,6 +112,32 @@ export class SurvivePhase extends GamePhase {
         if (this.options && this.options.boss) {
             await this.enemies.spawnBoss(this.worldGroup);
         }
+
+        this.waitForLoader().then(() => {
+            this.isReady = true;
+        });
+    }
+
+    waitForLoader() {
+        return new Promise(resolve => {
+            const loader = document.getElementById("global-loader");
+            if (!loader) return resolve();
+            
+            const checkHidden = setInterval(() => {
+                if (loader.classList.contains("hidden")) {
+                    clearInterval(checkHidden);
+                    const onEnd = () => {
+                        loader.removeEventListener("transitionend", onEnd);
+                        resolve();
+                    };
+                    loader.addEventListener("transitionend", onEnd);
+                    setTimeout(() => {
+                        loader.removeEventListener("transitionend", onEnd);
+                        resolve();
+                    }, 600); 
+                }
+            }, 50);
+        });
     }
 
     executeEventAction(eventToTrigger) {
@@ -155,7 +182,7 @@ export class SurvivePhase extends GamePhase {
     }
 
     update(deltaTime) {
-        if (this.isPhaseEnded) return;
+        if (this.isPhaseEnded || !this.isReady) return;
 
         if (this.enemies && this.enemies.boss && this.enemies.boss.isDead && !this.isTransitioningToNextLevel) {
             if (this.gameEngine.stats && !this.bossDeathRecorded) {
@@ -393,7 +420,7 @@ export class SurvivePhase extends GamePhase {
      * @param {KeyboardEvent} event - The keyboard event.
      */
     handleKeyDown(event) {
-        if (!this.player || !this.player.isAlive() || this.isTransitioningToNextLevel) return;
+        if (!this.player || !this.player.isAlive() || this.isTransitioningToNextLevel || !this.isReady) return;
 
         const keyName = event.key.toUpperCase();
         const target = this.keyboard?.find(keyName);
