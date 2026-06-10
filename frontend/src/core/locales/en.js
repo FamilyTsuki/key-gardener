@@ -80,7 +80,13 @@ export const en = {
         comments: "Comments",
         addComment: "Add a comment...",
         postComment: "Post",
-        noComments: "No comments yet."
+        noComments: "No comments yet.",
+        sortBy: "Sort by:",
+        sortHot: "Hot",
+        sortRecent: "Most Recent",
+        sortUpvotes: "Most Upvoted",
+        sortComments: "Most Commented",
+        refresh: "Refresh"
     },
     
     // LoginView

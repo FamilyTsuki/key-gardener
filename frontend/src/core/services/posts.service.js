@@ -37,15 +37,16 @@ export class PostsService {
 
     /**
      * Retrieves all posts from the server.
+     * @param {string} [sort="hot"] - The sorting criteria (e.g., hot, recent, upvotes, comments).
      * @returns {Promise<Array>} A promise resolving to a list of posts.
      */
-    static async getAllPosts() {
+    static async getAllPosts(sort = "hot") {
         const token = AuthService.getToken();
         const headers = {};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        const response = await fetch(`${this.API_URL}/`, { headers });
+        const response = await fetch(`${this.API_URL}/?sort=${sort}`, { headers });
         return this.handleResponse(response, "Failed to fetch posts");
     }
 

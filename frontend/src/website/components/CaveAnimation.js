@@ -3,6 +3,7 @@ import { gsap } from "/node_modules/gsap/index.js";
 import { ScrollTrigger } from "/node_modules/gsap/ScrollTrigger.js";
 import { GLTFLoader } from "/node_modules/three/examples/jsm/loaders/GLTFLoader.js";
 import { applyTriplanarMapping } from '../../game/utilities/TextureUtils.js';
+import { GLTFExporter } from '/node_modules/three/examples/jsm/exporters/GLTFExporter.js';
 
 export class CaveAnimation {
     constructor(containerElement) {
@@ -19,6 +20,8 @@ export class CaveAnimation {
         this.hasInitializedTimeout = false;
         
         this.mixers = [];
+
+        window.exportCave = () => this.exportToGLTF();
     }
 
     initializeConfiguration() {
@@ -1074,5 +1077,27 @@ export class CaveAnimation {
             this.renderer.render(this.scene, this.camera);
         };
         renderLoop();
+    }
+
+    exportToGLTF() {
+        if (!this.caveMesh) {
+            console.error("Cave mesh not found!");
+            return;
+        }
+        const exporter = new GLTFExporter();
+        exporter.parse(this.caveMesh, (gltf) => {
+            const output = JSON.stringify(gltf, null, 2);
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.style.display = 'none';
+            link.href = url;
+            link.download = 'cave_model.gltf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }, (error) => {
+            console.error('An error happened during GLTF export:', error);
+        });
     }
 }

@@ -14,7 +14,16 @@ class Post {
         return result.rows[0];
     }
 
-    static async getAllPosts(currentUserId = null) {
+    static async getAllPosts(currentUserId = null, sort = "hot") {
+        let orderBy = "hot_score DESC, p.created_at DESC";
+        if (sort === "recent") {
+            orderBy = "p.created_at DESC";
+        } else if (sort === "upvotes") {
+            orderBy = "p.upvotes DESC, p.created_at DESC";
+        } else if (sort === "comments") {
+            orderBy = "comment_count DESC, p.created_at DESC";
+        }
+
         const result = await db.query(
             `SELECT p.id, p.content, p.image_url, p.upvotes, p.downvotes, p.created_at, u.username, u.id as user_id,
                     COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $1), 0) AS user_vote,
@@ -26,7 +35,7 @@ class Post {
                     ) AS hot_score
              FROM posts p
              JOIN users u ON p.user_id = u.id
-             ORDER BY hot_score DESC, p.created_at DESC`,
+             ORDER BY ${orderBy}`,
             [currentUserId]
         );
         return result.rows;

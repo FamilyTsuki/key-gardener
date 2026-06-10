@@ -10,7 +10,8 @@ const textModerator = require("../utils/textModerator");
 exports.getAllPosts = async (req, res, next) => {
     try {
         const currentUserId = req.user ? req.user.id : null;
-        const posts = await Post.getAllPosts(currentUserId);
+        const sort = req.query.sort || "hot";
+        const posts = await Post.getAllPosts(currentUserId, sort);
         res.status(200).json({ success: true, posts });
     } catch (err) {
         next(err);

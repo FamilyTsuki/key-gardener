@@ -31,17 +31,71 @@ export default class HubView extends AbstractView {
             el("p", {}, LanguageManager.t("hub.loadingPosts"))
         );
 
+        let addPostSection = null;
+        if (AuthService.isAuthenticated()) {
+            addPostSection = this.displayAddPostForm();
+        }
+
+        this.sortContainer = el("div", { className: "sort-container" },
+            this.createSortButton("hot", LanguageManager.t("hub.sortHot"), true),
+            this.createSortButton("recent", LanguageManager.t("hub.sortRecent")),
+            this.createSortButton("upvotes", LanguageManager.t("hub.sortUpvotes")),
+            this.createSortButton("comments", LanguageManager.t("hub.sortComments"))
+        );
+
+        const refreshIcon = el("svg", {
+            xmlns: "http://www.w3.org/2000/svg",
+            viewBox: "0 0 24 24",
+            width: "16",
+            height: "16",
+            fill: "none",
+            stroke: "currentColor",
+            "stroke-width": "2",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            className: "refresh-icon"
+        },
+            el("polyline", { points: "23 4 23 10 17 10" }),
+            el("polyline", { points: "1 20 1 14 7 14" }),
+            el("path", { d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" })
+        );
+
+        this.refreshBtn = el("button", {
+            className: "sort-btn refresh-btn",
+            style: "display: flex; align-items: center; gap: 8px;",
+            onclick: () => this.handleRefresh()
+        }, refreshIcon, el("span", {}, LanguageManager.t("hub.refresh")));
+
+        const rightControls = el("div", { style: "display: flex; align-items: center; gap: 10px;" },
+            this.refreshBtn
+        );
+
+        const controlsContainer = el("div", { className: "hub-controls-container" },
+            this.sortContainer,
+            rightControls
+        );
+
         return el("div", { className: "community-hub-container" },
             el("h1", {}, LanguageManager.t("hub.title")),
             el("p", { className: "welcome-text" }, LanguageManager.t("hub.welcome")),
-            AuthService.isAuthenticated()
-                ? this.displayAddPostForm()
-                : el("div", { className: "login-prompt" },
+            !AuthService.isAuthenticated()
+                ? el("div", { className: "login-prompt" },
                     el("p", {}, LanguageManager.t("hub.loginPrompt")),
                     el("a", { href: "/login", "data-link": "true" }, LanguageManager.t("hub.login"))
-                  ),
+                  ) : null,
+            controlsContainer,
+            addPostSection,
+            this.addPostToggleBtn ? this.addPostToggleBtn : null,
             this.postsContainer
         );
+    }
+
+    createSortButton(value, label, isActive = false) {
+        return el("button", {
+            className: `sort-btn${isActive ? " active" : ""}`,
+            "data-sort": value,
+            onclick: (e) => this.handleSortChange(e, value)
+        }, label);
     }
 
     /**
@@ -67,7 +121,34 @@ export default class HubView extends AbstractView {
         });
         postTextarea.addEventListener("paste", (e) => this.handlePaste(e));
 
-        return el("div", { className: "add-post-form glass-panel" },
+        const closeIcon = el("svg", {
+            xmlns: "http://www.w3.org/2000/svg",
+            viewBox: "0 0 24 24",
+            width: "20",
+            height: "20",
+            fill: "none",
+            stroke: "currentColor",
+            "stroke-width": "2",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+        },
+            el("line", { x1: "18", y1: "6", x2: "6", y2: "18" }),
+            el("line", { x1: "6", y1: "6", x2: "18", y2: "18" })
+        );
+
+        const closeBtn = el("button", {
+            type: "button",
+            className: "form-close-btn",
+            onclick: () => {
+                this.addPostFormContainer.classList.add("hidden");
+                if (this.addPostToggleBtn) this.addPostToggleBtn.classList.remove("hidden");
+                postTextarea.value = "";
+                this.clearSelectedMedia();
+            }
+        }, closeIcon);
+
+        this.addPostFormContainer = el("div", { className: "add-post-form-inner glass-panel hidden" },
+            closeBtn,
             el("h3", {}, LanguageManager.t("hub.addPostTitle")),
             postTextarea,
             fileInput,
@@ -78,9 +159,49 @@ export default class HubView extends AbstractView {
                     className: "add-media-btn",
                     onclick: () => fileInput.click()
                 }, LanguageManager.t("hub.addImageVideo")),
-                el("button", { onclick: (e) => this.addPost(e), className: "btn-primary" }, LanguageManager.t("hub.postBtn"))
+                el("div", { className: "form-actions-right" },
+                    el("button", {
+                        type: "button",
+                        className: "action-btn cancel-btn",
+                        onclick: () => {
+                            this.addPostFormContainer.classList.add("hidden");
+                            if (this.addPostToggleBtn) this.addPostToggleBtn.classList.remove("hidden");
+                            postTextarea.value = "";
+                            this.clearSelectedMedia();
+                        }
+                    }, LanguageManager.t("hub.cancel")),
+                    el("button", { onclick: (e) => this.addPost(e), className: "btn-primary" }, LanguageManager.t("hub.postBtn"))
+                )
             )
         );
+
+        const plusIcon = el("svg", {
+            xmlns: "http://www.w3.org/2000/svg",
+            viewBox: "0 0 24 24",
+            width: "24",
+            height: "24",
+            fill: "none",
+            stroke: "currentColor",
+            "stroke-width": "4",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+        },
+            el("line", { x1: "12", y1: "4", x2: "12", y2: "20" }),
+            el("line", { x1: "4", y1: "12", x2: "20", y2: "12" })
+        );
+
+        this.addPostToggleBtn = el("button", {
+            className: "btn-primary add-post-toggle-btn",
+            title: LanguageManager.t("hub.addPostTitle"),
+            onclick: () => {
+                this.addPostFormContainer.classList.remove("hidden");
+                this.addPostToggleBtn.classList.add("hidden");
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => postTextarea.focus(), 300);
+            }
+        }, plusIcon);
+
+        return this.addPostFormContainer;
     }
 
     handleMediaSelection(e) {
@@ -260,6 +381,13 @@ export default class HubView extends AbstractView {
                 }
                 const newPostEl = this.createPostElement(data.post);
                 this.postsContainer.prepend(newPostEl);
+                
+                const formInner = document.querySelector(".add-post-form-inner");
+                const toggleBtn = document.querySelector(".add-post-toggle-btn");
+                if (formInner && toggleBtn) {
+                    formInner.classList.add("hidden");
+                    toggleBtn.classList.remove("hidden");
+                }
             }
         } catch (error) {
             console.error("Error creating post:", error);
@@ -291,7 +419,7 @@ export default class HubView extends AbstractView {
                 }
             }
 
-            const data = await PostsService.getAllPosts();
+            const data = await PostsService.getAllPosts(this.currentSort || "hot");
 
             clear(this.postsContainer);
 
@@ -534,6 +662,27 @@ export default class HubView extends AbstractView {
         if (!url) return false;
         const extension = url.split(".").pop().toLowerCase();
         return ["mp4", "webm", "ogg", "mov"].includes(extension);
+    }
+
+    async handleSortChange(e, value) {
+        if (this.currentSort === value) return;
+
+        const buttons = this.sortContainer.querySelectorAll(".sort-btn");
+        buttons.forEach(btn => btn.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+
+        this.currentSort = value;
+        this.postsContainer.innerHTML = "";
+        this.postsContainer.appendChild(el("p", {}, LanguageManager.t("hub.loadingPosts")));
+        await this.init();
+    }
+
+    async handleRefresh() {
+        this.refreshBtn.disabled = true;
+        this.postsContainer.innerHTML = "";
+        this.postsContainer.appendChild(el("p", {}, LanguageManager.t("hub.loadingPosts")));
+        await this.init();
+        this.refreshBtn.disabled = false;
     }
 
     /**
