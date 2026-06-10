@@ -18,6 +18,16 @@ export default class LoginView extends AbstractView {
         this.setTitle(LanguageManager.t("login.title") + " - Keyboard Survivor");
         this.state = "login";
         this.resetEmail = "";
+        this.resetToken = "";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("reset_token");
+        const email = urlParams.get("email");
+        if (token && email) {
+            this.state = "reset";
+            this.resetEmail = email;
+            this.resetToken = token;
+        }
     }
 
     /**
@@ -118,8 +128,7 @@ export default class LoginView extends AbstractView {
 
             try {
                 await AuthService.requestPasswordReset(email);
-                this.resetEmail = email;
-                this.state = "reset";
+                this.state = "login";
                 this.renderState();
                 FlashMessageManager.show(LanguageManager.t("login.resetCodeSent"), "success");
             } catch (error) {
@@ -155,17 +164,16 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The reset password form element.
      */
     createResetForm() {
-        const codeInput = el("input", { type: "text", placeholder: LanguageManager.t("login.codePlaceholder"), required: true, className: "form-input", maxLength: 6, "aria-label": "Reset Code" });
-        const newPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "form-input", "aria-label": "New Password" });
+        const newPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "form-input", "aria-label": "New Password", autocomplete: "new-password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
-            const code = codeInput.value.trim();
             const newPassword = newPasswordInput.value.trim();
 
             try {
-                await AuthService.resetPassword(this.resetEmail, code, newPassword);
+                await AuthService.resetPassword(this.resetEmail, this.resetToken, newPassword);
                 this.state = "login";
+                history.replaceState(null, null, "/login");
                 this.renderState();
                 FlashMessageManager.show(LanguageManager.t("login.resetSuccess"), "success");
             } catch (error) {
@@ -174,7 +182,6 @@ export default class LoginView extends AbstractView {
         };
 
         const form = el("form", { id: "reset-form", onsubmit: handleSubmit },
-            codeInput,
             newPasswordInput,
             el("button", { type: "submit", className: "btn-primary" }, LanguageManager.t("login.updatePasswordBtn"))
         );
@@ -189,6 +196,7 @@ export default class LoginView extends AbstractView {
                     onclick: (e) => {
                         e.preventDefault();
                         this.state = "login";
+                        history.replaceState(null, null, "/login");
                         this.renderState();
                     } 
                 }, LanguageManager.t("login.backToLogin"))

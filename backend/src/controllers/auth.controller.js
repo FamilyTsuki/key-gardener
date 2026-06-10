@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
@@ -189,16 +190,16 @@ exports.requestPasswordReset = async (req, res, next) => {
 
         const user = await User.findByEmail(email);
         if (!user) {
-            return res.json({ success: true, message: "If that email exists, a reset code has been sent." });
+            return res.json({ success: true, message: "Si le compte existe, un lien a été envoyé." });
         }
 
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const code = crypto.randomBytes(32).toString("hex");
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000); 
 
         await User.saveResetCode(email, code, expiresAt);
         await sendResetCodeEmail(email, code);
 
-        res.json({ success: true, message: "If that email exists, a reset code has been sent." });
+        res.json({ success: true, message: "Si le compte existe, un lien a été envoyé." });
     } catch (err) {
         next(err);
     }
