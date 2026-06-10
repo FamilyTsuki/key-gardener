@@ -201,5 +201,50 @@
 .rank-hacker { color: #ff0055; text-shadow: 0 0 10px #ff0055; font-size: 1.4rem; }
 .rank-pro { color: #bb86fc; text-shadow: 0 0 8px #bb86fc; }
 .rank-intermediate { color: #03dac6; text-shadow: 0 0 5px #03dac6; }
-.rank-initiate { color: #3b82f6; }
 .rank-noob { color: #9ca3af; }
+
+/* =============== RESPONSIVE =============== */
+@media (max-width: 600px) {
+    .account-container {
+        padding: 10px;
+    }
+
+    .account-title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .account-content {
+        padding: 15px;
+        gap: 20px;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .account-info,
+    .account-info-input {
+        width: 100%;
+    }
+
+    .edit {
+        margin-left: 0;
+        align-self: center;
+        width: 100%;
+        text-align: center;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-logout {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}

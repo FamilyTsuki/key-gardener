@@ -395,3 +395,27 @@
 .typing-minigame-char.typed {
     color: #f39c12;
 }
+
+/* =============== RESPONSIVE =============== */
+@media (max-width: 768px) {
+    body.in-game::before {
+        content: "Veuillez jouer sur un ordinateur. Ce jeu nécessite un clavier pour une expérience optimale.";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: var(--bg-color);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px;
+        font-size: 1.5rem;
+        z-index: 100000;
+        box-sizing: border-box;
+        line-height: 1.5;
+    }
+
+    body.in-game > *:not(script) {
+        display: none !important;
+    }
+}

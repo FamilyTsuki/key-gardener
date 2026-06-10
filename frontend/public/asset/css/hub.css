@@ -378,3 +378,60 @@
 .comment-emoji {
     font-family: 'Noto Color Emoji', sans-serif;
 }
+
+/* =============== RESPONSIVE =============== */
+@media (max-width: 768px) {
+    .community-hub-container {
+        padding: 10px;
+    }
+
+    .community-hub-container h1 {
+        font-size: 2rem;
+    }
+
+    .add-post-form {
+        padding: 15px;
+        margin-bottom: 25px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .add-media-btn {
+        justify-content: center;
+    }
+
+    .hub-post {
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .post-footer {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .post-votes {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .post-actions-container {
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .action-btn {
+        flex: 1 1 auto;
+        text-align: center;
+    }
+
+    .post-media {
+        max-height: 250px;
+    }
+}

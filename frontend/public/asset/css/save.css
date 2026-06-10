@@ -264,3 +264,34 @@
     color: #94a3b8;
     font-size: 14px;
 }
+
+/* =============== RESPONSIVE =============== */
+@media (max-width: 600px) {
+    .save-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .save-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .play-btn {
+        flex: 1;
+        text-align: center;
+    }
+
+    .save-title {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .context-menu {
+        top: 100%;
+        right: 0;
+        width: 100%;
+    }
+}

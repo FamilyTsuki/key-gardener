@@ -52,8 +52,8 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The login form element.
      */
     createLoginForm() {
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", id: "email", "aria-label": "Email Address" });
-        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "form-input", id: "password", "aria-label": "Password" });
+        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", id: "email", "aria-label": "Email Address", autocomplete: "username" });
+        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "form-input", id: "password", "aria-label": "Password", autocomplete: "current-password" });
 
         const handleSubmit = async (e) => {
             e.preventDefault();

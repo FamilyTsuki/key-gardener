@@ -34,9 +34,8 @@
     flex-direction: column;
     gap: 18px;
 }
-
-
-
+/* =============== RESPONSIVE =============== */
+@media (max-width: 600px) {
     .register-container {
         padding: 28px 20px;
         gap: 18px;

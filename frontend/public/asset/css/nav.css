@@ -22,6 +22,7 @@ nav a {
     font-weight: bold;
     border-bottom: 3px solid transparent;
     padding-bottom: 4px;
+    white-space: nowrap;
 }
 
 nav a:hover {
@@ -95,14 +96,34 @@ nav a.admin-link {
 /* =============== RESPONSIVE =============== */
 @media (max-width: 768px) {
     nav {
-        flex-direction: column;
+        flex-wrap: wrap;
         height: auto;
-        padding: 10px 0;
-        gap: 10px;
+        padding: 10px 5px;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .nav-page {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    nav a {
+        margin: 0 5px;
+        font-size: 16px;
     }
 
     .login {
-        padding: 4px 15px;
+        padding: 6px 20px;
+        font-size: 18px;
+        margin-top: 5px;
+    }
+
+    .nav-user {
+        margin-top: 5px;
     }
 
     .nav-user-avatar {
