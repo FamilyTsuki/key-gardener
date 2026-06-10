@@ -90,7 +90,7 @@ nav a.active {
 }
 
 nav a.admin-link {
-    color: #f39c12;
+    color: var(--warning-color);
 }
 
 /* =============== RESPONSIVE =============== */

@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { StatisticsService } from "../../core/services/statistics.service.js";
+import { createCustomSelect } from "../components/CustomSelect.js";
 
 /**
  * View for displaying and managing user account information.
@@ -93,19 +94,47 @@ export default class AccountView extends AbstractView {
             }, LanguageManager.t("account.updatePasswordBtn"))
         );
         const currentLang = LanguageManager.getLanguage();
-        const langSelect = el("select", {
-            className: "form-input lang-select",
-            onchange: (e) => {
-                LanguageManager.setLanguage(e.target.value);
-            }
-        }, 
-            el("option", { value: "en", selected: currentLang === "en" }, LanguageManager.t("account.english")),
-            el("option", { value: "fr", selected: currentLang === "fr" }, LanguageManager.t("account.french"))
-        );
+        const langSelect = createCustomSelect([
+            { value: "en", label: LanguageManager.t("account.english") },
+            { value: "fr", label: LanguageManager.t("account.french") }
+        ], currentLang, (newValue) => {
+            LanguageManager.setLanguage(newValue);
+        }, "lang-select");
 
         const langContainer = el("div", { className: "password-container" },
             el("h3", { className: "password-title" }, LanguageManager.t("account.languageTitle")),
             langSelect
+        );
+
+        const savedTheme = localStorage.getItem("theme");
+        const currentTheme = savedTheme || (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? "light" : "dark");
+        const isLightMode = currentTheme === "light";
+
+        const themeSwitchInput = el("input", {
+            type: "checkbox",
+            className: "theme-switch-checkbox",
+            id: "theme-toggle",
+            checked: isLightMode,
+            onchange: (e) => {
+                const theme = e.target.checked ? "light" : "dark";
+                localStorage.setItem("theme", theme);
+                if (theme === "light") {
+                    document.body.setAttribute("data-theme", "light");
+                } else {
+                    document.body.removeAttribute("data-theme");
+                }
+            }
+        });
+
+        const themeSwitchSlider = el("span", { className: "theme-switch-slider" });
+        const themeSwitchLabel = el("label", { className: "theme-switch-label", htmlFor: "theme-toggle" },
+            themeSwitchInput,
+            themeSwitchSlider
+        );
+
+        const themeContainer = el("div", { className: "password-container" },
+            el("h3", { className: "password-title" }, LanguageManager.t("account.themeTitle") || "Thème (Theme)"),
+            themeSwitchLabel
         );
             
         const container = el("div", { className: "account-container" },
@@ -124,7 +153,8 @@ export default class AccountView extends AbstractView {
                 ),
                 (this.statsContainer = el("div", { className: "stats-container hidden" })),
                 passwordContainer,
-                langContainer
+                langContainer,
+                themeContainer
             ),
             logoutTxt
         );

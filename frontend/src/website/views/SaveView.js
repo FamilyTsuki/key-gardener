@@ -125,7 +125,6 @@ export default class SaveView extends AbstractView {
 
         if (save) {
             const lastPlayedStr = new Date(save.last_played).toLocaleString();
-            const gameStateName = save.game_state.name || `Slot ${slot}`;
             const saveLevel = save.game_state.level !== undefined ? save.game_state.level : 1;
             const savePhase = save.game_state.phase !== undefined ? save.game_state.phase : 0;
 
@@ -133,7 +132,6 @@ export default class SaveView extends AbstractView {
                 "div",
                 { className: "save-info" },
                 el("div", { className: "save-slot-title" }, LanguageManager.t("save.slotPrefix") + slot),
-                el("div", { className: "save-name" }, gameStateName),
                 el("div", { className: "save-level-phase", style: "font-size: 0.9em; color: var(--text-color); margin-bottom: 5px; opacity: 0.8;" }, `Level: ${saveLevel} - Phase: ${savePhase}`),
                 el(
                     "div",

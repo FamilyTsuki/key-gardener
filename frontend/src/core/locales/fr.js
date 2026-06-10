@@ -194,7 +194,10 @@ export const fr = {
         emailFailed: "Échec de la mise à jour de l'email",
         languageTitle: "Langue",
         english: "English",
-        french: "Français"
+        french: "Français",
+        themeTitle: "Thème",
+        themeDark: "Mode Sombre",
+        themeLight: "Mode Clair"
     },
     
     // Game Engine (IntroPhase etc.)

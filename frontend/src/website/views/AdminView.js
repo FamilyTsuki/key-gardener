@@ -10,6 +10,7 @@ import { LanguageManager } from '../../core/utils/LanguageManager.js';
 import { applyTriplanarMapping } from '../../game/utilities/TextureUtils.js';
 import { el, clear } from '../../core/utils/DOMBuilder.js';
 import { VoidCreature } from "../../game/models/actors/VoidCreature.js";
+import { createCustomSelect } from "../components/CustomSelect.js";
 
 export class AdminView {
     constructor() {
@@ -185,11 +186,11 @@ export class AdminView {
             el("div", { className: "admin-editor-card" },
                 el("div", { className: "admin-phase-row" },
                     el("label", { className: "admin-label m-0" }, LanguageManager.t("admin.phaseType")),
-                    el("select", { className: "phase-type-select admin-select max-w-250" },
-                        el("option", { value: "survive", selected: isSurvive }, LanguageManager.t("admin.survivePhase")),
-                        el("option", { value: "world", selected: isWorld }, LanguageManager.t("admin.worldPhase")),
-                        el("option", { value: "void", selected: isVoid }, LanguageManager.t("admin.voidPhase"))
-                    )
+                    createCustomSelect([
+                        { value: "survive", label: LanguageManager.t("admin.survivePhase") },
+                        { value: "world", label: LanguageManager.t("admin.worldPhase") },
+                        { value: "void", label: LanguageManager.t("admin.voidPhase") }
+                    ], level.phase_type || "survive", null, "phase-type-select admin-compact-select max-w-250")
                 ),
                 surviveForm,
                 worldForm,
@@ -412,17 +413,17 @@ export class AdminView {
 
         const actionOptions = [];
         if (currentPhaseType === 'survive') {
-            actionOptions.push(el("option", { value: "dialogue", selected: evt.actionType === 'dialogue' || !evt.actionType }, LanguageManager.t("admin.actionDialogue")));
-            actionOptions.push(el("option", { value: "heal", selected: evt.actionType === 'heal' }, LanguageManager.t("admin.actionHeal")));
-            actionOptions.push(el("option", { value: "spawn", selected: evt.actionType === 'spawn' }, LanguageManager.t("admin.actionSpawn")));
-            actionOptions.push(el("option", { value: "spawnBoss", selected: evt.actionType === 'spawnBoss' }, LanguageManager.t("admin.actionSpawnBoss")));
-            actionOptions.push(el("option", { value: "spawnerConfig", selected: evt.actionType === 'spawnerConfig' }, LanguageManager.t("admin.actionConfigSpawner")));
+            actionOptions.push({ value: "dialogue", label: LanguageManager.t("admin.actionDialogue") });
+            actionOptions.push({ value: "heal", label: LanguageManager.t("admin.actionHeal") });
+            actionOptions.push({ value: "spawn", label: LanguageManager.t("admin.actionSpawn") });
+            actionOptions.push({ value: "spawnBoss", label: LanguageManager.t("admin.actionSpawnBoss") });
+            actionOptions.push({ value: "spawnerConfig", label: LanguageManager.t("admin.actionConfigSpawner") });
         } else {
-            actionOptions.push(el("option", { value: "dialogue", selected: evt.actionType === 'dialogue' || !evt.actionType }, LanguageManager.t("admin.actionDialogue")));
-            actionOptions.push(el("option", { value: "heal", selected: evt.actionType === 'heal' }, LanguageManager.t("admin.actionHeal")));
-            actionOptions.push(el("option", { value: "bridge", selected: evt.actionType === 'bridge' }, LanguageManager.t("admin.actionBridge")));
-            actionOptions.push(el("option", { value: "jumpword", selected: evt.actionType === 'jumpword' }, LanguageManager.t("admin.actionJump")));
-            actionOptions.push(el("option", { value: "flamewall", selected: evt.actionType === 'flamewall' }, LanguageManager.t("admin.actionFlame")));
+            actionOptions.push({ value: "dialogue", label: LanguageManager.t("admin.actionDialogue") });
+            actionOptions.push({ value: "heal", label: LanguageManager.t("admin.actionHeal") });
+            actionOptions.push({ value: "bridge", label: LanguageManager.t("admin.actionBridge") });
+            actionOptions.push({ value: "jumpword", label: LanguageManager.t("admin.actionJump") });
+            actionOptions.push({ value: "flamewall", label: LanguageManager.t("admin.actionFlame") });
         }
 
         const hideTriggerClass = ['bridge', 'jumpword', 'flamewall'].includes(evt.actionType) ? 'none' : '';
@@ -430,7 +431,7 @@ export class AdminView {
         const removeBtn = el("button", { className: "remove-evt-btn" }, "X");
         removeBtn.addEventListener('click', () => div.remove());
 
-        const selectAction = el("select", { className: "evt-action-type block-select" }, ...actionOptions);
+        const selectAction = createCustomSelect(actionOptions, evt.actionType || "dialogue", null, "evt-action-type admin-compact-select");
         selectAction.addEventListener('change', (e) => {
             const newType = e.target.value;
             div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-spawn-boss', 'block-spawner-config', 'block-bridge', 'block-flamewall');
@@ -454,10 +455,10 @@ export class AdminView {
         div.appendChild(
             el("div", { className: `evt-trigger-container block-row ${hideTriggerClass}` },
                 el("label", {}, LanguageManager.t("admin.when")),
-                el("select", { className: "evt-trigger-type block-select" },
-                    el("option", { value: "time", selected: evt.triggerType === 'time' }, LanguageManager.t("admin.afterTime")),
-                    el("option", { value: "distance", selected: evt.triggerType === 'distance' }, LanguageManager.t("admin.atDistance"))
-                ),
+                createCustomSelect([
+                    { value: "time", label: LanguageManager.t("admin.afterTime") },
+                    { value: "distance", label: LanguageManager.t("admin.atDistance") }
+                ], evt.triggerType || "time", null, "evt-trigger-type admin-compact-select"),
                 el("input", { type: "number", className: "evt-trigger-value block-input width-80", value: evt.triggerValue !== undefined ? evt.triggerValue : 10 })
             )
         );
@@ -485,11 +486,11 @@ export class AdminView {
         div.appendChild(
             el("div", { className: "evt-fields-spawn block-row" },
                 el("label", {}, LanguageManager.t("admin.enemyType")),
-                el("select", { className: "evt-spawn-type block-select width-150" },
-                    el("option", { value: "basic", selected: evt.spawnEnemy === 'basic' }, LanguageManager.t("admin.basic")),
-                    el("option", { value: "speedy", selected: evt.spawnEnemy === 'speedy' }, LanguageManager.t("admin.speedy")),
-                    el("option", { value: "tank", selected: evt.spawnEnemy === 'tank' }, LanguageManager.t("admin.tank"))
-                )
+                createCustomSelect([
+                    { value: "basic", label: LanguageManager.t("admin.basic") },
+                    { value: "speedy", label: LanguageManager.t("admin.speedy") },
+                    { value: "tank", label: LanguageManager.t("admin.tank") }
+                ], evt.spawnEnemy || "basic", null, "evt-spawn-type admin-compact-select width-150")
             )
         );
 
@@ -714,11 +715,11 @@ export class AdminView {
             el("div", { className: "block-row" },
                 el("div", { className: "flex-1 min-w-150" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.decor")),
-                    el("select", { className: "survive-decor block-select" },
-                        el("option", { value: "default", selected: options.decorType === 'default' }, LanguageManager.t("admin.default")),
-                        el("option", { value: "mine", selected: options.decorType === 'mine' }, LanguageManager.t("admin.mine")),
-                        el("option", { value: "styx", selected: options.decorType === 'styx' }, LanguageManager.t("admin.styx"))
-                    )
+                    createCustomSelect([
+                        { value: "default", label: LanguageManager.t("admin.default") },
+                        { value: "mine", label: LanguageManager.t("admin.mine") },
+                        { value: "styx", label: LanguageManager.t("admin.styx") }
+                    ], options.decorType || "default", null, "survive-decor admin-compact-select")
                 ),
                 el("div", { className: "flex-1 min-w-100" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.duration")),
@@ -748,17 +749,17 @@ export class AdminView {
             el("div", { className: "block-row" },
                 el("div", { className: "flex-1 min-w-200" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.introType")),
-                    el("select", { className: "world-intro block-select" },
-                        el("option", { value: "staircase", selected: options.introType === 'staircase' }, LanguageManager.t("admin.staircase")),
-                        el("option", { value: "skyfall", selected: options.introType === 'skyfall' }, LanguageManager.t("admin.skyfall"))
-                    )
+                    createCustomSelect([
+                        { value: "staircase", label: LanguageManager.t("admin.staircase") },
+                        { value: "skyfall", label: LanguageManager.t("admin.skyfall") }
+                    ], options.introType || "staircase", null, "world-intro admin-compact-select")
                 ),
                 el("div", { className: "flex-1 min-w-200" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.outroType")),
-                    el("select", { className: "world-outro block-select" },
-                        el("option", { value: "DoorEvent", selected: options.outroType === 'DoorEvent' }, LanguageManager.t("admin.doorEvent")),
-                        el("option", { value: "HoleEvent", selected: options.outroType === 'HoleEvent' }, LanguageManager.t("admin.holeEvent"))
-                    )
+                    createCustomSelect([
+                        { value: "DoorEvent", label: LanguageManager.t("admin.doorEvent") },
+                        { value: "HoleEvent", label: LanguageManager.t("admin.holeEvent") }
+                    ], options.outroType || "DoorEvent", null, "world-outro admin-compact-select")
                 ),
                 el("div", { className: "flex-1 min-w-100" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.playerHp")),
