@@ -63,6 +63,18 @@
     </head>
 
     <body>
+        <script>
+            (function() {
+                var savedTheme = localStorage.getItem("theme");
+                if (savedTheme === "light") {
+                    document.body.setAttribute("data-theme", "light");
+                } else if (savedTheme === "dark") {
+                    document.body.removeAttribute("data-theme");
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.body.setAttribute("data-theme", "light");
+                }
+            })();
+        </script>
         <div id="nav-container"></div>
         <div id="app"></div>
         <div id="page-transition"></div>

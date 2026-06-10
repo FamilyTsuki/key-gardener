@@ -35,15 +35,7 @@ import { EasterEgg } from "./website/components/EasterEgg.js";
 
 console.log("Website UI initialized");
 
-// Initialize theme
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme === "light") {
-    document.body.setAttribute("data-theme", "light");
-} else if (savedTheme === "dark") {
-    document.body.removeAttribute("data-theme");
-} else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.body.setAttribute("data-theme", "light");
-}
+
 
 Navbar.render();
 EasterEgg.init();
