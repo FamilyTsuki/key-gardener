@@ -53,6 +53,8 @@ if (!isProd) {
     });
 }
 
+app.use("/asset/img/users", express.static(path.join(__dirname, "../frontend/public/asset/img/users")));
+
 app.use(express.static(frontendDir));
 app.use("/src", express.static(srcDir));
 app.use(
