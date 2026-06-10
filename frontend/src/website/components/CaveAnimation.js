@@ -1040,7 +1040,7 @@ export class CaveAnimation {
             if (this.starsMaterial && this.starsMaterial.userData.uniforms) {
                 this.starsMaterial.userData.uniforms.uTime.value = time;
             }
-            this.blackHoleObject.rotateY(0.0003);
+            this.blackHoleObject.rotateY(-0.0003);
 
             this.renderer.render(this.scene, this.camera);
         };
