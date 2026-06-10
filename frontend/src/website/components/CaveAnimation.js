@@ -47,6 +47,7 @@ export class CaveAnimation {
     }
 
     async init() {
+        if (window.incrementLoader) window.incrementLoader();
         gsap.registerPlugin(ScrollTrigger);
         this.setupEnvironment();
         this.setupLights();
@@ -56,7 +57,7 @@ export class CaveAnimation {
         this.attachEvents();
         this.startRendering();
 
-        this.generateDetailsProgressively();
+        await this.generateDetailsProgressively();
 
         const canvas = this.renderer.domElement;
         if (canvas) {
@@ -64,6 +65,7 @@ export class CaveAnimation {
                 canvas.style.opacity = "1";
             });
         }
+        if (window.decrementLoader) window.decrementLoader();
     }
 
     setupEnvironment() {

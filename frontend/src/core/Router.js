@@ -90,6 +90,14 @@ export default class Router {
      * @returns {Promise<void>} Resolves when the view has been rendered.
      */
     async route() {
+        const globalLoader = document.getElementById("global-loader");
+        let loaderTimeout = null;
+        if (globalLoader) {
+            loaderTimeout = setTimeout(() => {
+                globalLoader.classList.remove("hidden");
+            }, 250);
+        }
+
         let match = this.routes.find(
             (route) => route.path === location.pathname
         );
@@ -99,6 +107,8 @@ export default class Router {
         }
 
         if (match.requiresAuth && !AuthService.isAuthenticated()) {
+            if (loaderTimeout) clearTimeout(loaderTimeout);
+            if (globalLoader) globalLoader.classList.add("hidden");
             FlashMessageManager.show(LanguageManager.t("auth.loginRequired"), "error");
             this.navigateTo("/");
             return;
@@ -177,8 +187,18 @@ export default class Router {
             }
             window.scrollTo(0, 0);
 
+            if (loaderTimeout) clearTimeout(loaderTimeout);
+            if (globalLoader) {
+                globalLoader.classList.add("hidden");
+            }
+
             if (isEnteringGame) {
                 await this.fadeFromBlack();
+            }
+        } else {
+            if (loaderTimeout) clearTimeout(loaderTimeout);
+            if (globalLoader) {
+                globalLoader.classList.add("hidden");
             }
         }
     }

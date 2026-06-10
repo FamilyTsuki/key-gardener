@@ -47,10 +47,7 @@ const frontendDir = isProd ? path.join(__dirname, "../dist/public") : path.join(
 const srcDir = isProd ? path.join(__dirname, "../dist/src") : path.join(__dirname, "../frontend/src");
 
 if (!isProd) {
-    app.use((req, res, next) => {
-        res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
-        next();
-    });
+    // Cache is now active even in development mode
 }
 
 app.use("/asset/img/users", express.static(path.join(__dirname, "../frontend/public/asset/img/users")));

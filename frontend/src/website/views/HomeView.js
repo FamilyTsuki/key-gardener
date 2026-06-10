@@ -15,17 +15,23 @@ export default class HomeView extends AbstractView {
     }
 
     renderHologram(imgSrc, altText) {
+        const img = el("img", {
+            src: imgSrc,
+            alt: altText,
+            className: "first-home-img",
+        });
+
+        if (window.incrementLoader) window.incrementLoader();
+        img.onload = () => { if (window.decrementLoader) window.decrementLoader(); };
+        img.onerror = () => { if (window.decrementLoader) window.decrementLoader(); };
+
         return el(
             "div",
             {
                 className: "hologram-wrapper",
                 style: `--img-url: url('${imgSrc}')`
             },
-            el("img", {
-                src: imgSrc,
-                alt: altText,
-                className: "first-home-img",
-            }),
+            img,
             el("div", { className: "hologram-scanlines" }),
             el("div", { className: "hologram-noise" }),
             el("div", { className: "hologram-tear-layer" })
