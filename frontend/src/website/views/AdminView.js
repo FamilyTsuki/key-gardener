@@ -498,7 +498,7 @@ export class AdminView {
             el("div", { className: "evt-fields-spawnerConfig block-row" },
                 el("label", {}, LanguageManager.t("admin.spawnIntervalConfig")),
                 el("input", { type: "number", step: "0.1", className: "evt-spawn-interval block-input width-80 mr-15", value: evt.spawnInterval !== undefined ? evt.spawnInterval : 3 }),
-                el("label", {}, "Max Ennemis :"),
+                el("label", {}, LanguageManager.t("admin.maxEnemies")),
                 el("input", { type: "number", className: "evt-spawn-max block-input", value: evt.maxEnemies !== undefined ? evt.maxEnemies : 20 })
             )
         );

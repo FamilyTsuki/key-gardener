@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * Reusable component for displaying dialogues with an optional speaker portrait (2D or 3D).
@@ -48,7 +49,7 @@ export class DialogueBox {
 
         this.skipIndicator = document.createElement("div");
         this.skipIndicator.className = "dialogue-skip-indicator";
-        this.skipIndicator.innerHTML = "↵ Enter / Space";
+        this.skipIndicator.innerHTML = LanguageManager.t("common.skipIndicator");
         this.bubble.appendChild(this.skipIndicator);
 
         this.speakerContainer = document.createElement("div");
@@ -84,7 +85,7 @@ export class DialogueBox {
      * @param {Function} [onComplete] - Callback function executed when dialogue ends.
      */
     show(dialogues, speakerPath, onComplete = null) {
-        this.dialogues = dialogues;
+        this.dialogues = dialogues.map(d => LanguageManager.t(d));
         this.dialogueStep = 0;
         this.onComplete = onComplete;
         

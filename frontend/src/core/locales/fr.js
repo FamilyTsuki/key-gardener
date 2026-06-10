@@ -283,7 +283,8 @@ export const fr = {
     },
     common: {
         confirm: "Confirmer",
-        cancel: "Annuler"
+        cancel: "Annuler",
+        skipIndicator: "↵ Entrée / Espace"
     }
 };
 

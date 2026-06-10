@@ -283,7 +283,8 @@ export const en = {
     },
     common: {
         confirm: "Confirm",
-        cancel: "Cancel"
+        cancel: "Cancel",
+        skipIndicator: "↵ Enter / Space"
     }
 };
 

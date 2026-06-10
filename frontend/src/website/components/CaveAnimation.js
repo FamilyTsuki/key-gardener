@@ -42,7 +42,7 @@ export class CaveAnimation {
                     new THREE.Color(0xff2222)
                 ]
             },
-            pebbleCount: 1300
+            pebbleCount: 3000
         };
     }
 
@@ -786,9 +786,12 @@ export class CaveAnimation {
         let y, normalizedY, isMineral;
         let color = new THREE.Color();
         let scale = 1.0;
-        const { caveHeight, caveRadius, colors } = this.config;
+        const { caveHeight, caveRadius, colors, holePosition, holeRadius } = this.config;
 
         let type = 'pebble';
+        let vx, vy, vz, nx, nz, nX, nY, nZ, archOffset;
+        let finalHoleNoiseMultiplier = 1.0;
+        let finalBottomNoiseFade = 1.0;
 
         while (true) {
             y = (Math.random() - 0.5) * caveHeight;
@@ -796,57 +799,88 @@ export class CaveAnimation {
 
             if (normalizedY > 0.8) {
                 continue;
-            } else if (normalizedY > 0.6) {
+            }
+
+            const theta = (7 * Math.PI / 6) + Math.random() * (2 * Math.PI / 3);
+            let currentRadius = caveRadius * normalizedY + (caveRadius - 20) * (1 - normalizedY);
+            if (normalizedY < 0.35) {
+                const t = normalizedY / 0.35;
+                currentRadius += 18 * Math.sqrt(1 - t * t);
+            }
+            
+            vx = Math.cos(theta) * currentRadius;
+            vy = y;
+            vz = Math.sin(theta) * currentRadius;
+
+            archOffset = 0;
+            if (normalizedY < 0.25) {
+                const xRatio = Math.abs(vx) / caveRadius;
+                if (xRatio < 1.0) {
+                    const archFactor = 1.0 - (xRatio * xRatio);
+                    archOffset = 70 * archFactor * Math.pow(1.0 - normalizedY / 0.25, 2);
+                }
+            }
+
+            const dx = vx - holePosition.x;
+            const dy = (vy + archOffset) - holePosition.y;
+            const dz = vz - holePosition.z;
+            const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+            
+            if (dist < holeRadius + 10) {
+                continue;
+            }
+
+            if (dist < holeRadius + 15) {
+                finalHoleNoiseMultiplier = 0.15 + 0.85 * (dist / (holeRadius + 15));
+            } else {
+                finalHoleNoiseMultiplier = 1.0;
+            }
+
+            finalBottomNoiseFade = Math.min(1.0, normalizedY / 0.05);
+
+            if (normalizedY > 0.6) {
                 const progress = (0.8 - normalizedY) / 0.2;
                 if (Math.random() > Math.pow(progress, 0.5)) continue;
+            }
 
-                isMineral = false;
-                const topColor = new THREE.Color(0x8c7362);
-                const bottomColor = new THREE.Color(0x5a5c60);
-                color.copy(topColor).lerp(bottomColor, progress);
-                scale = Math.random() * 2.0 + 1.0 + (progress * 6.0);
-                type = scale > 4.5 ? 'rock' : 'pebble';
-                break;
-            } else if (normalizedY > 0.45) {
-                isMineral = false;
-                color.setHex(0x4a4c50);
-                scale = Math.random() * 3.0 + 7.0;
-                type = 'rock';
-                break;
+            isMineral = (normalizedY <= 0.45) ? Math.random() < 0.008 : false;
+
+            if (isMineral) {
+                const mineralIndex = Math.floor(Math.random() * colors.minerals.length);
+                color.copy(colors.minerals[mineralIndex]);
+                scale = Math.random() * 2.0 + 7.0;
+                type = 'mineral';
             } else {
-                isMineral = Math.random() < 0.008;
-                if (isMineral) {
-                    const mineralIndex = Math.floor(Math.random() * colors.minerals.length);
-                    color.copy(colors.minerals[mineralIndex]);
-                    scale = Math.random() * 2.0 + 7.0;
-                    type = 'mineral';
+                const cTop = new THREE.Color(0x8c7362);
+                const cMidHigh = new THREE.Color(0x5a5c60);
+                const cMidLow = new THREE.Color(0x4a4c50);
+                const cBottom = new THREE.Color(0x2a2c30);
+                const cDeep = colors.deep;
+
+                if (normalizedY > 0.7) {
+                    const t = (normalizedY - 0.7) / 0.1;
+                    color.copy(cMidHigh).lerp(cTop, t);
+                } else if (normalizedY > 0.6) {
+                    const t = (normalizedY - 0.6) / 0.1;
+                    color.copy(cMidLow).lerp(cMidHigh, t);
+                } else if (normalizedY > 0.5) {
+                    const t = (normalizedY - 0.5) / 0.1;
+                    color.copy(cBottom).lerp(cMidLow, t);
                 } else {
-                    color.setHex(0x2a2c30);
-                    scale = Math.random() * 3.0 + 7.0;
-                    type = 'rock';
+                    const t = Math.max(0, normalizedY / 0.5);
+                    color.copy(cDeep).lerp(cBottom, t);
                 }
-                break;
-            }
-        }
 
-        const theta = (7 * Math.PI / 6) + Math.random() * (2 * Math.PI / 3);
-        let currentRadius = caveRadius * normalizedY + (caveRadius - 20) * (1 - normalizedY);
-        if (normalizedY < 0.35) {
-            const t = normalizedY / 0.35;
-            currentRadius += 18 * Math.sqrt(1 - t * t);
-        }
-        
-        let vx = Math.cos(theta) * currentRadius;
-        let vy = y;
-        let vz = Math.sin(theta) * currentRadius;
-
-        let archOffset = 0;
-        if (normalizedY < 0.25) {
-            const xRatio = Math.abs(vx) / this.config.caveRadius;
-            if (xRatio < 1.0) {
-                const archFactor = 1.0 - (xRatio * xRatio);
-                archOffset = 70 * archFactor * Math.pow(1.0 - normalizedY / 0.25, 2);
+                if (normalizedY > 0.6) {
+                    const progress = (0.8 - normalizedY) / 0.2;
+                    scale = Math.random() * 2.0 + 1.0 + (progress * 6.0);
+                } else {
+                    scale = Math.random() * 3.0 + 7.0;
+                }
+                type = scale > 4.5 ? 'rock' : 'pebble';
             }
+
+            break;
         }
 
         let defMult = 1.0;
@@ -854,15 +888,18 @@ export class CaveAnimation {
             defMult += (normalizedY - 0.5) * 1.5; 
         }
         
-        const nx = vx / currentRadius;
-        const nz = vz / currentRadius;
-        const nX = (Math.sin(vx * 0.05 + vy * 0.03) * 6 + Math.sin(vx * 0.15 - vy * 0.12) * 2.5) * defMult;
-        const nZ = (Math.cos(vx * 0.04 - vy * 0.05) * 7.5 + Math.sin(vx * 0.12 + y * 0.08) * 3.5) * defMult;
-        const nY = (Math.cos(vx * 0.06 + vy * 0.04) * 5 + Math.cos(vx * 0.18 - vy * 0.15) * 2) * defMult;
+        nx = vx / Math.sqrt(vx*vx + vz*vz);
+        nz = vz / Math.sqrt(vx*vx + vz*vz);
+        
+        let yWithArch = vy + archOffset;
+
+        nX = (Math.sin(vx * 0.05 + yWithArch * 0.03) * 6 + Math.sin(vx * 0.15 - yWithArch * 0.12) * 2.5) * defMult * finalHoleNoiseMultiplier * finalBottomNoiseFade;
+        nZ = (Math.cos(vx * 0.04 - yWithArch * 0.05) * 7.5 + Math.sin(vx * 0.12 + yWithArch * 0.08) * 3.5) * defMult * finalHoleNoiseMultiplier * finalBottomNoiseFade;
+        nY = (Math.cos(vx * 0.06 + yWithArch * 0.04) * 5 + Math.cos(vx * 0.18 - yWithArch * 0.15) * 2) * defMult * finalHoleNoiseMultiplier * finalBottomNoiseFade;
 
         const embedDepth = isMineral ? 4.5 : 0.8;
         vx += nx * (nX - embedDepth);
-        vy += nY + archOffset;
+        vy = yWithArch + nY;
         vz += nz * (nZ - embedDepth);
 
         dummy.position.set(vx, vy, vz);
