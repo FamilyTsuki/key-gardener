@@ -51,7 +51,7 @@ export default class ProfileView extends AbstractView {
             this.setTitle(`${user.username} - Keyboard Survivor`);
             
             const avatarPath = (user.personal_picture && user.personal_picture !== "null") ? user.personal_picture : "default.webp";
-            const avatarSrc = avatarPath.startsWith('/') ? avatarPath : `/asset/img/users/${avatarPath}`;
+            const avatarSrc = (avatarPath.startsWith('/') || avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) ? avatarPath : `/asset/img/users/${avatarPath}`;
             
             const avatarImg = el("img", { 
                 src: avatarSrc,

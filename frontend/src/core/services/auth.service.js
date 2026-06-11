@@ -83,6 +83,31 @@ export class AuthService {
     }
 
     /**
+     * Authenticates the user with a Google OAuth credential token.
+     * @param {string} credential - The Google OAuth2 ID token.
+     * @returns {Promise<Object>} The authentication response containing JWT and user profile.
+     */
+    static async loginWithGoogle(credential) {
+        const response = await fetch(`${this.API_URL}/google`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ credential }),
+        });
+
+        const data = await this.handleResponse(response, "Google authentication failed");
+
+        if (data.token) {
+            localStorage.setItem("authToken", data.token);
+        }
+        if (data.user) {
+            localStorage.setItem("username", data.user.username);
+            localStorage.setItem("userId", data.user.id);
+        }
+
+        return data;
+    }
+
+    /**
      * Logs out the current user by removing the auth token.
      */
     static logout() {

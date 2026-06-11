@@ -52,13 +52,11 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow-wrap: break-word;
-    word-break: break-word;
 }
 
 #app {
     position: relative;
     z-index: 1;
-    margin-top: 10dvh;
 }
 
 #bg-canvas {

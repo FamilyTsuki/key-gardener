@@ -43,7 +43,6 @@ export default class Navbar {
 
         const homeLink = el("a", { href: "/", dataset: { link: true } }, LanguageManager.t("nav.home"));
         const hubLink = el("a", { href: "/hub", dataset: { link: true } }, LanguageManager.t("nav.communityHub"));
-        const socialLink = AuthService.isAuthenticated() ? el("a", { href: "/social", dataset: { link: true } }, LanguageManager.t("social.title") || "Friends & Duels") : null;
         const sep1 = el("span", { className: "nav-separator" }, "|");
         const sep2 = saveComponent ? el("span", { className: "nav-separator" }, "|") : null;
         this.adminLink = null;
@@ -52,10 +51,6 @@ export default class Navbar {
         const navPageChildren = [
             homeLink, sep1, hubLink
         ];
-        
-        if (socialLink) {
-            navPageChildren.push(el("span", { className: "nav-separator" }, "|"), socialLink);
-        }
 
         if (saveComponent) {
             navPageChildren.push(sep2, saveComponent);
@@ -89,7 +84,7 @@ export default class Navbar {
             const user = await AuthService.getCurrentUser();
             this.usernameSpan.textContent = user.username;
             const avatar = (user.personalPicture && user.personalPicture !== "null") ? user.personalPicture : "default.webp";
-            if (avatar.startsWith('/')) {
+            if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
                 this.personalPictureImg.src = avatar;
             } else {
                 this.personalPictureImg.src = "/asset/img/users/" + avatar;

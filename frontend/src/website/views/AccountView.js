@@ -178,7 +178,7 @@ export default class AccountView extends AbstractView {
             this.usernameSpan.textContent = user.username;
             this.usermail.textContent = user.email;
             const avatar = (user.personalPicture && user.personalPicture !== "null") ? user.personalPicture : "default.webp";
-            if (avatar.startsWith('/')) {
+            if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
                 this.personalPictureImg.src = avatar;
             } else {
                 this.personalPictureImg.src = "/asset/img/users/" + avatar;

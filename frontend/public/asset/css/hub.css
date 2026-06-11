@@ -676,3 +676,32 @@
     gap: 10px;
 }
 
+.hub-tabs-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 10px;
+}
+
+.hub-tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.hub-tab-btn:hover {
+    color: var(--primary-color);
+}
+
+.hub-tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+

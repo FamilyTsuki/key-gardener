@@ -28,13 +28,14 @@ app.use(
             useDefaults: true,
             directives: {
                 "upgrade-insecure-requests": null,
-                "script-src": ["'self'", "'unsafe-inline'"],
-                "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                "script-src": ["'self'", "'unsafe-inline'", "https://accounts.google.com"],
+                "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com"],
                 "font-src": ["'self'", "data:", "https://fonts.gstatic.com"],
-                "connect-src": ["'self'", "blob:"],
+                "connect-src": ["'self'", "blob:", "https://accounts.google.com"],
                 "worker-src": ["'self'", "blob:"],
-                "child-src": ["'self'", "blob:"],
-                "img-src": ["'self'", "data:", "blob:"],
+                "child-src": ["'self'", "blob:", "https://accounts.google.com"],
+                "frame-src": ["'self'", "https://accounts.google.com"],
+                "img-src": ["'self'", "data:", "blob:", "https://lh3.googleusercontent.com"],
                 "media-src": ["'self'", "blob:"],
             },
         },
@@ -106,6 +107,7 @@ app.get("*", (req, res) => {
         
         const canonicalUrl = `https://keyboardsurvivor.com${req.path === '/' ? '' : req.path}`;
         htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`);
+        htmlData = htmlData.replace("GOOGLE_CLIENT_ID_PLACEHOLDER", process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com");
         
         res.send(htmlData);
     });

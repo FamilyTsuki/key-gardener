@@ -5,6 +5,7 @@ import { PostsService } from "../../core/services/posts.service.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { WarningPopupManager } from "../../core/utils/ModerationWarning.js";
+import SocketService from "../../core/services/SocketService.js";
 
 /**
  * View for the community hub displaying posts and interactions.
@@ -19,6 +20,9 @@ export default class HubView extends AbstractView {
         super(params);
         this.setTitle("Community Hub - Keyboard Survivor");
         this.selectedMediaFile = null;
+        this.activeTab = window.location.pathname === "/social" ? "social" : "posts";
+        this.friends = [];
+        this.searchResults = [];
     }
 
     /**
@@ -74,7 +78,49 @@ export default class HubView extends AbstractView {
             rightControls
         );
 
-        return el("div", { className: "community-hub-container" },
+        this.postsTabContent = el("div", { className: "tab-content" },
+            controlsContainer,
+            addPostSection,
+            this.addPostToggleBtn ? this.addPostToggleBtn : null,
+            this.postsContainer
+        );
+
+        this.addFriendSection = el("div", { className: "add-friend-section p-20 card-bg" },
+            el("h3", {}, LanguageManager.t("social.addFriendTitle")),
+            el("div", { className: "flex-row-gap10 mt-10" },
+                el("input", { 
+                    type: "text", 
+                    id: "friend-search-input", 
+                    placeholder: LanguageManager.t("social.usernamePlaceholder"), 
+                    className: "form-input w-full",
+                    oninput: (e) => this.handleSearch(e.target.value)
+                })
+            ),
+            el("div", { id: "search-results-container", className: "search-results mt-10" })
+        );
+
+        this.friendsListContainer = el("div", { className: "friends-list-section p-20 card-bg mt-20" });
+
+        this.socialTabContent = el("div", { className: "tab-content hidden" },
+            this.addFriendSection,
+            this.friendsListContainer
+        );
+
+        const feedTabBtn = el("button", {
+            className: "hub-tab-btn active",
+            dataset: { tab: "posts" },
+            onclick: () => this.switchTab("posts")
+        }, LanguageManager.t("hub.postsTab"));
+
+        const friendsTabBtn = AuthService.isAuthenticated() ? el("button", {
+            className: "hub-tab-btn",
+            dataset: { tab: "social" },
+            onclick: () => this.switchTab("social")
+        }, LanguageManager.t("hub.socialTab")) : null;
+
+        const tabsBar = friendsTabBtn ? el("div", { className: "hub-tabs-bar" }, feedTabBtn, friendsTabBtn) : null;
+
+        this.container = el("div", { className: "community-hub-container" },
             el("h1", {}, LanguageManager.t("hub.title")),
             el("p", { className: "welcome-text" }, LanguageManager.t("hub.welcome")),
             !AuthService.isAuthenticated()
@@ -82,11 +128,12 @@ export default class HubView extends AbstractView {
                     el("p", {}, LanguageManager.t("hub.loginPrompt")),
                     el("a", { href: "/login", "data-link": "true" }, LanguageManager.t("hub.login"))
                   ) : null,
-            controlsContainer,
-            addPostSection,
-            this.addPostToggleBtn ? this.addPostToggleBtn : null,
-            this.postsContainer
+            tabsBar,
+            this.postsTabContent,
+            this.socialTabContent
         );
+
+        return this.container;
     }
 
     createSortButton(value, label, isActive = false) {
@@ -420,6 +467,11 @@ export default class HubView extends AbstractView {
     }
 
     async init() {
+        if (this.activeTab === "social") {
+            await this.loadFriends();
+            return;
+        }
+
         if (!this.postsContainer) return;
 
         try {
@@ -754,12 +806,309 @@ export default class HubView extends AbstractView {
     }
 
     /**
+     * Switches the active tab in the community hub (Posts or Friends).
+     * @param {string} tab - The tab name ('posts' or 'social').
+     */
+    switchTab(tab) {
+        if (this.activeTab === tab) return;
+        this.activeTab = tab;
+
+        const buttons = this.container.querySelectorAll(".hub-tab-btn");
+        buttons.forEach(btn => btn.classList.remove("active"));
+        const activeBtn = this.container.querySelector(`.hub-tab-btn[data-tab="${tab}"]`);
+        if (activeBtn) activeBtn.classList.add("active");
+
+        if (tab === "posts") {
+            this.postsTabContent.classList.remove("hidden");
+            this.socialTabContent.classList.add("hidden");
+            const formInner = this.postsTabContent.querySelector(".add-post-form-inner");
+            if (this.addPostToggleBtn && formInner && formInner.classList.contains("hidden")) {
+                this.addPostToggleBtn.classList.remove("hidden");
+            }
+            if (this.postsContainer.querySelector("p")?.textContent === LanguageManager.t("hub.loadingPosts")) {
+                this.init();
+            }
+        } else {
+            this.postsTabContent.classList.add("hidden");
+            this.socialTabContent.classList.remove("hidden");
+            if (this.addPostToggleBtn) {
+                this.addPostToggleBtn.classList.add("hidden");
+            }
+            this.loadFriends();
+        }
+    }
+
+    /**
+     * Handles friend user search.
+     * @param {string} query - The search query.
+     */
+    async handleSearch(query) {
+        const container = document.getElementById("search-results-container");
+        if (!container) return;
+
+        if (query.trim().length < 2) {
+            container.innerHTML = "";
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("authToken");
+            const res = await fetch(`/api/friends/search?q=${encodeURIComponent(query)}`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                this.searchResults = data.users;
+                this.renderSearchResults();
+            }
+        } catch (e) {
+            console.error("Error searching users", e);
+        }
+    }
+
+    /**
+     * Renders search results for adding friends.
+     */
+    renderSearchResults() {
+        const container = document.getElementById("search-results-container");
+        if (!container) return;
+        
+        container.innerHTML = "";
+        if (this.searchResults.length === 0) return;
+
+        this.searchResults.forEach(user => {
+            const avatar = (user.personal_picture && user.personal_picture !== "null") ? user.personal_picture : "default.webp";
+            const avatarSrc = (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) ? avatar : `/asset/img/users/${avatar}`;
+            const card = el("div", { className: "search-result-card flex-row-gap10 p-10 mt-10 card-bg-light" },
+                el("div", { className: "flex-row-gap10" },
+                    el("img", { src: avatarSrc, className: "avatar-small" }),
+                    el("span", { className: "friend-username" }, user.username)
+                ),
+                el("button", { className: "btn-primary btn-small", onclick: (e) => this.addFriend(user.username, e.target) }, LanguageManager.t("social.addBtn"))
+            );
+            container.appendChild(card);
+        });
+    }
+
+    /**
+     * Loads the authenticated user's friends list.
+     */
+    async loadFriends() {
+        try {
+            const token = localStorage.getItem("authToken");
+            const res = await fetch("/api/friends/list", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                this.friends = data.friends;
+                this.renderFriendsList();
+            }
+        } catch (e) {
+            console.error("Error loading friends", e);
+        }
+    }
+
+    /**
+     * Sends a friend request.
+     * @param {string} username - The target user's username.
+     * @param {HTMLButtonElement} btnElement - The button clicked.
+     */
+    async addFriend(username, btnElement) {
+        if (btnElement) {
+            btnElement.disabled = true;
+            btnElement.textContent = LanguageManager.t("social.sentBtn");
+        }
+        try {
+            const token = localStorage.getItem("authToken");
+            const res = await fetch("/api/friends/add", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ targetUsername: username })
+            });
+            const data = await res.json();
+            if (data.success) {
+                FlashMessageManager.show(LanguageManager.t("social.friendRequestSent"), "success");
+                const input = document.getElementById("friend-search-input");
+                if (input) input.value = "";
+                this.searchResults = [];
+                this.renderSearchResults();
+                await this.loadFriends();
+            } else {
+                FlashMessageManager.show(data.message, "error");
+            }
+        } catch (e) {
+            FlashMessageManager.show(LanguageManager.t("social.errorSendingRequest"), "error");
+        }
+    }
+
+    /**
+     * Accepts an incoming friend request.
+     * @param {number} friendId - The friend identifier.
+     */
+    async acceptFriend(friendId) {
+        try {
+            const token = localStorage.getItem("authToken");
+            const res = await fetch("/api/friends/accept", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ friendId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                FlashMessageManager.show(LanguageManager.t("social.friendRequestAccepted"), "success");
+                await this.loadFriends();
+            }
+        } catch (e) {
+            FlashMessageManager.show(LanguageManager.t("social.errorAcceptingRequest"), "error");
+        }
+    }
+
+    /**
+     * Renders the friends list UI.
+     */
+    renderFriendsList() {
+        this.friendsListContainer.innerHTML = "";
+        
+        if (this.friends.length === 0) {
+            this.friendsListContainer.appendChild(el("p", { className: "text-muted text-center" }, LanguageManager.t("social.noFriendsYet")));
+            return;
+        }
+
+        const pendingList = el("div", { className: "pending-friends mb-20" });
+        const acceptedList = el("div", { className: "accepted-friends" });
+
+        this.friends.forEach(f => {
+            const avatar = (f.personal_picture && f.personal_picture !== "null") ? f.personal_picture : "default.webp";
+            const avatarSrc = (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) ? avatar : `/asset/img/users/${avatar}`;
+            const userInfo = el("div", { 
+                className: "flex-row-gap10 friend-user-info", 
+                onclick: () => this.showProfile(f)
+            },
+                el("img", { src: avatarSrc, className: "avatar-small" }),
+                el("span", { className: "friend-username" }, f.username)
+            );
+
+            const actions = el("div", { className: "flex-row-gap10" });
+            const card = el("div", { className: "friend-card flex-row-gap10 p-10 mt-10 card-bg-light" }, userInfo, actions);
+
+            if (f.status === "pending") {
+                if (f.direction === "received") {
+                    actions.appendChild(el("button", { className: "btn-primary btn-small", onclick: () => this.acceptFriend(f.user_id) }, LanguageManager.t("social.acceptBtn")));
+                } else {
+                    actions.appendChild(el("span", { className: "text-muted" }, LanguageManager.t("social.pendingStatus")));
+                }
+                pendingList.appendChild(card);
+            } else {
+                const hasDuelInvite = window.pendingDuelInvitations && window.pendingDuelInvitations.some(inv => inv.fromId === f.user_id);
+                if (hasDuelInvite) {
+                    const acceptBtn = el("button", { 
+                        className: "btn-primary btn-small", 
+                        onclick: () => this.acceptDuel(f.user_id) 
+                    }, LanguageManager.t("social.acceptDuel"));
+                    const declineBtn = el("button", { 
+                        className: "btn-danger btn-small", 
+                        onclick: () => this.declineDuel(f.user_id) 
+                    }, LanguageManager.t("social.declineDuel"));
+                    actions.appendChild(acceptBtn);
+                    actions.appendChild(declineBtn);
+                } else {
+                    actions.appendChild(el("button", { className: "btn-danger btn-small", onclick: (e) => this.inviteDuel(f.user_id, e.target) }, LanguageManager.t("social.duelBtn")));
+                }
+                acceptedList.appendChild(card);
+            }
+        });
+
+        if (pendingList.children.length > 0) {
+            this.friendsListContainer.appendChild(el("h3", {}, LanguageManager.t("social.pendingRequests")));
+            this.friendsListContainer.appendChild(pendingList);
+        }
+
+        if (acceptedList.children.length > 0) {
+            this.friendsListContainer.appendChild(el("h3", {}, LanguageManager.t("social.myFriends")));
+            this.friendsListContainer.appendChild(acceptedList);
+        }
+    }
+
+    /**
+     * Sends a duel invitation to a friend.
+     * @param {number} targetUserId - Target friend's user identifier.
+     * @param {HTMLButtonElement} btnElement - The button element clicked.
+     */
+    inviteDuel(targetUserId, btnElement) {
+        if (btnElement) {
+            btnElement.disabled = true;
+            btnElement.textContent = LanguageManager.t("social.waitingBtn");
+            setTimeout(() => {
+                if (btnElement) {
+                    btnElement.disabled = false;
+                    btnElement.textContent = LanguageManager.t("social.duelBtn");
+                }
+            }, 10000);
+        }
+        FlashMessageManager.show(LanguageManager.t("social.duelInvitationSent"), "success");
+        SocketService.emit("invite_duel", { targetUserId });
+    }
+
+    /**
+     * Accepts a duel invitation.
+     * @param {number} fromId - The identifier of the challenger.
+     */
+    acceptDuel(fromId) {
+        window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
+        SocketService.emit("accept_duel", { fromId });
+        this.loadFriends();
+    }
+
+    /**
+     * Declines a duel invitation challenger.
+     * @param {number} fromId - Challenger identifier.
+     */
+    declineDuel(fromId) {
+        window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
+        SocketService.emit("decline_duel", { fromId });
+        this.loadFriends();
+    }
+
+    /**
+     * Redirects to the selected friend's profile.
+     * @param {Object} friendData - Friend details.
+     */
+    showProfile(friendData) {
+        history.pushState(null, null, `/profile?id=${friendData.user_id}`);
+        window.dispatchEvent(new Event("popstate"));
+    }
+
+    /**
+     * Removes a friend.
+     * @param {number} userId - Friend user identifier.
+     */
+    async removeFriend(userId) {
+        try {
+            const token = localStorage.getItem("authToken");
+            const res = await fetch(`/api/friends/remove/${userId}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                FlashMessageManager.show(LanguageManager.t("social.friendRemoved"), "success");
+                await this.loadFriends();
+            } else {
+                FlashMessageManager.show(data.message || LanguageManager.t("social.errorRemovingFriend"), "error");
+            }
+        } catch (e) {
+            FlashMessageManager.show(LanguageManager.t("social.errorRemovingFriend"), "error");
+        }
+    }
+
+    /**
      * Retrieves the CSS files specific to this view.
      *
      * @returns {Array<string>} List of CSS file paths.
      */
     getCss() {
-        return ["/asset/css/hub.css"];
+        return ["/asset/css/hub.css", "/asset/css/social.css"];
     }
 }
 

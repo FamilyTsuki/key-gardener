@@ -107,6 +107,83 @@ exports.login = async (req, res, next) => {
     }
 };
 
+/**
+ * Handles authentication via Google OAuth2 credential validation.
+ * @param {Object} req - The Express request object containing the Google ID token.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The next middleware function.
+ * @returns {Promise<void>}
+ */
+exports.loginWithGoogle = async (req, res, next) => {
+    try {
+        const { credential } = req.body;
+
+        if (!credential) {
+            return res.status(400).json({ success: false, message: "Google credential token is required" });
+        }
+
+        const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+        if (!response.ok) {
+            return res.status(401).json({ success: false, message: "Invalid Google credential" });
+        }
+
+        const payload = await response.json();
+
+        const clientId = process.env.GOOGLE_CLIENT_ID;
+        if (clientId && payload.aud !== clientId) {
+            return res.status(401).json({ success: false, message: "Google token audience mismatch" });
+        }
+
+        const googleId = payload.sub;
+        const email = payload.email;
+        const name = payload.name;
+        const picture = payload.picture || "default.webp";
+
+        let user = await User.findByGoogleId(googleId);
+
+        if (!user) {
+            const existingUserByEmail = await User.findByEmail(email);
+            if (existingUserByEmail) {
+                user = await User.linkGoogleAccount(existingUserByEmail.id, googleId, picture);
+            } else {
+                let baseUsername = (name || email.split("@")[0]).replace(/[^a-zA-Z0-9]/g, "");
+                let username = baseUsername.substring(0, 30);
+                let uniqueUsernameFound = false;
+                let suffix = 0;
+
+                while (!uniqueUsernameFound) {
+                    const candidate = suffix === 0 ? username : `${username}${suffix}`;
+                    const conflict = await User.findByUsername(candidate);
+                    if (!conflict) {
+                        username = candidate;
+                        uniqueUsernameFound = true;
+                    } else {
+                        suffix++;
+                    }
+                }
+
+                user = await User.createGoogleUser(username, email, googleId, picture);
+            }
+        }
+
+        const token = generateToken(user.id);
+
+        res.json({
+            success: true,
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                personalPicture: user.personal_picture || "default.webp",
+                is_admin: user.is_admin || false
+            }
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.me = async (req, res, next) => {
     try {
         const user = req.user;

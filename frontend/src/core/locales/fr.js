@@ -88,6 +88,8 @@ export const fr = {
         sortUpvotes: "Plus votés",
         sortComments: "Plus commentés",
         refresh: "Actualiser",
+        postsTab: "Publications",
+        socialTab: "Amis & Duels",
         report: "Signaler",
         reportPrompt: "Veuillez indiquer la raison du signalement :",
         reportSuccess: "Post signalé avec succès.",
@@ -116,7 +118,9 @@ export const fr = {
         newPasswordPlaceholder: "Nouveau mot de passe",
         updatePasswordBtn: "Mettre à jour le mot de passe",
         resetSuccess: "Mot de passe réinitialisé avec succès ! Veuillez vous connecter.",
-        resetFailed: "Échec de la réinitialisation"
+        resetFailed: "Échec de la réinitialisation",
+        loginFailed: "Échec de la connexion",
+        or: "OU"
     },
     
     // RegisterView

@@ -1,5 +1,5 @@
 nav {
-    position: fixed;
+    position: sticky;
     top: 0;
     width: 100%;
     z-index: 10;
@@ -107,7 +107,7 @@ nav a.admin-link {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 8px;
+        gap: 8px 12px;
         width: 100%;
     }
 
@@ -132,6 +132,6 @@ nav a.admin-link {
     }
 
     .nav-separator {
-        margin: 0 5px;
+        display: none;
     }
 }

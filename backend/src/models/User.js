@@ -94,6 +94,49 @@ class User {
         );
         return result.rows[0]?.warning_count || 0;
     }
+
+    /**
+     * Finds a user by their Google OAuth ID.
+     * @param {string} googleId - The Google sub ID.
+     * @returns {Promise<Object|null>} The user object or undefined.
+     */
+    static async findByGoogleId(googleId) {
+        const result = await db.query("SELECT * FROM users WHERE google_id = $1", [
+            googleId,
+        ]);
+        return result.rows[0];
+    }
+
+    /**
+     * Creates a new user authenticated via Google OAuth.
+     * @param {string} username - Unique generated username.
+     * @param {string} email - The user's email.
+     * @param {string} googleId - Google sub ID.
+     * @param {string} pictureUrl - Google profile picture URL.
+     * @returns {Promise<Object>} The created user.
+     */
+    static async createGoogleUser(username, email, googleId, pictureUrl) {
+        const result = await db.query(
+            "INSERT INTO users (username, email, google_id, personal_picture) VALUES ($1, $2, $3, $4) RETURNING id, username, email, created_at",
+            [username, email, googleId, pictureUrl]
+        );
+        return result.rows[0];
+    }
+
+    /**
+     * Links a Google OAuth account to an existing user by email.
+     * @param {number} id - User database ID.
+     * @param {string} googleId - Google sub ID.
+     * @param {string} pictureUrl - Google profile picture URL.
+     * @returns {Promise<Object>} The updated user.
+     */
+    static async linkGoogleAccount(id, googleId, pictureUrl) {
+        const result = await db.query(
+            "UPDATE users SET google_id = $1, personal_picture = COALESCE($2, personal_picture) WHERE id = $3 RETURNING id, username, email",
+            [googleId, pictureUrl, id]
+        );
+        return result.rows[0];
+    }
 }
 
 module.exports = User;

@@ -75,9 +75,11 @@ export class SocialView extends AbstractView {
         if (this.searchResults.length === 0) return;
 
         this.searchResults.forEach(user => {
+            const avatar = (user.personal_picture && user.personal_picture !== "null") ? user.personal_picture : "default.webp";
+            const avatarSrc = (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) ? avatar : `/asset/img/users/${avatar}`;
             const card = el("div", { className: "search-result-card flex-row-gap10 p-10 mt-10 card-bg-light" },
                 el("div", { className: "flex-row-gap10" },
-                    el("img", { src: `/asset/img/users/${user.personal_picture}`, className: "avatar-small" }),
+                    el("img", { src: avatarSrc, className: "avatar-small" }),
                     el("span", { className: "friend-username" }, user.username)
                 ),
                 el("button", { className: "btn-primary btn-small", onclick: (e) => this.addFriend(user.username, e.target) }, LanguageManager.t("social.addBtn"))
@@ -160,11 +162,13 @@ export class SocialView extends AbstractView {
         const acceptedList = el("div", { className: "accepted-friends" });
 
         this.friends.forEach(f => {
+            const avatar = (f.personal_picture && f.personal_picture !== "null") ? f.personal_picture : "default.webp";
+            const avatarSrc = (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) ? avatar : `/asset/img/users/${avatar}`;
             const userInfo = el("div", { 
                 className: "flex-row-gap10 friend-user-info", 
                 onclick: () => this.showProfile(f)
             },
-                el("img", { src: `/asset/img/users/${f.personal_picture}`, className: "avatar-small" }),
+                el("img", { src: avatarSrc, className: "avatar-small" }),
                 el("span", { className: "friend-username" }, f.username)
             );
 

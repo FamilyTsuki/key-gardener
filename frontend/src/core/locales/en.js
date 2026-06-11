@@ -88,6 +88,8 @@ export const en = {
         sortUpvotes: "Most Upvoted",
         sortComments: "Most Commented",
         refresh: "Refresh",
+        postsTab: "Feed",
+        socialTab: "Friends & Duels",
         report: "Report",
         reportPrompt: "Please provide a reason for reporting:",
         reportSuccess: "Post reported successfully.",
@@ -116,7 +118,9 @@ export const en = {
         newPasswordPlaceholder: "New password",
         updatePasswordBtn: "Update Password",
         resetSuccess: "Password reset successful! Please login.",
-        resetFailed: "Reset failed"
+        resetFailed: "Reset failed",
+        loginFailed: "Login failed",
+        or: "OR"
     },
     
     // RegisterView

@@ -168,6 +168,11 @@ export default class Player extends Actor {
         const hudEl = document.getElementById("player-hud");
         if (hudEl) hudEl.style.display = "none";
         
+        const gameOverScreen = document.getElementById("game-over-screen");
+        if (gameOverScreen) {
+            gameOverScreen.remove();
+        }
+
         if (typeof super.destroy === "function") {
             super.destroy();
         }

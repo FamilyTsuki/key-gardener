@@ -249,7 +249,7 @@ export class DuelPhase extends GamePhase {
         const bossUI = document.getElementById("boss-ui");
         if (bossUI) bossUI.classList.add("hidden");
 
-        this.hpUI = el("div", { className: "duel-hp-ui" },
+        this.hpUI = el("div", { id: "duel-hp-ui", className: "duel-hp-ui" },
             el("div", { className: "duel-hud-panel" },
                 el("span", { className: "duel-hud-name duel-hud-name-local" }, this.localData.username),
                 el("div", { className: "duel-hud-bar" },
@@ -620,7 +620,11 @@ export class DuelPhase extends GamePhase {
                         this.updateSpellsUI();
                     }, 200);
                 }
-           /**
+            }
+        }
+    }
+
+    /**
      * Handles the spawn of a spell projectile in the 3D scene.
      * @param {Object} data - Payload containing spell metadata (attacker, target, speed, etc.).
      * @returns {void}
@@ -1007,6 +1011,9 @@ export class DuelPhase extends GamePhase {
         const announcerContainer = document.getElementById("duel-announcer-container");
         if (announcerContainer) announcerContainer.remove();
 
+        const countdownOverlay = document.getElementById("duel-countdown-overlay");
+        if (countdownOverlay) countdownOverlay.remove();
+
         if (this.spellsUI) {
             this.spellsUI.style.position = "";
             this.spellsUI.style.bottom = "";
@@ -1018,6 +1025,10 @@ export class DuelPhase extends GamePhase {
         if (this.defensesUI) this.defensesUI.remove();
         const hpUI = document.getElementById("duel-hp-ui");
         if (hpUI) hpUI.remove();
+        if (this.hpUI) {
+            this.hpUI.remove();
+            this.hpUI = null;
+        }
 
         if (this.jailUI) {
             this.jailUI.remove();
