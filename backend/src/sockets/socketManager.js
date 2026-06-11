@@ -54,6 +54,14 @@ module.exports = (io) => {
             duelManager.handleTakeDamage(socket, data);
         });
 
+        socket.on('player_ready', () => {
+            duelManager.handlePlayerReady(socket);
+        });
+
+        socket.on('update_wpm', (data) => {
+            duelManager.handleUpdateWpm(socket, data);
+        });
+
         socket.on('player_move', (data) => {
             if (socket.roomId) {
                 socket.to(socket.roomId).emit('opponent_move', data);

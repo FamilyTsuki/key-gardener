@@ -15,6 +15,11 @@ import { el, clear } from "../../core/utils/DOMBuilder.js";
 const loader = new GLTFLoader();
 
 export class DuelPhase extends GamePhase {
+    /**
+     * Creates an instance of DuelPhase.
+     * @param {Object} gameEngine - The game engine instance.
+     * @param {Object} duelData - Data containing information about the duel and players.
+     */
     constructor(gameEngine, duelData) {
         super(gameEngine);
         this.duelData = duelData;
@@ -45,8 +50,18 @@ export class DuelPhase extends GamePhase {
         this.currentTypedJail = "";
         this.jailEscapeWord = "";
         this.slowZones = [];
+        this.isCountdownActive = true;
+        this.successfulStrokesCount = 0;
+        this.baseWpm = this.localData.wpm || 30;
+        this.duelStartTime = null;
+        this.wpmUpdateTimer = 0;
     }
 
+    /**
+     * Initializes the duel phase, loading assets, placing keyboards,
+     * creating actors, setting up event listeners, and emitting player ready.
+     * @returns {Promise<void>}
+     */
     async init() {
         const scene = this.gameEngine.scene;
 
@@ -116,15 +131,27 @@ export class DuelPhase extends GamePhase {
         SocketService.on('hp_update', this.onHpUpdate.bind(this));
         SocketService.on('duel_ended', this.onDuelEnded.bind(this));
         SocketService.on('opponent_move', this.onOpponentMove.bind(this));
+        SocketService.on('start_countdown', this.onStartCountdown.bind(this));
+
+        const baseLightLen = Math.max(3, Math.floor(this.baseWpm / 15));
+        const baseRandomLen = Math.max(4, Math.floor(this.baseWpm / 12));
+        const baseHeavyLen = Math.max(5, Math.floor(this.baseWpm / 10));
 
         this.availableSpells = [
-            { type: 'heavy', wordLength: 6, word: this.getRandomWord(6), cooldownDuration: 10000, cooldownRemaining: 0 },
-            { type: 'light', wordLength: 4, word: this.getRandomWord(4), cooldownDuration: 1000, cooldownRemaining: 0 },
-            { type: 'random', wordLength: 5, word: this.getRandomWord(5), cooldownDuration: 6000, cooldownRemaining: 0 }
+            { type: 'heavy', wordLength: baseHeavyLen, word: this.getRandomWord(baseHeavyLen), cooldownDuration: 10000, cooldownRemaining: 0 },
+            { type: 'light', wordLength: baseLightLen, word: this.getRandomWord(baseLightLen), cooldownDuration: 1000, cooldownRemaining: 0 },
+            { type: 'random', wordLength: baseRandomLen, word: this.getRandomWord(baseRandomLen), cooldownDuration: 6000, cooldownRemaining: 0 }
         ];
         this.updateSpellsUI();
+
+        SocketService.emit('player_ready');
     }
 
+    /**
+     * Handles the opponent movement event from socket data, translating tile keys to positions.
+     * @param {Object} data - Payload containing the target keyboard tile key.
+     * @returns {void}
+     */
     onOpponentMove(data) {
         if (this.remotePlayer) {
             this.remotePlayer.isJailed = false;
@@ -140,6 +167,55 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Animates and handles the starting countdown for the duel.
+     * Prevents inputs while active and records the start time on completion.
+     * @returns {void}
+     */
+    onStartCountdown() {
+        const countdownOverlay = el("div", { id: "duel-countdown-overlay", className: "duel-countdown-overlay" });
+        const countdownText = el("div", { className: "duel-countdown-text" });
+        countdownOverlay.appendChild(countdownText);
+        document.body.appendChild(countdownOverlay);
+
+        const steps = ["3", "2", "1", LanguageManager.t("duel.go") || "GO !"];
+        const timeline = gsap.timeline({
+            onComplete: () => {
+                countdownOverlay.remove();
+                this.isCountdownActive = false;
+                this.duelStartTime = Date.now();
+            }
+        });
+
+        timeline.fromTo(countdownOverlay,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.3 }
+        );
+
+        steps.forEach((text) => {
+            timeline.call(() => {
+                countdownText.textContent = text;
+            });
+            timeline.fromTo(countdownText, 
+                { scale: 0.5, opacity: 0 },
+                { scale: 1.2, opacity: 1, duration: 0.4, ease: "back.out(2)" }
+            );
+            timeline.to(countdownText, 
+                { scale: 1.5, opacity: 0, duration: 0.4, delay: 0.2, ease: "power2.in" }
+            );
+        });
+
+        timeline.to(countdownOverlay, {
+            opacity: 0,
+            duration: 0.3
+        }, "-=0.3");
+    }
+
+    /**
+     * Gets a random word from the locale dict that fits the requested length.
+     * @param {number} length - Desired word length.
+     * @returns {string} The randomly picked word.
+     */
     getRandomWord(length) {
         const words = LanguageManager.t("game.jumpWords") || ["fire", "ice", "bolt", "storm", "blast", "strike", "burn"];
         const filtered = words.filter(w => w.length === length || Math.abs(w.length - length) <= 1);
@@ -147,6 +223,25 @@ export class DuelPhase extends GamePhase {
         return words[Math.floor(Math.random() * words.length)];
     }
 
+    /**
+     * Computes the current real-time WPM of the local player during active gameplay.
+     * @returns {number} The calculated WPM bounded between 15 and 120.
+     */
+    getCurrentWpm() {
+        if (!this.duelStartTime) return this.baseWpm;
+        const now = Date.now();
+        const durationMinutes = (now - this.duelStartTime) / 60000;
+        if (durationMinutes < 0.05) {
+            return this.baseWpm;
+        }
+        const wpm = (this.successfulStrokesCount / 5) / durationMinutes;
+        return Math.max(15, Math.min(120, Math.round(wpm)));
+    }
+
+    /**
+     * Builds and appends the HUD, player panel fills, and DOM containers for spell and defense lists.
+     * @returns {void}
+     */
     buildUI() {
         const hud = document.getElementById("player-hud");
         if (hud) hud.classList.remove("hidden");
@@ -191,6 +286,10 @@ export class DuelPhase extends GamePhase {
         document.body.appendChild(announcer);
     }
 
+    /**
+     * Updates the spells list DOM overlay showing cooldowns and current typing state characters.
+     * @returns {void}
+     */
     updateSpellsUI() {
         if (!this.spellsUI) return;
         clear(this.spellsUI);
@@ -240,6 +339,10 @@ export class DuelPhase extends GamePhase {
         this.spellsUI.appendChild(ul);
     }
 
+    /**
+     * Updates the incoming defenses list DOM showing required shielding words and character match feedback.
+     * @returns {void}
+     */
     updateDefensesUI() {
         if (!this.defensesUI) return;
         clear(this.defensesUI);
@@ -276,13 +379,23 @@ export class DuelPhase extends GamePhase {
         });
     }
 
+    /**
+     * Activates the jail state locally, generating an escape word, displaying UI, and rendering the 3D cage.
+     * @returns {void}
+     */
     activateJailLocal() {
         if (this.localPlayer.isJailed) return;
         this.localPlayer.isJailed = true;
         this.currentTypedJail = "";
         this.jailEscapeWord = this.getRandomWord(5);
         
-        this.jailUI = el("div", { id: "jail-ui", className: "jail-ui" });
+        this.jailUI = el("div", { id: "jail-ui", className: "jail-ui" },
+            el("div", { className: "status-overlay-jail" }),
+            el("div", { className: "status-message-box jail-message" },
+                el("span", { className: "status-icon" }, "🔒"),
+                el("div", { id: "jail-content-box" })
+            )
+        );
         document.body.appendChild(this.jailUI);
         this.updateJailUI();
 
@@ -293,17 +406,23 @@ export class DuelPhase extends GamePhase {
         this.localPlayer.mesh.add(this.localJailCage);
     }
 
+    /**
+     * Updates the jail UI box with the correct escape word characters typed so far.
+     * @returns {void}
+     */
     updateJailUI() {
         if (!this.jailUI) return;
-        clear(this.jailUI);
+        const contentBox = document.getElementById("jail-content-box");
+        if (!contentBox) return;
+        clear(contentBox);
 
-        this.jailUI.appendChild(document.createTextNode(LanguageManager.t("duel.jailedTitle")));
-        this.jailUI.appendChild(el("br"));
+        contentBox.appendChild(el("span", { className: "status-title" }, LanguageManager.t("duel.jailedTitle") || "EMPRISONNÉ !"));
+        contentBox.appendChild(el("br"));
 
-        const subtitle = el("span", { className: "jail-subtitle" }, LanguageManager.t("duel.jailedSubtitle"));
-        this.jailUI.appendChild(subtitle);
-        this.jailUI.appendChild(el("br"));
-        this.jailUI.appendChild(el("br"));
+        const subtitle = el("span", { className: "jail-subtitle" }, LanguageManager.t("duel.jailedSubtitle") || "Tapez le mot ci-dessous pour briser la cage et vous échapper :");
+        contentBox.appendChild(subtitle);
+        contentBox.appendChild(el("br"));
+        contentBox.appendChild(el("br"));
 
         const wordSpan = el("span", { className: "jail-word" });
         for (let i = 0; i < this.jailEscapeWord.length; i++) {
@@ -313,9 +432,61 @@ export class DuelPhase extends GamePhase {
                 wordSpan.appendChild(el("span", { className: "duel-spell-char-normal" }, this.jailEscapeWord[i]));
             }
         }
-        this.jailUI.appendChild(wordSpan);
+        contentBox.appendChild(wordSpan);
     }
 
+    /**
+     * Creates and attaches a 3D rotating electrical ring visual to the given player model.
+     * @param {Object} playerModel - The player model instance.
+     * @returns {THREE.Group} The 3D visual group.
+     */
+    createStunVisual(playerModel) {
+        const group = new THREE.Group();
+        const mat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, wireframe: true });
+        
+        const ringGeo1 = new THREE.TorusGeometry(0.8, 0.04, 8, 24);
+        const ring1 = new THREE.Mesh(ringGeo1, mat);
+        ring1.rotation.x = Math.PI / 2;
+        group.add(ring1);
+
+        const ringGeo2 = new THREE.TorusGeometry(0.8, 0.04, 8, 24);
+        const ring2 = new THREE.Mesh(ringGeo2, mat);
+        ring2.rotation.y = Math.PI / 4;
+        group.add(ring2);
+
+        group.position.y = 1.0;
+        playerModel.mesh.add(group);
+        return group;
+    }
+
+    /**
+     * Updates the stun UI warning box and vignette overlay based on the local player's stun timer.
+     * @returns {void}
+     */
+    updateStunUI() {
+        if (this.localPlayer && this.localPlayer.stunTimer > 0) {
+            if (!this.stunUI) {
+                this.stunUI = el("div", { id: "stun-ui", className: "stun-ui" },
+                    el("div", { className: "status-overlay-stun" }),
+                    el("div", { className: "status-message-box stun-message" },
+                        el("span", { className: "status-icon" }, "⚡"),
+                        el("span", { className: "status-text" }, LanguageManager.t("duel.stunnedMessage") || "PARALYSÉ ! Vous avez été foudroyé, impossible d'agir !")
+                    )
+                );
+                document.body.appendChild(this.stunUI);
+            }
+        } else {
+            if (this.stunUI) {
+                this.stunUI.remove();
+                this.stunUI = null;
+            }
+        }
+    }
+
+    /**
+     * Frees the local player from jail, removing the UI and the 3D cage mesh.
+     * @returns {void}
+     */
     escapeJail() {
         this.localPlayer.isJailed = false;
         if (this.jailUI) {
@@ -328,13 +499,21 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Handles keyboard events for local player movements, spell casts, defenses, and jail escapes.
+     * @param {KeyboardEvent} event - The keyboard event.
+     * @returns {void}
+     */
     handleKeyDown(event) {
-        if (this.isDuelOver) return;
+        if (this.isDuelOver || this.isCountdownActive) return;
 
         if (this.localPlayer && (this.localPlayer.stunTimer > 0 || this.localPlayer.isJailed)) {
             if (this.localPlayer.isJailed) {
                 if (event.key.length === 1 && event.key.match(/[a-zA-Z]/)) {
                     const char = event.key.toLowerCase();
+                    if (this.jailEscapeWord.toLowerCase().startsWith(this.currentTypedJail + char)) {
+                        this.successfulStrokesCount++;
+                    }
                     this.currentTypedJail += char;
                     this.updateJailUI();
                     
@@ -380,6 +559,9 @@ export class DuelPhase extends GamePhase {
             
             const incoming = this.projectiles.filter(p => p.targetId == this.localData.id);
             if (incoming.length > 0) {
+                if (incoming.some(p => p.defenseWord.toLowerCase().startsWith(this.currentTypedDefense + char))) {
+                    this.successfulStrokesCount++;
+                }
                 this.currentTypedDefense += char;
                 this.updateDefensesUI();
                 
@@ -400,6 +582,9 @@ export class DuelPhase extends GamePhase {
                 return;
             }
 
+            if (this.availableSpells.some(s => s.cooldownRemaining === 0 && s.word.toLowerCase().startsWith(this.currentTypedSpell + char))) {
+                this.successfulStrokesCount++;
+            }
             this.currentTypedSpell += char;
             this.updateSpellsUI();
 
@@ -411,6 +596,19 @@ export class DuelPhase extends GamePhase {
                     finalType = pool[Math.floor(Math.random() * pool.length)];
                 }
                 SocketService.emit('cast_spell', { spellType: finalType });
+                
+                const currentWpm = this.getCurrentWpm();
+                let newLength = 5;
+                if (completedSpell.type === 'light') {
+                    newLength = Math.max(3, Math.floor(currentWpm / 15));
+                } else if (completedSpell.type === 'heavy') {
+                    newLength = Math.max(5, Math.floor(currentWpm / 10));
+                } else if (completedSpell.type === 'random') {
+                    newLength = Math.max(4, Math.floor(currentWpm / 12));
+                }
+
+                completedSpell.wordLength = newLength;
+                completedSpell.word = this.getRandomWord(newLength);
                 completedSpell.cooldownRemaining = completedSpell.cooldownDuration;
                 this.currentTypedSpell = "";
                 this.updateSpellsUI();
@@ -422,10 +620,11 @@ export class DuelPhase extends GamePhase {
                         this.updateSpellsUI();
                     }, 200);
                 }
-            }
-        }
-    }
-
+           /**
+     * Handles the spawn of a spell projectile in the 3D scene.
+     * @param {Object} data - Payload containing spell metadata (attacker, target, speed, etc.).
+     * @returns {void}
+     */
     onSpellSpawned(data) {
         const { spellId, attackerId, targetId, spellType, requiredLength, speedMultiplier } = data;
         
@@ -487,6 +686,11 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Handles the successful block of a spell projectile.
+     * @param {Object} data - Payload containing the blocked spell ID.
+     * @returns {void}
+     */
     onSpellBlocked(data) {
         const { spellId } = data;
         const index = this.projectiles.findIndex(p => p.id === spellId);
@@ -497,6 +701,12 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Triggers a hit animation (camera shake and model flashing red).
+     * @param {Object} model - The actor model instance that took damage.
+     * @param {boolean} isLocal - True if the hit actor is the local player.
+     * @returns {void}
+     */
     playHitAnimation(model, isLocal) {
         if (!model) return;
         
@@ -515,6 +725,11 @@ export class DuelPhase extends GamePhase {
         });
     }
 
+    /**
+     * Synchronizes and updates the health bars and values of both players.
+     * @param {Object} data - Payload containing new HP values for player 1 and player 2.
+     * @returns {void}
+     */
     onHpUpdate(data) {
         let localHp, remoteHp;
         if (this.duelData.player1.id == this.localData.id) {
@@ -547,6 +762,11 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Handles the termination of the duel, displaying victory/defeat messages and redirecting to the social view.
+     * @param {Object} data - Payload containing the winner ID or disconnect reason.
+     * @returns {void}
+     */
     onDuelEnded(data) {
         this.isDuelOver = true;
         let won = false;
@@ -564,8 +784,12 @@ export class DuelPhase extends GamePhase {
         }, 3000);
     }
 
-
-
+    /**
+     * Appends a colored spell announcement text overlay onto the HUD screen.
+     * @param {string} attackerId - The socket user ID of the attacker.
+     * @param {string} spellType - Type of the cast spell (light, heavy, stun, slow, etc.).
+     * @returns {void}
+     */
     announceSpell(attackerId, spellType) {
         const isLocal = attackerId == this.localData.id;
         const attackerName = isLocal ? this.localData.username : this.remoteData.username;
@@ -612,6 +836,11 @@ export class DuelPhase extends GamePhase {
         });
     }
 
+    /**
+     * Updates actors, camera positions, spell cooldowns, dynamic WPM updates, and projectiles.
+     * @param {number} deltaTime - Time elapsed since last frame in seconds.
+     * @returns {void}
+     */
     update(deltaTime) {
         if (this.decor) {
             this.decor.update(deltaTime);
@@ -631,11 +860,47 @@ export class DuelPhase extends GamePhase {
 
         if (this.isDuelOver) return;
 
+        this.wpmUpdateTimer += deltaTime;
+        if (this.wpmUpdateTimer >= 2.0) {
+            this.wpmUpdateTimer = 0;
+            SocketService.emit('update_wpm', { wpm: this.getCurrentWpm() });
+        }
+
         if (this.localPlayer && this.localPlayer.stunTimer > 0) {
             this.localPlayer.stunTimer = Math.max(0, this.localPlayer.stunTimer - deltaTime);
+            if (!this.localStunVisual) {
+                this.localStunVisual = this.createStunVisual(this.localPlayer);
+            }
+            this.localStunVisual.rotation.x += deltaTime * 10;
+            this.localStunVisual.rotation.y += deltaTime * 15;
+            const pulse = 0.9 + Math.sin(performance.now() * 0.03) * 0.15;
+            this.localStunVisual.scale.set(pulse, pulse, pulse);
+        } else {
+            if (this.localStunVisual) {
+                if (this.localStunVisual.parent) {
+                    this.localStunVisual.parent.remove(this.localStunVisual);
+                }
+                this.localStunVisual = null;
+            }
         }
+        this.updateStunUI();
+
         if (this.remotePlayer && this.remotePlayer.stunTimer > 0) {
-            this.remotePlayer.remoteTimer = Math.max(0, this.remotePlayer.stunTimer - deltaTime);
+            this.remotePlayer.stunTimer = Math.max(0, this.remotePlayer.stunTimer - deltaTime);
+            if (!this.remoteStunVisual) {
+                this.remoteStunVisual = this.createStunVisual(this.remotePlayer);
+            }
+            this.remoteStunVisual.rotation.x += deltaTime * 10;
+            this.remoteStunVisual.rotation.y += deltaTime * 15;
+            const pulse = 0.9 + Math.sin(performance.now() * 0.03) * 0.15;
+            this.remoteStunVisual.scale.set(pulse, pulse, pulse);
+        } else {
+            if (this.remoteStunVisual) {
+                if (this.remoteStunVisual.parent) {
+                    this.remoteStunVisual.parent.remove(this.remoteStunVisual);
+                }
+                this.remoteStunVisual = null;
+            }
         }
 
         if (this.localPlayer) {
@@ -643,6 +908,12 @@ export class DuelPhase extends GamePhase {
         }
         if (this.remotePlayer) {
             this.remotePlayer.update(deltaTime);
+        }
+
+        if (this.localJailCage) {
+            this.localJailCage.rotation.y += deltaTime * 2;
+            const pulse = 1.0 + Math.sin(performance.now() * 0.01) * 0.08;
+            this.localJailCage.scale.set(pulse, 1.0, pulse);
         }
 
         if (this.remotePlayer && this.remotePlayer.isJailed) {
@@ -653,6 +924,9 @@ export class DuelPhase extends GamePhase {
                 this.remoteJailCage.position.y = 1.25;
                 this.remotePlayer.mesh.add(this.remoteJailCage);
             }
+            this.remoteJailCage.rotation.y += deltaTime * 2;
+            const pulse = 1.0 + Math.sin(performance.now() * 0.01) * 0.08;
+            this.remoteJailCage.scale.set(pulse, 1.0, pulse);
         } else {
             if (this.remoteJailCage) {
                 if (this.remoteJailCage.parent) {
@@ -703,6 +977,10 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Updates key tiles highlight state and rendering details on every frame.
+     * @returns {void}
+     */
     draw() {
         if (this.localKeyboard && this.localPlayer) {
             this.localKeyboard.keyboardLayout.forEach((tile) => {
@@ -721,6 +999,10 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Cleans up scene groups, HUD elements, status UIs, slow zones, and event listeners.
+     * @returns {void}
+     */
     cleanup() {
         const announcerContainer = document.getElementById("duel-announcer-container");
         if (announcerContainer) announcerContainer.remove();
@@ -741,6 +1023,10 @@ export class DuelPhase extends GamePhase {
             this.jailUI.remove();
             this.jailUI = null;
         }
+        if (this.stunUI) {
+            this.stunUI.remove();
+            this.stunUI = null;
+        }
         if (this.localJailCage && this.localJailCage.parent) {
             this.localJailCage.parent.remove(this.localJailCage);
             this.localJailCage = null;
@@ -748,6 +1034,14 @@ export class DuelPhase extends GamePhase {
         if (this.remoteJailCage && this.remoteJailCage.parent) {
             this.remoteJailCage.parent.remove(this.remoteJailCage);
             this.remoteJailCage = null;
+        }
+        if (this.localStunVisual && this.localStunVisual.parent) {
+            this.localStunVisual.parent.remove(this.localStunVisual);
+            this.localStunVisual = null;
+        }
+        if (this.remoteStunVisual && this.remoteStunVisual.parent) {
+            this.remoteStunVisual.parent.remove(this.remoteStunVisual);
+            this.remoteStunVisual = null;
         }
         
         this.slowZones.forEach(sz => sz.destroy());
@@ -775,5 +1069,6 @@ export class DuelPhase extends GamePhase {
         SocketService.off('hp_update', this.onHpUpdate.bind(this));
         SocketService.off('duel_ended', this.onDuelEnded.bind(this));
         SocketService.off('opponent_move', this.onOpponentMove.bind(this));
+        SocketService.off('start_countdown', this.onStartCountdown.bind(this));
     }
 }

@@ -46,7 +46,7 @@ export default class Keyboard {
             : new THREE.CylinderGeometry(1.4, 1.4, 0.3, 32);
             
         const ringMat = isStyx
-            ? new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 1.0 })
+            ? new THREE.MeshStandardMaterial({ color: 0x7f8c8d, roughness: 0.8 })
             : new THREE.MeshStandardMaterial({ color: 0xc5a059, roughness: 0.3, metalness: 0.8 });
 
         const capGeo = isStyx
@@ -54,22 +54,17 @@ export default class Keyboard {
             : new THREE.CylinderGeometry(1.2, 1.2, 0.35, 32);
             
         const capMat = isStyx
-            ? new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 1.0 })
+            ? new THREE.MeshStandardMaterial({ color: 0x1d2432, roughness: 0.8 })
             : new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.1 });
 
         const planeGeometry = new THREE.PlaneGeometry(1.8, 1.8);
-        const textColor = isStyx ? "#88ffff" : "#c5a059";
+        const textColor = isStyx ? "#00ffff" : "#c5a059";
 
         this.#keyboardLayout.forEach((keyObj) => {
             const keyGroup = new THREE.Group();
             
             const ringMesh = new THREE.Mesh(ringGeo, ringMat);
             const capMesh = new THREE.Mesh(capGeo, capMat.clone());
-            
-            if (isStyx) {
-                ringMesh.rotation.y = Math.random() * Math.PI;
-                capMesh.rotation.y = ringMesh.rotation.y;
-            }
 
             keyGroup.add(ringMesh);
             keyGroup.add(capMesh);
@@ -105,8 +100,8 @@ export default class Keyboard {
      */
     update() {
         const isStyx = this.theme === "styx";
-        const pressedColor = isStyx ? 0x228888 : 0xc5a059;
-        const unpressedColor = isStyx ? 0x222222 : 0x111111;
+        const pressedColor = isStyx ? 0x00ffff : 0xc5a059;
+        const unpressedColor = isStyx ? 0x1d2432 : 0x111111;
         const pressedY = isStyx ? 0.0 : 0.05;
 
         this.#keyboardLayout.forEach((keyObj) => {

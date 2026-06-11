@@ -547,15 +547,9 @@
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(15, 23, 42, 0.95);
-    border: 2px solid var(--danger-color);
-    padding: 20px 40px;
-    border-radius: 12px;
     z-index: 10000;
-    font-family: monospace;
-    font-size: 32px;
-    color: white;
-    text-align: center;
+    width: 90%;
+    max-width: 500px;
 }
 
 .duel-spells-title {
@@ -609,5 +603,150 @@
 .jail-word {
     letter-spacing: 4px;
     font-weight: bold;
+}
+.duel-countdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.duel-countdown-text {
+    font-size: clamp(60px, 15vw, 180px);
+    font-weight: 900;
+    color: var(--primary-color);
+    text-shadow: 0 0 30px rgba(0, 255, 102, 0.4), 0 0 60px rgba(0, 255, 102, 0.2);
+    font-family: var(--font-main), monospace;
+    text-align: center;
+    user-select: none;
+}
+
+.status-overlay-jail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    box-shadow: inset 0 0 120px rgba(255, 136, 0, 0.65);
+    background-color: rgba(255, 136, 0, 0.05);
+    pointer-events: none;
+    z-index: 9999;
+    animation: status-pulse-jail 1.5s infinite alternate ease-in-out;
+}
+
+.status-overlay-stun {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    box-shadow: inset 0 0 120px rgba(0, 229, 255, 0.65);
+    background-color: rgba(0, 229, 255, 0.05);
+    pointer-events: none;
+    z-index: 9999;
+    animation: status-pulse-stun 0.6s infinite alternate ease-in-out;
+}
+
+@keyframes status-pulse-jail {
+    from {
+        box-shadow: inset 0 0 80px rgba(255, 136, 0, 0.4);
+        background-color: rgba(255, 136, 0, 0.02);
+    }
+    to {
+        box-shadow: inset 0 0 160px rgba(255, 136, 0, 0.8);
+        background-color: rgba(255, 136, 0, 0.08);
+    }
+}
+
+@keyframes status-pulse-stun {
+    from {
+        box-shadow: inset 0 0 80px rgba(0, 229, 255, 0.4);
+        background-color: rgba(0, 229, 255, 0.02);
+    }
+    to {
+        box-shadow: inset 0 0 160px rgba(0, 229, 255, 0.8);
+        background-color: rgba(0, 229, 255, 0.08);
+    }
+}
+
+.stun-ui {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    pointer-events: none;
+    width: 90%;
+    max-width: 500px;
+}
+
+.status-message-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: rgba(15, 23, 42, 0.95);
+    border-radius: 12px;
+    padding: 25px;
+    color: var(--text-color);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    justify-content: center;
+}
+
+.jail-message {
+    border: 2px solid #ff8800;
+    box-shadow: 0 0 20px rgba(255, 136, 0, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.stun-message {
+    border: 2px solid #00e5ff;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+    animation: stun-shake 0.4s infinite ease-in-out;
+}
+
+@keyframes stun-shake {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    20% { transform: translate(-2px, 2px) rotate(-0.5deg); }
+    40% { transform: translate(2px, -2px) rotate(0.5deg); }
+    60% { transform: translate(-2px, -2px) rotate(-0.5deg); }
+    80% { transform: translate(2px, 2px) rotate(0.5deg); }
+}
+
+.status-icon {
+    font-size: 44px;
+    display: inline-block;
+    animation: status-icon-bounce 1s infinite alternate ease-in-out;
+}
+
+@keyframes status-icon-bounce {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); }
+}
+
+.status-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #ff8800;
+    text-shadow: 0 0 10px rgba(255, 136, 0, 0.3);
+}
+
+.jail-subtitle {
+    font-size: 15px;
+    color: var(--text-muted);
+}
+
+.status-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-color);
 }
 

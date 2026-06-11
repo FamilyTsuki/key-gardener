@@ -9,11 +9,20 @@ const SPELL_CONFIGS = {
 };
 
 class DuelManager {
+    /**
+     * Creates an instance of DuelManager.
+     * @param {Object} io - The socket.io server instance.
+     */
     constructor(io) {
         this.io = io;
         this.activeDuels = new Map();
     }
 
+    /**
+     * Retrieves a player's average WPM from the database statistics.
+     * @param {string} userId - The database ID of the user.
+     * @returns {Promise<number>} The player's average WPM (defaults to 30).
+     */
     async getPlayerAverageWpm(userId) {
         try {
             const result = await db.query('SELECT average_wpm FROM user_statistics WHERE user_id = $1', [userId]);
@@ -27,6 +36,12 @@ class DuelManager {
         }
     }
 
+    /**
+     * Creates a new multiplayer duel room state and notifies both players.
+     * @param {Object} player1Socket - Socket of the first player.
+     * @param {Object} player2Socket - Socket of the second player.
+     * @returns {Promise<void>}
+     */
     async createDuel(player1Socket, player2Socket) {
         const roomId = `duel_${Date.now()}_${Math.random().toString(36).substring(7)}`;
         
@@ -38,8 +53,8 @@ class DuelManager {
 
         const duelState = {
             roomId,
-            player1: { id: player1Socket.userId, username: player1Socket.username, wpm: p1Wpm, hp: 100 },
-            player2: { id: player2Socket.userId, username: player2Socket.username, wpm: p2Wpm, hp: 100 },
+            player1: { id: player1Socket.userId, username: player1Socket.username, wpm: p1Wpm, hp: 100, ready: false },
+            player2: { id: player2Socket.userId, username: player2Socket.username, wpm: p2Wpm, hp: 100, ready: false },
             spellsInFlight: []
         };
 
@@ -54,6 +69,57 @@ class DuelManager {
         });
     }
 
+    /**
+     * Marks a player ready, and starts the countdown once both players are ready.
+     * @param {Object} socket - The socket instance of the ready player.
+     * @returns {void}
+     */
+    handlePlayerReady(socket) {
+        const roomId = socket.roomId;
+        if (!roomId) return;
+
+        const duel = this.activeDuels.get(roomId);
+        if (!duel) return;
+
+        const isPlayer1 = duel.player1.id == socket.userId;
+        if (isPlayer1) {
+            duel.player1.ready = true;
+        } else {
+            duel.player2.ready = true;
+        }
+
+        if (duel.player1.ready && duel.player2.ready) {
+            this.io.to(roomId).emit('start_countdown');
+        }
+    }
+
+    /**
+     * Updates the player's dynamic WPM in the active duel session.
+     * @param {Object} socket - The player's socket instance.
+     * @param {Object} data - Payload containing the current dynamic WPM.
+     * @returns {void}
+     */
+    handleUpdateWpm(socket, data) {
+        const { wpm } = data;
+        const roomId = socket.roomId;
+        if (!roomId) return;
+
+        const duel = this.activeDuels.get(roomId);
+        if (!duel) return;
+
+        const isPlayer1 = duel.player1.id == socket.userId;
+        if (isPlayer1) {
+            duel.player1.wpm = Math.max(15, wpm);
+        } else {
+            duel.player2.wpm = Math.max(15, wpm);
+        }
+    }
+
+    /**
+     * Clears all pending automatic spell damage timeout schedules.
+     * @param {Object} duel - The active duel session object.
+     * @returns {void}
+     */
     clearDuelTimeouts(duel) {
         if (duel.spellsInFlight) {
             duel.spellsInFlight.forEach(spell => {
@@ -64,6 +130,11 @@ class DuelManager {
         }
     }
 
+    /**
+     * Handles user disconnection during an active duel, notifying the room and cleaning timeouts.
+     * @param {Object} socket - The socket instance of the disconnecting player.
+     * @returns {void}
+     */
     handleDisconnect(socket) {
         if (socket.roomId) {
             const duel = this.activeDuels.get(socket.roomId);
@@ -75,6 +146,13 @@ class DuelManager {
         }
     }
 
+    /**
+     * Handles the casting of a spell by a player, calculating its speed multiplier
+     * dynamically based on the attacker/target WPM ratio for rubberband difficulty balancing.
+     * @param {Object} socket - The attacker's socket instance.
+     * @param {Object} data - Payload containing the spell type.
+     * @returns {void}
+     */
     handleCastSpell(socket, data) {
         const { spellType } = data;
         const roomId = socket.roomId;
@@ -88,7 +166,8 @@ class DuelManager {
         const attacker = isPlayer1 ? duel.player1 : duel.player2;
 
         const wordLengthRequired = Math.max(3, Math.floor(target.wpm / 10));
-        const spellSpeed = Math.max(1, attacker.wpm / 40);
+        const speedRatio = target.wpm / attacker.wpm;
+        const spellSpeed = Math.max(0.6, Math.min(2.5, 1.2 * speedRatio));
 
         const spellId = `spell_${Date.now()}_${Math.random().toString(36).substring(7)}`;
         
@@ -126,6 +205,12 @@ class DuelManager {
         });
     }
 
+    /**
+     * Automatically applies damage for homing spells that fly for too long without being blocked.
+     * @param {string} roomId - The room ID of the active duel.
+     * @param {string} spellId - The ID of the in-flight spell.
+     * @returns {void}
+     */
     applyAutomaticSpellHit(roomId, spellId) {
         const duel = this.activeDuels.get(roomId);
         if (!duel) return;
@@ -151,6 +236,12 @@ class DuelManager {
         }
     }
 
+    /**
+     * Handles a player's request to block an incoming spell, with validation to prevent cheating.
+     * @param {Object} socket - The defender's socket instance.
+     * @param {Object} data - Payload containing the spell ID to block.
+     * @returns {void}
+     */
     handleBlockSpell(socket, data) {
         const { spellId } = data;
         const roomId = socket.roomId;
@@ -176,6 +267,12 @@ class DuelManager {
         }
     }
 
+    /**
+     * Applies damage to a player when hit by a projectile, with distance flight validation.
+     * @param {Object} socket - The target player's socket instance.
+     * @param {Object} data - Payload containing the hitting spell ID.
+     * @returns {void}
+     */
     handleTakeDamage(socket, data) {
         const { spellId } = data;
         const roomId = socket.roomId;
@@ -214,6 +311,12 @@ class DuelManager {
         }
     }
 
+    /**
+     * Ends a duel session, notifying all room participants, cleaning timeouts, and deleting the state.
+     * @param {string} roomId - The active room ID.
+     * @param {string} winnerId - The database ID of the winner.
+     * @returns {void}
+     */
     endDuel(roomId, winnerId) {
         const duel = this.activeDuels.get(roomId);
         if (duel) {
