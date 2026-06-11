@@ -274,4 +274,44 @@ export class PostsService {
         });
         return this.handleResponse(response, "Failed to send contest report");
     }
+
+    static async reportPost(postId, reason) {
+        const token = AuthService.getToken();
+        if (!token) throw new Error("Not authenticated");
+
+        const response = await fetch(`${this.API_URL}/${postId}/report`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ reason }),
+        });
+        return this.handleResponse(response, "Failed to report post");
+    }
+
+    static async getReportedPosts() {
+        const token = AuthService.getToken();
+        if (!token) throw new Error("Not authenticated");
+
+        const response = await fetch(`${this.API_URL}/admin/reported`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return this.handleResponse(response, "Failed to fetch reported posts");
+    }
+
+    static async approvePost(postId) {
+        const token = AuthService.getToken();
+        if (!token) throw new Error("Not authenticated");
+
+        const response = await fetch(`${this.API_URL}/admin/${postId}/approve`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return this.handleResponse(response, "Failed to approve post");
+    }
 }

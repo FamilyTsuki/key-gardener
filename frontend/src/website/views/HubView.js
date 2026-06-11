@@ -317,23 +317,39 @@ export default class HubView extends AbstractView {
 
         const isSelfPost = this.currentUserId && post.user_id === this.currentUserId;
 
-        let postActions = null;
+        let postActions = el("div", { className: "post-actions-container" });
         if (isSelfPost) {
             const postDate = new Date(post.created_at.endsWith("Z") ? post.created_at : post.created_at + "Z");
             const diffMinutes = (new Date() - postDate) / (1000 * 60);
             const canEdit = diffMinutes <= 5;
 
-            const editBtn = canEdit ? el("button", { 
-                className: "action-btn edit-btn",
-                onclick: () => this.handleEdit(post)
-            }, LanguageManager.t("hub.edit")) : null;
+            if (canEdit) {
+                const editBtn = el("button", { 
+                    className: "action-btn edit-btn",
+                    onclick: () => this.handleEdit(post)
+                }, LanguageManager.t("hub.edit"));
+                postActions.appendChild(editBtn);
+            }
 
             const deleteBtn = el("button", {
                 className: "action-btn delete-btn",
                 onclick: () => this.handleDelete(post.id)
             }, LanguageManager.t("hub.delete"));
-
-            postActions = el("div", { className: "post-actions-container" }, editBtn, deleteBtn);
+            postActions.appendChild(deleteBtn);
+        } else if (AuthService.isAuthenticated()) {
+            if (post.has_reported) {
+                const reportBtn = el("button", {
+                    className: "action-btn report-btn",
+                    disabled: true
+                }, LanguageManager.t("hub.report"));
+                postActions.appendChild(reportBtn);
+            } else {
+                const reportBtn = el("button", {
+                    className: "action-btn report-btn",
+                    onclick: () => this.handleReport(post.id)
+                }, LanguageManager.t("hub.report"));
+                postActions.appendChild(reportBtn);
+            }
         }
 
         const postFooter = el("div", { className: "post-footer" }, voteContainer, postActions);
@@ -561,6 +577,59 @@ export default class HubView extends AbstractView {
         } catch (error) {
             FlashMessageManager.show(error.message || "Failed to delete post", "error");
         }
+    }
+
+    async handleReport(postId) {
+        const existingModal = document.getElementById("report-modal");
+        if (existingModal) existingModal.remove();
+
+        const modal = el("div", { id: "report-modal", className: "report-modal-overlay" });
+        const modalContent = el("div", { className: "report-modal-content" });
+        
+        const title = el("h3", { className: "report-modal-title" }, LanguageManager.t("hub.reportPrompt"));
+        const textarea = el("textarea", { 
+            className: "report-modal-textarea",
+            rows: "4", 
+            placeholder: LanguageManager.t("hub.reportPrompt")
+        });
+        
+        const btnContainer = el("div", { className: "report-modal-actions" });
+        const cancelBtn = el("button", { className: "btn-secondary report-modal-btn", onclick: () => modal.remove() }, LanguageManager.t("hub.cancel"));
+        const submitBtn = el("button", { className: "btn-primary report-modal-btn report-modal-submit", onclick: async () => {
+            const reason = textarea.value.trim();
+            if (!reason) return;
+            modal.remove();
+            try {
+                const data = await PostsService.reportPost(postId, reason);
+                if (data.success) {
+                    if (data.hidden) {
+                        FlashMessageManager.show(LanguageManager.t("hub.reportHidden"), "warning");
+                        const postEl = document.getElementById(`post-${postId}`);
+                        if (postEl) postEl.remove();
+                    } else {
+                        FlashMessageManager.show(LanguageManager.t("hub.reportSuccess"), "success");
+                        const postObj = this.posts.find(p => p.id === postId);
+                        if (postObj) {
+                            postObj.has_reported = true;
+                            this.renderPosts();
+                        }
+                    }
+                }
+            } catch (error) {
+                FlashMessageManager.show(error.message || "Failed to report post", "error");
+            }
+        }}, LanguageManager.t("hub.report"));
+
+        btnContainer.appendChild(cancelBtn);
+        btnContainer.appendChild(submitBtn);
+
+        modalContent.appendChild(title);
+        modalContent.appendChild(textarea);
+        modalContent.appendChild(btnContainer);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+        
+        textarea.focus();
     }
 
     async toggleComments(postId) {

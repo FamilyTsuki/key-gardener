@@ -38,6 +38,9 @@ const upload = multer({
     }
 });
 
+router.get("/admin/reported", verifyToken, postsController.getReportedPosts);
+router.post("/admin/:id/approve", verifyToken, postsController.approvePost);
+
 router.get("/user/:userId", verifyToken.optional, postsController.getUserPosts);
 router.get("/", verifyToken.optional, postsController.getAllPosts);
 
@@ -54,5 +57,7 @@ router.delete("/:id", verifyToken, postsController.deletePost);
 
 router.post("/:id/upvote", verifyToken, postsController.upvotePost);
 router.post("/:id/downvote", verifyToken, postsController.downvotePost);
+
+router.post("/:id/report", verifyToken, postsController.reportPost);
 
 module.exports = router;

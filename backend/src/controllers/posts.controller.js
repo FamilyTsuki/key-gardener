@@ -425,3 +425,58 @@ exports.contestModeration = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.reportPost = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { reason } = req.body;
+        const userId = req.user.id;
+
+        if (!reason || reason.trim().length === 0) {
+            return res.status(400).json({ success: false, message: "Reason is required" });
+        }
+
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ success: false, message: "Post not found" });
+        }
+
+        const result = await Post.reportPost(id, userId, reason.trim());
+
+        if (result.alreadyReported) {
+            return res.status(400).json({ success: false, message: "You have already reported this post." });
+        }
+
+        res.status(200).json({ success: true, hidden: result.hidden, message: "Post reported successfully" });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.getReportedPosts = async (req, res, next) => {
+    try {
+        if (!req.user || !req.user.is_admin) {
+            return res.status(403).json({ success: false, message: "Admin access required" });
+        }
+
+        const posts = await Post.getReportedPosts();
+        res.status(200).json({ success: true, posts });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.approvePost = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        
+        if (!req.user || !req.user.is_admin) {
+            return res.status(403).json({ success: false, message: "Admin access required" });
+        }
+
+        await Post.approvePost(id);
+        res.status(200).json({ success: true, message: "Post approved" });
+    } catch (err) {
+        next(err);
+    }
+};

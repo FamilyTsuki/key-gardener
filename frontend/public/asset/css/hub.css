@@ -421,6 +421,22 @@
     border-color: var(--danger-color);
 }
 
+.report-btn {
+    color: var(--danger-color);
+    border-color: var(--card-border);
+}
+
+.report-btn:hover:not(:disabled) {
+    background: var(--danger-translucent);
+    border-color: var(--danger-color);
+}
+
+.report-btn:disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
 .save-btn {
     color: var(--primary-color);
     border-color: var(--primary-color);
@@ -518,6 +534,77 @@
 
 .comment-emoji {
     font-family: 'Noto Color Emoji', sans-serif;
+}
+
+/* =============== MODAL REPORT =============== */
+.report-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    width: 450px;
+    max-width: 90%;
+    padding: 25px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.report-modal-title {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.25rem;
+}
+
+.report-modal-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--dark-overlay-dense);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--text-color);
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.report-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.report-modal-btn {
+    padding: 10px 20px;
+    flex: 0 1 auto;
+    width: auto;
+}
+
+.report-modal-submit {
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+    color: var(--text-color);
+}
+
+.report-modal-submit:hover {
+    background: var(--danger-hover);
+    border-color: var(--danger-hover);
 }
 
 /* =============== RESPONSIVE =============== */

@@ -18,6 +18,9 @@ export class AdminView {
         this.container.classList.add("view-container");
         this.levels = [];
         this.activeLevelNumber = null;
+        this.currentView = 'levels';
+        this.reportedPosts = [];
+        this.activeReportedPostId = null;
     }
 
     getCss() {
@@ -26,31 +29,42 @@ export class AdminView {
 
     async init() {
         clear(this.container);
+        
+        const sidebarContent = el("div", { id: "sidebar-content", className: "w-100 flex-col-stretch" });
+        const detailContainer = el("div", { id: "level-detail-container" });
+
         this.container.appendChild(
             el("div", { className: "admin-dashboard" },
                 el("aside", { className: "admin-sidebar" },
-                    el("h2", { className: "sidebar-title" }, LanguageManager.t("admin.title")),
                     el("div", { className: "flex-row-gap10 mb-15" },
-                        el("button", { className: "btn-secondary btn-sm flex-1", onclick: () => this.exportLevels() }, LanguageManager.t("admin.exportLevels")),
-                        el("button", { className: "btn-secondary btn-sm flex-1", onclick: () => this.importLevels() }, LanguageManager.t("admin.importLevels"))
+                        el("button", { 
+                            className: `btn-secondary flex-1 ${this.currentView === 'levels' ? 'active' : ''}`,
+                            onclick: () => this.switchView('levels')
+                        }, LanguageManager.t("admin.title")),
+                        el("button", { 
+                            className: `btn-secondary flex-1 ${this.currentView === 'reports' ? 'active' : ''}`,
+                            onclick: () => this.switchView('reports')
+                        }, LanguageManager.t("admin.reportedPosts"))
                     ),
-                    el("div", { id: "levels-list", className: "levels-list" },
-                        el("div", { className: "admin-loading" }, LanguageManager.t("admin.loading"))
-                    )
+                    sidebarContent
                 ),
                 el("main", { className: "admin-main" },
                     el("div", { id: "admin-error", className: "admin-error-msg" }),
-                    el("div", { id: "level-detail-container" },
-                        el("div", { className: "admin-welcome-screen" },
-                            el("h3", {}, LanguageManager.t("admin.selectLevelTitle")),
-                            el("p", {}, LanguageManager.t("admin.selectLevelDesc"))
-                        )
-                    )
+                    detailContainer
                 )
             )
         );
 
-        await this.loadLevels();
+        if (this.currentView === 'levels') {
+            await this.loadLevels();
+        } else {
+            await this.loadReportedPosts();
+        }
+    }
+
+    switchView(view) {
+        this.currentView = view;
+        this.init();
     }
 
     async loadLevels() {
@@ -64,11 +78,29 @@ export class AdminView {
             }
 
             this.levels = data.configs;
+            this.renderLevelsSidebar();
             this.renderLevels();
         } catch (e) {
             console.error(e);
             document.getElementById("admin-error").textContent = LanguageManager.t("admin.errorServer");
         }
+    }
+
+    renderLevelsSidebar() {
+        const sidebar = document.getElementById("sidebar-content");
+        if (!sidebar) return;
+        clear(sidebar);
+
+        sidebar.appendChild(
+            el("div", { className: "flex-col-stretch w-100" },
+                el("h2", { className: "sidebar-title" }, LanguageManager.t("admin.title")),
+                el("div", { className: "flex-row-gap10 mb-15" },
+                    el("button", { className: "btn-secondary btn-sm flex-1", onclick: () => this.exportLevels() }, LanguageManager.t("admin.exportLevels")),
+                    el("button", { className: "btn-secondary btn-sm flex-1", onclick: () => this.importLevels() }, LanguageManager.t("admin.importLevels"))
+                ),
+                el("div", { id: "levels-list", className: "levels-list" })
+            )
+        );
     }
 
     renderLevels() {
@@ -941,5 +973,156 @@ export class AdminView {
 
     async render() {
         return this.container;
+    }
+
+    async loadReportedPosts() {
+        try {
+            const token = localStorage.getItem("authToken");
+            const response = await fetch("/api/posts/admin/reported", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await response.json();
+
+            if (!data.success) {
+                document.getElementById("admin-error").textContent = data.message || LanguageManager.t("admin.errorLoad");
+                return;
+            }
+
+            this.reportedPosts = data.posts;
+            this.renderReportsSidebar();
+            this.renderReportedPosts();
+        } catch (e) {
+            console.error(e);
+            document.getElementById("admin-error").textContent = LanguageManager.t("admin.errorServer");
+        }
+    }
+
+    renderReportsSidebar() {
+        const sidebar = document.getElementById("sidebar-content");
+        if (!sidebar) return;
+        clear(sidebar);
+
+        sidebar.appendChild(
+            el("div", { className: "flex-col-stretch w-100" },
+                el("h2", { className: "sidebar-title" }, LanguageManager.t("admin.reportedPosts")),
+                el("div", { id: "reports-list", className: "levels-list" })
+            )
+        );
+    }
+
+    renderReportedPosts() {
+        const listContainer = document.getElementById("reports-list");
+        if (!listContainer) return;
+        clear(listContainer);
+
+        if (this.reportedPosts.length === 0) {
+            listContainer.appendChild(el("p", { style: "color: var(--text-muted); text-align: center; padding: 20px;" }, LanguageManager.t("admin.noReportedPosts")));
+            
+            const detailContainer = document.getElementById("level-detail-container");
+            if (detailContainer) {
+                clear(detailContainer);
+                detailContainer.appendChild(el("div", { className: "admin-welcome-screen" },
+                    el("h3", {}, LanguageManager.t("admin.noReportedPosts"))
+                ));
+            }
+            return;
+        }
+
+        if (this.activeReportedPostId === null || !this.reportedPosts.find(p => p.id === this.activeReportedPostId)) {
+            this.activeReportedPostId = this.reportedPosts[0].id;
+        }
+
+        this.reportedPosts.forEach(post => {
+            const btn = document.createElement("button");
+            btn.className = "level-item-btn";
+            if (post.id === this.activeReportedPostId) {
+                btn.classList.add("active");
+            }
+
+            btn.appendChild(el("span", { className: "level-btn-number" }, `Post #${post.id}`));
+            btn.appendChild(el("span", { className: "level-btn-type" }, post.username));
+
+            btn.addEventListener("click", () => {
+                this.activeReportedPostId = post.id;
+                this.renderReportedPosts();
+            });
+
+            listContainer.appendChild(btn);
+        });
+
+        const activePost = this.reportedPosts.find(p => p.id === this.activeReportedPostId);
+        if (activePost) {
+            this.renderReportDetail(activePost);
+        }
+    }
+
+    renderReportDetail(post) {
+        const container = document.getElementById("level-detail-container");
+        if (!container) return;
+        clear(container);
+
+        const reportsList = el("ul", { className: "reports-list mt-15" });
+        if (post.reports && Array.isArray(post.reports)) {
+            post.reports.forEach(r => {
+                reportsList.appendChild(el("li", { className: "report-item", style: "padding: 10px; background: rgba(255,255,255,0.05); margin-bottom: 5px; border-radius: 4px;" },
+                    el("strong", {}, `User ${r.user_id}: `),
+                    el("span", {}, r.reason)
+                ));
+            });
+        }
+
+        const keepBtn = el("button", { className: "btn-primary", onclick: () => this.handleKeepPost(post.id) }, LanguageManager.t("admin.keepPost"));
+        const destroyBtn = el("button", { className: "btn-delete-level", onclick: () => this.handleDestroyPost(post.id) }, LanguageManager.t("admin.destroyPost"));
+
+        container.appendChild(
+            el("div", { className: "admin-editor-card" },
+                el("h3", { className: "mb-15" }, `Post #${post.id} by ${post.username}`),
+                el("div", { className: "post-content-preview p-15 mb-15", style: "background: #1a1c23; border-radius: 8px;" },
+                    post.content ? el("p", {}, post.content) : null,
+                    post.image_url ? el("img", { src: post.image_url, style: "max-width: 100%; border-radius: 4px; margin-top: 10px;" }) : null
+                ),
+                el("h4", {}, `${LanguageManager.t("admin.reason")} (${post.reports ? post.reports.length : 0} signalements)`),
+                reportsList,
+                el("div", { className: "flex-row-gap10 mt-20" }, keepBtn, destroyBtn)
+            )
+        );
+    }
+
+    async handleKeepPost(postId) {
+        try {
+            const token = localStorage.getItem("authToken");
+            const response = await fetch(`/api/posts/admin/${postId}/approve`, {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                FlashMessageManager.show(LanguageManager.t("admin.postKept"), "success");
+                await this.loadReportedPosts();
+            } else {
+                FlashMessageManager.show(data.message, "error");
+            }
+        } catch (e) {
+            FlashMessageManager.show("Error approving post", "error");
+        }
+    }
+
+    async handleDestroyPost(postId) {
+        try {
+            const token = localStorage.getItem("authToken");
+            const response = await fetch(`/api/posts/${postId}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                FlashMessageManager.show(LanguageManager.t("admin.postDestroyed"), "success");
+                await this.loadReportedPosts();
+            } else {
+                FlashMessageManager.show(data.message, "error");
+            }
+        } catch (e) {
+            FlashMessageManager.show("Error deleting post", "error");
+        }
     }
 }

@@ -87,7 +87,11 @@ export const fr = {
         sortRecent: "Plus récents",
         sortUpvotes: "Plus votés",
         sortComments: "Plus commentés",
-        refresh: "Actualiser"
+        refresh: "Actualiser",
+        report: "Signaler",
+        reportPrompt: "Veuillez indiquer la raison du signalement :",
+        reportSuccess: "Post signalé avec succès.",
+        reportHidden: "Ce post a été masqué en attendant la modération."
     },
     
     // LoginView
@@ -280,7 +284,14 @@ export const fr = {
         exportLevels: "Tout Exporter",
         importLevels: "Tout Importer",
         confirmImport: "Écraser et importer les niveaux : ",
-        importSuccess: "Import réussi"
+        importSuccess: "Import réussi",
+        reportedPosts: "Posts Signalés",
+        noReportedPosts: "Aucun post signalé.",
+        reason: "Raison :",
+        keepPost: "Garder",
+        destroyPost: "Détruire",
+        postKept: "Post approuvé et restauré.",
+        postDestroyed: "Post supprimé."
     },
     settings: {
         title: "Paramètres",
