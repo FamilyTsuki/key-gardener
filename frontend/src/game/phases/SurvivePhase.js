@@ -146,7 +146,7 @@ export class SurvivePhase extends GamePhase {
                 this.player.heal(eventToTrigger.healAmount || 50);
             }
         } else if (eventToTrigger.actionType === "spawn") {
-            this.spawnEnemy(eventToTrigger.enemyType || eventToTrigger.spawnEnemy || "basic"); 
+            this.spawnEnemy(eventToTrigger.enemyType || eventToTrigger.spawnEnemy || "basic", eventToTrigger); 
         } else if (eventToTrigger.actionType === "spawnBoss") {
             if (this.enemies) {
                 this.enemies.spawnBoss(this.worldGroup);
@@ -380,7 +380,7 @@ export class SurvivePhase extends GamePhase {
     /**
      * Spawns a new random enemy on a random key (avoiding the player's current key).
      */
-    spawnEnemy(type = null) {
+    spawnEnemy(type = null, options = {}) {
         if (!this.keyboard || !this.enemies) return;
 
         const keys = this.keyboard.keyboardLayout;
@@ -408,7 +408,7 @@ export class SurvivePhase extends GamePhase {
             randomType = "basic";
         }
         
-        this.enemies.spawnAt(randomKey, this.worldGroup, randomType);
+        this.enemies.spawnAt(randomKey, this.worldGroup, randomType, options);
         
         if (this.lastPlayerKey) {
             this.enemies.updatePath(this.lastPlayerKey, this.keyboard);

@@ -211,7 +211,7 @@ export default class Enemies {
      * @param {string} [type="basic"] - The type of enemy to spawn.
      * @returns {Enemy} The spawned enemy instance.
      */
-    spawnAt(keyObject, scene, type = "basic") {
+    spawnAt(keyObject, scene, type = "basic", options = {}) {
         if (!keyObject || !keyObject.rawPosition) {
             console.error(
                 "Erreur: La touche fournie à spawnAt est invalide",
@@ -221,20 +221,31 @@ export default class Enemies {
         }
         let hp;
         if (type == "basic") {
-            hp = 50;
+            hp = 50 * (options.difficulty || 1);
         } else if (type == "speedy") {
-            hp = 10;
+            hp = 10 * (options.difficulty || 1);
         } else if (type == "tank") {
-            hp = 100;
+            hp = 100 * (options.difficulty || 1);
         }
+        
+        
+        let position = keyObject.rawPosition;
+        // Pour les futures intégrations avec tileDistance dans SurvivePhase si nécessaire.
+        // if (options.tileDistance !== undefined && options.tileDistance > 0) {
+        //    // logic for distance
+        // }
+
         const enemy = new Enemy(
             type,
             keyObject.key,
             scene,
-            keyObject.rawPosition,
+            position,
             hp,
             hp,
-            this.#enemyModel.clone()
+            this.#enemyModel.clone(),
+            { width: 1, height: 1 },
+            crypto.randomUUID(),
+            options.scale || 1
         );
 
         this.#container.push(enemy);

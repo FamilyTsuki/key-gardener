@@ -133,9 +133,10 @@ export class GameEngine {
                             "HoleEvent": HoleEvent,
                             "FlameWallEvent": FlameWallEvent
                         };
-                        const eventInstances = (options.events || []).map(evtName => {
+                        const eventInstances = (options.events || []).map(evtConfig => {
+                            const evtName = typeof evtConfig === 'string' ? evtConfig : evtConfig.type;
                             const EventClass = eventMap[evtName];
-                            return EventClass ? new EventClass() : null;
+                            return EventClass ? new EventClass(evtConfig) : null;
                         }).filter(Boolean);
                         
                         options.events = eventInstances;

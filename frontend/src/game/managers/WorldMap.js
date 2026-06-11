@@ -120,6 +120,7 @@ export default class WorldMap {
             hex.renderMesh = tileRaw.renderMesh !== false;
             hex.role = tileRaw.role || null;
             if (tileRaw.baseY !== undefined) hex.baseY = tileRaw.baseY;
+            if (tileRaw.isDoorRow) hex.isDoorRow = tileRaw.isDoorRow;
             return hex;
         });
 
@@ -178,6 +179,7 @@ export default class WorldMap {
             hex.renderMesh = tileRaw.renderMesh !== false;
             hex.role = tileRaw.role || null;
             if (tileRaw.baseY !== undefined) hex.baseY = tileRaw.baseY;
+            if (tileRaw.isDoorRow) hex.isDoorRow = tileRaw.isDoorRow;
             return hex;
         });
 

@@ -6,10 +6,10 @@ export class FlameWallEvent extends WorldEvent {
     /**
      * Creates an instance of FlameWallEvent.
      */
-    constructor() {
-        super();
+    constructor(config = {}) {
+        super(config.gameEngine);
         this.wallGroup = null;
-        this.speed = 1.8;
+        this.speed = 1.8 * (config.difficultyMultiplier || 1);
         this.isGameOver = false;
         this.uiOverlay = null;
         this.particles = [];

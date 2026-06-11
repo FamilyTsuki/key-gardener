@@ -31,7 +31,7 @@ export class DoorEvent extends WorldEvent {
      * @param {Array} mapLayout - The raw map layout array.
      */
     modifyLayout(mapLayout) {
-        const doorRow = mapLayout.filter((t) => t.y === -34);
+        const doorRow = mapLayout.filter((t) => t.isDoorRow);
         if (doorRow.length > 0) {
             doorRow.sort((a, b) => a.x - b.x);
             const centerTile = doorRow[Math.floor(doorRow.length / 2)];
@@ -84,7 +84,10 @@ export class DoorEvent extends WorldEvent {
         arch.position.set(0, 13, 0);
 
         const textureLoader = new THREE.TextureLoader();
-        const doorTexture = textureLoader.load('/asset/game_assets/textures/door.webp');
+        let leftDoorTexture;
+        const doorTexture = textureLoader.load('/asset/game_assets/textures/door.webp', () => {
+            if (leftDoorTexture) leftDoorTexture.needsUpdate = true;
+        });
         
 
         const doorMat = new THREE.MeshStandardMaterial({
@@ -95,10 +98,9 @@ export class DoorEvent extends WorldEvent {
         });
         const doorGeo = new THREE.BoxGeometry(2.25, 12, 0.5);
 
-        const leftDoorTexture = doorTexture.clone();
+        leftDoorTexture = doorTexture.clone();
         leftDoorTexture.wrapS = THREE.RepeatWrapping;
         leftDoorTexture.repeat.x = -1;
-        leftDoorTexture.needsUpdate = true;
 
         const leftDoorMat = doorMat.clone();
         leftDoorMat.map = leftDoorTexture;

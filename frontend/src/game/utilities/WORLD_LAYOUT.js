@@ -4,8 +4,7 @@
  *
  * @returns {Array<Object>} An array of tile objects representing the world layout.
  */
-export function createWordlLayout(introType = "none") {
-    const height = 30;
+export function createWordlLayout(introType = "none", height = 30) {
     let worldLayout = [];
 
     if (introType === "skyfall") {
@@ -114,6 +113,7 @@ export function createWordlLayout(introType = "none") {
                 y: -y,
                 letter: letterValue,
                 isPressed: false,
+                isDoorRow: i === 4
             });
         }
     }

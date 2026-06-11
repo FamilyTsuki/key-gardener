@@ -37,7 +37,8 @@ export default class Enemy extends Actor {
         hpMax = 100,
         model = undefined,
         size = { width: 1, height: 1 },
-        id = crypto.randomUUID()
+        id = crypto.randomUUID(),
+        scale = 1
     ) {
         super(id, hp, hpMax, position, position, size, model);
         this.#actualKey = actualKey;
@@ -50,22 +51,24 @@ export default class Enemy extends Actor {
         this.mesh = new THREE.Group();
         this.scene = scene;
         this.isJumping = false;
+        this.baseScale = scale;
+        
+        let defaultHp = 100;
         if (type == "basic") {
             this.color = 0x00ff00;
             this.speed = 0.05;
-            this.hp = 100;
-            this.hpMax = 100;
         } else if (type == "speedy") {
             this.speed = 0.15;
             this.color = 0x0000ff;
-            this.hp = 50;
-            this.hpMax = 50;
+            defaultHp = 50;
         } else if (type == "tank") {
             this.color = 0xff0000;
             this.speed = 0.02;
-            this.hp = 250;
-            this.hpMax = 250;
+            defaultHp = 250;
         }
+        
+        this.hp = hp !== 100 ? hp : defaultHp;
+        this.hpMax = hpMax !== 100 ? hpMax : defaultHp;
 
         this.isSpawning = true;
         this.spawnProgress = 0;
@@ -85,7 +88,7 @@ export default class Enemy extends Actor {
         const loader = new GLTFLoader();
         loader.load("/asset/game_assets/models/bug.glb", (gltf) => {
             this.model = gltf.scene;
-            this.model.scale.set(1.3, 1.3, 1.3);
+            this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
 
             this.model.rotation.y = Math.PI / 2;
             this.model.traverse((child) => {
@@ -332,18 +335,18 @@ export default class Enemy extends Actor {
                     const sinePos = Math.sin(progression * Math.PI);
                     this.model.position.y = 1.6 + sinePos * jumpAmplitude;
 
-                    const stretchFactor = 0.3 * Math.sin(progression * Math.PI);
+                    const stretchFactor = 0.3 * Math.sin(progression * Math.PI) * this.baseScale;
 
-                    this.model.scale.y = 1.3 + stretchFactor;
-                    this.model.scale.x = 1.3 - stretchFactor * 0.5;
-                    this.model.scale.z = 1.3 - stretchFactor * 0.5;
+                    this.model.scale.y = 1.3 * this.baseScale + stretchFactor;
+                    this.model.scale.x = 1.3 * this.baseScale - stretchFactor * 0.5;
+                    this.model.scale.z = 1.3 * this.baseScale - stretchFactor * 0.5;
                 }
 
                 if (currentDist < 0.05) {
                     this.isJumping = false;
                     if (this.model) {
                         this.model.position.y = 1.6;
-                        this.model.scale.set(1.3, 1.3, 1.3);
+                        this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
                     }
                     this.position.x = this.#targetedPosition.x;
                     this.position.y = this.#targetedPosition.y;

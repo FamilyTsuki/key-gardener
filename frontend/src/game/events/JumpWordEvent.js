@@ -4,8 +4,9 @@ import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { AudioManager } from "../managers/AudioManager.js";
 
 export class JumpWordEvent extends WorldEvent {
-    constructor() {
-        super();
+    constructor(config = {}) {
+        super(config.gameEngine);
+        this.tileDistance = config.tileDistance || 15;
         this.isActive = false;
         this.isCompleted = false;
         const words = LanguageManager.t("game.jumpWords");
@@ -18,7 +19,7 @@ export class JumpWordEvent extends WorldEvent {
         this.baseSpawnDelay = 3.0;
         this.wordSpawnTimer = 0;
         this.nextWordId = 0;
-        this.targetCompletedCount = 10;
+        this.targetCompletedCount = Math.max(1, Math.floor(10 * (config.difficultyMultiplier || 1)));
         this.completedCount = 0;
         this.currentTyped = "";
         this.currentWordId = null;
@@ -53,12 +54,13 @@ export class JumpWordEvent extends WorldEvent {
     }
 
     modifyLayout(mapLayout) {
+        const d = this.tileDistance;
         mapLayout.forEach(tile => {
-            if (tile.y <= -15 && tile.y > -20) {
+            if (tile.y <= -d && tile.y > -(d + 5)) {
                 tile.renderMesh = false;
                 tile.letter = null;
             }
-            if (tile.y === -14) {
+            if (tile.y === -(d - 1)) {
                 this.triggerTileIds.add(tile.id);
             }
         });

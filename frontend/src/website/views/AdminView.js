@@ -261,15 +261,19 @@ export class AdminView {
         if (level.phase_type === 'world') {
             const eventsArray = options.events || [];
             options.outroType = 'DoorEvent';
-            eventsArray.forEach(eType => {
+            eventsArray.forEach(eConfig => {
+                const eType = typeof eConfig === 'string' ? eConfig : eConfig.type;
+                const dist = typeof eConfig === 'string' ? 15 : (eConfig.tileDistance || 15);
+                const diffMulti = typeof eConfig === 'string' ? 1 : (eConfig.difficultyMultiplier || 1);
+
                 if (eType === 'DoorEvent' || eType === 'HoleEvent') {
                     options.outroType = eType;
                 } else if (eType === 'BridgeWordEvent') {
-                    initialStoryEvents.push({ actionType: 'bridge' });
+                    initialStoryEvents.push({ actionType: 'bridge', tileDistance: dist, difficultyMultiplier: diffMulti });
                 } else if (eType === 'JumpWordEvent') {
-                    initialStoryEvents.push({ actionType: 'jumpword' });
+                    initialStoryEvents.push({ actionType: 'jumpword', tileDistance: dist, difficultyMultiplier: diffMulti });
                 } else if (eType === 'FlameWallEvent') {
-                    initialStoryEvents.push({ actionType: 'flamewall' });
+                    initialStoryEvents.push({ actionType: 'flamewall', tileDistance: dist, difficultyMultiplier: diffMulti });
                 }
             });
             if (options.dialogue && options.dialogue.length > 0) {
@@ -330,6 +334,8 @@ export class AdminView {
                     spawnEnemy: block.querySelector('.evt-spawn-type').value,
                     spawnInterval: Number(block.querySelector('.evt-spawn-interval').value) || 3,
                     maxEnemies: Number(block.querySelector('.evt-spawn-max').value) || 20,
+                    tileDistance: Number(block.querySelector('.evt-tile-distance') ? block.querySelector('.evt-tile-distance').value : 0),
+                    difficultyMultiplier: Number(block.querySelector('.evt-difficulty') ? block.querySelector('.evt-difficulty').value : 1),
                     isTriggered: false
                 };
             });
@@ -350,9 +356,9 @@ export class AdminView {
                 const filteredStoryEvents = [];
 
                 gatheredStoryEvents.forEach(evt => {
-                    if (evt.actionType === 'bridge') eventsList.push('BridgeWordEvent');
-                    else if (evt.actionType === 'jumpword') eventsList.push('JumpWordEvent');
-                    else if (evt.actionType === 'flamewall') eventsList.push('FlameWallEvent');
+                    if (evt.actionType === 'bridge') eventsList.push({ type: 'BridgeWordEvent', tileDistance: evt.tileDistance, difficultyMultiplier: evt.difficultyMultiplier });
+                    else if (evt.actionType === 'jumpword') eventsList.push({ type: 'JumpWordEvent', tileDistance: evt.tileDistance, difficultyMultiplier: evt.difficultyMultiplier });
+                    else if (evt.actionType === 'flamewall') eventsList.push({ type: 'FlameWallEvent', tileDistance: evt.tileDistance, difficultyMultiplier: evt.difficultyMultiplier });
                     else filteredStoryEvents.push(evt);
                 });
 
@@ -374,6 +380,7 @@ export class AdminView {
 
                 parsedOptions = {
                     introType: card.querySelector('.world-intro').value,
+                    worldDistance: card.querySelector('.world-distance').value ? Number(card.querySelector('.world-distance').value) : 30,
                     playerHp: card.querySelector('.world-hp').value ? Number(card.querySelector('.world-hp').value) : null,
                     events: eventsList,
                     dialogue: globalDialogue,
@@ -465,7 +472,10 @@ export class AdminView {
         const hideTriggerClass = ['bridge', 'jumpword', 'flamewall'].includes(evt.actionType) ? 'none' : '';
 
         const removeBtn = el("button", { className: "remove-evt-btn" }, "X");
-        removeBtn.addEventListener('click', () => div.remove());
+        removeBtn.addEventListener('click', () => {
+            div.remove();
+            storyContainer.dispatchEvent(new Event('input', { bubbles: true }));
+        });
 
         const selectAction = createCustomSelect(actionOptions, evt.actionType || "dialogue", null, "evt-action-type admin-compact-select");
         selectAction.addEventListener('change', (e) => {
@@ -539,7 +549,26 @@ export class AdminView {
             )
         );
 
+        div.appendChild(
+            el("div", { className: "block-row flex-col-stretch mt-10" },
+                el("div", { className: "flex-row-gap10 flex-start" },
+                    el("label", {}, LanguageManager.t("admin.tileDistance")),
+                    el("input", { type: "number", className: "evt-tile-distance block-input width-80", value: evt.tileDistance !== undefined ? evt.tileDistance : 0 })
+                )
+            )
+        );
+
+        div.appendChild(
+            el("div", { className: "evt-fields-difficulty block-row flex-col-stretch mt-10" },
+                el("div", { className: "flex-row-gap10 flex-start" },
+                    el("label", {}, LanguageManager.t("admin.difficultyMultiplier")),
+                    el("input", { type: "number", step: "0.1", className: "evt-difficulty block-input width-80", value: evt.difficultyMultiplier !== undefined ? evt.difficultyMultiplier : 1 })
+                )
+            )
+        );
+
         storyContainer.appendChild(div);
+        storyContainer.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     init3DPreview(container, phaseType, options, card) {
@@ -547,6 +576,7 @@ export class AdminView {
 
         let currentDecor = null;
         let keyboardGroup = null;
+        let eventMeshes = [];
         let playerMesh = null;
         let targetPlayerPos = new THREE.Vector3(15, 1.35, 3);
 
@@ -604,15 +634,33 @@ export class AdminView {
                 if (playerMesh) playerMesh.position.set(0, 1.35, 10);
                 else targetPlayerPos.set(0, 1.35, 10);
             } else {
-                camera.position.set(30, 85, 5);
-                camera.lookAt(12, 0, -25);
-
+                camera.position.set(12, 110, 15);
+                camera.lookAt(12, 0, -38);
                 const introType = card.querySelector('.world-intro').value || "staircase";
                 const outroType = card.querySelector('.world-outro').value || "DoorEvent";
-                const layout = createWordlLayout(introType);
+                const worldDistance = card.querySelector('.world-distance').value ? Number(card.querySelector('.world-distance').value) : 30;
+                const layout = createWordlLayout(introType, worldDistance);
+
+                const storyContainer = card.querySelector('.events-list');
+                if (storyContainer) {
+                    const actionBlocks = Array.from(storyContainer.querySelectorAll('.story-event-block'));
+                    actionBlocks.forEach(block => {
+                        const actionType = block.querySelector('.evt-action-type')?.value;
+                        const tileDistance = Number(block.querySelector('.evt-tile-distance')?.value) || 0;
+                        
+                        if (actionType === 'bridge' || actionType === 'jumpword') {
+                            const d = tileDistance || 15;
+                            layout.forEach(tile => {
+                                if (tile.y <= -d && tile.y > -(d + 5)) {
+                                    tile.renderMesh = false;
+                                }
+                            });
+                        }
+                    });
+                }
 
                 if (outroType === "HoleEvent") {
-                    const doorRow = layout.filter((t) => t.y === -34);
+                    const doorRow = layout.filter((t) => t.isDoorRow);
                     if (doorRow.length > 0) {
                         doorRow.sort((a, b) => a.x - b.x);
                         const centerTile = doorRow[Math.floor(doorRow.length / 2)];
@@ -633,7 +681,7 @@ export class AdminView {
                         targetPlayerPos.set(spawnPos.x, spawnPos.y + 1.35, spawnPos.z);
                     }
 
-                    const doorRow = wMap.mapLayout.filter((t) => t.rawPosition.y === -34);
+                    const doorRow = wMap.mapLayout.filter((t) => t.isDoorRow);
                     if (doorRow.length > 0) {
                         doorRow.sort((a, b) => a.rawPosition.x - b.rawPosition.x);
                         const exitTile = doorRow[Math.floor(doorRow.length / 2)];
@@ -656,7 +704,10 @@ export class AdminView {
                                 const arch = new THREE.Mesh(archGeo, pillarMat);
                                 arch.position.set(0, 13, 0);
                                 const textureLoader = new THREE.TextureLoader();
-                                const doorTexture = textureLoader.load('/asset/game_assets/textures/door.webp');
+                                let leftDoorTexture;
+                                const doorTexture = textureLoader.load('/asset/game_assets/textures/door.webp', () => {
+                                    if (leftDoorTexture) leftDoorTexture.needsUpdate = true;
+                                });
                                 
                                 const doorMat = new THREE.MeshStandardMaterial({
                                     map: doorTexture,
@@ -666,10 +717,12 @@ export class AdminView {
                                 });
                                 const doorGeo = new THREE.BoxGeometry(2.25, 12, 0.5);
                                 
-                                const leftDoorTexture = doorTexture.clone();
+                                leftDoorTexture = doorTexture.clone();
                                 leftDoorTexture.wrapS = THREE.RepeatWrapping;
                                 leftDoorTexture.repeat.x = -1;
-                                leftDoorTexture.needsUpdate = true;
+
+                                const leftDoorMat = doorMat.clone();
+                                leftDoorMat.map = leftDoorTexture;
                                 
                                 const doorMaterialsLeft = [
                                     doorMat, doorMat, doorMat, doorMat,
@@ -702,7 +755,56 @@ export class AdminView {
                     }
                 });
             }
+            renderEventsPreviews();
         };
+
+        const renderEventsPreviews = () => {
+            eventMeshes.forEach(m => scene.remove(m));
+            eventMeshes = [];
+
+            const storyContainer = card.querySelector('.events-list');
+            if (!storyContainer) return;
+
+            Array.from(storyContainer.querySelectorAll('.story-event-block')).forEach(block => {
+                const actionType = block.querySelector('.evt-action-type')?.value;
+                const tileDistance = Number(block.querySelector('.evt-tile-distance')?.value) || 0;
+
+                const size = 1.5;
+                let color = 0xffffff;
+                if (actionType === 'spawn') color = 0xff0000;
+                else if (actionType === 'heal') color = 0x00ff00;
+                else if (actionType === 'dialogue') color = 0x0000ff;
+
+                const geo = new THREE.BoxGeometry(size, size, size);
+                const mat = new THREE.MeshBasicMaterial({ color: color, wireframe: true });
+                const mesh = new THREE.Mesh(geo, mat);
+
+                if (phaseType === 'survive') {
+                    mesh.position.set(0, size / 2, tileDistance * 3.2);
+                    scene.add(mesh);
+                    eventMeshes.push(mesh);
+                } else if (actionType !== 'bridge' && actionType !== 'jumpword' && actionType !== 'flamewall') {
+                    mesh.position.set(12, 2.0 + size / 2, -tileDistance * 2.25);
+                    scene.add(mesh);
+                    eventMeshes.push(mesh);
+                }
+            });
+        };
+
+        card.addEventListener('input', (e) => {
+            if (e.target.classList.contains('evt-tile-distance') || 
+                e.target.classList.contains('evt-scale') ||
+                e.target.classList.contains('evt-action-type') ||
+                e.target.classList.contains('events-list')) {
+                renderEventsPreviews();
+            }
+        });
+
+        card.addEventListener('change', (e) => {
+            if (e.target.classList.contains('evt-action-type')) {
+                renderEventsPreviews();
+            }
+        });
 
         card.querySelector('.phase-type-select').addEventListener('change', (e) => {
             phaseType = e.target.value;
@@ -800,6 +902,10 @@ export class AdminView {
                 el("div", { className: "flex-1 min-w-100" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.playerHp")),
                     el("input", { type: "number", className: "world-hp block-input", value: options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : '', placeholder: LanguageManager.t("admin.immortal") })
+                ),
+                el("div", { className: "flex-1 min-w-100" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.worldDistance")),
+                    el("input", { type: "number", className: "world-distance block-input", value: options.worldDistance !== undefined && options.worldDistance !== null ? options.worldDistance : 30, placeholder: "30" })
                 )
             )
         );

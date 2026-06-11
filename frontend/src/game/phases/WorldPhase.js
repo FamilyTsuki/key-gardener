@@ -53,7 +53,7 @@ export class WorldPhase extends GamePhase {
     async init() {
         const scene = this.gameEngine.scene;
         this.activeIntroType = this.introType === "random" ? (Math.random() > 0.5 ? "skyfall" : "staircase") : this.introType;
-        const worldLayout = createWordlLayout(this.activeIntroType);
+        const worldLayout = createWordlLayout(this.activeIntroType, this.options.worldDistance || 30);
 
         const cssFiles = new Set();
         for (const event of this.events) {

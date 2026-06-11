@@ -10,9 +10,10 @@ export class BridgeWordEvent extends WorldEvent {
     /**
      * Creates an instance of BridgeWordEvent.
      */
-    constructor(gameEngine, scenarioType) {
-        super(gameEngine);
-        this.scenarioType = scenarioType;
+    constructor(config = {}) {
+        super(config.gameEngine);
+        this.scenarioType = config.scenarioType;
+        this.tileDistance = config.tileDistance || 15;
         this.isActive = false;
         this.isCompleted = false;
         
@@ -29,7 +30,7 @@ export class BridgeWordEvent extends WorldEvent {
         this.wordSpawnTimer = 0;
         this.nextWordId = 0;
         
-        this.targetCompletedCount = 10; 
+        this.targetCompletedCount = Math.max(1, Math.floor(10 * (config.difficultyMultiplier || 1))); 
         this.completedCount = 0;
         this.piecesBuilt = 0;
         this.currentTyped = "";
@@ -63,12 +64,13 @@ export class BridgeWordEvent extends WorldEvent {
      * @param {Array} mapLayout - The raw map layout array.
      */
     modifyLayout(mapLayout) {
+        const d = this.tileDistance;
         mapLayout.forEach(tile => {
-            if (tile.y <= -15 && tile.y > -20) {
+            if (tile.y <= -d && tile.y > -(d + 5)) {
                 tile.renderMesh = false;
                 tile.letter = null;
             }
-            if (tile.y === -14) {
+            if (tile.y === -(d - 1)) {
                 this.triggerTileId = tile.id;
             }
         });

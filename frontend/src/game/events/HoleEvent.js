@@ -25,7 +25,7 @@ export class HoleEvent extends WorldEvent {
     modifyLayout(mapLayout) {
         if (!mapLayout || mapLayout.length === 0) return;
 
-        const targetRow = mapLayout.filter((t) => t.y === -34);
+        const targetRow = mapLayout.filter((t) => t.isDoorRow);
         
         if (targetRow.length > 0) {
             targetRow.sort((a, b) => a.x - b.x);
