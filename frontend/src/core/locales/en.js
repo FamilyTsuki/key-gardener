@@ -28,7 +28,8 @@ export const en = {
         home: "Home",
         communityHub: "Community Hub",
         account: "Account",
-        adminPanel: "Admin Panel"
+        adminPanel: "Admin Panel",
+        donate: "Support the Project"
     },
     
     // HomeView
@@ -291,10 +292,34 @@ export const en = {
         language: "Language",
         close: "Close"
     },
+    notFound: {
+        title: "404 - Page Not Found",
+        description: "Oops! The page you are looking for has been lost in the void.",
+        backHome: "Back to Home"
+    },
+    error: {
+        title: "Error {code}",
+        defaultDescription: "Something went wrong.",
+        backHome: "Back to Home"
+    },
     common: {
         confirm: "Confirm",
         cancel: "Cancel",
         skipIndicator: "↵ Enter / Space"
+    },
+    
+    // SupportView
+    donate: {
+        title: "Support the Project",
+        letterIntro1: "Welcome! Keyboard Survivor was initially created as an end-of-year academic project, and I have continued to develop it in my spare time out of pure passion.",
+        letterIntro2: "The game is completely free, but the multiplayer infrastructure and community hub come with a cost. If you enjoy the game and want to support its evolution, you're in the right place!",
+        realityTitle: "The Current Setup",
+        realityDesc: "Today, the servers proudly run on a small Raspberry Pi in my living room! Expenses include electricity, the database, and the AI credits used to moderate the Hub in real-time.",
+        dreamTitle: "Future Goals",
+        dreamDesc: "With your support, the project could afford a real dedicated server to guarantee a lag-free experience for more players, and acquire a professional domain name to secure the adventure's future.",
+        ctaTitle: "Want to contribute?",
+        ctaDesc: "There's absolutely no obligation, but if you'd like to financially support the project, you can make a small donation (the equivalent of a coffee) via Ko-fi. Thank you so much for your support, whether financial or just by playing the game!",
+        submit: "Support the project (Ko-fi)"
     }
 };
 

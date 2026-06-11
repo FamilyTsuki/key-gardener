@@ -342,8 +342,8 @@ body.in-game #app {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background-color: rgba(10, 12, 16, 0.85);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -426,6 +426,36 @@ body.in-game #app {
 @keyframes pulse-glow {
     0%, 100% { opacity: 0.7; text-shadow: 0 0 5px var(--primary-color); }
     50% { opacity: 1; text-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--primary-color); }
+}
+
+@media (max-width: 480px) {
+    #global-loader {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+    }
+    
+    .loader-content {
+        gap: 1.5rem;
+    }
+    
+    .cyber-spinner {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .cyber-spinner::before {
+        top: 6px;
+        left: 6px;
+        right: 6px;
+        bottom: 6px;
+    }
+    
+    .cyber-spinner::after {
+        top: 14px;
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+    }
 }
 
 /* =============== GLOBAL UTILITY CLASSES =============== */

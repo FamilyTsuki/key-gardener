@@ -7,6 +7,8 @@ import GameView from "../website/views/GameView.js";
 import AccountView from "../website/views/AccountView.js";
 import FaqView from "../website/views/FaqView.js";
 import { AdminView } from "../website/views/AdminView.js";
+import DonateView from "../website/views/DonateView.js";
+import ErrorView from "../website/views/ErrorView.js";
 import { AuthService } from "./services/auth.service.js";
 import { FlashMessageManager } from "./utils/FlashMessageManager.js";
 import { LanguageManager } from "./utils/LanguageManager.js";
@@ -31,6 +33,7 @@ export default class Router {
             { path: "/game", view: GameView, requiresAuth: true },
             { path: "/account", view: AccountView, requiresAuth: true },
             { path: "/faq", view: FaqView, requiresAuth: false },
+            { path: "/support", view: DonateView, requiresAuth: false },
             { path: "/admin", view: AdminView, requiresAuth: true },
         ];
 
@@ -103,7 +106,15 @@ export default class Router {
         );
 
         if (!match) {
-            match = this.routes[0];
+            match = { 
+                path: location.pathname, 
+                view: ErrorView, 
+                requiresAuth: false,
+                params: { 
+                    errorCode: "404", 
+                    errorMessage: LanguageManager.t("notFound.description") || "Oops! The page you are looking for has been lost in the void." 
+                }
+            };
         }
 
         if (match.requiresAuth && !AuthService.isAuthenticated()) {
@@ -122,7 +133,7 @@ export default class Router {
         }
         canonical.href = window.location.origin + window.location.pathname;
 
-        const view = new match.view();
+        const view = new match.view(match.params || {});
         const appContainer = document.querySelector("#app");
 
         const oldLinks = document.querySelectorAll("link[data-dynamic-css]");

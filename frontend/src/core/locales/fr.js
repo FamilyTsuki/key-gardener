@@ -28,7 +28,8 @@ export const fr = {
         home: "Accueil",
         communityHub: "Communauté",
         account: "Compte",
-        adminPanel: "Panneau d'Administration"
+        adminPanel: "Panneau d'Administration",
+        donate: "Soutenir le Projet"
     },
     
     // HomeView
@@ -291,10 +292,34 @@ export const fr = {
         language: "Langue",
         close: "Fermer"
     },
+    notFound: {
+        title: "404 - Page Introuvable",
+        description: "Oups ! La page que vous cherchez s'est perdue dans le vide.",
+        backHome: "Retour à l'accueil"
+    },
+    error: {
+        title: "Erreur {code}",
+        defaultDescription: "Une erreur est survenue.",
+        backHome: "Retour à l'accueil"
+    },
     common: {
         confirm: "Confirmer",
         cancel: "Annuler",
         skipIndicator: "↵ Entrée / Espace"
+    },
+    
+    // SupportView
+    donate: {
+        title: "Soutenir le Projet",
+        letterIntro1: "Bienvenue ! Keyboard Survivor a d'abord été créé dans le cadre d'un projet de fin d'année, et j'ai continué à le développer par passion sur mon temps libre.",
+        letterIntro2: "Le jeu est entièrement gratuit, mais l'infrastructure multijoueur et le hub communautaire ont un coût. Si vous appréciez le jeu et souhaitez soutenir son évolution, vous êtes au bon endroit !",
+        realityTitle: "L'installation actuelle",
+        realityDesc: "Aujourd'hui, les serveurs tournent fièrement sur un petit Raspberry Pi dans mon salon ! Les frais incluent l'électricité, la base de données et les crédits d'IA utilisés pour modérer le Hub en temps réel.",
+        dreamTitle: "Les objectifs futurs",
+        dreamDesc: "Avec votre soutien, le projet pourrait s'offrir un véritable serveur dédié pour garantir une expérience fluide à plus de joueurs, et acquérir un nom de domaine professionnel pour pérenniser l'aventure.",
+        ctaTitle: "Envie de participer ?",
+        ctaDesc: "Il n'y a aucune obligation, mais si vous souhaitez soutenir financièrement le projet, vous pouvez faire un petit don (l'équivalent du prix d'un café) via Ko-fi. Merci infiniment pour votre soutien, financier ou simplement en jouant au jeu !",
+        submit: "Soutenir le projet (Ko-fi)"
     }
 };
 

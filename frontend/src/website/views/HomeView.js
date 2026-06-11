@@ -164,14 +164,18 @@ export default class HomeView extends AbstractView {
                             el("a", { href: "https://www.twitter.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Twitter" }, "Twitter"),
                             el("a", { href: "https://www.instagram.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Instagram" }, "Instagram")
                         ),
-                        el(
-                            "div",
-                            { className: "footer-column" },
-                            el("h3", {}, "Credits"),
-                            el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
-                            el("p", { className: "footer-thx" }, LanguageManager.t("home.thankSupporters"))
-                        )
+
+                        el("div", { className: "footer-column" },
+                                el("h3", {}, "Credits"),
+                                el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
+                                el("p", { className: "footer-thx" }, LanguageManager.t("home.thankSupporters"))
+                            )
                     ),
+                    el("a", { 
+                        href: "/support", 
+                        dataset: { link: true }, 
+                        className: "footer-support-link"
+                    }, LanguageManager.t("nav.donate") || "Support the Project"),
                     el(
                         "div",
                         { className: "footer-bottom" },

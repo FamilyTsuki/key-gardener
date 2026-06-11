@@ -58,6 +58,23 @@
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
+.footer-support-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-decoration: none;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    transition: all 0.3s ease;
+}
+
+.footer-support-link:hover {
+    color: var(--white);
+    text-shadow: 0 0 15px rgba(0, 255, 102, 0.6);
+    transform: translateY(-2px);
+}
+
 /* =============== RESPONSIVE FOOTER =============== */
 @media (max-width: 768px) {
     .home-footer {
