@@ -97,14 +97,7 @@ export class DuelSpell {
         context.fillStyle = "rgba(10, 12, 16, 0.85)";
         context.fill();
         
-        context.strokeStyle = "#" + this.color.getHexString();
-        context.lineWidth = 6;
-        context.shadowColor = "#" + this.color.getHexString();
-        context.shadowBlur = 15;
-        context.stroke();
-        
-        context.shadowBlur = 0;
-        context.font = "bold 60px monospace";
+        context.font = "bold 72px monospace";
         context.fillStyle = "#ffffff";
         context.textAlign = "center";
         context.textBaseline = "middle";
@@ -113,8 +106,8 @@ export class DuelSpell {
         const texture = new THREE.CanvasTexture(canvas);
         const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
         this.textSprite = new THREE.Sprite(spriteMaterial);
-        this.textSprite.scale.set(2.0, 0.5, 1.0);
-        this.textSprite.position.y = 1.0 + this.scale.y * 1.8;
+        this.textSprite.scale.set(3.2, 0.8, 1.0);
+        this.textSprite.position.y = 1.5 + this.scale.y * 2.0;
         this.mesh.add(this.textSprite);
     }
 
@@ -175,7 +168,7 @@ export class LightSpell extends DuelSpell {
     constructor(...args) {
         super(...args);
         this.damage = 10;
-        this.speed = 24;
+        this.speed = 12;
         this.isHoming = false;
         this.color = new THREE.Color(0xffff00);
         this.scale.set(0.3, 0.3, 0.3);
@@ -209,7 +202,7 @@ export class HeavySpell extends DuelSpell {
     constructor(...args) {
         super(...args);
         this.damage = 20;
-        this.speed = 6;
+        this.speed = 4;
         this.isHoming = true;
         this.color = new THREE.Color(0xff0000);
         this.scale.set(0.85, 0.85, 0.85);
@@ -221,7 +214,7 @@ export class StunSpell extends DuelSpell {
     constructor(...args) {
         super(...args);
         this.damage = 10;
-        this.speed = 15;
+        this.speed = 8;
         this.isHoming = true;
         this.color = new THREE.Color(0x00ffff);
         this.scale.set(0.5, 0.5, 0.5);
@@ -262,7 +255,7 @@ export class HealSpell extends DuelSpell {
     constructor(...args) {
         super(...args);
         this.damage = -20;
-        this.speed = 25;
+        this.speed = 15;
         this.isHoming = true;
         this.color = new THREE.Color(0x00ff66);
         this.scale.set(0.7, 0.7, 0.7);
@@ -299,7 +292,7 @@ export class JailSpell extends DuelSpell {
     constructor(...args) {
         super(...args);
         this.damage = 10;
-        this.speed = 14;
+        this.speed = 7;
         this.isHoming = true;
         this.color = new THREE.Color(0xffaa00);
         this.scale.set(0.6, 0.6, 0.6);

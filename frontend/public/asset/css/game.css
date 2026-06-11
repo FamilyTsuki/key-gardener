@@ -463,10 +463,6 @@
 
 .duel-hud-panel {
     min-width: 180px;
-    padding: 12px;
-    border-radius: 10px;
-    background: rgba(10, 12, 16, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.15);
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -523,14 +519,9 @@
     position: fixed;
     top: auto;
     left: auto;
-    bottom: 40px;
-    right: 40px;
-    padding: 16px 24px;
-    background: rgba(10, 12, 16, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 16px;
-    min-width: 320px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    bottom: 20px;
+    right: 20px;
+    min-width: 240px;
     z-index: 9999;
 }
 
@@ -543,7 +534,7 @@
 
 .duel-defense-block {
     margin-bottom: 10px;
-    font-size: 22px;
+    font-size: 18px;
     background: rgba(255, 0, 0, 0.2);
     padding: 10px;
     border-radius: 5px;
@@ -556,8 +547,8 @@
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(255, 68, 0, 0.55);
-    border: 3px solid #ff4400;
+    background: rgba(15, 23, 42, 0.95);
+    border: 2px solid var(--danger-color);
     padding: 20px 40px;
     border-radius: 12px;
     z-index: 10000;
@@ -565,14 +556,12 @@
     font-size: 32px;
     color: white;
     text-align: center;
-    box-shadow: 0 0 30px #ff4400;
 }
 
 .duel-spells-title {
-    color: #00ffff;
-    text-shadow: 0 0 5px #00ffff;
+    color: var(--primary-color);
     margin: 0 0 10px 0;
-    font-size: 26px;
+    font-size: 20px;
 }
 
 .duel-spells-list {
@@ -583,7 +572,7 @@
 
 .duel-spell-item {
     margin-bottom: 8px;
-    font-size: 28px;
+    font-size: 20px;
     color: #aaa;
 }
 
@@ -592,13 +581,11 @@
 }
 
 .duel-spell-char-match {
-    color: #00ff00;
-    text-shadow: 0 0 5px #00ff00;
+    color: var(--success-color);
 }
 
 .duel-spell-char-error {
-    color: red;
-    text-shadow: 0 0 5px red;
+    color: var(--danger-color);
 }
 
 .duel-spell-char-normal {
@@ -606,8 +593,7 @@
 }
 
 .duel-defenses-title {
-    color: #ff00ff;
-    text-shadow: 0 0 10px #ff00ff;
+    color: var(--primary-color);
 }
 
 .duel-no-incoming {

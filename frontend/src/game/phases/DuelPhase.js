@@ -109,9 +109,6 @@ export class DuelPhase extends GamePhase {
         if (this.localPlayer.loadPromise) await this.localPlayer.loadPromise;
         if (this.remotePlayer.loadPromise) await this.remotePlayer.loadPromise;
 
-        this.localHealthBar = this.createFloatingHealthBar(this.localPlayer, 0x00ffff);
-        this.remoteHealthBar = this.createFloatingHealthBar(this.remotePlayer, 0xff00ff);
-
         this.buildUI();
 
         SocketService.on('spell_spawned', this.onSpellSpawned.bind(this));
@@ -158,7 +155,7 @@ export class DuelPhase extends GamePhase {
         if (bossUI) bossUI.classList.add("hidden");
 
         this.hpUI = el("div", { className: "duel-hp-ui" },
-            el("div", { className: "duel-hud-panel glass-panel" },
+            el("div", { className: "duel-hud-panel" },
                 el("span", { className: "duel-hud-name duel-hud-name-local" }, this.localData.username),
                 el("div", { className: "duel-hud-bar" },
                     el("div", { id: "hp-local-fill", className: "duel-hud-fill duel-hud-fill-local" })
@@ -168,7 +165,7 @@ export class DuelPhase extends GamePhase {
                     " HP"
                 )
             ),
-            el("div", { className: "duel-hud-panel duel-hud-panel-right glass-panel" },
+            el("div", { className: "duel-hud-panel duel-hud-panel-right" },
                 el("span", { className: "duel-hud-name duel-hud-name-remote" }, this.remoteData.username),
                 el("div", { className: "duel-hud-bar" },
                     el("div", { id: "hp-remote-fill", className: "duel-hud-fill duel-hud-fill-remote" })
@@ -187,7 +184,7 @@ export class DuelPhase extends GamePhase {
             this.spellsUI.innerHTML = "";
         }
 
-        this.defensesUI = el("div", { className: "duel-defenses-ui glass-panel p-20" });
+        this.defensesUI = el("div", { className: "duel-defenses-ui" });
         document.body.appendChild(this.defensesUI);
 
         const announcer = el("div", { id: "duel-announcer-container" });
@@ -538,16 +535,7 @@ export class DuelPhase extends GamePhase {
         if (localFill) localFill.style.width = `${Math.max(0, localHp)}%`;
         if (remoteFill) remoteFill.style.width = `${Math.max(0, remoteHp)}%`;
         
-        if (this.localHealthBar) {
-            const ratio = Math.max(0, localHp / 100);
-            this.localHealthBar.fg.scale.x = ratio;
-            this.localHealthBar.fg.position.x = -0.75 * (1 - ratio);
-        }
-        if (this.remoteHealthBar) {
-            const ratio = Math.max(0, remoteHp / 100);
-            this.remoteHealthBar.fg.scale.x = ratio;
-            this.remoteHealthBar.fg.position.x = -0.75 * (1 - ratio);
-        }
+
 
         if (localHp < this.localData.hp) {
             this.localData.hp = localHp;
@@ -561,7 +549,12 @@ export class DuelPhase extends GamePhase {
 
     onDuelEnded(data) {
         this.isDuelOver = true;
-        const won = data.winnerId == this.localData.id;
+        let won = false;
+        if (data.reason === "disconnect") {
+            won = data.loserId != this.localData.id;
+        } else {
+            won = data.winnerId == this.localData.id;
+        }
         FlashMessageManager.show(
             won ? LanguageManager.t("duel.victory") : LanguageManager.t("duel.defeat"),
             won ? "success" : "error"
@@ -571,35 +564,7 @@ export class DuelPhase extends GamePhase {
         }, 3000);
     }
 
-    createFloatingHealthBar(player, colorHex) {
-        const group = new THREE.Group();
 
-        const bgGeo = new THREE.PlaneGeometry(1.6, 0.16);
-        const bgMat = new THREE.MeshBasicMaterial({ color: 0x222222, side: THREE.DoubleSide });
-        const bg = new THREE.Mesh(bgGeo, bgMat);
-        group.add(bg);
-
-        const fgGeo = new THREE.PlaneGeometry(1.5, 0.12);
-        const fgMat = new THREE.MeshBasicMaterial({ color: colorHex, side: THREE.DoubleSide });
-        const fg = new THREE.Mesh(fgGeo, fgMat);
-        fg.position.z = 0.01;
-        group.add(fg);
-
-        this.gameEngine.scene.add(group);
-        return { group, fg, player };
-    }
-
-    updateFloatingHealthBar(bar) {
-        if (!bar || !bar.player || !bar.player.mesh) return;
-
-        const worldPos = new THREE.Vector3();
-        bar.player.mesh.getWorldPosition(worldPos);
-
-        bar.group.position.copy(worldPos);
-        bar.group.position.y += 2.5;
-
-        bar.group.quaternion.copy(this.gameEngine.camera.quaternion);
-    }
 
     announceSpell(attackerId, spellType) {
         const isLocal = attackerId == this.localData.id;
@@ -655,8 +620,7 @@ export class DuelPhase extends GamePhase {
         this.gameEngine.camera.position.set(0, 11, 13.0);
         this.gameEngine.camera.lookAt(0, 0, 6.5);
 
-        this.updateFloatingHealthBar(this.localHealthBar);
-        this.updateFloatingHealthBar(this.remoteHealthBar);
+
 
         this.availableSpells.forEach(s => {
             if (s.cooldownRemaining > 0) {
@@ -721,8 +685,7 @@ export class DuelPhase extends GamePhase {
                     if (p.mesh.position.distanceTo(finalTargetPos) < 2.0) {
                         if (p.targetId == this.localData.id) {
                             SocketService.emit('take_damage', { 
-                                spellId: p.id, 
-                                damage: p.damage 
+                                spellId: p.id 
                             });
                             
                             if (p instanceof JailSpell) {
@@ -759,12 +722,6 @@ export class DuelPhase extends GamePhase {
     }
 
     cleanup() {
-        if (this.localHealthBar) {
-            this.gameEngine.scene.remove(this.localHealthBar.group);
-        }
-        if (this.remoteHealthBar) {
-            this.gameEngine.scene.remove(this.remoteHealthBar.group);
-        }
         const announcerContainer = document.getElementById("duel-announcer-container");
         if (announcerContainer) announcerContainer.remove();
 

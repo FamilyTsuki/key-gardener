@@ -1,5 +1,13 @@
 const db = require('../config/database');
 
+const SPELL_CONFIGS = {
+    light: { damage: 10, speed: 12, isHoming: false },
+    heavy: { damage: 20, speed: 4, isHoming: true },
+    stun: { damage: 10, speed: 8, isHoming: true },
+    heal: { damage: -20, speed: 15, isHoming: true },
+    jail: { damage: 10, speed: 7, isHoming: true }
+};
+
 class DuelManager {
     constructor(io) {
         this.io = io;
@@ -46,8 +54,22 @@ class DuelManager {
         });
     }
 
+    clearDuelTimeouts(duel) {
+        if (duel.spellsInFlight) {
+            duel.spellsInFlight.forEach(spell => {
+                if (spell.timeoutId) {
+                    clearTimeout(spell.timeoutId);
+                }
+            });
+        }
+    }
+
     handleDisconnect(socket) {
         if (socket.roomId) {
+            const duel = this.activeDuels.get(socket.roomId);
+            if (duel) {
+                this.clearDuelTimeouts(duel);
+            }
             this.io.to(socket.roomId).emit('duel_ended', { reason: 'disconnect', loserId: socket.userId });
             this.activeDuels.delete(socket.roomId);
         }
@@ -70,12 +92,29 @@ class DuelManager {
 
         const spellId = `spell_${Date.now()}_${Math.random().toString(36).substring(7)}`;
         
-        duel.spellsInFlight.push({
+        const distance = spellType === 'heal' ? 4.0 : 16.0;
+        const config = SPELL_CONFIGS[spellType] || { damage: 10, speed: 15, isHoming: true };
+        const expectedFlightTime = (distance / (config.speed * spellSpeed)) * 1000;
+
+        const spell = {
             id: spellId,
             attackerId: attacker.id,
             targetId: target.id,
-            spellType
-        });
+            spellType,
+            damage: config.damage,
+            isHoming: config.isHoming,
+            castTime: Date.now(),
+            expectedFlightTime,
+            requiredLength: wordLengthRequired
+        };
+
+        if (config.isHoming) {
+            spell.timeoutId = setTimeout(() => {
+                this.applyAutomaticSpellHit(roomId, spellId);
+            }, expectedFlightTime * 2 + 3000);
+        }
+
+        duel.spellsInFlight.push(spell);
 
         this.io.to(roomId).emit('spell_spawned', {
             spellId,
@@ -85,6 +124,31 @@ class DuelManager {
             requiredLength: wordLengthRequired,
             speedMultiplier: spellSpeed
         });
+    }
+
+    applyAutomaticSpellHit(roomId, spellId) {
+        const duel = this.activeDuels.get(roomId);
+        if (!duel) return;
+
+        const index = duel.spellsInFlight.findIndex(s => s.id === spellId);
+        if (index === -1) return;
+
+        const spell = duel.spellsInFlight[index];
+        duel.spellsInFlight.splice(index, 1);
+
+        const target = duel.player1.id == spell.targetId ? duel.player1 : duel.player2;
+        target.hp -= spell.damage;
+        if (target.hp > 100) target.hp = 100;
+
+        this.io.to(roomId).emit('hp_update', {
+            player1Hp: duel.player1.hp,
+            player2Hp: duel.player2.hp
+        });
+
+        if (target.hp <= 0) {
+            const winnerId = duel.player1.id == target.id ? duel.player2.id : duel.player1.id;
+            this.endDuel(roomId, winnerId);
+        }
     }
 
     handleBlockSpell(socket, data) {
@@ -97,13 +161,23 @@ class DuelManager {
 
         const index = duel.spellsInFlight.findIndex(s => s.id === spellId);
         if (index !== -1) {
+            const spell = duel.spellsInFlight[index];
+            const elapsed = Date.now() - spell.castTime;
+            if (elapsed < spell.requiredLength * 80) {
+                return;
+            }
+
+            if (spell.timeoutId) {
+                clearTimeout(spell.timeoutId);
+            }
+
             duel.spellsInFlight.splice(index, 1);
             this.io.to(roomId).emit('spell_blocked', { spellId, defenderId: socket.userId });
         }
     }
 
     handleTakeDamage(socket, data) {
-        const { spellId, damage } = data;
+        const { spellId } = data;
         const roomId = socket.roomId;
         if (!roomId) return;
 
@@ -112,27 +186,39 @@ class DuelManager {
 
         const index = duel.spellsInFlight.findIndex(s => s.id === spellId && s.targetId == socket.userId);
         if (index !== -1) {
+            const spell = duel.spellsInFlight[index];
+            const elapsed = Date.now() - spell.castTime;
+            if (elapsed < spell.expectedFlightTime - 300) {
+                return;
+            }
+
+            if (spell.timeoutId) {
+                clearTimeout(spell.timeoutId);
+            }
+
             duel.spellsInFlight.splice(index, 1);
             
-            const isPlayer1 = duel.player1.id == socket.userId;
-            if (isPlayer1) {
-                duel.player1.hp -= damage;
-                if (duel.player1.hp > 100) duel.player1.hp = 100;
-                if (duel.player1.hp <= 0) this.endDuel(roomId, duel.player2.id);
-            } else {
-                duel.player2.hp -= damage;
-                if (duel.player2.hp > 100) duel.player2.hp = 100;
-                if (duel.player2.hp <= 0) this.endDuel(roomId, duel.player1.id);
-            }
+            const target = duel.player1.id == socket.userId ? duel.player1 : duel.player2;
+            target.hp -= spell.damage;
+            if (target.hp > 100) target.hp = 100;
 
             this.io.to(roomId).emit('hp_update', {
                 player1Hp: duel.player1.hp,
                 player2Hp: duel.player2.hp
             });
+
+            if (target.hp <= 0) {
+                const winnerId = duel.player1.id == target.id ? duel.player2.id : duel.player1.id;
+                this.endDuel(roomId, winnerId);
+            }
         }
     }
 
     endDuel(roomId, winnerId) {
+        const duel = this.activeDuels.get(roomId);
+        if (duel) {
+            this.clearDuelTimeouts(duel);
+        }
         this.io.to(roomId).emit('duel_ended', { winnerId });
         this.activeDuels.delete(roomId);
     }
