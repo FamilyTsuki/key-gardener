@@ -14,8 +14,7 @@ import { createCustomSelect } from "../components/CustomSelect.js";
 
 export class AdminView {
     constructor() {
-        this.container = document.createElement("div");
-        this.container.classList.add("view-container");
+        this.container = el("div", { className: "view-container" });
         this.levels = [];
         this.activeLevelNumber = null;
         this.currentView = 'levels';
@@ -122,21 +121,16 @@ export class AdminView {
         }
 
         allLevels.forEach((level) => {
-            const btn = document.createElement("button");
-            btn.className = "level-item-btn";
-            if (level.level_number === this.activeLevelNumber) {
-                btn.classList.add("active");
-            }
-
             const displayName = level.isNew ? LanguageManager.t("admin.addLevel") : `${LanguageManager.t("admin.level")} ${level.level_number}`;
             const phaseLabel = level.isNew ? LanguageManager.t("admin.createNewLevel") : this.getPhaseLabel(level.phase_type);
 
-            btn.appendChild(el("span", { className: "level-btn-number" }, displayName));
-            btn.appendChild(el("span", { className: "level-btn-type" }, phaseLabel));
-
-            btn.addEventListener("click", () => {
-                this.selectLevel(level, allLevels);
-            });
+            const btn = el("button", {
+                className: `level-item-btn${level.level_number === this.activeLevelNumber ? " active" : ""}`,
+                onclick: () => this.selectLevel(level, allLevels)
+            },
+                el("span", { className: "level-btn-number" }, displayName),
+                el("span", { className: "level-btn-type" }, phaseLabel)
+            );
 
             listContainer.appendChild(btn);
         });
@@ -952,7 +946,7 @@ export class AdminView {
     async saveLevel(levelNumber, phaseType, options) {
         const token = localStorage.getItem("authToken");
         if (!token) {
-            FlashMessageManager.show("Vous devez être connecté.", "error");
+            FlashMessageManager.show(LanguageManager.t("auth.loginRequired"), "error");
             return;
         }
 
@@ -969,21 +963,21 @@ export class AdminView {
             const data = await response.json();
 
             if (data.success) {
-                FlashMessageManager.show("Niveau sauvegardé avec succès !", "success");
+                FlashMessageManager.show(LanguageManager.t("admin.saveSuccess"), "success");
                 await this.loadLevels();
             } else {
-                FlashMessageManager.show("Erreur : " + data.message, "error");
+                FlashMessageManager.show(LanguageManager.t("admin.errorPrefix") + data.message, "error");
             }
         } catch (e) {
             console.error(e);
-            FlashMessageManager.show("Erreur de connexion au serveur.", "error");
+            FlashMessageManager.show(LanguageManager.t("admin.errorServer"), "error");
         }
     }
 
     async deleteLevel(levelNumber) {
         const token = localStorage.getItem("authToken");
         if (!token) {
-            FlashMessageManager.show("Vous devez être connecté.", "error");
+            FlashMessageManager.show(LanguageManager.t("auth.loginRequired"), "error");
             return;
         }
 
@@ -998,35 +992,31 @@ export class AdminView {
             const data = await response.json();
 
             if (data.success) {
-                FlashMessageManager.show("Niveau supprimé avec succès !", "success");
+                FlashMessageManager.show(LanguageManager.t("admin.deleteSuccess"), "success");
                 if (this.activeLevelNumber === levelNumber) {
                     this.activeLevelNumber = null;
                 }
                 await this.loadLevels();
             } else {
-                FlashMessageManager.show("Erreur : " + data.message, "error");
+                FlashMessageManager.show(LanguageManager.t("admin.errorPrefix") + data.message, "error");
             }
         } catch (e) {
             console.error(e);
-            FlashMessageManager.show("Erreur de connexion au serveur.", "error");
+            FlashMessageManager.show(LanguageManager.t("admin.errorServer"), "error");
         }
     }
 
     exportLevels() {
         if (!this.levels || this.levels.length === 0) return;
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.levels, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "levels_export.json");
+        const downloadAnchorNode = el('a', { href: dataStr, download: "levels_export.json" });
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
     }
 
     importLevels() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'application/json';
+        const input = el('input', { type: 'file', accept: 'application/json' });
         input.onchange = e => {
             const file = e.target.files[0];
             if (!file) return;
@@ -1037,11 +1027,11 @@ export class AdminView {
                     const content = readerEvent.target.result;
                     const importedLevels = JSON.parse(content);
                     if (!Array.isArray(importedLevels)) {
-                        FlashMessageManager.show("Format JSON invalide. Un tableau est attendu.", "error");
+                        FlashMessageManager.show(LanguageManager.t("admin.invalidJsonFormat"), "error");
                         return;
                     }
                     
-                    const confirmed = await FlashMessageManager.confirm(`${LanguageManager.t("admin.confirmImport")} ${importedLevels.length} ?`);
+                    const confirmed = await FlashMessageManager.confirm(LanguageManager.t("admin.confirmImportMsg").replace("{count}", importedLevels.length));
                     if (!confirmed) return;
                     
                     let successCount = 0;
@@ -1066,11 +1056,11 @@ export class AdminView {
                         }
                     }
                     
-                    FlashMessageManager.show(`${LanguageManager.t("admin.importSuccess")} (${successCount}/${importedLevels.length})`, "success");
+                    FlashMessageManager.show(LanguageManager.t("admin.importSuccessMsg").replace("{success}", successCount).replace("{total}", importedLevels.length), "success");
                     await this.loadLevels();
                 } catch (err) {
                     console.error(err);
-                    FlashMessageManager.show("Erreur lors de la lecture du fichier JSON.", "error");
+                    FlashMessageManager.show(LanguageManager.t("admin.errorReadJson"), "error");
                 }
             }
         }
@@ -1122,7 +1112,7 @@ export class AdminView {
         clear(listContainer);
 
         if (this.reportedPosts.length === 0) {
-            listContainer.appendChild(el("p", { style: "color: var(--text-muted); text-align: center; padding: 20px;" }, LanguageManager.t("admin.noReportedPosts")));
+            listContainer.appendChild(el("p", { className: "admin-no-reports" }, LanguageManager.t("admin.noReportedPosts")));
             
             const detailContainer = document.getElementById("level-detail-container");
             if (detailContainer) {
@@ -1139,19 +1129,16 @@ export class AdminView {
         }
 
         this.reportedPosts.forEach(post => {
-            const btn = document.createElement("button");
-            btn.className = "level-item-btn";
-            if (post.id === this.activeReportedPostId) {
-                btn.classList.add("active");
-            }
-
-            btn.appendChild(el("span", { className: "level-btn-number" }, `Post #${post.id}`));
-            btn.appendChild(el("span", { className: "level-btn-type" }, post.username));
-
-            btn.addEventListener("click", () => {
-                this.activeReportedPostId = post.id;
-                this.renderReportedPosts();
-            });
+            const btn = el("button", {
+                className: `level-item-btn${post.id === this.activeReportedPostId ? " active" : ""}`,
+                onclick: () => {
+                    this.activeReportedPostId = post.id;
+                    this.renderReportedPosts();
+                }
+            },
+                el("span", { className: "level-btn-number" }, `${LanguageManager.t("admin.postLabel")} #${post.id}`),
+                el("span", { className: "level-btn-type" }, post.username)
+            );
 
             listContainer.appendChild(btn);
         });
@@ -1170,7 +1157,7 @@ export class AdminView {
         const reportsList = el("ul", { className: "reports-list mt-15" });
         if (post.reports && Array.isArray(post.reports)) {
             post.reports.forEach(r => {
-                reportsList.appendChild(el("li", { className: "report-item", style: "padding: 10px; background: rgba(255,255,255,0.05); margin-bottom: 5px; border-radius: 4px;" },
+                reportsList.appendChild(el("li", { className: "report-item admin-report-item" },
                     el("strong", {}, `User ${r.user_id}: `),
                     el("span", {}, r.reason)
                 ));
@@ -1182,12 +1169,12 @@ export class AdminView {
 
         container.appendChild(
             el("div", { className: "admin-editor-card" },
-                el("h3", { className: "mb-15" }, `Post #${post.id} by ${post.username}`),
-                el("div", { className: "post-content-preview p-15 mb-15", style: "background: #1a1c23; border-radius: 8px;" },
+                el("h3", { className: "mb-15" }, LanguageManager.t("admin.postBy").replace("{id}", post.id).replace("{username}", post.username)),
+                el("div", { className: "post-content-preview p-15 mb-15" },
                     post.content ? el("p", {}, post.content) : null,
-                    post.image_url ? el("img", { src: post.image_url, style: "max-width: 100%; border-radius: 4px; margin-top: 10px;" }) : null
+                    post.image_url ? el("img", { src: post.image_url, className: "post-image-preview" }) : null
                 ),
-                el("h4", {}, `${LanguageManager.t("admin.reason")} (${post.reports ? post.reports.length : 0} signalements)`),
+                el("h4", {}, `${LanguageManager.t("admin.reason")} (${LanguageManager.t("admin.reportsCount").replace("{count}", post.reports ? post.reports.length : 0)})`),
                 reportsList,
                 el("div", { className: "flex-row-gap10 mt-20" }, keepBtn, destroyBtn)
             )
@@ -1209,7 +1196,7 @@ export class AdminView {
                 FlashMessageManager.show(data.message, "error");
             }
         } catch (e) {
-            FlashMessageManager.show("Error approving post", "error");
+            FlashMessageManager.show(LanguageManager.t("admin.errorApprovePost"), "error");
         }
     }
 
@@ -1228,7 +1215,7 @@ export class AdminView {
                 FlashMessageManager.show(data.message, "error");
             }
         } catch (e) {
-            FlashMessageManager.show("Error deleting post", "error");
+            FlashMessageManager.show(LanguageManager.t("admin.errorDeletePost"), "error");
         }
     }
 }

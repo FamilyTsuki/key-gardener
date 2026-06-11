@@ -702,3 +702,29 @@ body[data-theme="light"] .level-item-btn {
         margin: 0;
     }
 }
+
+/* =============== REPORTED POSTS PREVIEW =============== */
+.admin-no-reports {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 20px;
+}
+
+.admin-report-item {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 5px;
+    border-radius: 4px;
+}
+
+.post-content-preview {
+    background: #1a1c23;
+    border-radius: 8px;
+}
+
+.post-image-preview {
+    max-width: 100%;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+

@@ -198,7 +198,6 @@ export class WorldMapBuilder {
             floorTexture.wrapS = THREE.RepeatWrapping;
             floorTexture.wrapT = THREE.RepeatWrapping;
             floorTexture.repeat.set(4, 30);
-            floorTexture.needsUpdate = true;
         }
 
         const floorMaterial = new THREE.MeshStandardMaterial({

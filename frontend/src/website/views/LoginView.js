@@ -3,6 +3,7 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import SocketService from "../../core/services/SocketService.js";
 
 /**
  * View for user authentication (login, forgot password, reset password).
@@ -72,6 +73,7 @@ export default class LoginView extends AbstractView {
 
             try {
                 await AuthService.login(email, password);
+                SocketService.registerUser();
                 const Navbar = (await import("../components/Navbar.js")).default;
                 Navbar.render();
                 history.pushState(null, null, "/");

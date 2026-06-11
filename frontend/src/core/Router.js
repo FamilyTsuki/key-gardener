@@ -9,6 +9,8 @@ import FaqView from "../website/views/FaqView.js";
 import { AdminView } from "../website/views/AdminView.js";
 import DonateView from "../website/views/DonateView.js";
 import ErrorView from "../website/views/ErrorView.js";
+import { SocialView } from "../website/views/SocialView.js";
+import ProfileView from "../website/views/ProfileView.js";
 import { AuthService } from "./services/auth.service.js";
 import { FlashMessageManager } from "./utils/FlashMessageManager.js";
 import { LanguageManager } from "./utils/LanguageManager.js";
@@ -35,6 +37,8 @@ export default class Router {
             { path: "/faq", view: FaqView, requiresAuth: false },
             { path: "/support", view: DonateView, requiresAuth: false },
             { path: "/admin", view: AdminView, requiresAuth: true },
+            { path: "/social", view: SocialView, requiresAuth: true },
+            { path: "/profile", view: ProfileView, requiresAuth: true },
         ];
 
         window.addEventListener("popstate", () => {

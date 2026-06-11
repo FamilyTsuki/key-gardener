@@ -39,7 +39,7 @@ export default class GameView extends AbstractView {
         this.settingsBtnContainer = el(
             "div",
             { className: "settings-btn-container" },
-            el("span", { className: "settings-btn-text" }, "Paramètres"),
+            el("span", { className: "settings-btn-text" }, LanguageManager.t("settings.title") || "Settings"),
             settingsBtn
         );
         return el(
@@ -110,7 +110,26 @@ export default class GameView extends AbstractView {
      */
     async init() {
         document.body.classList.add("in-game");
-        this.engine = new GameEngine();
+        
+        let startMode = "normal";
+        let startData = null;
+        if (window.location.search.includes("mode=duel")) {
+            if (window.currentDuelData) {
+                startMode = "duel";
+                startData = window.currentDuelData;
+            } else {
+                // If the user refreshed the page, the duel data is lost.
+                // Redirect them to the social page safely.
+                import("../../core/utils/FlashMessageManager.js").then(module => {
+                    module.FlashMessageManager.show("Duel data lost. Please restart the duel.", "error");
+                });
+                history.pushState(null, null, "/social");
+                window.dispatchEvent(new Event('popstate'));
+                return;
+            }
+        }
+
+        this.engine = new GameEngine(startMode, startData);
         await this.engine.init();
 
         this.engine.start();

@@ -295,3 +295,11 @@
         width: 100%;
     }
 }
+
+.save-level-phase {
+    font-size: 0.9em;
+    color: var(--text-color);
+    margin-bottom: 5px;
+    opacity: 0.8;
+}
+

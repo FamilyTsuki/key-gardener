@@ -178,6 +178,7 @@ export const fr = {
             "FLAMME", "ELAN", "ECLAIR", "FONCE", "CHARGE", "ECLAT", "TEMPETE", "BRASIER", "RUGIR", "COEUR"
         ],
         voidTargetWord: "FEU",
+        wordMastery: "MAITRISE DU MOT",
         voidTitle: "DÉTRUISEZ LE VIDE",
         voidDescription: "Tapez le mot pour lancer un sort !",
         doorSequence: ["O", "U", "V", "R", "I", "R"],
@@ -296,7 +297,19 @@ export const fr = {
         keepPost: "Garder",
         destroyPost: "Détruire",
         postKept: "Post approuvé et restauré.",
-        postDestroyed: "Post supprimé."
+        postDestroyed: "Post supprimé.",
+        saveSuccess: "Niveau sauvegardé avec succès !",
+        deleteSuccess: "Niveau supprimé avec succès !",
+        errorPrefix: "Erreur : ",
+        invalidJsonFormat: "Format JSON invalide. Un tableau est attendu.",
+        confirmImportMsg: "Voulez-vous écraser et importer les {count} niveaux ?",
+        errorReadJson: "Erreur lors de la lecture du fichier JSON.",
+        importSuccessMsg: "Import réussi ({success}/{total})",
+        postLabel: "Post",
+        postBy: "Post #{id} par {username}",
+        reportsCount: "{count} signalement(s)",
+        errorApprovePost: "Erreur lors de l'approbation du post",
+        errorDeletePost: "Erreur lors de la suppression du post"
     },
     settings: {
         title: "Paramètres",
@@ -336,6 +349,58 @@ export const fr = {
         ctaTitle: "Envie de participer ?",
         ctaDesc: "Il n'y a aucune obligation, mais si vous souhaitez soutenir financièrement le projet, vous pouvez faire un petit don (l'équivalent du prix d'un café) via Ko-fi. Merci infiniment pour votre soutien, financier ou simplement en jouant au jeu !",
         submit: "Soutenir le projet (Ko-fi)"
+    },
+    
+    // SocialView
+    social: {
+        title: "Amis & Duels",
+        addFriendTitle: "Ajouter un ami",
+        usernamePlaceholder: "Nom d'utilisateur...",
+        searchBtn: "Rechercher",
+        addBtn: "Ajouter",
+        noFriendsYet: "Vous n'avez pas encore d'amis.",
+        pendingRequests: "Demandes en attente",
+        myFriends: "Mes Amis",
+        acceptBtn: "Accepter",
+        pendingStatus: "En attente...",
+        duelBtn: "Duel !",
+        friendRequestSent: "Demande d'ami envoyée !",
+        friendRequestAccepted: "Demande d'ami acceptée !",
+        errorSendingRequest: "Erreur lors de l'envoi de la demande",
+        errorAcceptingRequest: "Erreur lors de l'acceptation de la demande",
+        duelInvitationSent: "Invitation au duel envoyée...",
+        duelStarting: "Le duel commence !",
+        duelDeclined: "a refusé votre duel.",
+        duelPrompt: "Invitation de duel de {user}. Accepter ?",
+        profileTitle: "Profil de {user}",
+        removeFriendBtn: "Retirer l'ami",
+        removeFriendConfirm: "Êtes-vous sûr de vouloir retirer cet ami ?",
+        friendRemoved: "Ami retiré avec succès.",
+        errorRemovingFriend: "Erreur lors de la suppression de l'ami.",
+        sentBtn: "Envoyé !",
+        waitingBtn: "En attente...",
+        closeBtn: "Fermer",
+        acceptDuel: "Accepter le Duel",
+        declineDuel: "Décliner"
+    },
+    duel: {
+        spellsTitle: "Sorts",
+        defensesTitle: "Boucliers Requis",
+        noProjectiles: "Aucun projectile en approche.",
+        jailedTitle: "PRISONNIER !",
+        jailedSubtitle: "Tapez pour casser la cage :",
+        victory: "Vous avez gagné le duel !",
+        defeat: "Vous avez perdu...",
+        spellLight: "Attaque Légère",
+        spellHeavy: "Attaque Lourde",
+        spellStun: "Foudre",
+        spellHeal: "Soin",
+        spellJail: "Prison",
+        spellSlow: "Ralentissement",
+        spellDefault: "Sort",
+        labelLight: "Léger",
+        labelHeavy: "Lourd",
+        labelRandom: "Aléatoire"
     }
 };
 

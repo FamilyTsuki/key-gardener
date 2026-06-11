@@ -6,8 +6,7 @@ import { LanguageManager } from "../../core/utils/LanguageManager.js";
  */
 export default class DonateView {
     constructor() {
-        this.container = document.createElement("div");
-        this.container.classList.add("view-container", "donate-container");
+        this.container = el("div", { className: "view-container donate-container" });
     }
 
     /**

@@ -13,6 +13,9 @@ const postsRoutes = require("./src/routes/posts.routes");
 const savesRoutes = require("./src/routes/saves.routes");
 const levelsRoutes = require("./src/routes/levels.routes");
 const statisticsRoutes = require("./src/routes/statistics.routes");
+const friendsRoutes = require("./src/routes/friends.routes");
+const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -65,6 +68,7 @@ app.use("/api/posts", postsRoutes);
 app.use("/api/saves", savesRoutes);
 app.use("/api/levels", levelsRoutes);
 app.use("/api/stats", statisticsRoutes);
+app.use("/api/friends", friendsRoutes);
 
 app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "OK", message: "API is running securely" });
@@ -118,7 +122,14 @@ const startServer = async () => {
 
 
 
-        app.listen(port, () => {
+        const server = http.createServer(app);
+        const io = new Server(server, {
+            cors: { origin: "*", methods: ["GET", "POST"] }
+        });
+
+        require('./src/sockets/socketManager')(io);
+
+        server.listen(port, () => {
             console.log(
                 `🚀 [BACKEND] Secure Server listening on port ${port}.`
             );

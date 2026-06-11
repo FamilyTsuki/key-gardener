@@ -663,3 +663,16 @@
         max-height: 250px;
     }
 }
+
+.refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hub-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+

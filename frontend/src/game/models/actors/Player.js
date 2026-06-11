@@ -168,7 +168,9 @@ export default class Player extends Actor {
         const hudEl = document.getElementById("player-hud");
         if (hudEl) hudEl.style.display = "none";
         
-        super.destroy();
+        if (typeof super.destroy === "function") {
+            super.destroy();
+        }
     }
 
     /**
@@ -383,6 +385,12 @@ export default class Player extends Actor {
                     const maxTilt = Math.min(jumpDistance * 0.1, 0.6);
                     
                     this.playerModel.rotation.x = Math.sin(this.movementProgress * Math.PI) * maxTilt; 
+
+                    const speedFactor = 15 / this.movementDuration;
+                    const maxStretchZ = Math.max(1, speedFactor * 0.6);
+                    const stretchFactor = 1 + (maxStretchZ - 1) * Math.sin(this.movementProgress * Math.PI);
+                    const shrinkFactor = 1.95 / Math.sqrt(stretchFactor);
+                    this.playerModel.scale.set(shrinkFactor, shrinkFactor, 1.95 * stretchFactor);
                 } else {
                     this.playerModel.position.y = 0;
                     this.playerModel.rotation.x = 0;

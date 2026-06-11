@@ -419,3 +419,209 @@
         display: none !important;
     }
 }
+
+#duel-announcer-container {
+    position: fixed;
+    top: 110px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.spell-announcement {
+    font-family: var(--font-main), sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-transform: none;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    backdrop-filter: none;
+    transition: all 0.3s ease;
+}
+
+
+/* =============== DUEL UI STYLING =============== */
+.duel-hp-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.duel-hud-panel {
+    min-width: 180px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(10, 12, 16, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.duel-hud-panel-right {
+    text-align: right;
+    align-items: flex-end;
+}
+
+.duel-hud-name {
+    font-weight: bold;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+}
+
+.duel-hud-name-local {
+    color: #00ffff;
+}
+
+.duel-hud-name-remote {
+    color: #ff00ff;
+}
+
+.duel-hud-bar {
+    width: 100%;
+    height: 10px;
+    background: #222;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #444;
+}
+
+.duel-hud-fill {
+    height: 100%;
+    width: 100%;
+    transition: width 0.3s ease-out;
+}
+
+.duel-hud-fill-local {
+    background: linear-gradient(90deg, #00ffff, #0088ff);
+}
+
+.duel-hud-fill-remote {
+    background: linear-gradient(90deg, #ff00ff, #aa00aa);
+}
+
+.duel-hud-hp {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.duel-spells-ui {
+    position: fixed;
+    top: auto;
+    left: auto;
+    bottom: 40px;
+    right: 40px;
+    padding: 16px 24px;
+    background: rgba(10, 12, 16, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    min-width: 320px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+.duel-defenses-ui {
+    position: absolute;
+    right: 20px;
+    top: 150px;
+    min-width: 250px;
+}
+
+.duel-defense-block {
+    margin-bottom: 10px;
+    font-size: 22px;
+    background: rgba(255, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 0, 0, 0.5);
+}
+
+
+.jail-ui {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 68, 0, 0.55);
+    border: 3px solid #ff4400;
+    padding: 20px 40px;
+    border-radius: 12px;
+    z-index: 10000;
+    font-family: monospace;
+    font-size: 32px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 0 30px #ff4400;
+}
+
+.duel-spells-title {
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
+    margin: 0 0 10px 0;
+    font-size: 26px;
+}
+
+.duel-spells-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.duel-spell-item {
+    margin-bottom: 8px;
+    font-size: 28px;
+    color: #aaa;
+}
+
+.duel-spell-cooldown {
+    color: #64748b;
+}
+
+.duel-spell-char-match {
+    color: #00ff00;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+.duel-spell-char-error {
+    color: red;
+    text-shadow: 0 0 5px red;
+}
+
+.duel-spell-char-normal {
+    color: #fff;
+}
+
+.duel-defenses-title {
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+}
+
+.duel-no-incoming {
+    color: #aaa;
+    font-style: italic;
+}
+
+.jail-subtitle {
+    font-size: 18px;
+    color: #ccc;
+}
+
+.jail-word {
+    letter-spacing: 4px;
+    font-weight: bold;
+}
+

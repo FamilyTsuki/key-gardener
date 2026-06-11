@@ -3,6 +3,7 @@ import { WorldPhase } from "../phases/WorldPhase.js";
 import { IntroPhase } from "../phases/IntroPhase.js";
 import { SurvivePhase } from "../phases/SurvivePhase.js";
 import { InfiniteVoidPhase } from "../phases/InfiniteVoidPhase.js";
+import { DuelPhase } from "../phases/DuelPhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
 import { HoleEvent } from "../events/HoleEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
@@ -19,8 +20,12 @@ import { AuthService } from "../../core/services/auth.service.js";
 export class GameEngine {
     /**
      * Creates an instance of GameEngine.
+     * @param {string} startMode - 'normal' or 'duel'
+     * @param {Object} startData - duel data if mode is 'duel'
      */
-    constructor() {
+    constructor(startMode = "normal", startData = null) {
+        this.startMode = startMode;
+        this.startData = startData;
         this.canvas = document.getElementById("game-canvas");
         if (!this.canvas) {
             throw new Error("Canvas element #game-canvas not found.");
@@ -75,6 +80,11 @@ export class GameEngine {
      * @returns {Promise<void>}
      */
     async init() {
+        if (this.startMode === "duel") {
+            await this.setPhase(new DuelPhase(this, this.startData));
+            return;
+        }
+
         let initialPhaseName = "intro";
         try {
             const savedData = localStorage.getItem("activeSaveData");

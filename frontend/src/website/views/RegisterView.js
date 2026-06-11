@@ -3,6 +3,7 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import SocketService from "../../core/services/SocketService.js";
 
 /**
  * View for registering a new user account.
@@ -50,6 +51,8 @@ export default class RegisterView extends AbstractView {
             try {
                 await AuthService.register(username, email, password);
                 
+                SocketService.registerUser();
+
                 const Navbar = (await import("../components/Navbar.js")).default;
                 Navbar.render();
                 

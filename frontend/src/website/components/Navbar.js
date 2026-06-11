@@ -43,6 +43,7 @@ export default class Navbar {
 
         const homeLink = el("a", { href: "/", dataset: { link: true } }, LanguageManager.t("nav.home"));
         const hubLink = el("a", { href: "/hub", dataset: { link: true } }, LanguageManager.t("nav.communityHub"));
+        const socialLink = AuthService.isAuthenticated() ? el("a", { href: "/social", dataset: { link: true } }, LanguageManager.t("social.title") || "Friends & Duels") : null;
         const sep1 = el("span", { className: "nav-separator" }, "|");
         const sep2 = saveComponent ? el("span", { className: "nav-separator" }, "|") : null;
         this.adminLink = null;
@@ -52,6 +53,10 @@ export default class Navbar {
             homeLink, sep1, hubLink
         ];
         
+        if (socialLink) {
+            navPageChildren.push(el("span", { className: "nav-separator" }, "|"), socialLink);
+        }
+
         if (saveComponent) {
             navPageChildren.push(sep2, saveComponent);
         }

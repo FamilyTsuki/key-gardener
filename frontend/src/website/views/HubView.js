@@ -62,11 +62,10 @@ export default class HubView extends AbstractView {
 
         this.refreshBtn = el("button", {
             className: "sort-btn refresh-btn",
-            style: "display: flex; align-items: center; gap: 8px;",
             onclick: () => this.handleRefresh()
         }, refreshIcon, el("span", {}, LanguageManager.t("hub.refresh")));
 
-        const rightControls = el("div", { style: "display: flex; align-items: center; gap: 10px;" },
+        const rightControls = el("div", { className: "hub-right-controls" },
             this.refreshBtn
         );
 

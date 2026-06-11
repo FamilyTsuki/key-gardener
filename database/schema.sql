@@ -1,5 +1,3 @@
-CREATE DATABASE keyboard_survivor;
-
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -13,6 +11,15 @@ CREATE TABLE IF NOT EXISTS users (
     reset_code_expires_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+    id SERIAL PRIMARY KEY,
+    user_id_1 INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    user_id_2 INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id_1, user_id_2)
 );
 
 CREATE TABLE IF NOT EXISTS saves (

@@ -139,13 +139,11 @@ export class DoorEvent extends WorldEvent {
             wallTexture.wrapS = THREE.RepeatWrapping;
             wallTexture.wrapT = THREE.RepeatWrapping;
             wallTexture.repeat.set(5, 4);
-            wallTexture.needsUpdate = true;
 
             tunnelTexture = stoneTexture.clone();
             tunnelTexture.wrapS = THREE.RepeatWrapping;
             tunnelTexture.wrapT = THREE.RepeatWrapping;
             tunnelTexture.repeat.set(1, 2);
-            tunnelTexture.needsUpdate = true;
         }
 
 

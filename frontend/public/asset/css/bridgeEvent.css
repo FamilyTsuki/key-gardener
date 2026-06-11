@@ -102,9 +102,9 @@
 }
 .jump-gauge-container.full {
     border-color: #f1c40f;
-    animation: pulse-glow 1.2s infinite alternate;
+    animation: gauge-pulse-glow 1.2s infinite alternate;
 }
-@keyframes pulse-glow {
+@keyframes gauge-pulse-glow {
     0% {
         box-shadow: 0 0 5px rgba(241, 196, 15, 0.4);
     }

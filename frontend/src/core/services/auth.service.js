@@ -48,6 +48,10 @@ export class AuthService {
         if (data.token) {
             localStorage.setItem("authToken", data.token);
         }
+        if (data.user) {
+            localStorage.setItem("username", data.user.username);
+            localStorage.setItem("userId", data.user.id);
+        }
 
         return data;
     }
@@ -70,6 +74,10 @@ export class AuthService {
         if (data.token) {
             localStorage.setItem("authToken", data.token);
         }
+        if (data.user) {
+            localStorage.setItem("username", data.user.username);
+            localStorage.setItem("userId", data.user.id);
+        }
 
         return data;
     }
@@ -79,6 +87,8 @@ export class AuthService {
      */
     static logout() {
         localStorage.removeItem("authToken");
+        localStorage.removeItem("username");
+        localStorage.removeItem("userId");
     }
 
     /**
@@ -117,6 +127,10 @@ export class AuthService {
         });
 
         const data = await this.handleResponse(response, "Failed to get user data");
+        if (data.user) {
+            localStorage.setItem("username", data.user.username);
+            localStorage.setItem("userId", data.user.id);
+        }
         return data.user;
     }
 
@@ -167,7 +181,11 @@ export class AuthService {
             body: JSON.stringify({ newUsername }),
         });
 
-        return this.handleResponse(response, "Failed to update username");
+        const data = await this.handleResponse(response, "Failed to update username");
+        if (data.success) {
+            localStorage.setItem("username", newUsername);
+        }
+        return data;
     }
 
     /**
