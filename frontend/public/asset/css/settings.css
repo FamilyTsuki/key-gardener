@@ -42,10 +42,10 @@
     width: 40px;
     height: 40px;
     object-fit: contain;
-    filter: drop-shadow(2px 0 0 black) 
-            drop-shadow(0 2px 0 black) 
-            drop-shadow(-2px 0 0 black) 
-            drop-shadow(0 -2px 0 black);
+    filter: drop-shadow(2px 0 0 white) 
+            drop-shadow(0 2px 0 white) 
+            drop-shadow(-2px 0 0 white) 
+            drop-shadow(0 -2px 0 white);
 }
 
 .settings-modal-overlay {
@@ -149,9 +149,7 @@ body[data-theme="light"] .settings-btn-text {
     text-shadow: none !important;
 }
 
-body[data-theme="light"] .settings-icon {
-    filter: none !important;
-}
+
 
 .settings-compact-select {
     flex: 2;

@@ -230,10 +230,6 @@ export default class Enemies {
         
         
         let position = keyObject.rawPosition;
-        // Pour les futures intégrations avec tileDistance dans SurvivePhase si nécessaire.
-        // if (options.tileDistance !== undefined && options.tileDistance > 0) {
-        //    // logic for distance
-        // }
 
         const enemy = new Enemy(
             type,

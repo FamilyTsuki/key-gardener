@@ -88,6 +88,8 @@ export default class Player extends Actor {
         );
         this.mesh.rotation.set(0, initialAngle, 0);
 
+        this.updatePosition();
+
         this.fireballModel = fireballModel;
         this.playerModel = null;
 
@@ -370,10 +372,7 @@ export default class Player extends Actor {
         }
 
         if (this.mesh) {
-            const worldCurrentX = this.x * this.spacingX + this.offsetX;
-            const worldCurrentZ = this.y * this.spacingZ + this.offsetZ;
-
-            this.mesh.position.set(worldCurrentX, this.offsetY, worldCurrentZ);
+            this.updatePosition();
 
             if (this.playerModel) {
                 if (this.isMoving) {
@@ -414,6 +413,18 @@ export default class Player extends Actor {
             }
         }
     }
+
+    /**
+     * Updates the mesh's physical position in the 3D world based on current logical coordinates.
+     */
+    updatePosition() {
+        if (this.mesh) {
+            const worldCurrentX = this.x * this.spacingX + this.offsetX;
+            const worldCurrentZ = this.y * this.spacingZ + this.offsetZ;
+            this.mesh.position.set(worldCurrentX, this.offsetY, worldCurrentZ);
+        }
+    }
+
     /**
      * Applies a procedural crouch animation to the player rig.
      * @param {number} percentage - From 0.0 (standing) to 1.0 (fully crouched)
@@ -459,7 +470,7 @@ export default class Player extends Actor {
                 detail: {
                     position: this.mesh.position,
                     text: `-${Math.round(amount)}`,
-                    type: "damage"
+                    type: "damage-taken"
                 }
             }));
         }

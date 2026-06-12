@@ -47,6 +47,9 @@ export class SurvivePhase extends GamePhase {
 
     async init() {
         const scene = this.gameEngine.scene;
+        
+        this.gameEngine.camera.position.set(15, 18, 7);
+        this.gameEngine.camera.lookAt(15, 0, 3);
 
         this.worldGroupPivot = new THREE.Group();
         this.worldGroupPivot.position.set(16, 0, 3.2);
@@ -82,6 +85,8 @@ export class SurvivePhase extends GamePhase {
             this.gameEngine.stats
         );
         this.player.offsetY = 0.225;
+        this.player.updatePosition();
+
         this.lastPlayerKey = "A";
         this.elCurrentWord = document.getElementById("currentWord");
         document

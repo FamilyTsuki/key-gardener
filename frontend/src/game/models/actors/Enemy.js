@@ -163,7 +163,6 @@ export default class Enemy extends Actor {
     takeDamage(nb) {
         this.hp -= nb;
 
-        // Spawn floating damage text
         if (this.mesh && this.mesh.position) {
             window.dispatchEvent(new CustomEvent("spawn_floating_text", {
                 detail: {
@@ -190,18 +189,7 @@ export default class Enemy extends Actor {
         if (!player) {
             throw new Error("No player !");
         }
-        player.hp -= this.#damage;
-        
-        // Spawn floating damage text over player
-        if (player.mesh && player.mesh.position) {
-            window.dispatchEvent(new CustomEvent("spawn_floating_text", {
-                detail: {
-                    position: player.mesh.position,
-                    text: `-${Math.round(this.#damage)}`,
-                    type: "damage"
-                }
-            }));
-        }
+        player.damage(this.#damage, "L'ennemi t'a dévoré");
     }
 
     /**

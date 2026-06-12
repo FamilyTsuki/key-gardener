@@ -20,6 +20,17 @@ export default class GameView extends AbstractView {
         super(params);
         this.setTitle("Game - Keyboard Survivor");
         this.engine = null;
+        
+        this.handleEscapeKey = (e) => {
+            if (e.key === "Escape") {
+                if (this.settingsModal) {
+                    this.settingsModal.close();
+                } else {
+                    this.openSettings();
+                }
+            }
+        };
+        window.addEventListener("keydown", this.handleEscapeKey);
     }
 
     /**
@@ -118,8 +129,6 @@ export default class GameView extends AbstractView {
                 startMode = "duel";
                 startData = window.currentDuelData;
             } else {
-                // If the user refreshed the page, the duel data is lost.
-                // Redirect them to the social page safely.
                 import("../../core/utils/FlashMessageManager.js").then(module => {
                     module.FlashMessageManager.show("Duel data lost. Please restart the duel.", "error");
                 });
@@ -209,6 +218,8 @@ export default class GameView extends AbstractView {
      */
     destroy() {
         document.body.classList.remove("in-game");
+        window.removeEventListener("keydown", this.handleEscapeKey);
+        
         if (this.settingsModal) {
             this.settingsModal.close();
             this.settingsModal = null;
