@@ -9,7 +9,8 @@ export default class LegalView extends AbstractView {
     constructor(params) {
         super(params);
         this.setTitle(LanguageManager.t("legal.title") || "Legal Information");
-        this.currentTab = "notice"; // 'notice', 'privacy', 'terms'
+        this.setMetaDescription(LanguageManager.t("legal.description"));
+        this.currentTab = "notice";
     }
 
     async render() {
@@ -42,8 +43,6 @@ export default class LegalView extends AbstractView {
             if (tabName === "notice") noticeSection.classList.add("active");
             if (tabName === "privacy") privacySection.classList.add("active");
             if (tabName === "terms") termsSection.classList.add("active");
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         noticeBtn.addEventListener("click", () => switchTab("notice"));

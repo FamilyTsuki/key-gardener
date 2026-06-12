@@ -409,12 +409,13 @@ export const en = {
     },
     legal: {
         title: "Legal Information",
+        description: "Read the legal information, privacy policy, and terms of service for Keyboard Survivor.",
         legalNoticeTab: "Legal Notice",
         privacyTab: "Privacy Policy",
         termsTab: "Terms of Service",
         
         legalNoticeTitle: "Legal Notice",
-        legalNoticeContent: "<h3>Publisher</h3><p>This website is published by [Your Name or Company Name], registered under the number [Number] at the [City] trade register. Head office: [Address].</p><h3>Hosting</h3><p>This website is hosted by [Host Name], [Host Address].</p><h3>Intellectual Property</h3><p>All content on this site is protected by intellectual property laws. Keyboard Survivor and its assets are the property of their respective creators.</p>",
+        legalNoticeContent: "<h3>Publisher</h3><p>This website is published for personal purposes by Alban Elie, residing near Orléans, France.</p><h3>Hosting</h3><p>This website is self-hosted for personal purposes on a private server (Raspberry Pi) at the publisher's residence.</p><h3>Intellectual Property</h3><p>All content on this site is protected by intellectual property laws. Keyboard Survivor and its assets are the property of their respective creators.</p>",
 
         privacyTitle: "Privacy Policy",
         privacyContent: "<h3>Data Collection</h3><p>We collect your email address, username, and game statistics when you register. This data is strictly used to provide the service, save your progress, and manage leaderboards.</p><h3>Cookies</h3><p>We only use essential cookies (e.g., for session management and authentication). No third-party tracking cookies are used without your consent.</p><h3>Your Rights</h3><p>According to the GDPR, you have the right to access, rectify, or delete your personal data. You can exercise these rights by contacting us at info@keyboard-survivor.com.</p>",
