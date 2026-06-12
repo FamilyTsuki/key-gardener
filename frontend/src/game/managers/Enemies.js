@@ -1,10 +1,10 @@
-import { GLTFLoader } from "three/examples/jsm/Addons.js";
+import ModelLoader from "../../core/utils/ModelLoader.js";
 import NodeAStar from "../utilities/NodeAStar.js";
 import Boss from "../models/actors/Boss.js";
 import Enemy from "../models/actors/Enemy.js";
 import findBestPath from "../utilities/aStar.js";
 
-const loader = new GLTFLoader();
+
 
 /**
  * Manages the collection of enemies, their pathfinding, and behavior.
@@ -260,10 +260,7 @@ export default class Enemies {
     async spawnBoss(scene) {
         const bossRawPosition = { x: 5, y: -2 };
 
-        const bossModel = await loader.loadAsync(
-            "/asset/game_assets/models/yameter.glb",
-            (bossGltf) => bossGltf
-        );
+        const bossModel = await ModelLoader.loadAsync("/asset/game_assets/models/yameter.glb");
 
         this.#boss = new Boss(
             "Octopus",

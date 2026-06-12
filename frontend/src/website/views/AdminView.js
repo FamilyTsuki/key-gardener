@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { SurviveDecorBuilder } from "../../game/utilities/SurviveDecorBuilder.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../core/utils/ModelLoader.js";
 import Keyboard from "../../game/managers/Keyboard.js";
 import { KEYBOARD_LAYOUT } from "../../game/utilities/KEYBOARD.js";
 import WorldMap from "../../game/managers/WorldMap.js";
@@ -574,8 +574,7 @@ export class AdminView {
         let playerMesh = null;
         let targetPlayerPos = new THREE.Vector3(15, 1.35, 3);
 
-        const loader = new GLTFLoader();
-        loader.load("/asset/game_assets/models/player.glb", (gltf) => {
+        ModelLoader.load("/asset/game_assets/models/player.glb", (gltf) => {
             playerMesh = gltf.scene;
             playerMesh.scale.set(1.7, 1.7, 1.7);
             playerMesh.position.copy(targetPlayerPos);

@@ -1,6 +1,6 @@
 import Actor from "../Actor.js";
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../../core/utils/ModelLoader.js";
 import { AudioManager } from "../../managers/AudioManager.js";
 /**
  * Enemy class representing an adversary in the game.
@@ -85,8 +85,7 @@ export default class Enemy extends Actor {
         const bugTexture = textureLoader.load("/asset/game_assets/textures/bug.webp");
         bugTexture.flipY = false;
         bugTexture.colorSpace = THREE.SRGBColorSpace;
-        const loader = new GLTFLoader();
-        loader.load("/asset/game_assets/models/bug.glb", (gltf) => {
+        ModelLoader.load("/asset/game_assets/models/bug.glb", (gltf) => {
             this.model = gltf.scene;
             this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
 

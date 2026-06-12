@@ -1,7 +1,7 @@
 import * as THREE from "/node_modules/three/build/three.module.js";
 import { gsap } from "/node_modules/gsap/index.js";
 import { ScrollTrigger } from "/node_modules/gsap/ScrollTrigger.js";
-import { GLTFLoader } from "/node_modules/three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../core/utils/ModelLoader.js";
 import { applyTriplanarMapping } from '../../game/utilities/TextureUtils.js';
 import { GLTFExporter } from '/node_modules/three/examples/jsm/exporters/GLTFExporter.js';
 
@@ -102,7 +102,7 @@ export class CaveAnimation {
 
     loadModels() {
         return new Promise((resolve) => {
-            const gltfLoader = new GLTFLoader();
+
             let loadedAssetCount = 0;
             const totalAssetsToLoad = 4;
 
@@ -113,7 +113,7 @@ export class CaveAnimation {
                 }
             };
             
-            gltfLoader.load('/asset/game_assets/models/bone.glb', (gltf) => {
+            ModelLoader.load('/asset/game_assets/models/bone.glb', (gltf) => {
                 const boneModel = gltf.scene;
                 
                 for (let index = 0; index < 20; index++) { 
@@ -156,7 +156,7 @@ export class CaveAnimation {
                 verifyLoadingStatus();
             });
             
-            gltfLoader.load('/asset/game_assets/models/player.glb', (gltf) => {
+            ModelLoader.load('/asset/game_assets/models/player.glb', (gltf) => {
                 const playerMesh = gltf.scene;
                 
                 const absoluteHolePos = this.config.holePosition.clone();
@@ -272,7 +272,7 @@ export class CaveAnimation {
                 verifyLoadingStatus();
             });
             
-            gltfLoader.load('/asset/game_assets/models/bug.glb', (gltf) => {
+            ModelLoader.load('/asset/game_assets/models/bug.glb', (gltf) => {
                 const bugMeshObject = gltf.scene;
                 bugMeshObject.scale.set(12, 12, 12);
                 
@@ -361,7 +361,7 @@ export class CaveAnimation {
                 verifyLoadingStatus();
             });
             
-            gltfLoader.load('/asset/game_assets/models/black_hole.glb', (gltf) => {
+            ModelLoader.load('/asset/game_assets/models/black_hole.glb', (gltf) => {
                 this.blackHoleObject = gltf.scene;
                 
                 this.blackHoleObject.scale.set(1000, 1000, 1000);

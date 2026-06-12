@@ -1,5 +1,5 @@
 import * as THREE from "/node_modules/three/build/three.module.js";
-import { GLTFLoader } from "/node_modules/three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../core/utils/ModelLoader.js";
 
 export class BlackHoleAnimation {
     constructor(containerElement) {
@@ -102,8 +102,7 @@ export class BlackHoleAnimation {
 
     loadBlackHole() {
         return new Promise((resolve) => {
-            const gltfLoader = new GLTFLoader();
-            gltfLoader.load('/asset/game_assets/models/black_hole.glb', (gltf) => {
+            ModelLoader.load('/asset/game_assets/models/black_hole.glb', (gltf) => {
                 this.blackHoleObject = gltf.scene;
                 
                 this.blackHoleObject.scale.set(1000, 1000, 1000);

@@ -1,6 +1,6 @@
 import { GamePhase } from "./GamePhase.js";
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../core/utils/ModelLoader.js";
 import Enemies from "../managers/Enemies.js";
 import Keyboard from "../managers/Keyboard.js";
 import Player from "../models/actors/Player.js";
@@ -9,7 +9,7 @@ import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
 import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
 
-const loader = new GLTFLoader();
+
 
 export class SurvivePhase extends GamePhase {
     constructor(gameEngine, options = {}) {
@@ -58,8 +58,8 @@ export class SurvivePhase extends GamePhase {
 
         this.keyboard = Keyboard.init(this.worldGroup, KEYBOARD_LAYOUT, this.decorType);
 
-        const enemyGltf = await loader.loadAsync("/asset/game_assets/models/bug.glb");
-        const fireballGltf = await loader.loadAsync(
+        const enemyGltf = await ModelLoader.loadAsync("/asset/game_assets/models/bug.glb");
+        const fireballGltf = await ModelLoader.loadAsync(
             "/asset/game_assets/models/fireball.glb"
         );
 

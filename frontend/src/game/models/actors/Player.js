@@ -1,7 +1,7 @@
 import Actor from "../Actor.js";
 import Undefined from "../spells/Undefined.js";
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../../core/utils/ModelLoader.js";
 import ProjectileLuncher from "../spells/ProjectileLuncher.js";
 import HealSpell from "../spells/HealSpells.js";
 import FireCircle from "../spells/FireCircle.js";
@@ -93,8 +93,7 @@ export default class Player extends Actor {
 
 
 
-        const loader = new GLTFLoader();
-        this.loadPromise = loader.loadAsync("/asset/game_assets/models/player.glb").then((gltf) => {
+        this.loadPromise = ModelLoader.loadAsync("/asset/game_assets/models/player.glb").then((gltf) => {
             const rawModel = gltf.scene;
             
             const box = new THREE.Box3().setFromObject(rawModel);

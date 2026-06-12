@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../../core/utils/ModelLoader.js";
 
 export class VoidCreature {
     constructor(scene, playerPosition) {
@@ -14,9 +14,8 @@ export class VoidCreature {
     }
 
     async init() {
-        const loader = new GLTFLoader();
         try {
-            const gltf = await loader.loadAsync("/asset/game_assets/models/bug.glb");
+            const gltf = await ModelLoader.loadAsync("/asset/game_assets/models/bug.glb");
             this.model = gltf.scene;
             
             this.model.scale.set(2.8, 2.8, 2.8);

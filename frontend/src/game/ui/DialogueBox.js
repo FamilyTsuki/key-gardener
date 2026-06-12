@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../core/utils/ModelLoader.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
@@ -138,8 +138,7 @@ export class DialogueBox {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.speakerContainer.appendChild(this.renderer.domElement);
 
-        const loader = new GLTFLoader();
-        loader.load(modelPath, (gltf) => {
+        ModelLoader.load(modelPath, (gltf) => {
             this.model = gltf.scene;
             
             this.model.position.set(0, 1.5, 0);

@@ -8,13 +8,15 @@ class SocketService {
         if (this.socket) return;
         
         if (typeof io !== 'undefined') {
-            this.socket = io();
-            
-            this.socket.on('connect', () => {
-                this.registerUser();
+            const token = localStorage.getItem('authToken');
+            if (!token) return;
+
+            this.socket = io({
+                auth: { token }
             });
 
-            this.socket.on('disconnect', () => {
+            this.socket.on('connect_error', (err) => {
+                console.error("Socket connection error:", err.message);
             });
 
             for (const [event, callbacks] of this.listeners.entries()) {
@@ -24,21 +26,6 @@ class SocketService {
             }
         } else {
             console.error('Socket.io library not loaded.');
-        }
-    }
-
-    registerUser() {
-        const token = localStorage.getItem('authToken');
-        if (token && this.socket) {
-            fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.user) {
-                        localStorage.setItem('username', data.user.username);
-                        localStorage.setItem('userId', data.user.id);
-                        this.socket.emit('register', { userId: data.user.id, username: data.user.username });
-                    }
-                }).catch(err => console.error('Socket registration error', err));
         }
     }
 

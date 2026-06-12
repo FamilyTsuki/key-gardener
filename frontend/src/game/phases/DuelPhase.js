@@ -1,6 +1,6 @@
 import { GamePhase } from "./GamePhase.js";
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import ModelLoader from "../../core/utils/ModelLoader.js";
 import SocketService from "../../core/services/SocketService.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
@@ -12,7 +12,7 @@ import { gsap } from "/node_modules/gsap/index.js";
 import { LightSpell, HeavySpell, StunSpell, HealSpell, JailSpell, SlowZone } from "../models/spells/DuelSpell.js";
 import { el, clear } from "../../core/utils/DOMBuilder.js";
 
-const loader = new GLTFLoader();
+
 
 export class DuelPhase extends GamePhase {
     /**
@@ -91,7 +91,7 @@ export class DuelPhase extends GamePhase {
 
         this.remoteKeyboard = Keyboard.init(this.remoteKeyboardGroup, KEYBOARD_LAYOUT, "styx");
 
-        this.fireballGltf = await loader.loadAsync("/asset/game_assets/models/fireball.glb");
+        this.fireballGltf = await ModelLoader.loadAsync("/asset/game_assets/models/fireball.glb");
         
         this.localPlayer = new Player(
             this.localData.username,

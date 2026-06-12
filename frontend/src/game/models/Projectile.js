@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 import DamageObject from "./DamageObject.js";
 import { AudioManager } from "../managers/AudioManager.js";
 
