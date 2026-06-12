@@ -69,7 +69,7 @@ export default class DonateView {
             improvementsCard
         );
 
-        const kofiLink = "https://ko-fi.com/";
+        const kofiLink = "https://ko-fi.com/tsuki_dev";
 
         const ctaContainer = el("div", { className: "cta-container" },
             el("h2", { className: "cta-title" }, LanguageManager.t("donate.ctaTitle")),
