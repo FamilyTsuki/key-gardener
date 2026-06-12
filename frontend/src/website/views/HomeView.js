@@ -139,7 +139,7 @@ export default class HomeView extends AbstractView {
                         )
                     )
                 ),
-                                el(
+                el(
                     "footer",
                     { className: "home-footer", role: "contentinfo" },
                     el(
@@ -149,18 +149,17 @@ export default class HomeView extends AbstractView {
                             "div",
                             { className: "footer-column" },
                             el("h3", {}, LanguageManager.t("home.contactUs")),
-                            el("a", { href: "mailto:info@keyboard-survivor.com" }, "info@keyboard-survivor.com")
+                            el("a", { href: `mailto:${window.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com"}` }, window.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com")
                         ),
                         el(
                             "div",
                             { className: "footer-column" },
                             el("h3", {}, LanguageManager.t("home.followUs")),
-                            el("a", { href: "https://www.facebook.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Facebook" }, "Facebook"),
-                            el("a", { href: "https://www.twitter.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Twitter" }, "Twitter"),
-                            el("a", { href: "https://www.instagram.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Instagram" }, "Instagram")
+                            el("a", { href: "https://github.com/FamilyTsuki", target: "_blank", "aria-label": LanguageManager.t("home.followGitHub") }, "GitHub"),
+                            el("a", { href: "https://discord.gg/Mv3MRXmg9P", target: "_blank", "aria-label": LanguageManager.t("home.joinDiscord") }, "Discord")
                         ),
                         el("div", { className: "footer-column" },
-                                el("h3", {}, "Credits"),
+                                el("h3", {}, LanguageManager.t("home.credits") || "Credits"),
                                 el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
                                 el("p", { className: "footer-thx" }, LanguageManager.t("home.thankSupporters"))
                             )

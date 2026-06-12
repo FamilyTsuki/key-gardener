@@ -56,7 +56,7 @@ if (!isProd) {
 
 app.use("/asset/img/users", express.static(path.join(__dirname, "../frontend/public/asset/img/users")));
 
-app.use(express.static(frontendDir));
+app.use(express.static(frontendDir, { index: false }));
 app.use("/src", express.static(srcDir));
 app.use(
     "/node_modules",
@@ -108,6 +108,7 @@ app.get("*", (req, res) => {
         const canonicalUrl = `https://keyboardsurvivor.com${req.path === '/' ? '' : req.path}`;
         htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`);
         htmlData = htmlData.replace("GOOGLE_CLIENT_ID_PLACEHOLDER", process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com");
+        htmlData = htmlData.replace("SUPPORT_EMAIL_PLACEHOLDER", process.env.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com");
         
         res.send(htmlData);
     });

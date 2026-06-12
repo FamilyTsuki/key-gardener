@@ -27,7 +27,7 @@ export default class LegalView extends AbstractView {
         noticeSection.innerHTML = `<h2>${LanguageManager.t("legal.legalNoticeTitle") || "Legal Notice"}</h2>${LanguageManager.t("legal.legalNoticeContent") || ""}`;
 
         const privacySection = el("div", { className: "legal-content-section", id: "sec-privacy" });
-        privacySection.innerHTML = `<h2>${LanguageManager.t("legal.privacyTitle") || "Privacy Policy"}</h2>${LanguageManager.t("legal.privacyContent") || ""}`;
+        privacySection.innerHTML = `<h2>${LanguageManager.t("legal.privacyTitle") || "Privacy Policy"}</h2>${LanguageManager.t("legal.privacyContent", { email: window.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com" }) || ""}`;
 
         const termsSection = el("div", { className: "legal-content-section", id: "sec-terms" });
         termsSection.innerHTML = `<h2>${LanguageManager.t("legal.termsTitle") || "Terms of Service"}</h2>${LanguageManager.t("legal.termsContent") || ""}`;
