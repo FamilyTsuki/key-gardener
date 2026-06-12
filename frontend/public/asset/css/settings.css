@@ -158,3 +158,11 @@
     background: var(--danger-color);
     color: var(--bg-color);
 }
+
+body[data-theme="light"] .settings-btn-text {
+    text-shadow: none !important;
+}
+
+body[data-theme="light"] .settings-icon {
+    filter: none !important;
+}

@@ -89,3 +89,17 @@
         gap: 20px;
     }
 }
+
+.home-footer,
+.home-footer .footer-column h3,
+.home-footer .footer-column a,
+.home-footer .footer-thx,
+.home-footer .footer-bottom,
+.home-footer .footer-support-link {
+    color: #e2e8f0 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8) !important;
+}
+
+.home-footer .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}

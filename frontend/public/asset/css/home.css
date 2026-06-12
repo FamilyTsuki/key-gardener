@@ -243,6 +243,7 @@ body {
     margin: 0;
     color: var(--primary-color);
     line-height: 1.1;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
 }
 
 h2.home-title {
@@ -275,7 +276,8 @@ h2.home-title {
 .home-description {
     font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 400;
-    color: var(--text-color);
+    color: #e2e8f0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .home-presantation-container {
@@ -324,7 +326,8 @@ h2.home-title {
 .home-info {
     font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 400;
-    color: var(--text-color);
+    color: #e2e8f0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .hologram-svg-filter {
@@ -337,6 +340,7 @@ h2.home-title {
 .home-feature-title {
     color: var(--primary-color);
     margin-top: 1rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 .home-motivation-container {
@@ -388,42 +392,5 @@ h2.home-title {
 
     .start-btn {
         padding: 8px 16px;
-    }
-}
-
-/* =============== LIGHT MODE OVERRIDES =============== */
-body[data-theme="light"] .home-presantation-container,
-body[data-theme="light"] .home-info-container,
-body[data-theme="light"] .home-motivation-container,
-body[data-theme="light"] .home-footer {
-    background: var(--dark-overlay-dense);
-    padding: 2rem;
-    border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--card-border);
-    box-sizing: border-box;
-}
-
-body[data-theme="light"] .home-motivation-container {
-    width: 65vw;
-}
-
-body[data-theme="light"] .home-footer {
-    margin: 10vh 5vw 20px 5vw;
-    padding: 40px 2vw 20px 2vw;
-    width: auto;
-}
-
-@media (max-width: 768px) {
-    body[data-theme="light"] .home-presantation-container,
-    body[data-theme="light"] .home-info-container,
-    body[data-theme="light"] .home-motivation-container {
-        width: 90vw;
-        padding: 1.5rem;
-    }
-    
-    body[data-theme="light"] .home-footer {
-        margin: 5vh 5vw 20px 5vw;
     }
 }
