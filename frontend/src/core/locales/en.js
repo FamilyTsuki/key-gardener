@@ -89,7 +89,7 @@ export const en = {
         sortComments: "Most Commented",
         refresh: "Refresh",
         postsTab: "Feed",
-        socialTab: "Friends & Duels",
+        socialTab: "Friends",
         report: "Report",
         reportPrompt: "Please provide a reason for reporting:",
         reportSuccess: "Post reported successfully.",
@@ -356,7 +356,7 @@ export const en = {
     
     // SocialView
     social: {
-        title: "Friends & Duels",
+        title: "Friends",
         addFriendTitle: "Add a friend",
         usernamePlaceholder: "Username...",
         searchBtn: "Search",

@@ -1,4 +1,4 @@
-/* Container styling */
+
 .social-view-container {
     max-width: 800px;
     margin: 40px auto;
@@ -6,7 +6,6 @@
     color: var(--text-color);
 }
 
-/* Title styling */
 .social-title {
     font-size: 2.5rem;
     font-weight: 800;
@@ -15,12 +14,10 @@
     margin-bottom: 2rem;
 }
 
-/* Section styling */
 .add-friend-section {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(10px);
     transition: border-color 0.3s ease;
     padding: 25px;
@@ -45,14 +42,12 @@
     padding-bottom: 10px;
 }
 
-/* Search results & Lists */
 .search-results {
     max-height: 300px;
     overflow-y: auto;
     padding-right: 5px;
 }
 
-/* Scrollbar styles for search results */
 .search-results::-webkit-scrollbar {
     width: 6px;
 }
@@ -70,7 +65,6 @@
     background: var(--text-muted);
 }
 
-/* Cards styling */
 .search-result-card, .friend-card {
     display: flex;
     justify-content: space-between;
@@ -90,7 +84,6 @@
     box-shadow: 0 6px 20px rgba(0, 255, 102, 0.05);
 }
 
-/* Avatars styling */
 .avatar-small {
     width: 48px;
     height: 48px;
@@ -101,7 +94,6 @@
     transition: border-color 0.25s ease, transform 0.25s ease;
 }
 
-/* User Info Clickable state */
 .friend-user-info {
     display: flex;
     align-items: center;
@@ -125,7 +117,6 @@
     transition: color 0.2s ease;
 }
 
-/* Button & States styling */
 .btn-small {
     width: auto !important;
     padding: 8px 16px !important;
@@ -187,7 +178,6 @@
     transform: translateY(0);
 }
 
-/* Utility classes */
 .text-muted {
     color: var(--text-muted);
     font-style: italic;
@@ -230,13 +220,13 @@
 
 .card-bg {
     background: var(--card-bg);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.2);
 }
 
 .card-bg-light {
     background: var(--light-overlay);
 }
 
-/* Custom Modals styling */
 .custom-modal-overlay {
     position: fixed;
     top: 0;
@@ -296,7 +286,6 @@
     to { transform: scale(1); opacity: 1; }
 }
 
-/* Responsive adjustments */
 @media (max-width: 600px) {
     .social-view-container {
         padding: 15px;

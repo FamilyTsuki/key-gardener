@@ -89,7 +89,7 @@ export const fr = {
         sortComments: "Plus commentés",
         refresh: "Actualiser",
         postsTab: "Publications",
-        socialTab: "Amis & Duels",
+        socialTab: "Amis",
         report: "Signaler",
         reportPrompt: "Veuillez indiquer la raison du signalement :",
         reportSuccess: "Post signalé avec succès.",
@@ -357,7 +357,7 @@ export const fr = {
     
     // SocialView
     social: {
-        title: "Amis & Duels",
+        title: "Amis",
         addFriendTitle: "Ajouter un ami",
         usernamePlaceholder: "Nom d'utilisateur...",
         searchBtn: "Rechercher",

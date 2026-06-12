@@ -11,12 +11,10 @@ class SocketService {
             this.socket = io();
             
             this.socket.on('connect', () => {
-                console.log('🔌 Connected to Socket.io server');
                 this.registerUser();
             });
 
             this.socket.on('disconnect', () => {
-                console.log('🔌 Disconnected from Socket.io server');
             });
 
             for (const [event, callbacks] of this.listeners.entries()) {

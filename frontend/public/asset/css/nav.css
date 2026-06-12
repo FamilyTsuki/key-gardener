@@ -4,25 +4,28 @@ nav {
     width: 100%;
     z-index: 10;
     display: flex;
-    height: 10dvh;
+    flex-wrap: wrap;
+    min-height: 80px;
+    height: auto;
     background-color: var(--bg-color);
     border-bottom: 1px solid var(--card-border);
-    text-align: center;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
+    padding: 10px clamp(15px, 4vw, 40px);
     font-size: clamp(16px, 2.5vw, 25px);
     font-family: var(--font-main, sans-serif);
     box-sizing: border-box;
+    gap: 15px clamp(20px, 6vw, 80px);
 }
 
 nav a {
     color: var(--primary-color);
     text-decoration: none;
-    margin: 0 clamp(5px, 1.5vw, 15px);
     font-weight: bold;
     border-bottom: 3px solid transparent;
     padding-bottom: 4px;
     white-space: nowrap;
+    transition: border-color 0.2s ease, color 0.2s ease;
 }
 
 nav a:hover {
@@ -36,11 +39,15 @@ nav a.active {
 }
 
 .nav-page {
-    display: inline-block;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px clamp(10px, 2vw, 25px);
 }
 
 .login {
-    padding: 4px 30px;
+    padding: 8px 24px;
     background-color: var(--primary-color);
     color: var(--bg-color);
     border-radius: 15px;
@@ -56,7 +63,7 @@ nav a.active {
 .nav-user {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .nav-user-avatar-container {
@@ -67,25 +74,21 @@ nav a.active {
 }
 
 .nav-user-avatar {
-    width: 50px;
-    height: 50px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     object-fit: cover;
-
     background-color: var(--card-bg);
     cursor: pointer;
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 0 10px var(--primary-color);
 }
 
 .nav-user-avatar:hover {
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .nav-separator {
-    margin: 0 10px;
     color: var(--text-muted);
 }
 
@@ -93,42 +96,15 @@ nav a.admin-link {
     color: var(--warning-color);
 }
 
-/* =============== RESPONSIVE =============== */
 @media (max-width: 768px) {
     nav {
-        flex-wrap: wrap;
-        height: auto;
-        padding: 10px 5px;
-        gap: 8px;
         justify-content: center;
+        gap: 12px;
+        padding: 12px 15px;
     }
 
     .nav-page {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px 12px;
         width: 100%;
-    }
-
-    nav a {
-        margin: 0 5px;
-        font-size: 16px;
-    }
-
-    .login {
-        padding: 6px 20px;
-        font-size: 18px;
-        margin-top: 5px;
-    }
-
-    .nav-user {
-        margin-top: 5px;
-    }
-
-    .nav-user-avatar {
-        width: 40px;
-        height: 40px;
     }
 
     .nav-separator {

@@ -122,8 +122,6 @@ const startServer = async () => {
         await db.testConnection();
         console.log("🐘 [DB] PostgreSQL connection successful.");
 
-
-
         const server = http.createServer(app);
         const io = new Server(server, {
             cors: { origin: "*", methods: ["GET", "POST"] }
