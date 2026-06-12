@@ -120,9 +120,14 @@ export default class HubView extends AbstractView {
 
         const tabsBar = friendsTabBtn ? el("div", { className: "hub-tabs-bar" }, feedTabBtn, friendsTabBtn) : null;
 
+        const isFirstVisit = !localStorage.getItem("hub_visited");
+        if (isFirstVisit) {
+            localStorage.setItem("hub_visited", "true");
+        }
+
         this.container = el("div", { className: "community-hub-container" },
             el("h1", {}, LanguageManager.t("hub.title")),
-            el("p", { className: "welcome-text" }, LanguageManager.t("hub.welcome")),
+            isFirstVisit ? el("p", { className: "welcome-text" }, LanguageManager.t("hub.welcome")) : null,
             !AuthService.isAuthenticated()
                 ? el("div", { className: "login-prompt" },
                     el("p", {}, LanguageManager.t("hub.loginPrompt")),
