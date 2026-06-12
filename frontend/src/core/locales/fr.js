@@ -407,6 +407,21 @@ export const fr = {
         labelLight: "Léger",
         labelHeavy: "Lourd",
         labelRandom: "Aléatoire"
+    },
+    legal: {
+        title: "Informations Légales",
+        legalNoticeTab: "Mentions Légales",
+        privacyTab: "Confidentialité",
+        termsTab: "CGU",
+        
+        legalNoticeTitle: "Mentions Légales",
+        legalNoticeContent: "<h3>Éditeur du site</h3><p>Ce site est édité par [Votre Nom ou Nom de l'Entreprise], immatriculé sous le numéro [Numéro SIRET] au RCS de [Ville]. Siège social : [Adresse].</p><h3>Hébergement</h3><p>Ce site est hébergé par [Nom de l'hébergeur], [Adresse de l'hébergeur].</p><h3>Propriété Intellectuelle</h3><p>L'ensemble de ce site relève des législations françaises et internationales sur le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés.</p>",
+
+        privacyTitle: "Politique de Confidentialité",
+        privacyContent: "<h3>Collecte des données</h3><p>Nous collectons votre adresse e-mail, nom d'utilisateur et statistiques de jeu lors de votre inscription. Ces données sont strictement utilisées pour fournir le service, sauvegarder votre progression et gérer les classements.</p><h3>Cookies</h3><p>Nous n'utilisons que des cookies essentiels (ex: gestion de session et authentification). Aucun cookie de traçage tiers n'est utilisé sans votre consentement.</p><h3>Vos Droits (RGPD)</h3><p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Vous pouvez exercer ces droits en nous contactant à info@keyboard-survivor.com.</p>",
+
+        termsTitle: "Conditions Générales d'Utilisation",
+        termsContent: "<h3>Acceptation</h3><p>En utilisant Keyboard Survivor, vous acceptez les présentes conditions générales d'utilisation.</p><h3>Règles de compte</h3><p>Vous êtes responsable de la sécurité de votre compte. Toute forme de triche, d'exploitation de failles, ou de comportement inapproprié dans le Hub Communautaire est strictement interdite et peut entraîner un bannissement immédiat.</p><h3>Responsabilité</h3><p>Le jeu est fourni « en l'état » sans aucune garantie. Nous déclinons toute responsabilité en cas de perte de données ou de dommages liés à l'utilisation du service.</p>"
     }
 };
 

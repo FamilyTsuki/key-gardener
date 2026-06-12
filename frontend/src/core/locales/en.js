@@ -406,6 +406,21 @@ export const en = {
         labelLight: "Light",
         labelHeavy: "Heavy",
         labelRandom: "Random"
+    },
+    legal: {
+        title: "Legal Information",
+        legalNoticeTab: "Legal Notice",
+        privacyTab: "Privacy Policy",
+        termsTab: "Terms of Service",
+        
+        legalNoticeTitle: "Legal Notice",
+        legalNoticeContent: "<h3>Publisher</h3><p>This website is published by [Your Name or Company Name], registered under the number [Number] at the [City] trade register. Head office: [Address].</p><h3>Hosting</h3><p>This website is hosted by [Host Name], [Host Address].</p><h3>Intellectual Property</h3><p>All content on this site is protected by intellectual property laws. Keyboard Survivor and its assets are the property of their respective creators.</p>",
+
+        privacyTitle: "Privacy Policy",
+        privacyContent: "<h3>Data Collection</h3><p>We collect your email address, username, and game statistics when you register. This data is strictly used to provide the service, save your progress, and manage leaderboards.</p><h3>Cookies</h3><p>We only use essential cookies (e.g., for session management and authentication). No third-party tracking cookies are used without your consent.</p><h3>Your Rights</h3><p>According to the GDPR, you have the right to access, rectify, or delete your personal data. You can exercise these rights by contacting us at info@keyboard-survivor.com.</p>",
+
+        termsTitle: "Terms of Service",
+        termsContent: "<h3>Acceptance of Terms</h3><p>By using Keyboard Survivor, you agree to these terms of service.</p><h3>Account Rules</h3><p>You are responsible for keeping your account secure. Any form of cheating, exploiting bugs, or inappropriate behavior in the Community Hub is strictly prohibited and may result in an immediate account ban.</p><h3>Liability</h3><p>The game is provided 'as is' without any warranty. We are not responsible for any data loss or damage caused by the use of this service.</p>"
     }
 };
 

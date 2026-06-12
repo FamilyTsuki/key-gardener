@@ -1,0 +1,109 @@
+.legal-container {
+    max-width: 900px;
+    margin: 120px auto 60px auto; 
+    padding: 2rem;
+    background: rgba(20, 20, 30, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text-color, #e0e0e0);
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    min-height: 60vh;
+}
+.legal-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.legal-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, #ff8c00, #ff0080);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.legal-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+    flex-wrap: wrap;
+}
+.legal-tab-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ccc;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+.legal-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: translateY(-2px);
+}
+.legal-tab-btn.active {
+    background: rgba(255, 140, 0, 0.2);
+    border-color: #ff8c00;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+}
+.legal-content-section {
+    display: none;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+.legal-content-section.active {
+    display: block;
+}
+.legal-content-section h2 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+.legal-content-section h3 {
+    font-size: 1.3rem;
+    color: #ff8c00;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+.legal-content-section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    color: #bbb;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@media (max-width: 768px) {
+    .legal-container {
+        margin: 100px 1rem 2rem 1rem;
+        padding: 1.5rem;
+    }
+    .legal-title {
+        font-size: 2rem;
+    }
+    .legal-tabs {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

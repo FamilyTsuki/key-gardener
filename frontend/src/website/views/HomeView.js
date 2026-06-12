@@ -4,7 +4,9 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
-
+/**
+ * Represents HomeView.
+ */
 export default class HomeView extends AbstractView {
     constructor(params) {
         super(params);
@@ -13,18 +15,15 @@ export default class HomeView extends AbstractView {
         this.hologramListeners = [];
         this.glitchFrameId = null;
     }
-
     renderHologram(imgSrc, altText) {
         const img = el("img", {
             src: imgSrc,
             alt: altText,
             className: "first-home-img",
         });
-
         if (window.incrementLoader) window.incrementLoader();
         img.onload = () => { if (window.decrementLoader) window.decrementLoader(); };
         img.onerror = () => { if (window.decrementLoader) window.decrementLoader(); };
-
         return el(
             "div",
             {
@@ -37,11 +36,9 @@ export default class HomeView extends AbstractView {
             el("div", { className: "hologram-tear-layer" })
         );
     }
-
     async render() {
         this.isCurrentView = true;
         const tunnelContainer = el("div", { id: "tunnel-container" });
-
         const svgFilter = el("div", {},
             el("svg", { className: "hologram-svg-filter", width: "0", height: "0" },
                 el("filter", { id: "hologram-distortion-filter" },
@@ -56,7 +53,6 @@ export default class HomeView extends AbstractView {
                 )
             )
         );
-
         const container = el(
             "div",
             {},
@@ -143,7 +139,6 @@ export default class HomeView extends AbstractView {
                         )
                     )
                 ),
-
                                 el(
                     "footer",
                     { className: "home-footer", role: "contentinfo" },
@@ -164,7 +159,6 @@ export default class HomeView extends AbstractView {
                             el("a", { href: "https://www.twitter.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Twitter" }, "Twitter"),
                             el("a", { href: "https://www.instagram.com/keyboardsurvivor", target: "_blank", "aria-label": "Follow Keyboard Survivor on Instagram" }, "Instagram")
                         ),
-
                         el("div", { className: "footer-column" },
                                 el("h3", {}, "Credits"),
                                 el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
@@ -179,16 +173,15 @@ export default class HomeView extends AbstractView {
                     el(
                         "div",
                         { className: "footer-bottom" },
-                        el("p", { className: "home-footer-info" }, LanguageManager.t("home.rights"))
+                        el("p", { className: "home-footer-info" }, LanguageManager.t("home.rights")),
+                        el("a", { href: "/legal", dataset: { link: true }, className: "footer-legal-link" }, LanguageManager.t("legal.title") || "Legal Information")
                     )
                 )
             )
         );
-
         this.tunnelContainer = tunnelContainer;
         return container;
     }
-
     async init() {
         if (this.tunnelContainer) {
             const caveAnimation = new CaveAnimation(this.tunnelContainer);
@@ -196,18 +189,15 @@ export default class HomeView extends AbstractView {
         }
         const deviceDetector = new DeviceCapabilitiesDetector("start-btn", () => AuthService.isAuthenticated());
         deviceDetector.initialize();
-
         this.setupHologramListeners();
         this.startGlitchLoop();
     }
-
     setupHologramListeners() {
         this.hologramListeners = [];
         const wrappers = document.querySelectorAll(".hologram-wrapper");
         wrappers.forEach((wrapper) => {
             wrapper.targetHoverIntensity = 0;
             wrapper.currentHoverIntensity = 0;
-
             const handleMouseMove = (e) => {
                 const rect = wrapper.getBoundingClientRect();
                 const x = (e.clientX - rect.left) / rect.width;
@@ -215,32 +205,25 @@ export default class HomeView extends AbstractView {
                 wrapper.style.setProperty("--mouse-x", x);
                 wrapper.style.setProperty("--mouse-y", y);
             };
-
             const handleMouseEnter = () => {
                 wrapper.targetHoverIntensity = 1;
             };
-
             const handleMouseLeave = () => {
                 wrapper.targetHoverIntensity = 0;
             };
-
             wrapper.addEventListener("mousemove", handleMouseMove);
             wrapper.addEventListener("mouseenter", handleMouseEnter);
             wrapper.addEventListener("mouseleave", handleMouseLeave);
-
             this.hologramListeners.push({ wrapper, handleMouseMove, handleMouseEnter, handleMouseLeave });
         });
     }
-
     startGlitchLoop() {
         const displacementMap = document.getElementById("displacement-map");
         if (!displacementMap) return;
-
         const wrappers = document.querySelectorAll(".hologram-wrapper");
         const mouseMap = document.getElementById("mouse-displacement-map");
         let lastDisplacementScale = "0";
         let lastMouseScale = "0";
-
         let isScrolling = false;
         let scrollTimeout = null;
         const onScroll = () => {
@@ -251,18 +234,15 @@ export default class HomeView extends AbstractView {
             }, 150);
         };
         window.addEventListener('scroll', onScroll, { passive: true });
-
         const animate = () => {
             if (!this.isCurrentView) {
                 window.removeEventListener('scroll', onScroll);
                 return;
             }
-
             if (isScrolling) {
                 this.glitchFrameId = requestAnimationFrame(animate);
                 return;
             }
-
             let maxIntensity = 0;
             wrappers.forEach(wrapper => {
                 if (Math.abs(wrapper.targetHoverIntensity - wrapper.currentHoverIntensity) > 0.001) {
@@ -271,7 +251,6 @@ export default class HomeView extends AbstractView {
                         wrapper.currentHoverIntensity = wrapper.targetHoverIntensity;
                     }
                     wrapper.style.setProperty("--hover-intensity", wrapper.currentHoverIntensity.toFixed(3));
-
                                         if (wrapper.currentHoverIntensity > 0.01) {
                         wrapper.style.setProperty("--hologram-filter", "url(#hologram-distortion-filter)");
                         wrapper.style.setProperty("--hologram-mouse-filter", "url(#hologram-mouse-filter)");
@@ -280,12 +259,10 @@ export default class HomeView extends AbstractView {
                         wrapper.style.setProperty("--hologram-mouse-filter", "none");
                     }
                 }
-
                                 if (wrapper.currentHoverIntensity > maxIntensity) {
                     maxIntensity = wrapper.currentHoverIntensity;
                 }
             });
-
             if (maxIntensity > 0) {
                 let newScale;
                 if (Math.random() > 0.94) {
@@ -299,7 +276,6 @@ export default class HomeView extends AbstractView {
                     displacementMap.setAttribute("scale", newScale);
                     lastDisplacementScale = newScale;
                 }
-
                                 if (mouseMap) {
                     let newMouseScale;
                     if (Math.random() > 0.90) {
@@ -324,12 +300,10 @@ export default class HomeView extends AbstractView {
                     lastMouseScale = "0";
                 }
             }
-
             this.glitchFrameId = requestAnimationFrame(animate);
         };
         this.glitchFrameId = requestAnimationFrame(animate);
     }
-
     cleanupHologramListeners() {
         if (this.hologramListeners) {
             this.hologramListeners.forEach(({ wrapper, handleMouseMove, handleMouseEnter, handleMouseLeave }) => {
@@ -340,7 +314,6 @@ export default class HomeView extends AbstractView {
             this.hologramListeners = [];
         }
     }
-
     destroy() {
         this.isCurrentView = false;
         if (this.glitchFrameId) {
@@ -349,7 +322,6 @@ export default class HomeView extends AbstractView {
         }
         this.cleanupHologramListeners();
     }
-
     getCss() {
         return ["/asset/css/home.css", "/asset/css/footer.css"];
     }
