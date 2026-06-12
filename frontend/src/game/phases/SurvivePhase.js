@@ -5,7 +5,7 @@ import Enemies from "../managers/Enemies.js";
 import Keyboard from "../managers/Keyboard.js";
 import Player from "../models/actors/Player.js";
 import Projectile from "../models/Projectile.js";
-import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
+import { getKeyboardLayout } from "../utilities/KEYBOARD.js";
 import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
 
@@ -56,7 +56,7 @@ export class SurvivePhase extends GamePhase {
         this.worldGroup.position.set(-16, 0, -3.2);
         this.worldGroupPivot.add(this.worldGroup);
 
-        this.keyboard = Keyboard.init(this.worldGroup, KEYBOARD_LAYOUT, this.decorType);
+        this.keyboard = Keyboard.init(this.worldGroup, getKeyboardLayout(), this.decorType);
 
         const enemyGltf = await ModelLoader.loadAsync("/asset/game_assets/models/bug.glb");
         const fireballGltf = await ModelLoader.loadAsync(
@@ -106,6 +106,16 @@ export class SurvivePhase extends GamePhase {
             spellListContainer.appendChild(ul);
             spellListContainer.classList.remove("none");
         }
+
+        this.settingsListener = (e) => {
+            if (this.keyboard && this.keyboard.rebuild) {
+                this.keyboard.rebuild(getKeyboardLayout());
+                if (this.enemies) {
+                    this.enemies.keyboardLayout = this.keyboard.keyboardLayout;
+                }
+            }
+        };
+        window.addEventListener("settings_updated", this.settingsListener);
 
         this.decor = SurviveDecorBuilder.buildDecor(this.decorType, scene);
 
@@ -470,6 +480,9 @@ export class SurvivePhase extends GamePhase {
         const bossUI = document.getElementById("boss-ui");
         if (bossUI) {
             bossUI.classList.add("hidden");
+        }
+        if (this.settingsListener) {
+            window.removeEventListener("settings_updated", this.settingsListener);
         }
     }
 }

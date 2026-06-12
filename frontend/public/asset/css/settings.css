@@ -1,6 +1,6 @@
 .settings-btn-container {
     position: fixed;
-    top: 130px;
+    top: 20px;
     right: 20px;
     z-index: 9999;
     display: flex;
@@ -102,20 +102,6 @@
     cursor: pointer;
 }
 
-.settings-row select {
-    flex: 2;
-    padding: 5px;
-    border-radius: 4px;
-    background: var(--dark-overlay-dense);
-    color: var(--text-color);
-    border: 1px solid var(--card-border);
-    cursor: pointer;
-}
-
-.settings-row select option {
-    background: var(--bg-color);
-    color: var(--text-color);
-}
 
 .settings-val {
     width: 40px;
@@ -165,4 +151,20 @@ body[data-theme="light"] .settings-btn-text {
 
 body[data-theme="light"] .settings-icon {
     filter: none !important;
+}
+
+.settings-compact-select {
+    flex: 2;
+    margin: 0 15px;
+}
+
+.settings-compact-select .custom-select-trigger {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
+.settings-compact-select .custom-option {
+    padding: 10px 12px;
+    font-size: 13px;
 }

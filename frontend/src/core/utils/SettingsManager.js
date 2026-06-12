@@ -1,14 +1,19 @@
 export class SettingsManager {
-    static DEFAULT_SETTINGS = {
-        language: "en",
-        volume: {
-            global: 1.0,
-            music: 1.0,
-            environment: 1.0,
-            enemy: 1.0,
-            player: 1.0
-        }
-    };
+    static get DEFAULT_SETTINGS() {
+        const lang = (navigator.language || navigator.userLanguage || "en").toLowerCase();
+        const isFrench = lang.startsWith('fr');
+        return {
+            language: isFrench ? "fr" : "en",
+            keyboardLayout: isFrench ? "AZERTY" : "QWERTY",
+            volume: {
+                global: 1.0,
+                music: 1.0,
+                environment: 1.0,
+                enemy: 1.0,
+                player: 1.0
+            }
+        };
+    }
 
     /**
      * Get all settings from local storage or defaults.
@@ -21,6 +26,7 @@ export class SettingsManager {
                 const parsed = JSON.parse(saved);
                 return {
                     language: parsed.language || this.DEFAULT_SETTINGS.language,
+                    keyboardLayout: parsed.keyboardLayout || this.DEFAULT_SETTINGS.keyboardLayout,
                     volume: { ...this.DEFAULT_SETTINGS.volume, ...(parsed.volume || {}) }
                 };
             }
@@ -38,6 +44,7 @@ export class SettingsManager {
         const current = this.getSettings();
         const merged = {
             language: newSettings.language || current.language,
+            keyboardLayout: newSettings.keyboardLayout || current.keyboardLayout,
             volume: { ...current.volume, ...(newSettings.volume || {}) }
         };
         localStorage.setItem("game_settings", JSON.stringify(merged));

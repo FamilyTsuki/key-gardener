@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { SurviveDecorBuilder } from "../../game/utilities/SurviveDecorBuilder.js";
 import ModelLoader from "../../core/utils/ModelLoader.js";
 import Keyboard from "../../game/managers/Keyboard.js";
-import { KEYBOARD_LAYOUT } from "../../game/utilities/KEYBOARD.js";
+import { getKeyboardLayout } from "../../game/utilities/KEYBOARD.js";
 import WorldMap from "../../game/managers/WorldMap.js";
 import { createWordlLayout } from "../../game/utilities/WORLD_LAYOUT.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
@@ -609,7 +609,7 @@ export class AdminView {
                 currentDecor.position.set(0, 0, 0);
 
                 keyboardGroup = new THREE.Group();
-                Keyboard.init(keyboardGroup, KEYBOARD_LAYOUT, decorType);
+                Keyboard.init(keyboardGroup, getKeyboardLayout(), decorType);
                 keyboardGroup.position.set(0, 0, 0);
                 scene.add(keyboardGroup);
 

@@ -128,6 +128,33 @@ export default class Keyboard {
     }
 
     /**
+     * Rebuilds the keyboard layout dynamically (e.g. AZERTY to QWERTY).
+     * @param {Array<Object>} newLayoutRaw - The new raw layout array.
+     */
+    rebuild(newLayoutRaw) {
+        // Remove all children from the group
+        while (this.group.children.length > 0) {
+            const child = this.group.children[0];
+            this.group.remove(child);
+        }
+
+        // Re-initialize Key objects
+        this.#keyboardLayout = newLayoutRaw.map(
+            (keyRaw) =>
+                new Key(
+                    keyRaw.key,
+                    keyRaw.x,
+                    keyRaw.y,
+                    keyRaw.isPressed,
+                    this.tileSize
+                )
+        );
+
+        // Re-create the 3D meshes
+        this.loadAndCreateKeys(null);
+    }
+
+    /**
      * Factory method to initialize the keyboard.
      * @param {THREE.Scene} scene - The main three.js scene.
      * @param {Array<Object>} keyboardLayout - The raw layout definition.

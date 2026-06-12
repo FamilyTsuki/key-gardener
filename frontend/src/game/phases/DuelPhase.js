@@ -6,7 +6,7 @@ import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { DuelDecorBuilder } from "../utilities/DuelDecorBuilder.js";
 import Keyboard from "../managers/Keyboard.js";
-import { KEYBOARD_LAYOUT } from "../utilities/KEYBOARD.js";
+import { getKeyboardLayout } from "../utilities/KEYBOARD.js";
 import Player from "../models/actors/Player.js";
 import { gsap } from "/node_modules/gsap/index.js";
 import { LightSpell, HeavySpell, StunSpell, HealSpell, JailSpell, SlowZone } from "../models/spells/DuelSpell.js";
@@ -78,8 +78,7 @@ export class DuelPhase extends GamePhase {
         this.localKeyboardGroup.position.set(-16, 0, -3.2);
         this.localKeyboardPivot.add(this.localKeyboardGroup);
 
-        this.localKeyboard = Keyboard.init(this.localKeyboardGroup, KEYBOARD_LAYOUT, "styx");
-
+        this.localKeyboard = Keyboard.init(this.localKeyboardGroup, getKeyboardLayout(), "styx");
         this.remoteKeyboardPivot = new THREE.Group();
         this.remoteKeyboardPivot.position.set(0, 0, -8);
         this.remoteKeyboardPivot.rotation.y = Math.PI;
@@ -89,7 +88,7 @@ export class DuelPhase extends GamePhase {
         this.remoteKeyboardGroup.position.set(-16, 0, -3.2);
         this.remoteKeyboardPivot.add(this.remoteKeyboardGroup);
 
-        this.remoteKeyboard = Keyboard.init(this.remoteKeyboardGroup, KEYBOARD_LAYOUT, "styx");
+        this.remoteKeyboard = Keyboard.init(this.remoteKeyboardGroup, getKeyboardLayout(), "styx");
 
         this.fireballGltf = await ModelLoader.loadAsync("/asset/game_assets/models/fireball.glb");
         
@@ -143,6 +142,16 @@ export class DuelPhase extends GamePhase {
             { type: 'random', wordLength: baseRandomLen, word: this.getRandomWord(baseRandomLen), cooldownDuration: 6000, cooldownRemaining: 0 }
         ];
         this.updateSpellsUI();
+
+        this.settingsListener = (e) => {
+            if (this.localKeyboard && this.localKeyboard.rebuild) {
+                this.localKeyboard.rebuild(getKeyboardLayout());
+            }
+            if (this.remoteKeyboard && this.remoteKeyboard.rebuild) {
+                this.remoteKeyboard.rebuild(getKeyboardLayout());
+            }
+        };
+        window.addEventListener("settings_updated", this.settingsListener);
 
         SocketService.emit('player_ready');
     }
@@ -1073,6 +1082,9 @@ export class DuelPhase extends GamePhase {
 
         if (this.decor) {
             this.decor.cleanup();
+        }
+        if (this.settingsListener) {
+            window.removeEventListener("settings_updated", this.settingsListener);
         }
         
         SocketService.off('spell_spawned', this.onSpellSpawned.bind(this));

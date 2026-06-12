@@ -325,6 +325,7 @@ export const en = {
         volumeEnemy: "Enemies",
         volumePlayer: "Player (Effects)",
         language: "Language",
+        keyboardLayout: "Keyboard Layout",
         close: "Close"
     },
     notFound: {

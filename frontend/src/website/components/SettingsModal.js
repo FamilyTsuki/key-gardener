@@ -1,6 +1,7 @@
 import { el } from "../../core/utils/DOMBuilder.js";
 import { SettingsManager } from "../../core/utils/SettingsManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { createCustomSelect } from "./CustomSelect.js";
 
 export class SettingsModal {
     /**
@@ -49,17 +50,28 @@ export class SettingsModal {
         const playerSlider = createSlider(LanguageManager.t("settings.volumePlayer") || "Joueur (Effets)", "player");
 
         const currentLang = LanguageManager.getLanguage();
-        const langSelect = el("select", {
-            onchange: (e) => {
-                LanguageManager.setLanguage(e.target.value);
-            }
-        }, 
-            el("option", { value: "en", selected: currentLang === "en" ? true : undefined }, "English"),
-            el("option", { value: "fr", selected: currentLang === "fr" ? true : undefined }, "Français")
-        );
+        const langSelect = createCustomSelect([
+            { value: "en", label: "English" },
+            { value: "fr", label: "Français" }
+        ], currentLang, (newValue) => {
+            LanguageManager.setLanguage(newValue);
+        }, "settings-compact-select");
+
         const langRow = el("div", { className: "settings-row" },
             el("label", {}, LanguageManager.t("settings.language") || "Langue"),
             langSelect
+        );
+
+        const currentLayout = settings.keyboardLayout || "AZERTY";
+        const layoutSelect = createCustomSelect([
+            { value: "AZERTY", label: "AZERTY" },
+            { value: "QWERTY", label: "QWERTY" }
+        ], currentLayout, (newValue) => {
+            SettingsManager.saveSettings({ keyboardLayout: newValue });
+        }, "settings-compact-select");
+        const layoutRow = el("div", { className: "settings-row" },
+            el("label", {}, LanguageManager.t("settings.keyboardLayout") || "Clavier"),
+            layoutSelect
         );
 
         const closeBtn = el("button", {
@@ -85,6 +97,7 @@ export class SettingsModal {
                 enemySlider,
                 playerSlider,
                 langRow,
+                layoutRow,
                 closeBtn,
                 saveAndQuitBtn
             )
