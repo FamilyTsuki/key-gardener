@@ -85,18 +85,19 @@ app.get("*", (req, res) => {
             return res.status(500).send("Error loading application");
         }
         
-        let title = "Keyboard Survivor";
-        let desc = "Your keyboard is your only weapon. Plunge into the abyss, type fast to cast spells, and survive hordes of relentless monsters in this adrenaline-fueled typing RPG.";
+        const gameName = process.env.GAME_NAME || "Keyboard Survivor";
+        let title = gameName;
+        let desc = `Your keyboard is your only weapon. Plunge into the abyss, type fast to cast spells, and survive hordes of relentless monsters in this adrenaline-fueled typing RPG.`;
         
         if (req.path === "/hub") {
-            title = "Community Hub - Keyboard Survivor";
-            desc = "Share your progress, discuss strategies, and interact with other Keyboard Survivor players.";
+            title = `Community Hub - ${gameName}`;
+            desc = `Share your progress, discuss strategies, and interact with other ${gameName} players.`;
         } else if (req.path === "/login") {
-            title = "Login - Keyboard Survivor";
-            desc = "Log in to your Keyboard Survivor account to save your progress and access the community hub.";
+            title = `Login - ${gameName}`;
+            desc = `Log in to your ${gameName} account to save your progress and access the community hub.`;
         } else if (req.path === "/register") {
-            title = "Register - Keyboard Survivor";
-            desc = "Create a new Keyboard Survivor account to start your typing adventure.";
+            title = `Register - ${gameName}`;
+            desc = `Create a new ${gameName} account to start your typing adventure.`;
         }
         htmlData = htmlData.replace(/<title>.*<\/title>/, `<title>${title}</title>`);
         htmlData = htmlData.replace(/<meta name="description" content="[^"]*"/, `<meta name="description" content="${desc}"`);
@@ -109,6 +110,7 @@ app.get("*", (req, res) => {
         htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`);
         htmlData = htmlData.replace("GOOGLE_CLIENT_ID_PLACEHOLDER", process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com");
         htmlData = htmlData.replace("SUPPORT_EMAIL_PLACEHOLDER", process.env.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com");
+        htmlData = htmlData.replaceAll("GAME_NAME_PLACEHOLDER", gameName);
         
         res.send(htmlData);
     });

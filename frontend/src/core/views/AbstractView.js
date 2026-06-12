@@ -17,7 +17,8 @@ export default class AbstractView {
      * @param {string} title - The title for the page.
      */
     setTitle(title) {
-        document.title = title;
+        const gameName = window.GAME_NAME || "Keyboard Survivor";
+        document.title = title.replace(/Keyboard Survivor/g, gameName);
     }
 
     /**

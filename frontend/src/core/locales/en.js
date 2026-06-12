@@ -1,13 +1,13 @@
 export const en = {
     faq: {
         title: "FAQ & Tips",
-        description: "Learn how to improve your typing speed and master Keyboard Survivor with these helpful tips and answers to common questions.",
+        description: "Learn how to improve your typing speed and master {gameName} with these helpful tips and answers to common questions.",
         mainTitle: "Frequently Asked Questions & Typing Tips",
-        intro: "Mastering Keyboard Survivor means mastering your keyboard. Here are answers to common questions and tips to boost your Words Per Minute (WPM).",
+        intro: "Mastering {gameName} means mastering your keyboard. Here are answers to common questions and tips to boost your Words Per Minute (WPM).",
         q1: "How can I improve my typing speed?",
-        a1: "The most important rule is to use all ten fingers and avoid looking at your keyboard (touch typing). Start slowly to build muscle memory, and speed will naturally follow as you play Keyboard Survivor.",
-        q2: "Why is Keyboard Survivor good for learning?",
-        a2: "Unlike traditional typing tutors, Keyboard Survivor forces you to type under pressure while managing game mechanics. This gamification keeps you engaged and accelerates your learning process through adrenaline.",
+        a1: "The most important rule is to use all ten fingers and avoid looking at your keyboard (touch typing). Start slowly to build muscle memory, and speed will naturally follow as you play {gameName}.",
+        q2: "Why is {gameName} good for learning?",
+        a2: "Unlike traditional typing tutors, {gameName} forces you to type under pressure while managing game mechanics. This gamification keeps you engaged and accelerates your learning process through adrenaline.",
         q3: "How are the spells triggered?",
         a3: "Each spell requires a specific sequence of letters. The faster and more accurately you type the sequence, the more powerful the spell. Keep an eye on your combo meter!",
         q4: "Is there a leaderboard?",
@@ -34,11 +34,11 @@ export const en = {
     
     // HomeView
     home: {
-        title: "Keyboard Survivor",
+        title: "{gameName}",
         description: "Your keyboard is your only weapon. Plunge into the abyss, type fast to cast spells, and survive hordes of relentless monsters in this adrenaline-fueled typing RPG.",
         startGame: "Start Game",
         whyTitle: "Typing Reimagined",
-        whyDesc: "Forget boring typing tutors. Keyboard Survivor fuses rogue-lite progression, intense dungeon crawling, and fast-paced word combat into an unforgiving trial of speed and accuracy.",
+        whyDesc: "Forget boring typing tutors. {gameName} fuses rogue-lite progression, intense dungeon crawling, and fast-paced word combat into an unforgiving trial of speed and accuracy.",
         feature1Title: "Type Fast or Die Trying",
         feature1Desc: "Every keystroke matters. Execute perfect combos under pressure to unleash devastating attacks and keep the swarming enemies at bay.",
         feature2Title: "Uncover the Deep Unknown",
@@ -52,12 +52,12 @@ export const en = {
         callToAction: "Do you have the speed to survive the depths?",
         contactUs: "Contact Us: ",
         followUs: "Follow us on social media: ",
-        followGitHub: "Follow Keyboard Survivor on GitHub",
-        joinDiscord: "Join Keyboard Survivor Discord",
+        followGitHub: "Follow {gameName} on GitHub",
+        joinDiscord: "Join {gameName} Discord",
         credits: "Credits",
         specialThank: "Special Thanks",
-        thankSupporters: "to all our supporters and players who make Keyboard Survivor possible!",
-        rights: "\u00A9 2026 Keyboard Survivor. All rights reserved."
+        thankSupporters: "to all our supporters and players who make {gameName} possible!",
+        rights: "\u00A9 2026 {gameName}. All rights reserved."
     },
     
     // HubView
@@ -346,7 +346,7 @@ export const en = {
     // SupportView
     donate: {
         title: "Support the Project",
-        letterIntro1: "Welcome! Keyboard Survivor was initially created as an end-of-year academic project, and I have continued to develop it in my spare time out of pure passion.",
+        letterIntro1: "Welcome! {gameName} was initially created as an end-of-year academic project, and I have continued to develop it in my spare time out of pure passion.",
         letterIntro2: "The game is completely free, but the multiplayer infrastructure and community hub come with a cost. If you enjoy the game and want to support its evolution, you're in the right place!",
         realityTitle: "The Current Setup",
         realityDesc: "Today, the servers proudly run on a small Raspberry Pi in my living room! Expenses include electricity, the database, and the AI credits used to moderate the Hub in real-time.",
@@ -412,19 +412,19 @@ export const en = {
     },
     legal: {
         title: "Legal Information",
-        description: "Read the legal information, privacy policy, and terms of service for Keyboard Survivor.",
+        description: "Read the legal information, privacy policy, and terms of service for {gameName}.",
         legalNoticeTab: "Legal Notice",
         privacyTab: "Privacy Policy",
         termsTab: "Terms of Service",
         
         legalNoticeTitle: "Legal Notice",
-        legalNoticeContent: "<h3>Publisher</h3><p>This website is published for personal purposes by Alban Elie, residing near Orléans, France.</p><h3>Hosting</h3><p>This website is self-hosted for personal purposes on a private server (Raspberry Pi) at the publisher's residence.</p><h3>Intellectual Property</h3><p>All content on this site is protected by intellectual property laws. Keyboard Survivor and its assets are the property of their respective creators.</p>",
+        legalNoticeContent: "<h3>Publisher</h3><p>This website is published for personal purposes by Alban Elie, residing near Orléans, France.</p><h3>Hosting</h3><p>This website is self-hosted for personal purposes on a private server (Raspberry Pi) at the publisher's residence.</p><h3>Intellectual Property</h3><p>All content on this site is protected by intellectual property laws. {gameName} and its assets are the property of their respective creators.</p>",
 
         privacyTitle: "Privacy Policy",
         privacyContent: "<h3>Data Collection</h3><p>We collect your email address, username, and game statistics when you register. This data is strictly used to provide the service, save your progress, and manage leaderboards.</p><h3>Cookies</h3><p>We only use essential cookies (e.g., for session management and authentication). No third-party tracking cookies are used without your consent.</p><h3>Your Rights</h3><p>According to the GDPR, you have the right to access, rectify, or delete your personal data. You can exercise these rights by contacting us at {email}.</p>",
 
         termsTitle: "Terms of Service",
-        termsContent: "<h3>Acceptance of Terms</h3><p>By using Keyboard Survivor, you agree to these terms of service.</p><h3>Account Rules</h3><p>You are responsible for keeping your account secure. Any form of cheating, exploiting bugs, or inappropriate behavior in the Community Hub is strictly prohibited and may result in an immediate account ban.</p><h3>Liability</h3><p>The game is provided 'as is' without any warranty. We are not responsible for any data loss or damage caused by the use of this service.</p>"
+        termsContent: "<h3>Acceptance of Terms</h3><p>By using {gameName}, you agree to these terms of service.</p><h3>Account Rules</h3><p>You are responsible for keeping your account secure. Any form of cheating, exploiting bugs, or inappropriate behavior in the Community Hub is strictly prohibited and may result in an immediate account ban.</p><h3>Liability</h3><p>The game is provided 'as is' without any warranty. We are not responsible for any data loss or damage caused by the use of this service.</p>"
     }
 };
 

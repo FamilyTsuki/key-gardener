@@ -1,13 +1,13 @@
 export const fr = {
     faq: {
         title: "FAQ & Astuces",
-        description: "Apprenez à améliorer votre vitesse de frappe et maîtrisez Keyboard Survivor grâce à nos astuces et aux réponses aux questions fréquentes.",
+        description: "Apprenez à améliorer votre vitesse de frappe et maîtrisez {gameName} grâce à nos astuces et aux réponses aux questions fréquentes.",
         mainTitle: "Questions Fréquentes & Astuces de Frappe",
-        intro: "Maîtriser Keyboard Survivor, c'est maîtriser son clavier. Voici nos réponses aux questions courantes et des conseils pour booster votre MPM (Mots Par Minute).",
+        intro: "Maîtriser {gameName}, c'est maîtriser son clavier. Voici nos réponses aux questions courantes et des conseils pour booster votre MPM (Mots Par Minute).",
         q1: "Comment améliorer ma vitesse de frappe ?",
-        a1: "La règle d'or est d'utiliser ses dix doigts et de ne pas regarder son clavier (frappe à l'aveugle). Commencez lentement pour développer la mémoire musculaire, la vitesse suivra naturellement en jouant à Keyboard Survivor.",
-        q2: "Pourquoi Keyboard Survivor est-il efficace pour apprendre ?",
-        a2: "Contrairement aux logiciels de dactylographie classiques, Keyboard Survivor vous force à taper sous la pression d'ennemis. Cette gamification vous maintient engagé et accélère l'apprentissage grâce à l'adrénaline.",
+        a1: "La règle d'or est d'utiliser ses dix doigts et de ne pas regarder son clavier (frappe à l'aveugle). Commencez lentement pour développer la mémoire musculaire, la vitesse suivra naturellement en jouant à {gameName}.",
+        q2: "Pourquoi {gameName} est-il efficace pour apprendre ?",
+        a2: "Contrairement aux logiciels de dactylographie classiques, {gameName} vous force à taper sous la pression d'ennemis. Cette gamification vous maintient engagé et accélère l'apprentissage grâce à l'adrénaline.",
         q3: "Comment déclencher les sorts ?",
         a3: "Chaque sort requiert une séquence précise de lettres. Plus vous tapez vite et sans erreur, plus le sort est dévastateur. Gardez un œil sur votre jauge de combo !",
         q4: "Y a-t-il un classement mondial ?",
@@ -34,11 +34,11 @@ export const fr = {
     
     // HomeView
     home: {
-        title: "Keyboard Survivor",
+        title: "{gameName}",
         description: "Votre clavier est votre seule arme. Plongez dans l'abîme, tapez à toute vitesse pour lancer vos sorts et survivez à des hordes de monstres dans ce RPG dactylographique sous haute tension.",
         startGame: "Commencer le jeu",
         whyTitle: "La Dactylographie Réinventée",
-        whyDesc: "Oubliez les cours de frappe ennuyeux. Keyboard Survivor fusionne progression rogue-lite, exploration de donjons et combats de mots intenses dans une épreuve impitoyable de vitesse et de précision.",
+        whyDesc: "Oubliez les cours de frappe ennuyeux. {gameName} fusionne progression rogue-lite, exploration de donjons et combats de mots intenses dans une épreuve impitoyable de vitesse et de précision.",
         feature1Title: "Tapez Vite ou Mourez",
         feature1Desc: "Chaque touche compte. Exécutez des combos parfaits sous pression pour déclencher des attaques dévastatrices et repousser l'invasion ennemie.",
         feature2Title: "Explorez les Profondeurs",
@@ -52,12 +52,12 @@ export const fr = {
         callToAction: "Aurez-vous la vitesse nécessaire pour survivre ?",
         contactUs: "Contactez-nous : ",
         followUs: "Suivez-nous sur les réseaux sociaux : ",
-        followGitHub: "Suivez Keyboard Survivor sur GitHub",
-        joinDiscord: "Rejoignez le Discord de Keyboard Survivor",
+        followGitHub: "Suivez {gameName} sur GitHub",
+        joinDiscord: "Rejoignez le Discord de {gameName}",
         credits: "Crédits",
         specialThank: "Remerciements spéciaux",
-        thankSupporters: "à tous nos supporters et joueurs qui rendent Keyboard Survivor possible !",
-        rights: "\u00A9 2026 Keyboard Survivor. Tous droits réservés."
+        thankSupporters: "à tous nos supporters et joueurs qui rendent {gameName} possible !",
+        rights: "\u00A9 2026 {gameName}. Tous droits réservés."
     },
     
     // HubView
@@ -347,7 +347,7 @@ export const fr = {
     // SupportView
     donate: {
         title: "Soutenir le Projet",
-        letterIntro1: "Bienvenue ! Keyboard Survivor a d'abord été créé dans le cadre d'un projet de fin d'année, et j'ai continué à le développer par passion sur mon temps libre.",
+        letterIntro1: "Bienvenue ! {gameName} a d'abord été créé dans le cadre d'un projet de fin d'année, et j'ai continué à le développer par passion sur mon temps libre.",
         letterIntro2: "Le jeu est entièrement gratuit, mais l'infrastructure multijoueur et le hub communautaire ont un coût. Si vous appréciez le jeu et souhaitez soutenir son évolution, vous êtes au bon endroit !",
         realityTitle: "L'installation actuelle",
         realityDesc: "Aujourd'hui, les serveurs tournent fièrement sur un petit Raspberry Pi dans mon salon ! Les frais incluent l'électricité, la base de données et les crédits d'IA utilisés pour modérer le Hub en temps réel.",
@@ -413,7 +413,7 @@ export const fr = {
     },
     legal: {
         title: "Informations Légales",
-        description: "Consultez les informations légales, la politique de confidentialité et les conditions d'utilisation de Keyboard Survivor.",
+        description: "Consultez les informations légales, la politique de confidentialité et les conditions d'utilisation de {gameName}.",
         legalNoticeTab: "Mentions Légales",
         privacyTab: "Confidentialité",
         termsTab: "CGU",
@@ -425,7 +425,7 @@ export const fr = {
         privacyContent: "<h3>Collecte des données</h3><p>Nous collectons votre adresse e-mail, nom d'utilisateur et statistiques de jeu lors de votre inscription. Ces données sont strictement utilisées pour fournir le service, sauvegarder votre progression et gérer les classements.</p><h3>Cookies</h3><p>Nous n'utilisons que des cookies essentiels (ex: gestion de session et authentification). Aucun cookie de traçage tiers n'est utilisé sans votre consentement.</p><h3>Vos Droits (RGPD)</h3><p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Vous pouvez exercer ces droits en nous contactant à {email}.</p>",
 
         termsTitle: "Conditions Générales d'Utilisation",
-        termsContent: "<h3>Acceptation</h3><p>En utilisant Keyboard Survivor, vous acceptez les présentes conditions générales d'utilisation.</p><h3>Règles de compte</h3><p>Vous êtes responsable de la sécurité de votre compte. Toute forme de triche, d'exploitation de failles, ou de comportement inapproprié dans le Hub Communautaire est strictement interdite et peut entraîner un bannissement immédiat.</p><h3>Responsabilité</h3><p>Le jeu est fourni « en l'état » sans aucune garantie. Nous déclinons toute responsabilité en cas de perte de données ou de dommages liés à l'utilisation du service.</p>"
+        termsContent: "<h3>Acceptation</h3><p>En utilisant {gameName}, vous acceptez les présentes conditions générales d'utilisation.</p><h3>Règles de compte</h3><p>Vous êtes responsable de la sécurité de votre compte. Toute forme de triche, d'exploitation de failles, ou de comportement inapproprié dans le Hub Communautaire est strictement interdite et peut entraîner un bannissement immédiat.</p><h3>Responsabilité</h3><p>Le jeu est fourni « en l'état » sans aucune garantie. Nous déclinons toute responsabilité en cas de perte de données ou de dommages liés à l'utilisation du service.</p>"
     }
 };
 
