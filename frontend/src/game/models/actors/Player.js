@@ -453,6 +453,17 @@ export default class Player extends Actor {
      */
     damage(amount, reason = null) {
         this.hp -= amount;
+
+        if (this.mesh && this.mesh.position) {
+            window.dispatchEvent(new CustomEvent("spawn_floating_text", {
+                detail: {
+                    position: this.mesh.position,
+                    text: `-${Math.round(amount)}`,
+                    type: "damage"
+                }
+            }));
+        }
+
         if (reason && this.hp <= 0) {
             this.deathReason = reason;
         }
@@ -464,6 +475,27 @@ export default class Player extends Actor {
             setTimeout(() => {
                 this.elVignette.classList.remove("flash-red");
             }, 500);
+        }
+    }
+
+    /**
+     * Heals the player.
+     * @param {number} amount - The amount to heal.
+     */
+    heal(amount) {
+        if (this.hp < this.hpMax) {
+            const healAmount = Math.min(amount, this.hpMax - this.hp);
+            this.hp += healAmount;
+
+            if (this.mesh && this.mesh.position) {
+                window.dispatchEvent(new CustomEvent("spawn_floating_text", {
+                    detail: {
+                        position: this.mesh.position,
+                        text: `+${Math.round(healAmount)}`,
+                        type: "heal"
+                    }
+                }));
+            }
         }
     }
 

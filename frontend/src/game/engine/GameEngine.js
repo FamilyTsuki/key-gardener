@@ -13,6 +13,7 @@ import { StatisticsManager } from "../managers/StatisticsManager.js";
 import { StatisticsService } from "../../core/services/statistics.service.js";
 import { SaveService } from "../../core/services/save.service.js";
 import { AuthService } from "../../core/services/auth.service.js";
+import { FloatingTextManager } from "../ui/FloatingTextManager.js";
 
 /**
  * Represents the main game engine that manages scenes, phases, and the render loop.
@@ -57,6 +58,7 @@ export class GameEngine {
         this.shakeDecay = 0.9;
         
         this.stats = new StatisticsManager();
+        this.floatingTextManager = new FloatingTextManager();
 
         this.resize();
 
@@ -73,6 +75,13 @@ export class GameEngine {
         window.startShake = (intensity) => {
             this.shakeIntensity = intensity;
         };
+
+        this.onSpawnFloatingText = (e) => {
+            if (this.floatingTextManager) {
+                this.floatingTextManager.add(e.detail.position, e.detail.text, e.detail.type);
+            }
+        };
+        window.addEventListener("spawn_floating_text", this.onSpawnFloatingText);
     }
 
     /**
@@ -191,6 +200,10 @@ export class GameEngine {
             await this.gamePhase.init();
         }
 
+        if (this.floatingTextManager) {
+            this.floatingTextManager.clear();
+        }
+
         if (loader) loader.classList.add("hidden");
 
         this.lastTime = performance.now();
@@ -250,6 +263,7 @@ export class GameEngine {
         this.saveStats();
         window.removeEventListener("resize", this.onResize);
         window.removeEventListener("keydown", this.onKeyDown);
+        window.removeEventListener("spawn_floating_text", this.onSpawnFloatingText);
         if (window.startShake) {
             delete window.startShake;
         }
@@ -329,6 +343,11 @@ export class GameEngine {
         }
 
         this.render();
+
+        const activeCamera = this.gamePhase && this.gamePhase.camera ? this.gamePhase.camera : this.camera;
+        if (this.floatingTextManager) {
+            this.floatingTextManager.update(activeCamera, deltaTime);
+        }
 
         requestAnimationFrame((time) => this.loop(time));
     }

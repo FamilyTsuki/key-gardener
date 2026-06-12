@@ -30,11 +30,8 @@ export default class HealSpell extends Spell {
      */
     effect(closestEnemy, player, scene) {
         if (player) {
-            if (player.hp < 100) {
-                player.hp += this.#healAmount;
-                if (player.hp > 100) {
-                    player.hp = 100;
-                }
+            if (player.hp < player.hpMax) {
+                player.heal(this.#healAmount);
             }
             
             AudioManager.playSFX("/asset/game_assets/sounds/heal.wav", "player", 0.5);

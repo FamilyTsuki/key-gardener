@@ -290,6 +290,18 @@ export default class Boss extends Actor {
   takeDamage(nb) {
       if (this.isDying || this.hp < 0) return;
       this.hp -= nb;
+
+      // Spawn floating damage text
+      if (this.mesh && this.mesh.position) {
+          window.dispatchEvent(new CustomEvent("spawn_floating_text", {
+              detail: {
+                  position: this.mesh.position,
+                  text: `-${Math.round(nb)}`,
+                  type: "damage"
+              }
+          }));
+      }
+
       if (this.hp <= 0) {
           this.hp = 0;
           this.isDying = true;

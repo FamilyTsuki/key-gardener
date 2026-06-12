@@ -162,9 +162,20 @@ export default class Enemy extends Actor {
      */
     takeDamage(nb) {
         this.hp -= nb;
+
+        // Spawn floating damage text
+        if (this.mesh && this.mesh.position) {
+            window.dispatchEvent(new CustomEvent("spawn_floating_text", {
+                detail: {
+                    position: this.mesh.position,
+                    text: `-${Math.round(nb)}`,
+                    type: "damage"
+                }
+            }));
+        }
+
         if (this.hp <= 0) {
             this.hp = -1;
-
             this.die();
         }
 
@@ -180,6 +191,17 @@ export default class Enemy extends Actor {
             throw new Error("No player !");
         }
         player.hp -= this.#damage;
+        
+        // Spawn floating damage text over player
+        if (player.mesh && player.mesh.position) {
+            window.dispatchEvent(new CustomEvent("spawn_floating_text", {
+                detail: {
+                    position: player.mesh.position,
+                    text: `-${Math.round(this.#damage)}`,
+                    type: "damage"
+                }
+            }));
+        }
     }
 
     /**

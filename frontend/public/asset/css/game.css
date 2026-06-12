@@ -750,3 +750,40 @@
     color: var(--text-color);
 }
 
+/* =============== FLOATING TEXT =============== */
+#floating-text-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.floating-text {
+    position: absolute;
+    font-family: 'Inter', var(--font-main), sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    text-shadow: 0 0 5px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5);
+    transform-origin: center;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+.floating-text.damage {
+    color: #ff4444;
+}
+
+.floating-text.heal {
+    color: #44ff44;
+}
+
+.floating-text.critical {
+    color: #ffdd44;
+    font-size: 36px;
+    text-shadow: 0 0 8px rgba(255,221,68,0.5), 0 0 15px rgba(0,0,0,0.8);
+}
+
