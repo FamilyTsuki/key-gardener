@@ -424,8 +424,36 @@ export const fr = {
         privacyTitle: "Politique de Confidentialité",
         privacyContent: "<h3>Collecte des données</h3><p>Nous collectons votre adresse e-mail, nom d'utilisateur et statistiques de jeu lors de votre inscription. Ces données sont strictement utilisées pour fournir le service, sauvegarder votre progression et gérer les classements.</p><h3>Cookies</h3><p>Nous n'utilisons que des cookies essentiels (ex: gestion de session et authentification). Aucun cookie de traçage tiers n'est utilisé sans votre consentement.</p><h3>Vos Droits (RGPD)</h3><p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Vous pouvez exercer ces droits en nous contactant à {email}.</p>",
 
-        termsTitle: "Conditions Générales d'Utilisation",
-        termsContent: "<h3>Acceptation</h3><p>En utilisant {gameName}, vous acceptez les présentes conditions générales d'utilisation.</p><h3>Règles de compte</h3><p>Vous êtes responsable de la sécurité de votre compte. Toute forme de triche, d'exploitation de failles, ou de comportement inapproprié dans le Hub Communautaire est strictement interdite et peut entraîner un bannissement immédiat.</p><h3>Responsabilité</h3><p>Le jeu est fourni « en l'état » sans aucune garantie. Nous déclinons toute responsabilité en cas de perte de données ou de dommages liés à l'utilisation du service.</p>"
+        termsTitle: "Conditions d'Utilisation",
+        termsContent: "<h3>Acceptation des Conditions</h3><p>En utilisant {gameName}, vous acceptez ces conditions d'utilisation.</p><h3>Règles de Compte</h3><p>Vous êtes responsable de la sécurité de votre compte. Toute forme de triche, d'exploitation de bugs, ou de comportement inapproprié dans le Hub Communautaire est strictement interdite et peut entraîner un bannissement immédiat du compte.</p><h3>Responsabilité</h3><p>Le jeu est fourni 'tel quel' sans aucune garantie. Nous ne sommes pas responsables de la perte de données ou des dommages causés par l'utilisation de ce service.</p>"
+    },
+    backendErrors: {
+        "All fields are required": "Tous les champs sont requis",
+        "Password must be at least 8 characters long, contain at least one number and one special character": "Le mot de passe doit comporter au moins 8 caractères, dont un chiffre et un caractère spécial",
+        "Password must be at least 6 characters": "Le mot de passe doit comporter au moins 6 caractères",
+        "Email already registered": "Cet email est déjà enregistré",
+        "Username already taken": "Ce nom d'utilisateur est déjà pris",
+        "Invalid email or password": "Email ou mot de passe invalide",
+        "Email and password are required": "Email et mot de passe sont requis",
+        "Email, code, and new password are required": "Email, code et nouveau mot de passe sont requis",
+        "Invalid or expired reset code": "Code de réinitialisation invalide ou expiré",
+        "Password has been successfully reset": "Le mot de passe a été réinitialisé avec succès",
+        "Current and new passwords are required": "Les mots de passe actuel et nouveau sont requis",
+        "Incorrect current password": "Mot de passe actuel incorrect",
+        "Password updated successfully": "Mot de passe mis à jour avec succès",
+        "No token provided.": "Aucun jeton fourni.",
+        "Unauthorized.": "Non autorisé.",
+        "User not found.": "Utilisateur introuvable.",
+        "Server error.": "Erreur serveur.",
+        "No image file provided": "Aucun fichier image fourni",
+        "Avatar updated successfully": "Avatar mis à jour avec succès",
+        "Username updated successfully": "Nom d'utilisateur mis à jour avec succès",
+        "New username is required": "Nouveau nom d'utilisateur requis",
+        "Email updated successfully": "Email mis à jour avec succès",
+        "New email is required": "Nouvel email requis",
+        "Game saved successfully": "Partie sauvegardée avec succès",
+        "Save not found": "Sauvegarde introuvable",
+        "Save slot is already empty": "L'emplacement de sauvegarde est déjà vide",
+        "Save deleted successfully": "Sauvegarde supprimée avec succès"
     }
 };
-

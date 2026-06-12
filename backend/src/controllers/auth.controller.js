@@ -4,6 +4,11 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { sendResetCodeEmail } = require("../utils/mailer");
 
+const validatePassword = (password) => {
+    const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    return regex.test(password);
+};
+
 const generateToken = (userId) => {
     return jwt.sign(
         { id: userId },
@@ -23,10 +28,10 @@ exports.register = async (req, res, next) => {
                 .json({ success: false, message: "All fields are required" });
         }
 
-        if (password.length < 6) {
+        if (!validatePassword(password)) {
             return res.status(400).json({
                 success: false,
-                message: "Password must be at least 6 characters",
+                message: "Password must be at least 8 characters long, contain at least one number and one special character",
             });
         }
 
@@ -304,8 +309,8 @@ exports.resetPassword = async (req, res, next) => {
             return res.status(400).json({ success: false, message: "Email, code, and new password are required" });
         }
 
-        if (newPassword.length < 6) {
-            return res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
+        if (!validatePassword(newPassword)) {
+            return res.status(400).json({ success: false, message: "Password must be at least 8 characters long, contain at least one number and one special character" });
         }
 
         const user = await User.findByResetCode(email, code);
@@ -331,8 +336,8 @@ exports.changePassword = async (req, res, next) => {
             return res.status(400).json({ success: false, message: "Current and new passwords are required" });
         }
 
-        if (newPassword.length < 6) {
-            return res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
+        if (!validatePassword(newPassword)) {
+            return res.status(400).json({ success: false, message: "Password must be at least 8 characters long, contain at least one number and one special character" });
         }
 
         const dbUser = await User.findById(user.id);

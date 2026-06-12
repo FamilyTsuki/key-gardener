@@ -78,6 +78,8 @@ export const FlashMessageManager = {
         persistent = false,
         onClickCallback = null,
     ) {
+        message = LanguageManager.translateMessage(message);
+
         const existingMessages = Array.from(document.querySelectorAll('.flash-text'));
         if (existingMessages.some(el => el.textContent === message)) {
             return;

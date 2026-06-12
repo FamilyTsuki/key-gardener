@@ -41,7 +41,20 @@ app.use(
         },
     })
 );
-app.use(cors());
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || origin.includes("localhost") || origin.includes("127.0.0.1")) {
+            return callback(null, true);
+        }
+        if (origin === "https://tsuki-dev.fr" || origin.endsWith(".tsuki-dev.fr")) {
+            return callback(null, true);
+        }
+
+        callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "10kb" }));
 app.use(xss());
 app.use(compression());
@@ -127,7 +140,7 @@ const startServer = async () => {
 
         const server = http.createServer(app);
         const io = new Server(server, {
-            cors: { origin: "*", methods: ["GET", "POST"] }
+            cors: corsOptions
         });
 
         require('./src/sockets/socketManager')(io);
