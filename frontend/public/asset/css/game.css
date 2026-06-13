@@ -1,3 +1,15 @@
+body.in-game {
+    --text-color: #e2e8f0 !important;
+    --text-muted: #64748b !important;
+    --dark-overlay-dense: rgba(10, 12, 16, 0.95) !important;
+    --dark-overlay: rgba(10, 12, 16, 0.85) !important;
+    --light-overlay: #14171f !important;
+    --light-overlay-hover: #1c202b !important;
+    --card-border: #272c38 !important;
+    --white: #ffffff !important;
+    --black: #000000 !important;
+}
+
 .game-canvas {
     position: fixed;
     top: 0;

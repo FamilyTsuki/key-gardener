@@ -457,6 +457,7 @@
 .story-event-block:not(.block-heal) .evt-fields-heal,
 .story-event-block:not(.block-spawn) .evt-fields-spawn,
 .story-event-block:not(.block-spawner-config) .evt-fields-spawnerConfig,
+.story-event-block:not(.block-expand-map) .evt-fields-expandMap,
 .story-event-block.block-bridge .evt-trigger-container,
 .story-event-block.block-flamewall .evt-trigger-container {
     display: none !important;

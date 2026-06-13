@@ -77,3 +77,45 @@ export function getKeyboardLayout() {
   const baseLayout = layoutType === "QWERTY" ? QWERTY_LAYOUT : AZERTY_LAYOUT;
   return baseLayout.map(key => ({ ...key }));
 }
+
+/**
+ * Returns the keyboard layout extended with ground tiles for enemies to spawn and walk on.
+ * @param {number} paddingSides - Number of extra columns to the left and right.
+ * @param {number} paddingTopBottom - Number of extra rows above and below.
+ * @returns {Array<Object>} The extended map layout.
+ */
+export function getExtendedMapLayout(paddingSides = 3, paddingTopBottom = 5) {
+  const baseKeys = getKeyboardLayout();
+  
+  let minY = 0;
+  let maxY = 2;
+  let minX = 0;
+  let maxX = 9.5; 
+
+  const extendedMap = [...baseKeys];
+
+  for (let y = minY - paddingTopBottom; y <= maxY + paddingTopBottom; y++) {
+      const offset = (Math.abs(y % 2) === 1) ? 0.5 : 0;
+      
+      const startI = Math.floor(minX - paddingSides);
+      const endI = Math.ceil(maxX + paddingSides);
+
+      for (let i = startI; i <= endI; i++) {
+          const x = i + offset;
+          
+          const exists = baseKeys.find(k => k.x === x && k.y === y);
+          
+          if (!exists) {
+              extendedMap.push({
+                  key: `ground_${x}_${y}`,
+                  x: x,
+                  y: y,
+                  isPressed: false,
+                  isGround: true
+              });
+          }
+      }
+  }
+
+  return extendedMap;
+}

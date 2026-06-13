@@ -51,6 +51,31 @@ export default class Enemies {
     }
 
     /**
+     * Rebuilds the A* grid based on a new keyboard layout.
+     * @param {Array<Object>} keyboardLayout - The new layout.
+     */
+    rebuildGrid(keyboardLayout) {
+        this.#aStarGrid = new Map();
+        for (const key of keyboardLayout) {
+            const position = { x: key.x, y: key.y };
+            this.#aStarGrid.set(
+                key.key,
+                new NodeAStar(
+                    key.key,
+                    position,
+                    findNeighbours(key.key, key.rawPosition, keyboardLayout)
+                )
+            );
+        }
+
+        for (const key of this.#aStarGrid.values()) {
+            for (let i = 0; i < key.neighbours.length; i++) {
+                key.neighbours[i] = this.#aStarGrid.get(key.neighbours[i]);
+            }
+        }
+    }
+
+    /**
      * Gets the A* pathfinding grid.
      * @returns {Map<string, NodeAStar>} The grid map.
      */

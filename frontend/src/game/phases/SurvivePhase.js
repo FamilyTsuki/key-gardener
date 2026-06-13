@@ -5,7 +5,7 @@ import Enemies from "../managers/Enemies.js";
 import Keyboard from "../managers/Keyboard.js";
 import Player from "../models/actors/Player.js";
 import Projectile from "../models/Projectile.js";
-import { getKeyboardLayout } from "../utilities/KEYBOARD.js";
+import { getKeyboardLayout, getExtendedMapLayout } from "../utilities/KEYBOARD.js";
 import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
 
@@ -59,7 +59,9 @@ export class SurvivePhase extends GamePhase {
         this.worldGroup.position.set(-16, 0, -3.2);
         this.worldGroupPivot.add(this.worldGroup);
 
-        this.keyboard = Keyboard.init(this.worldGroup, getKeyboardLayout(), this.decorType);
+        const padSides = this.options.paddingSides !== undefined ? this.options.paddingSides : 0;
+        const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 0;
+        this.keyboard = Keyboard.init(this.worldGroup, getExtendedMapLayout(padSides, padTB), this.decorType);
 
         const enemyGltf = await ModelLoader.loadAsync("/asset/game_assets/models/bug.glb");
         const fireballGltf = await ModelLoader.loadAsync(
@@ -113,12 +115,9 @@ export class SurvivePhase extends GamePhase {
         }
 
         this.settingsListener = (e) => {
-            if (this.keyboard && this.keyboard.rebuild) {
-                this.keyboard.rebuild(getKeyboardLayout());
-                if (this.enemies) {
-                    this.enemies.keyboardLayout = this.keyboard.keyboardLayout;
-                }
-            }
+            const padSides = this.options.paddingSides !== undefined ? this.options.paddingSides : 0;
+            const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 0;
+            this.updateLayout(padSides, padTB);
         };
         window.addEventListener("settings_updated", this.settingsListener);
 
@@ -155,6 +154,43 @@ export class SurvivePhase extends GamePhase {
         });
     }
 
+    updateLayout(padSides, padTB) {
+        if (!this.keyboard || !this.keyboard.rebuild) return;
+
+        this.keyboard.rebuild(getExtendedMapLayout(padSides, padTB));
+        
+        if (this.player) {
+            const pPos = this.player.targetPosition || this.player.rawPosition;
+            if (pPos) {
+                const newKeyAtPlayerPos = this.keyboard.keyboardLayout.find(
+                    k => k.rawPosition.x === pPos.x && k.rawPosition.y === pPos.y
+                );
+                if (newKeyAtPlayerPos) {
+                    this.lastPlayerKey = newKeyAtPlayerPos.key;
+                }
+            }
+        }
+
+        if (this.enemies) {
+            for (const enemy of this.enemies.container) {
+                if (enemy.name !== "Octopus" && enemy) {
+                    const ePos = enemy.targetedPosition || enemy.rawPosition;
+                    if (ePos) {
+                        const newKeyAtEnemyTarget = this.keyboard.keyboardLayout.find(
+                            k => k.rawPosition.x === ePos.x && k.rawPosition.y === ePos.y
+                        );
+                        if (newKeyAtEnemyTarget) {
+                            enemy.actualKey = newKeyAtEnemyTarget.key;
+                        }
+                    }
+                }
+            }
+
+            this.enemies.keyboardLayout = this.keyboard.keyboardLayout;
+            this.enemies.rebuildGrid(this.keyboard.keyboardLayout);
+        }
+    }
+
     executeEventAction(eventToTrigger) {
         if (eventToTrigger.actionType === "heal") {
             if (this.player) {
@@ -170,6 +206,11 @@ export class SurvivePhase extends GamePhase {
             this.spawnInterval = eventToTrigger.spawnInterval !== undefined ? eventToTrigger.spawnInterval : 3;
             this.maxEnemies = eventToTrigger.maxEnemies !== undefined ? eventToTrigger.maxEnemies : 20;
             console.log(`[SurvivePhase] Spawner Config Updated: interval=${this.spawnInterval}, max=${this.maxEnemies}`);
+        } else if (eventToTrigger.actionType === "expandMap") {
+            this.options.paddingSides = eventToTrigger.padSides !== undefined ? eventToTrigger.padSides : 3;
+            this.options.paddingTopBottom = eventToTrigger.padTB !== undefined ? eventToTrigger.padTB : 5;
+            this.updateLayout(this.options.paddingSides, this.options.paddingTopBottom);
+            console.log(`[SurvivePhase] Map Expanded: paddingSides=${this.options.paddingSides}, paddingTopBottom=${this.options.paddingTopBottom}`);
         }
     }
 
@@ -399,6 +440,7 @@ export class SurvivePhase extends GamePhase {
         if (!this.keyboard || !this.enemies) return;
 
         const keys = this.keyboard.keyboardLayout;
+        const spawnDist = this.options.spawnDistance !== undefined ? this.options.spawnDistance : 5;
         let randomKey;
         let attempts = 0;
         let dist = 1000;
@@ -413,8 +455,8 @@ export class SurvivePhase extends GamePhase {
                 dist = Math.sqrt(dx * dx + dy * dy);
             }
         } while (
-            dist < 2 &&
-            attempts < 20
+            (!randomKey.isGround || dist < spawnDist) &&
+            attempts < 50
         );
 
         const types = ["basic", "speedy", "tank"];

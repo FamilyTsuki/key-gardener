@@ -16,13 +16,14 @@ export default class Key extends GameObject {
    * @param {boolean} isPressed - Indicates if the key is pressed.
    * @param {number} tileSize - The size of the tile.
    */
-  constructor(key, x, y, isPressed, tileSize) {
+  constructor(key, x, y, isPressed, tileSize, isGround = false) {
     const spacing = 3.2;
     super({ x, y }, { x: x * spacing, y: y * spacing });
 
     this.#key = key;
     this.#isPressed = isPressed;
     this.#tileSize = tileSize;
+    this.isGround = isGround;
 
     this.mesh = null;
     this.lightUpTimer = 0;

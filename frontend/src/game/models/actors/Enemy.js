@@ -72,12 +72,28 @@ export default class Enemy extends Actor {
 
         this.isSpawning = true;
         this.spawnProgress = 0;
-        const spawnAngle = Math.random() * Math.PI * 2;
-        const spawnDist = 12;
-        this.spawnSource = {
-            x: position.x + Math.cos(spawnAngle) * spawnDist,
-            y: position.y + Math.sin(spawnAngle) * spawnDist
-        };
+
+        const distLeft = position.x - (-12);
+        const distRight = 22 - position.x;
+        const distTop = position.y - (-15);
+
+        let spawnX, spawnY;
+        if (distLeft < distRight && distLeft < distTop) {
+            spawnX = -12;
+            spawnY = position.y + (Math.random() - 0.5) * 2;
+        } else if (distRight < distLeft && distRight < distTop) {
+            spawnX = 22;
+            spawnY = position.y + (Math.random() - 0.5) * 2;
+        } else {
+            spawnX = position.x + (Math.random() - 0.5) * 2;
+            spawnY = -15;
+        }
+        this.spawnSource = { x: spawnX, y: spawnY };
+
+        const dx = position.x - this.spawnSource.x;
+        const dy = position.y - this.spawnSource.y;
+        this.spawnDistance = Math.sqrt(dx * dx + dy * dy);
+        this.spawnDuration = Math.max(0.7, Math.min(1.3, this.spawnDistance * 0.05));
 
         scene.add(this.mesh);
 
@@ -132,12 +148,19 @@ export default class Enemy extends Actor {
         return this.hp <= 0 || this.hp === undefined;
     }
 
-    /**
-     * Gets the actual key of the enemy.
-     * @returns {string} The actual key.
-     */
     get actualKey() {
         return this.#actualKey;
+    }
+    set actualKey(val) {
+        this.#actualKey = val;
+    }
+
+    /**
+     * Gets the targeted position of the enemy.
+     * @returns {Object} The targeted position {x, y}.
+     */
+    get targetedPosition() {
+        return this.#targetedPosition;
     }
 
     /**
@@ -246,7 +269,7 @@ export default class Enemy extends Actor {
      */
     update(player, deltaTime = 0.016) {
         if (this.isSpawning) {
-            this.spawnProgress += 0.025;
+            this.spawnProgress += deltaTime / this.spawnDuration;
             if (this.spawnProgress >= 1) {
                 this.isSpawning = false;
                 this.spawnProgress = 1;
@@ -264,7 +287,8 @@ export default class Enemy extends Actor {
                 const currentX = this.spawnSource.x + (this.position.x - this.spawnSource.x) * this.spawnProgress;
                 const currentY = this.spawnSource.y + (this.position.y - this.spawnSource.y) * this.spawnProgress;
                 
-                const height = 1.3 + Math.sin(this.spawnProgress * Math.PI) * 12;
+                const maxJumpHeight = Math.min(6.0, 2.0 + this.spawnDistance * 0.25);
+                const height = 1.3 + Math.sin(this.spawnProgress * Math.PI) * maxJumpHeight;
                 
                 this.mesh.position.set(currentX * 3.2, 0, currentY * 3.2);
                 const lookTarget = new THREE.Vector3(this.position.x * 3.2, 0, this.position.y * 3.2);
@@ -275,7 +299,6 @@ export default class Enemy extends Actor {
 
                 if (this.model) {
                     this.model.position.y = height;
-                    this.model.rotation.x = this.spawnProgress * Math.PI * 2;
                     this.model.rotation.x = this.spawnProgress * Math.PI * 2;
                 }
                 if (this.hpSprite) this.hpSprite.visible = false;

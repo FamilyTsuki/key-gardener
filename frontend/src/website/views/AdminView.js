@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { SurviveDecorBuilder } from "../../game/utilities/SurviveDecorBuilder.js";
 import ModelLoader from "../../core/utils/ModelLoader.js";
 import Keyboard from "../../game/managers/Keyboard.js";
-import { getKeyboardLayout } from "../../game/utilities/KEYBOARD.js";
+import { getKeyboardLayout, getExtendedMapLayout } from "../../game/utilities/KEYBOARD.js";
 import WorldMap from "../../game/managers/WorldMap.js";
 import { createWordlLayout } from "../../game/utilities/WORLD_LAYOUT.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
@@ -328,6 +328,8 @@ export class AdminView {
                     spawnEnemy: block.querySelector('.evt-spawn-type').value,
                     spawnInterval: Number(block.querySelector('.evt-spawn-interval').value) || 3,
                     maxEnemies: Number(block.querySelector('.evt-spawn-max').value) || 20,
+                    padSides: block.querySelector('.evt-expand-sides') ? Number(block.querySelector('.evt-expand-sides').value) : 3,
+                    padTB: block.querySelector('.evt-expand-tb') ? Number(block.querySelector('.evt-expand-tb').value) : 5,
                     tileDistance: Number(block.querySelector('.evt-tile-distance') ? block.querySelector('.evt-tile-distance').value : 0),
                     difficultyMultiplier: Number(block.querySelector('.evt-difficulty') ? block.querySelector('.evt-difficulty').value : 1),
                     isTriggered: false
@@ -341,6 +343,9 @@ export class AdminView {
                     playerHp: card.querySelector('.survive-hp').value ? Number(card.querySelector('.survive-hp').value) : null,
                     spawnInterval: card.querySelector('.survive-spawn-interval').value ? Number(card.querySelector('.survive-spawn-interval').value) : null,
                     maxEnemies: card.querySelector('.survive-max-enemies').value ? Number(card.querySelector('.survive-max-enemies').value) : 0,
+                    paddingTopBottom: card.querySelector('.survive-padding-tb') && card.querySelector('.survive-padding-tb').value ? Number(card.querySelector('.survive-padding-tb').value) : 5,
+                    paddingSides: card.querySelector('.survive-padding-sides') && card.querySelector('.survive-padding-sides').value ? Number(card.querySelector('.survive-padding-sides').value) : 3,
+                    spawnDistance: card.querySelector('.survive-spawn-dist') && card.querySelector('.survive-spawn-dist').value ? Number(card.querySelector('.survive-spawn-dist').value) : 5,
                     storyEvents: gatheredStoryEvents
                 };
             } else if (phaseType === 'void') {
@@ -443,6 +448,7 @@ export class AdminView {
         else if (evt.actionType === 'spawn') div.classList.add("block-spawn");
         else if (evt.actionType === 'spawnBoss') div.classList.add("block-spawn-boss");
         else if (evt.actionType === 'spawnerConfig') div.classList.add("block-spawner-config");
+        else if (evt.actionType === 'expandMap') div.classList.add("block-expand-map");
         else if (evt.actionType === 'bridge') div.classList.add("block-bridge");
         else if (evt.actionType === 'jumpword') div.classList.add("block-bridge");
         else if (evt.actionType === 'flamewall') div.classList.add("block-flamewall");
@@ -455,6 +461,7 @@ export class AdminView {
             actionOptions.push({ value: "spawn", label: LanguageManager.t("admin.actionSpawn") });
             actionOptions.push({ value: "spawnBoss", label: LanguageManager.t("admin.actionSpawnBoss") });
             actionOptions.push({ value: "spawnerConfig", label: LanguageManager.t("admin.actionConfigSpawner") });
+            actionOptions.push({ value: "expandMap", label: LanguageManager.t("admin.actionExpandMap") });
         } else {
             actionOptions.push({ value: "dialogue", label: LanguageManager.t("admin.actionDialogue") });
             actionOptions.push({ value: "heal", label: LanguageManager.t("admin.actionHeal") });
@@ -474,11 +481,12 @@ export class AdminView {
         const selectAction = createCustomSelect(actionOptions, evt.actionType || "dialogue", null, "evt-action-type admin-compact-select");
         selectAction.addEventListener('change', (e) => {
             const newType = e.target.value;
-            div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-spawn-boss', 'block-spawner-config', 'block-bridge', 'block-flamewall');
+            div.classList.remove('block-dialogue', 'block-heal', 'block-spawn', 'block-spawn-boss', 'block-spawner-config', 'block-bridge', 'block-flamewall', 'block-expand-map');
             if (newType === 'heal') div.classList.add("block-heal");
             else if (newType === 'spawn') div.classList.add("block-spawn");
             else if (newType === 'spawnBoss') div.classList.add("block-spawn-boss");
             else if (newType === 'spawnerConfig') div.classList.add("block-spawner-config");
+            else if (newType === 'expandMap') div.classList.add("block-expand-map");
             else if (newType === 'bridge' || newType === 'jumpword') div.classList.add("block-bridge");
             else if (newType === 'flamewall') div.classList.add("block-flamewall");
             else div.classList.add("block-dialogue");
@@ -544,6 +552,15 @@ export class AdminView {
         );
 
         div.appendChild(
+            el("div", { className: "evt-fields-expandMap block-row" },
+                el("label", {}, LanguageManager.t("admin.expandSides")),
+                el("input", { type: "number", className: "evt-expand-sides block-input width-80 mr-15", value: evt.padSides !== undefined ? evt.padSides : 3 }),
+                el("label", {}, LanguageManager.t("admin.expandTB")),
+                el("input", { type: "number", className: "evt-expand-tb block-input width-80", value: evt.padTB !== undefined ? evt.padTB : 5 })
+            )
+        );
+
+        div.appendChild(
             el("div", { className: "block-row flex-col-stretch mt-10" },
                 el("div", { className: "flex-row-gap10 flex-start" },
                     el("label", {}, LanguageManager.t("admin.tileDistance")),
@@ -569,6 +586,7 @@ export class AdminView {
         const { scene, camera, renderer } = this._setupPreviewScene(container);
 
         let currentDecor = null;
+        let decorUpdateFn = null;
         let keyboardGroup = null;
         let eventMeshes = [];
         let playerMesh = null;
@@ -584,6 +602,7 @@ export class AdminView {
 
         const animate = () => {
             requestAnimationFrame(animate);
+            if (decorUpdateFn) decorUpdateFn(0.016);
             if (container.clientWidth > 0 && container.clientHeight > 0) {
                 renderer.render(scene, camera);
             }
@@ -602,14 +621,22 @@ export class AdminView {
             if (phaseType === "survive") {
                 camera.position.set(15, 18, 7);
                 camera.lookAt(15, 0, 3);
+                scene.background = new THREE.Color(0x0a0c10);
+                scene.fog = null;
 
                 const decorType = card.querySelector('.survive-decor').value || options.decorType || "default";
                 const decorObj = SurviveDecorBuilder.buildDecor(decorType, scene);
                 currentDecor = decorObj.decorGroup;
+                decorUpdateFn = decorObj.update;
                 currentDecor.position.set(0, 0, 0);
 
+                const padSidesInput = card.querySelector('.survive-padding-sides');
+                const padTBInput = card.querySelector('.survive-padding-tb');
+                const padSides = padSidesInput ? Number(padSidesInput.value) : (options.paddingSides !== undefined ? options.paddingSides : 3);
+                const padTB = padTBInput ? Number(padTBInput.value) : (options.paddingTopBottom !== undefined ? options.paddingTopBottom : 5);
+
                 keyboardGroup = new THREE.Group();
-                Keyboard.init(keyboardGroup, getKeyboardLayout(), decorType);
+                Keyboard.init(keyboardGroup, getExtendedMapLayout(padSides, padTB), decorType);
                 keyboardGroup.position.set(0, 0, 0);
                 scene.add(keyboardGroup);
 
@@ -619,6 +646,8 @@ export class AdminView {
             } else if (phaseType === "void") {
                 camera.position.set(20, 20, 10);
                 camera.lookAt(0, 0, 0);
+                scene.background = new THREE.Color(0x0a0c10);
+                scene.fog = null;
                 
                 const voidCreature = new VoidCreature(scene, { x: 0, y: -6, z: -30 });
                 voidCreature.init();
@@ -629,6 +658,9 @@ export class AdminView {
             } else {
                 camera.position.set(12, 110, 15);
                 camera.lookAt(12, 0, -38);
+                scene.background = new THREE.Color(0x0a0c10);
+                scene.fog = null;
+
                 const introType = card.querySelector('.world-intro').value || "staircase";
                 const outroType = card.querySelector('.world-outro').value || "DoorEvent";
                 const worldDistance = card.querySelector('.world-distance').value ? Number(card.querySelector('.world-distance').value) : 30;
@@ -791,6 +823,10 @@ export class AdminView {
                 e.target.classList.contains('events-list')) {
                 renderEventsPreviews();
             }
+            if (e.target.classList.contains('survive-padding-sides') || 
+                e.target.classList.contains('survive-padding-tb')) {
+                renderDecor();
+            }
         });
 
         card.addEventListener('change', (e) => {
@@ -849,7 +885,8 @@ export class AdminView {
                     createCustomSelect([
                         { value: "default", label: LanguageManager.t("admin.default") },
                         { value: "mine", label: LanguageManager.t("admin.mine") },
-                        { value: "styx", label: LanguageManager.t("admin.styx") }
+                        { value: "styx", label: LanguageManager.t("admin.styx") },
+                        { value: "dungeon", label: LanguageManager.t("admin.dungeon") }
                     ], options.decorType || "default", null, "survive-decor admin-compact-select")
                 ),
                 el("div", { className: "flex-1 min-w-100" },
@@ -869,6 +906,20 @@ export class AdminView {
                 el("div", { className: "flex-1 min-w-150" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.maxEnemies")),
                     el("input", { type: "number", className: "survive-max-enemies block-input", value: options.maxEnemies !== undefined && options.maxEnemies !== null ? options.maxEnemies : '', placeholder: LanguageManager.t("admin.disabled") })
+                )
+            ),
+            el("div", { className: "block-row mt-15" },
+                el("div", { className: "flex-1 min-w-100" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.paddingTopBottom")),
+                    el("input", { type: "number", className: "survive-padding-tb block-input", value: options.paddingTopBottom !== undefined ? options.paddingTopBottom : 5 })
+                ),
+                el("div", { className: "flex-1 min-w-100" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.paddingSides")),
+                    el("input", { type: "number", className: "survive-padding-sides block-input", value: options.paddingSides !== undefined ? options.paddingSides : 3 })
+                ),
+                el("div", { className: "flex-1 min-w-100" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.spawnDistance")),
+                    el("input", { type: "number", className: "survive-spawn-dist block-input", value: options.spawnDistance !== undefined ? options.spawnDistance : 5 })
                 )
             )
         );
