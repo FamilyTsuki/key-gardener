@@ -67,13 +67,24 @@ if (!isProd) {
     // Cache is now active even in development mode
 }
 
-app.use("/asset/img/users", express.static(path.join(__dirname, "../frontend/public/asset/img/users")));
+const staticCacheOptions = {
+    maxAge: "1d",
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith(".html")) {
+            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        } else {
+            res.setHeader("Cache-Control", "public, max-age=86400");
+        }
+    }
+};
 
-app.use(express.static(frontendDir, { index: false }));
-app.use("/src", express.static(srcDir));
+app.use("/asset/img/users", express.static(path.join(__dirname, "../frontend/public/asset/img/users"), staticCacheOptions));
+
+app.use(express.static(frontendDir, { ...staticCacheOptions, index: false }));
+app.use("/src", express.static(srcDir, staticCacheOptions));
 app.use(
     "/node_modules",
-    express.static(path.join(__dirname, "../node_modules"))
+    express.static(path.join(__dirname, "../node_modules"), staticCacheOptions)
 );
 
 app.use("/api/", apiLimiter);

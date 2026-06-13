@@ -104,7 +104,7 @@ export class CaveAnimation {
         return new Promise((resolve) => {
 
             let loadedAssetCount = 0;
-            const totalAssetsToLoad = 4;
+            const totalAssetsToLoad = 2;
 
             const verifyLoadingStatus = () => {
                 loadedAssetCount++;
@@ -152,8 +152,6 @@ export class CaveAnimation {
                 arrowGroup.rotation.set(0, -0.3, 0);
                 this.scene.add(arrowGroup);
                 this.scrollArrowGroup = arrowGroup;
-
-                verifyLoadingStatus();
             });
             
             ModelLoader.load('/asset/game_assets/models/player.glb', (gltf) => {
@@ -377,8 +375,6 @@ export class CaveAnimation {
                 });
                 
                 this.scene.add(this.blackHoleObject);
-                
-                verifyLoadingStatus();
             });
         });
     }
@@ -476,7 +472,7 @@ export class CaveAnimation {
         this.soilTexture.wrapT = THREE.RepeatWrapping;
         this.soilTexture.repeat.set(15, 60);
 
-        this.soilNormalTexture = textureLoader.load('/asset/game_assets/textures/soil_normal.png');
+        this.soilNormalTexture = textureLoader.load('/asset/game_assets/textures/soil_normal.webp');
         this.soilNormalTexture.wrapS = THREE.RepeatWrapping;
         this.soilNormalTexture.wrapT = THREE.RepeatWrapping;
         this.soilNormalTexture.repeat.set(15, 60);
@@ -1079,7 +1075,9 @@ export class CaveAnimation {
             if (this.starsMaterial && this.starsMaterial.userData.uniforms) {
                 this.starsMaterial.userData.uniforms.uTime.value = time;
             }
-            this.blackHoleObject.rotateY(-0.0003);
+            if (this.blackHoleObject) {
+                this.blackHoleObject.rotateY(-0.0003);
+            }
 
             this.renderer.render(this.scene, this.camera);
         };
