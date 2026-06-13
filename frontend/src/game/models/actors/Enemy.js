@@ -468,6 +468,6 @@ export default class Enemy extends Actor {
             height += keyObj.isGround ? 0.2 : 0.225;
         }
 
-        return height + 0.45;
+        return height + 0.48 * this.baseScale;
     }
 }

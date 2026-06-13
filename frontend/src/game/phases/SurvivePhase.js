@@ -74,6 +74,7 @@ export class SurvivePhase extends GamePhase {
             fireballGltf.scene
         );
 
+        this.lastPlayerKey = "A";
         this.player = new Player(
             "Héros",
             this.options.playerHp === null ? Infinity : (this.options.playerHp || 100),
@@ -86,10 +87,9 @@ export class SurvivePhase extends GamePhase {
             () => this.gameEngine.loadLevel(this.gameEngine.currentLevel),
             this.gameEngine.stats
         );
-        this.player.offsetY = 0.225;
+        const spawnTile = this.keyboard.find(this.lastPlayerKey) || this.keyboard.keyboardLayout[0];
+        this.player.offsetY = this.player.getTileSurfaceHeight(spawnTile);
         this.player.updatePosition();
-
-        this.lastPlayerKey = "A";
         this.elCurrentWord = document.getElementById("currentWord");
         document
             .getElementById("currentWord")
@@ -342,7 +342,7 @@ export class SurvivePhase extends GamePhase {
             }
         }
         if (this.player) {
-            this.player.update(deltaTime);
+            this.player.update(deltaTime, this.keyboard ? this.keyboard.keyboardLayout : null);
             
             if (this.pendingSpell && !this.player.isMoving) {
                 const closestEnemy = this.enemies.findClosestEnemy(
@@ -513,7 +513,7 @@ export class SurvivePhase extends GamePhase {
             this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
-            });
+            }, this.keyboard ? this.keyboard.keyboardLayout : null);
         }
         let word = this.player.handleKeyPress(event.key);
 

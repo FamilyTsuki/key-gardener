@@ -476,8 +476,15 @@ export class CaveAnimation {
         this.soilTexture.wrapT = THREE.RepeatWrapping;
         this.soilTexture.repeat.set(15, 60);
 
+        this.soilNormalTexture = textureLoader.load('/asset/game_assets/textures/soil_normal.png');
+        this.soilNormalTexture.wrapS = THREE.RepeatWrapping;
+        this.soilNormalTexture.wrapT = THREE.RepeatWrapping;
+        this.soilNormalTexture.repeat.set(15, 60);
+
         const material = new THREE.MeshStandardMaterial({
             map: this.soilTexture,
+            normalMap: this.soilNormalTexture,
+            normalScale: new THREE.Vector2(1.5, 1.5),
             vertexColors: true,
             roughness: 1.0,
             metalness: 0.0,

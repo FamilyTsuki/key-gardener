@@ -160,7 +160,7 @@ export class InfiniteVoidPhase extends GamePhase {
             }
         }
 
-        this.player.update();
+        this.player.update(deltaTime, this.worldMap ? this.worldMap.mapLayout : null);
 
         if (this.player.mesh) {
             const playerPos = this.player.mesh.position;
@@ -534,7 +534,7 @@ export class InfiniteVoidPhase extends GamePhase {
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
                 offsetY: 2.0 + (target.baseY || 0)
-            });
+            }, this.worldMap ? this.worldMap.mapLayout : null);
         }
     }
 

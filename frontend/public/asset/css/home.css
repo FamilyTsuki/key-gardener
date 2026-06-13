@@ -269,8 +269,8 @@ h2.home-title {
 }
 
 .home-contaner-1 {
-    margin-top: 20dvh;
-    margin-bottom: 150dvh;
+    margin-top: 5dvh;
+    margin-bottom: 165dvh;
 }
 
 .home-description {
@@ -361,7 +361,7 @@ h2.home-title {
     }
 
     .home-contaner-1 {
-        margin-top: 15dvh;
+        margin-top: 10dvh;
     }
 
     .home-presantation-container,

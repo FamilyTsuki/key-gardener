@@ -242,7 +242,7 @@ export class WorldPhase extends GamePhase {
             }
         }
 
-        this.player.update();
+        this.player.update(deltaTime, this.worldMap ? this.worldMap.mapLayout : null);
         if (this.player && this.player.mesh) {
             if (this.isStunnedAfterFall) {
                 let percentage = 1.0;
@@ -417,7 +417,7 @@ export class WorldPhase extends GamePhase {
                             x: firstNormalTile.rawPosition.x,
                             y: firstNormalTile.rawPosition.y,
                             offsetY: 2.0 + (firstNormalTile.baseY || 0)
-                        });
+                        }, this.worldMap ? this.worldMap.mapLayout : null);
                         await new Promise(r => setTimeout(r, this.player.movementDuration * 16.6));
                     }
                     this.isPlayingIntro = false;
@@ -431,7 +431,7 @@ export class WorldPhase extends GamePhase {
                     x: nextTile.rawPosition.x,
                     y: nextTile.rawPosition.y,
                     offsetY: 2.0 + (nextTile.baseY || 0)
-                });
+                }, this.worldMap ? this.worldMap.mapLayout : null);
                 
                 await new Promise(r => setTimeout(r, this.player.movementDuration * 16.6));
                 await stepDown(index + 1);
@@ -471,7 +471,7 @@ export class WorldPhase extends GamePhase {
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
                 offsetY: 2.0 + (target.baseY || 0),
-            });
+            }, this.worldMap ? this.worldMap.mapLayout : null);
         }
     }
 

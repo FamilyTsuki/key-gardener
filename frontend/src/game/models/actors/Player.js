@@ -218,7 +218,7 @@ export default class Player extends Actor {
      * Initiates movement towards a new position.
      * @param {Object} newPosition - The target position {x, y, z, offsetY}.
      */
-    move(newPosition) {
+    move(newPosition, keyboardLayout = null) {
         if (
             this.targetPosition.x !== newPosition.x ||
             this.targetPosition.y !== newPosition.y
@@ -248,7 +248,15 @@ export default class Player extends Actor {
             if (newPosition.offsetY !== undefined) {
                 this.targetOffsetY = newPosition.offsetY;
             } else {
-                this.targetOffsetY = this.offsetY;
+                const targetKey = keyboardLayout ? keyboardLayout.find(k => 
+                    Math.abs(k.rawPosition.x - newPosition.x) < 0.1 && 
+                    Math.abs(k.rawPosition.y - newPosition.y) < 0.1
+                ) : null;
+                if (targetKey) {
+                    this.targetOffsetY = this.getTileSurfaceHeight(targetKey);
+                } else {
+                    this.targetOffsetY = this.offsetY;
+                }
             }
 
             this.isMoving = true;
@@ -313,7 +321,7 @@ export default class Player extends Actor {
     /**
      * Updates the player's state, spells, and position each frame.
      */
-    update(deltaTime = 0.0166) {
+    update(deltaTime = 0.0166, keyboardLayout = null) {
         if (!this.isAlive()) {
             if (!this.deathAnimationPlayed) {
                 if (this.playerModel) {
@@ -372,6 +380,16 @@ export default class Player extends Actor {
         }
 
         if (this.mesh) {
+            if (!this.isMoving && keyboardLayout) {
+                const currentKey = keyboardLayout.find(k => 
+                    Math.abs(k.rawPosition.x - this.x) < 0.1 && 
+                    Math.abs(k.rawPosition.y - this.y) < 0.1
+                );
+                if (currentKey) {
+                    this.offsetY = this.getTileSurfaceHeight(currentKey);
+                }
+            }
+
             this.updatePosition();
 
             if (this.playerModel) {
@@ -553,5 +571,26 @@ export default class Player extends Actor {
      */
     get wordSpellsInstances() {
         return this.#wordSpells;
+    }
+
+    getTileSurfaceHeight(keyObj) {
+        if (!keyObj || !keyObj.mesh) return 0.225;
+
+        const keyGroup = keyObj.mesh;
+        const targetMesh = keyObj.isGround ? keyGroup.children[0] : keyGroup.children[1];
+        let height = keyGroup.position.y;
+
+        if (targetMesh && targetMesh.geometry) {
+            if (!targetMesh.geometry.boundingBox) {
+                targetMesh.geometry.computeBoundingBox();
+            }
+            const bbox = targetMesh.geometry.boundingBox;
+            const halfHeight = (bbox.max.y - bbox.min.y) / 2;
+            height += halfHeight * targetMesh.scale.y;
+        } else {
+            height += keyObj.isGround ? 0.2 : 0.225;
+        }
+
+        return height + 0.05;
     }
 }
