@@ -454,10 +454,19 @@ export class SurvivePhase extends GamePhase {
                 const dy = randomKey.rawPosition.y - this.player.y;
                 dist = Math.sqrt(dx * dx + dy * dy);
             }
-        } while (
-            (!randomKey.isGround || dist < spawnDist) &&
-            attempts < 50
-        );
+
+            const isOccupied = this.enemies.container.some(enemy => 
+                enemy.actualKey === randomKey.key || 
+                (enemy.targetedPosition && 
+                 enemy.targetedPosition.x === randomKey.rawPosition.x && 
+                 enemy.targetedPosition.y === randomKey.rawPosition.y) ||
+                (enemy.path && enemy.path.length > 0 && enemy.path[0].key === randomKey.key)
+            );
+
+            if (randomKey.isGround && dist >= spawnDist && !isOccupied) {
+                break;
+            }
+        } while (attempts < 100);
 
         const types = ["basic", "speedy", "tank"];
         let randomType = type || types[Math.floor(Math.random() * types.length)];

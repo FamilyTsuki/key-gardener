@@ -67,6 +67,9 @@ export default class NodeAStar {
   get neighbours() {
     return this.#neighbours;
   }
+  set neighbours(newNeighbours) {
+    this.#neighbours = newNeighbours;
+  }
 
   /**
    * Gets the cost object for pathfinding.

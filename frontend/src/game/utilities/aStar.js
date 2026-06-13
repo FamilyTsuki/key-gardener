@@ -1,118 +1,76 @@
-/**
- * Finds the best path from a start node to a goal node using the A* algorithm.
- * @param {string} startKey - The key of the starting node.
- * @param {string} goalKey - The key of the goal node.
- * @param {Map<string, NodeAStar>} gridRaw - A map representing the grid of nodes.
- * @returns {Array<string>} An array of node keys representing the shortest path.
- */
 export default function findBestPath(startKey, goalKey, gridRaw) {
-  const grid = new Map();
-  for (const entries of gridRaw.entries()) {
-    grid.set(entries[0], entries[1].copy());
-  }
+    if (startKey === goalKey) {
+        return [startKey];
+    }
 
-  let open = [];
-  const close = [];
+    const startNode = gridRaw.get(startKey);
+    const goalNode = gridRaw.get(goalKey);
+    if (!startNode || !goalNode) {
+        return [];
+    }
 
-  const start = grid.get(startKey);
-  const goal = grid.get(goalKey);
-  let find = false;
+    const openSet = new Set([startKey]);
+    const closedSet = new Set();
 
-  findCost(start, goal);
-  open.push(start);
+    const gScore = new Map();
+    const fScore = new Map();
+    const cameFrom = new Map();
 
-  let current = start;
+    gScore.set(startKey, 0);
+    const startH = Math.sqrt((goalNode.x - startNode.x) ** 2 + (goalNode.y - startNode.y) ** 2);
+    fScore.set(startKey, startH);
 
-  do {
-    current = findLowestCost(open);
-    open = open.filter((node) => node.key !== current.key);
-    close.push(current);
-
-    if (current.key === goalKey) {
-      find = true;
-    } else {
-      for (let neighbour of current.neighbours) {
-        neighbour = grid.get(neighbour.key);
-        if (!close.find((closedNode) => closedNode === neighbour)) {
-          if (!open.find((openedNode) => openedNode === neighbour)) {
-            neighbour.parent = current;
-            findCost(neighbour, goal);
-            open.push(neighbour);
-          } else {
-            const neighbourCopy = neighbour.copy(current);
-            const newCost = findCost(neighbourCopy, goal);
-
-            if (newCost.f < neighbour.cost.f) {
-              neighbour.parent = current;
-              neighbour.cost = newCost;
+    while (openSet.size > 0) {
+        let currentKey = null;
+        let lowestF = Infinity;
+        for (const key of openSet) {
+            const f = fScore.get(key) ?? Infinity;
+            if (f < lowestF) {
+                lowestF = f;
+                currentKey = key;
             }
-          }
         }
-      }
+
+        if (currentKey === goalKey) {
+            const path = [];
+            let curr = currentKey;
+            while (curr !== undefined) {
+                path.push(curr);
+                curr = cameFrom.get(curr);
+            }
+            return path.reverse();
+        }
+
+        openSet.delete(currentKey);
+        closedSet.add(currentKey);
+
+        const currentNode = gridRaw.get(currentKey);
+        if (!currentNode) continue;
+
+        for (const neighbourNode of currentNode.neighbours) {
+            const neighbourKey = neighbourNode.key;
+            if (closedSet.has(neighbourKey)) {
+                continue;
+            }
+
+            const dist = Math.sqrt(
+                (neighbourNode.x - currentNode.x) ** 2 + (neighbourNode.y - currentNode.y) ** 2
+            );
+            const tentativeGScore = (gScore.get(currentKey) ?? Infinity) + dist;
+
+            if (tentativeGScore < (gScore.get(neighbourKey) ?? Infinity)) {
+                cameFrom.set(neighbourKey, currentKey);
+                gScore.set(neighbourKey, tentativeGScore);
+                
+                const h = Math.sqrt(
+                    (goalNode.x - neighbourNode.x) ** 2 + (goalNode.y - neighbourNode.y) ** 2
+                );
+                fScore.set(neighbourKey, tentativeGScore + h);
+
+                openSet.add(neighbourKey);
+            }
+        }
     }
-  } while (!find);
 
-  return findPath(current);
-}
-
-/**
- * Finds the node with the lowest f-cost in the open list.
- * @param {Array<NodeAStar>} open - The array of open nodes.
- * @returns {NodeAStar} The node with the lowest cost.
- * @throws {Error} If the open list is empty.
- */
-function findLowestCost(open) {
-  if (open.length <= 0) {
-    throw new Error("Open is empty !");
-  }
-
-  let lowestCost = open[0];
-
-  for (let i = 1; i < open.length; i++) {
-    if (open[i].cost.f < lowestCost.cost.f) {
-      lowestCost = open[i];
-    }
-  }
-
-  return lowestCost;
-}
-
-/**
- * Recursively reconstructs the path from the goal node back to the start node.
- * @param {NodeAStar} current - The current node.
- * @param {Array<string>} [path=[]] - The accumulated path.
- * @returns {Array<string>} The reconstructed path of node keys.
- */
-function findPath(current, path = []) {
-  if (!current) {
-    return path.reverse();
-  }
-
-  path.push(current.key);
-  return findPath(current.parent, path);
-}
-
-/**
- * Calculates and updates the pathfinding cost (g, h, f) of a node.
- * @param {NodeAStar} node - The node to calculate the cost for.
- * @param {NodeAStar} goalNode - The goal node to compute the heuristic against.
- * @returns {Object} The calculated cost object {g, h, f}.
- */
-function findCost(node, goalNode) {
-  if (node.parent) {
-    const distToParent = Math.sqrt(
-      (node.x - node.parent.x) ** 2 + (node.y - node.parent.y) ** 2
-    );
-    node.cost.g = node.parent.cost.g + distToParent;
-  } else {
-    node.cost.g = 0;
-  }
-
-  node.cost.h = Math.sqrt(
-    (goalNode.x - node.x) ** 2 + (goalNode.y - node.y) ** 2,
-  );
-
-  node.cost.f = node.cost.g + node.cost.h;
-
-  return node.cost;
+    return [];
 }

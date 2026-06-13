@@ -183,18 +183,53 @@ export default class Enemies {
     updatePath(playerKey, keyboard) {
         for (const enemy of this.#container) {
             if (enemy.name !== "Octopus" && enemy) {
-                const path = findBestPath(
+                const occupiedKeys = new Set();
+                for (const other of this.#container) {
+                    if (other !== enemy && other.name !== "Octopus" && !other.isDead) {
+                        if (other.actualKey) {
+                            occupiedKeys.add(other.actualKey);
+                        }
+                        if (other.targetedPosition) {
+                            const keyAtTarget = keyboard.keyboardLayout.find(
+                                k => k.rawPosition.x === other.targetedPosition.x && k.rawPosition.y === other.targetedPosition.y
+                            );
+                            if (keyAtTarget) {
+                                occupiedKeys.add(keyAtTarget.key);
+                            }
+                        }
+                        if (other.path && other.path.length > 0) {
+                            occupiedKeys.add(other.path[0].key);
+                        }
+                    }
+                }
+
+                const tempGrid = new Map();
+                for (const [k, node] of this.#aStarGrid.entries()) {
+                    const nodeCopy = node.copy();
+                    if (occupiedKeys.has(k) && k !== playerKey) {
+                        nodeCopy.neighbours = [];
+                    } else {
+                        nodeCopy.neighbours = nodeCopy.neighbours.filter(n => !occupiedKeys.has(n.key) || n.key === playerKey);
+                    }
+                    tempGrid.set(k, nodeCopy);
+                }
+
+                const pathKeys = findBestPath(
                     enemy.actualKey,
                     playerKey,
-                    this.#aStarGrid
-                ).map((keyStr) => keyboard.find(keyStr));
+                    tempGrid
+                );
+
+                const path = pathKeys.map((keyStr) => keyboard.find(keyStr)).filter(Boolean);
                 
                 if (path.length > 1 && path[0].key === enemy.actualKey) {
                     path.shift();
                 }
 
-                enemy.path = path;
-                enemy.move();
+                if (path.length > 0) {
+                    enemy.path = path;
+                    enemy.move();
+                }
             }
         }
     }
