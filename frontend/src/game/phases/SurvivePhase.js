@@ -197,7 +197,11 @@ export class SurvivePhase extends GamePhase {
                 this.player.heal(eventToTrigger.healAmount || 50);
             }
         } else if (eventToTrigger.actionType === "spawn") {
-            this.spawnEnemy(eventToTrigger.enemyType || eventToTrigger.spawnEnemy || "basic", eventToTrigger); 
+            const count = eventToTrigger.spawnCount !== undefined ? eventToTrigger.spawnCount : 1;
+            const enemyType = eventToTrigger.enemyType || eventToTrigger.spawnEnemy || "basic";
+            for (let i = 0; i < count; i++) {
+                this.spawnEnemy(enemyType, eventToTrigger);
+            } 
         } else if (eventToTrigger.actionType === "spawnBoss") {
             if (this.enemies) {
                 this.enemies.spawnBoss(this.worldGroup);
@@ -440,7 +444,12 @@ export class SurvivePhase extends GamePhase {
         if (!this.keyboard || !this.enemies) return;
 
         const keys = this.keyboard.keyboardLayout;
-        const spawnDist = this.options.spawnDistance !== undefined ? this.options.spawnDistance : 5;
+        const minSpawnDist = options.minSpawnDistance !== undefined ? options.minSpawnDistance : 
+                             (this.options.minSpawnDistance !== undefined ? this.options.minSpawnDistance : 
+                             (this.options.spawnDistance !== undefined ? this.options.spawnDistance : 5));
+        const maxSpawnDist = options.maxSpawnDistance !== undefined ? options.maxSpawnDistance : 
+                             (this.options.maxSpawnDistance !== undefined ? this.options.maxSpawnDistance : 999);
+        
         let randomKey;
         let attempts = 0;
         let dist = 1000;
@@ -463,13 +472,16 @@ export class SurvivePhase extends GamePhase {
                 (enemy.path && enemy.path.length > 0 && enemy.path[0].key === randomKey.key)
             );
 
-            if (randomKey.isGround && dist >= spawnDist && !isOccupied) {
+            if (randomKey.isGround && dist >= minSpawnDist && dist <= maxSpawnDist && !isOccupied) {
                 break;
             }
         } while (attempts < 100);
 
         const types = ["basic", "speedy", "tank"];
         let randomType = type || types[Math.floor(Math.random() * types.length)];
+        if (randomType === "random") {
+            randomType = types[Math.floor(Math.random() * types.length)];
+        }
         if (!types.includes(randomType)) {
             randomType = "basic";
         }

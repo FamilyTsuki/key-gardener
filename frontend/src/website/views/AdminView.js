@@ -325,7 +325,11 @@ export class AdminView {
                     dialogueModel: block.querySelector('.evt-model').value,
                     dialogue: actionType === 'dialogue' ? dText.split('\n').map(l => l.trim()).filter(l => l.length > 0) : [],
                     healAmount: Number(block.querySelector('.evt-heal-amount').value) || 50,
-                    spawnEnemy: block.querySelector('.evt-spawn-type').value,
+                    spawnEnemy: block.querySelector('.evt-spawn-type') ? block.querySelector('.evt-spawn-type').value : 'basic',
+                    enemyType: block.querySelector('.evt-spawn-type') ? block.querySelector('.evt-spawn-type').value : 'basic',
+                    spawnCount: block.querySelector('.evt-spawn-count') ? (Number(block.querySelector('.evt-spawn-count').value) || 1) : 1,
+                    minSpawnDistance: block.querySelector('.evt-min-spawn-dist') ? (Number(block.querySelector('.evt-min-spawn-dist').value) || 5) : 5,
+                    maxSpawnDistance: block.querySelector('.evt-max-spawn-dist') ? (Number(block.querySelector('.evt-max-spawn-dist').value) || 999) : 999,
                     spawnInterval: Number(block.querySelector('.evt-spawn-interval').value) || 3,
                     maxEnemies: Number(block.querySelector('.evt-spawn-max').value) || 20,
                     padSides: block.querySelector('.evt-expand-sides') ? Number(block.querySelector('.evt-expand-sides').value) : 3,
@@ -345,7 +349,8 @@ export class AdminView {
                     maxEnemies: card.querySelector('.survive-max-enemies').value ? Number(card.querySelector('.survive-max-enemies').value) : 0,
                     paddingTopBottom: card.querySelector('.survive-padding-tb') && card.querySelector('.survive-padding-tb').value ? Number(card.querySelector('.survive-padding-tb').value) : 5,
                     paddingSides: card.querySelector('.survive-padding-sides') && card.querySelector('.survive-padding-sides').value ? Number(card.querySelector('.survive-padding-sides').value) : 3,
-                    spawnDistance: card.querySelector('.survive-spawn-dist') && card.querySelector('.survive-spawn-dist').value ? Number(card.querySelector('.survive-spawn-dist').value) : 5,
+                    minSpawnDistance: card.querySelector('.survive-min-spawn-dist') && card.querySelector('.survive-min-spawn-dist').value ? Number(card.querySelector('.survive-min-spawn-dist').value) : 5,
+                    maxSpawnDistance: card.querySelector('.survive-max-spawn-dist') && card.querySelector('.survive-max-spawn-dist').value ? Number(card.querySelector('.survive-max-spawn-dist').value) : 999,
                     storyEvents: gatheredStoryEvents
                 };
             } else if (phaseType === 'void') {
@@ -440,7 +445,7 @@ export class AdminView {
         this.init3DPreview(previewContainer, level.phase_type, options, card);
     }
 
-    createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: [], dialogueModel: '/asset/game_assets/models/player.glb', healAmount: 50, spawnEnemy: 'basic' }) {
+    createStoryEventBlock(storyContainer, typeSelect, evt = { actionType: 'dialogue', triggerType: 'time', triggerValue: 10, dialogue: [], dialogueModel: '/asset/game_assets/models/player.glb', healAmount: 50, spawnEnemy: 'basic', spawnCount: 1, minSpawnDistance: 5, maxSpawnDistance: 999 }) {
         const currentPhaseType = typeSelect.value;
         const div = el("div", { className: "story-event-block" });
 
@@ -533,12 +538,27 @@ export class AdminView {
 
         div.appendChild(
             el("div", { className: "evt-fields-spawn block-row" },
-                el("label", {}, LanguageManager.t("admin.enemyType")),
-                createCustomSelect([
-                    { value: "basic", label: LanguageManager.t("admin.basic") },
-                    { value: "speedy", label: LanguageManager.t("admin.speedy") },
-                    { value: "tank", label: LanguageManager.t("admin.tank") }
-                ], evt.spawnEnemy || "basic", null, "evt-spawn-type admin-compact-select width-150")
+                el("div", { className: "flex-row-gap10 flex-center mr-15" },
+                    el("label", {}, LanguageManager.t("admin.enemyType")),
+                    createCustomSelect([
+                        { value: "basic", label: LanguageManager.t("admin.basic") },
+                        { value: "speedy", label: LanguageManager.t("admin.speedy") },
+                        { value: "tank", label: LanguageManager.t("admin.tank") },
+                        { value: "random", label: LanguageManager.t("admin.random") }
+                    ], evt.enemyType || evt.spawnEnemy || "basic", null, "evt-spawn-type admin-compact-select width-150")
+                ),
+                el("div", { className: "flex-row-gap10 flex-center mr-15" },
+                    el("label", {}, LanguageManager.t("admin.spawnCount")),
+                    el("input", { type: "number", className: "evt-spawn-count block-input width-80", value: evt.spawnCount !== undefined ? evt.spawnCount : 1 })
+                ),
+                el("div", { className: "flex-row-gap10 flex-center mr-15" },
+                    el("label", {}, LanguageManager.t("admin.minSpawnDistance")),
+                    el("input", { type: "number", className: "evt-min-spawn-dist block-input width-80", value: evt.minSpawnDistance !== undefined ? evt.minSpawnDistance : 5 })
+                ),
+                el("div", { className: "flex-row-gap10 flex-center" },
+                    el("label", {}, LanguageManager.t("admin.maxSpawnDistance")),
+                    el("input", { type: "number", className: "evt-max-spawn-dist block-input width-80", value: evt.maxSpawnDistance !== undefined ? evt.maxSpawnDistance : 999 })
+                )
             )
         );
 
@@ -918,8 +938,12 @@ export class AdminView {
                     el("input", { type: "number", className: "survive-padding-sides block-input", value: options.paddingSides !== undefined ? options.paddingSides : 3 })
                 ),
                 el("div", { className: "flex-1 min-w-100" },
-                    el("label", { className: "admin-label" }, LanguageManager.t("admin.spawnDistance")),
-                    el("input", { type: "number", className: "survive-spawn-dist block-input", value: options.spawnDistance !== undefined ? options.spawnDistance : 5 })
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.minSpawnDistance")),
+                    el("input", { type: "number", className: "survive-min-spawn-dist block-input", value: options.minSpawnDistance !== undefined ? options.minSpawnDistance : (options.spawnDistance !== undefined ? options.spawnDistance : 5) })
+                ),
+                el("div", { className: "flex-1 min-w-100" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.maxSpawnDistance")),
+                    el("input", { type: "number", className: "survive-max-spawn-dist block-input", value: options.maxSpawnDistance !== undefined ? options.maxSpawnDistance : 999 })
                 )
             )
         );

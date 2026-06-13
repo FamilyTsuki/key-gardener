@@ -121,7 +121,7 @@ export default class Enemy extends Actor {
 
                 this.hpSprite.position.set(0, 1.5, 0);
             }
-            this.model.position.y = 1.3;
+            this.model.position.y = 0.6;
             this.mesh.add(this.model);
         });
         const canvas = document.createElement("canvas");
@@ -275,7 +275,7 @@ export default class Enemy extends Actor {
                 this.spawnProgress = 1;
                 this.mesh.position.set(this.position.x * 3.2, 0, this.position.y * 3.2);
                 if (this.model) {
-                    this.model.position.y = 1.3;
+                    this.model.position.y = 0.6;
                     this.model.rotation.x = 0;
                 }
                 if (this.hpSprite) this.hpSprite.visible = true;
@@ -288,7 +288,7 @@ export default class Enemy extends Actor {
                 const currentY = this.spawnSource.y + (this.position.y - this.spawnSource.y) * this.spawnProgress;
                 
                 const maxJumpHeight = Math.min(6.0, 2.0 + this.spawnDistance * 0.25);
-                const height = 1.3 + Math.sin(this.spawnProgress * Math.PI) * maxJumpHeight;
+                const height = 0.6 + Math.sin(this.spawnProgress * Math.PI) * maxJumpHeight;
                 
                 this.mesh.position.set(currentX * 3.2, 0, currentY * 3.2);
                 const lookTarget = new THREE.Vector3(this.position.x * 3.2, 0, this.position.y * 3.2);
@@ -365,7 +365,7 @@ export default class Enemy extends Actor {
 
                 if (this.model) {
                     const sinePos = Math.sin(progression * Math.PI);
-                    this.model.position.y = 1.6 + sinePos * jumpAmplitude;
+                    this.model.position.y = 0.6 + sinePos * jumpAmplitude;
 
                     const stretchFactor = 0.3 * Math.sin(progression * Math.PI) * this.baseScale;
 
@@ -377,7 +377,7 @@ export default class Enemy extends Actor {
                 if (currentDist < 0.05) {
                     this.isJumping = false;
                     if (this.model) {
-                        this.model.position.y = 1.6;
+                        this.model.position.y = 0.6;
                         this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
                     }
                     this.position.x = this.#targetedPosition.x;
