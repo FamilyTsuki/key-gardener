@@ -11,6 +11,7 @@ import { applyTriplanarMapping } from '../../game/utilities/TextureUtils.js';
 import { el, clear } from '../../core/utils/DOMBuilder.js';
 import { VoidCreature } from "../../game/models/actors/VoidCreature.js";
 import { createCustomSelect } from "../components/CustomSelect.js";
+import { ENEMY_TYPES } from "../../game/constants/EnemyTypes.js";
 
 export class AdminView {
     constructor() {
@@ -29,19 +30,19 @@ export class AdminView {
     async init() {
         clear(this.container);
         
-        const sidebarContent = el("div", { id: "sidebar-content", className: "w-100 flex-col-stretch" });
+        const sidebarContent = el("div", { id: "sidebar-content", className: "sidebar-content-wrapper" });
         const detailContainer = el("div", { id: "level-detail-container" });
 
         this.container.appendChild(
             el("div", { className: "admin-dashboard" },
                 el("aside", { className: "admin-sidebar" },
-                    el("div", { className: "flex-row-gap10 mb-15" },
+                    el("div", { className: "sidebar-toggle-group" },
                         el("button", { 
-                            className: `btn-secondary flex-1 ${this.currentView === 'levels' ? 'active' : ''}`,
+                            className: `btn-secondary ${this.currentView === 'levels' ? 'active' : ''}`,
                             onclick: () => this.switchView('levels')
                         }, LanguageManager.t("admin.title")),
                         el("button", { 
-                            className: `btn-secondary flex-1 ${this.currentView === 'reports' ? 'active' : ''}`,
+                            className: `btn-secondary ${this.currentView === 'reports' ? 'active' : ''}`,
                             onclick: () => this.switchView('reports')
                         }, LanguageManager.t("admin.reportedPosts"))
                     ),
@@ -91,11 +92,11 @@ export class AdminView {
         clear(sidebar);
 
         sidebar.appendChild(
-            el("div", { className: "flex-col-stretch w-100" },
+            el("div", { className: "sidebar-inner" },
                 el("h2", { className: "sidebar-title" }, LanguageManager.t("admin.title")),
-                el("div", { className: "flex-row-gap10 mb-15" },
-                    el("button", { className: "btn-secondary btn-sm flex-1", onclick: () => this.exportLevels() }, LanguageManager.t("admin.exportLevels")),
-                    el("button", { className: "btn-secondary btn-sm flex-1", onclick: () => this.importLevels() }, LanguageManager.t("admin.importLevels"))
+                el("div", { className: "sidebar-actions" },
+                    el("button", { className: "btn-secondary btn-sm", onclick: () => this.exportLevels() }, LanguageManager.t("admin.exportLevels")),
+                    el("button", { className: "btn-secondary btn-sm", onclick: () => this.importLevels() }, LanguageManager.t("admin.importLevels"))
                 ),
                 el("div", { id: "levels-list", className: "levels-list" })
             )
@@ -215,18 +216,19 @@ export class AdminView {
         container.appendChild(
             el("div", { className: "admin-editor-card" },
                 el("div", { className: "admin-phase-row" },
-                    el("label", { className: "admin-label m-0" }, LanguageManager.t("admin.phaseType")),
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.phaseType")),
                     createCustomSelect([
                         { value: "survive", label: LanguageManager.t("admin.survivePhase") },
                         { value: "world", label: LanguageManager.t("admin.worldPhase") },
                         { value: "void", label: LanguageManager.t("admin.voidPhase") }
-                    ], level.phase_type || "survive", null, "phase-type-select admin-compact-select max-w-250")
+                    ], level.phase_type || "survive", null, "phase-type-select admin-compact-select")
                 ),
                 surviveForm,
                 worldForm,
                 voidForm,
                 storyEvents,
-                el("div", { className: "mt-15" },
+                el("div", { className: "editor-actions-row" },
+                    el("button", { className: "add-story-event-btn btn-secondary", dataset: { level: level.level_number } }, LanguageManager.t("admin.addEvent")),
                     el("button", { className: "save-btn btn-primary" }, `${LanguageManager.t("admin.saveLevel")} ${level.level_number}`)
                 )
             )
@@ -316,22 +318,40 @@ export class AdminView {
             let parsedOptions = {};
 
             const gatheredStoryEvents = Array.from(storyContainer.querySelectorAll('.story-event-block')).map(block => {
-                const actionType = block.querySelector('.evt-action-type').value || 'dialogue';
-                const dText = block.querySelector('.evt-dialogue').value;
+                const actionType = block.querySelector('.evt-action-type') ? block.querySelector('.evt-action-type').value : 'dialogue';
+                const dText = block.querySelector('.evt-dialogue') ? block.querySelector('.evt-dialogue').value : '';
+
+                const enemyWeights = {};
+                if (actionType === 'spawnerConfig') {
+                    for (const typeKey of Object.keys(ENEMY_TYPES)) {
+                        const wInput = block.querySelector(`.evt-spawner-weight-${typeKey}`);
+                        enemyWeights[typeKey] = wInput ? Number(wInput.value) || 0 : 0;
+                    }
+                }
+
                 return {
                     actionType: actionType,
-                    triggerType: block.querySelector('.evt-trigger-type').value,
-                    triggerValue: Number(block.querySelector('.evt-trigger-value').value) || 0,
-                    dialogueModel: block.querySelector('.evt-model').value,
+                    triggerType: block.querySelector('.evt-trigger-type') ? block.querySelector('.evt-trigger-type').value : 'time',
+                    triggerValue: block.querySelector('.evt-trigger-value') ? (Number(block.querySelector('.evt-trigger-value').value) || 0) : 0,
+                    dialogueModel: block.querySelector('.evt-model') ? block.querySelector('.evt-model').value : undefined,
                     dialogue: actionType === 'dialogue' ? dText.split('\n').map(l => l.trim()).filter(l => l.length > 0) : [],
-                    healAmount: Number(block.querySelector('.evt-heal-amount').value) || 50,
+                    healAmount: block.querySelector('.evt-heal-amount') ? (Number(block.querySelector('.evt-heal-amount').value) || 50) : undefined,
                     spawnEnemy: block.querySelector('.evt-spawn-type') ? block.querySelector('.evt-spawn-type').value : 'basic',
                     enemyType: block.querySelector('.evt-spawn-type') ? block.querySelector('.evt-spawn-type').value : 'basic',
                     spawnCount: block.querySelector('.evt-spawn-count') ? (Number(block.querySelector('.evt-spawn-count').value) || 1) : 1,
-                    minSpawnDistance: block.querySelector('.evt-min-spawn-dist') ? (Number(block.querySelector('.evt-min-spawn-dist').value) || 5) : 5,
-                    maxSpawnDistance: block.querySelector('.evt-max-spawn-dist') ? (Number(block.querySelector('.evt-max-spawn-dist').value) || 999) : 999,
-                    spawnInterval: Number(block.querySelector('.evt-spawn-interval').value) || 3,
-                    maxEnemies: Number(block.querySelector('.evt-spawn-max').value) || 20,
+                    minSpawnDistance: actionType === 'spawnerConfig'
+                        ? (block.querySelector('.evt-spawner-min-dist') ? (Number(block.querySelector('.evt-spawner-min-dist').value) || 5) : 5)
+                        : (block.querySelector('.evt-min-spawn-dist') ? (Number(block.querySelector('.evt-min-spawn-dist').value) || 5) : 5),
+                    maxSpawnDistance: actionType === 'spawnerConfig'
+                        ? (block.querySelector('.evt-spawner-max-dist') ? (Number(block.querySelector('.evt-spawner-max-dist').value) || 999) : 999)
+                        : (block.querySelector('.evt-max-spawn-dist') ? (Number(block.querySelector('.evt-max-spawn-dist').value) || 999) : 999),
+                    spawnInterval: block.querySelector('.evt-spawn-interval') ? (Number(block.querySelector('.evt-spawn-interval').value) || 3) : undefined,
+                    maxEnemies: block.querySelector('.evt-spawn-max') ? (Number(block.querySelector('.evt-spawn-max').value) || 20) : undefined,
+                    spawnerEndCondition: actionType === 'spawnerConfig' ? (block.querySelector('.evt-spawner-end-condition') ? block.querySelector('.evt-spawner-end-condition').value : 'none') : undefined,
+                    spawnerDuration: actionType === 'spawnerConfig' ? (block.querySelector('.evt-spawner-duration') && block.querySelector('.evt-spawner-duration').value ? Number(block.querySelector('.evt-spawner-duration').value) : null) : undefined,
+                    spawnerSpawnLimit: actionType === 'spawnerConfig' ? (block.querySelector('.evt-spawner-spawn-limit') && block.querySelector('.evt-spawner-spawn-limit').value ? Number(block.querySelector('.evt-spawner-spawn-limit').value) : null) : undefined,
+                    spawnerKillTarget: actionType === 'spawnerConfig' ? (block.querySelector('.evt-spawner-kill-target') && block.querySelector('.evt-spawner-kill-target').value ? Number(block.querySelector('.evt-spawner-kill-target').value) : null) : undefined,
+                    enemyWeights: actionType === 'spawnerConfig' ? enemyWeights : undefined,
                     padSides: block.querySelector('.evt-expand-sides') ? Number(block.querySelector('.evt-expand-sides').value) : 3,
                     padTB: block.querySelector('.evt-expand-tb') ? Number(block.querySelector('.evt-expand-tb').value) : 5,
                     tileDistance: Number(block.querySelector('.evt-tile-distance') ? block.querySelector('.evt-tile-distance').value : 0),
@@ -345,12 +365,8 @@ export class AdminView {
                     decorType: card.querySelector('.survive-decor').value,
                     duration: card.querySelector('.survive-duration').value ? Number(card.querySelector('.survive-duration').value) : null,
                     playerHp: card.querySelector('.survive-hp').value ? Number(card.querySelector('.survive-hp').value) : null,
-                    spawnInterval: card.querySelector('.survive-spawn-interval').value ? Number(card.querySelector('.survive-spawn-interval').value) : null,
-                    maxEnemies: card.querySelector('.survive-max-enemies').value ? Number(card.querySelector('.survive-max-enemies').value) : 0,
-                    paddingTopBottom: card.querySelector('.survive-padding-tb') && card.querySelector('.survive-padding-tb').value ? Number(card.querySelector('.survive-padding-tb').value) : 5,
-                    paddingSides: card.querySelector('.survive-padding-sides') && card.querySelector('.survive-padding-sides').value ? Number(card.querySelector('.survive-padding-sides').value) : 3,
-                    minSpawnDistance: card.querySelector('.survive-min-spawn-dist') && card.querySelector('.survive-min-spawn-dist').value ? Number(card.querySelector('.survive-min-spawn-dist').value) : 5,
-                    maxSpawnDistance: card.querySelector('.survive-max-spawn-dist') && card.querySelector('.survive-max-spawn-dist').value ? Number(card.querySelector('.survive-max-spawn-dist').value) : 999,
+                    paddingTopBottom: card.querySelector('.survive-padding-tb') ? Number(card.querySelector('.survive-padding-tb').value) : 5,
+                    paddingSides: card.querySelector('.survive-padding-sides') ? Number(card.querySelector('.survive-padding-sides').value) : 3,
                     storyEvents: gatheredStoryEvents
                 };
             } else if (phaseType === 'void') {
@@ -499,7 +515,7 @@ export class AdminView {
 
         div.appendChild(removeBtn);
         div.appendChild(
-            el("div", { className: "block-row mb-15" },
+            el("div", { className: "block-row action-row" },
                 el("strong", {}, LanguageManager.t("admin.action")),
                 selectAction
             )
@@ -512,17 +528,17 @@ export class AdminView {
                     { value: "time", label: LanguageManager.t("admin.afterTime") },
                     { value: "distance", label: LanguageManager.t("admin.atDistance") }
                 ], evt.triggerType || "time", null, "evt-trigger-type admin-compact-select"),
-                el("input", { type: "number", className: "evt-trigger-value block-input width-80", value: evt.triggerValue !== undefined ? evt.triggerValue : 10 })
+                el("input", { type: "number", className: "evt-trigger-value block-input compact-input", value: evt.triggerValue !== undefined ? evt.triggerValue : 10 })
             )
         );
 
         div.appendChild(
-            el("div", { className: "evt-fields-dialogue block-row flex-col-stretch" },
-                el("div", { className: "flex-row-gap10 flex-center" },
+            el("div", { className: "evt-fields-dialogue block-row" },
+                el("div", { className: "form-row" },
                     el("label", {}, LanguageManager.t("admin.model3D")),
-                    el("input", { type: "text", className: "evt-model block-input flex-1", value: evt.dialogueModel || '/asset/game_assets/models/player.glb' })
+                    el("input", { type: "text", className: "evt-model block-input", value: evt.dialogueModel || '/asset/game_assets/models/player.glb' })
                 ),
-                el("div", { className: "flex-row-gap10 flex-start mt-10" },
+                el("div", { className: "form-row" },
                     el("label", {}, LanguageManager.t("admin.dialogues")),
                     el("textarea", { className: "evt-dialogue block-textarea", rows: "3", placeholder: LanguageManager.t("admin.dialoguePlaceholder"), value: (evt.dialogue || []).join('\n') })
                 )
@@ -532,68 +548,110 @@ export class AdminView {
         div.appendChild(
             el("div", { className: "evt-fields-heal block-row" },
                 el("label", {}, LanguageManager.t("admin.hp")),
-                el("input", { type: "number", className: "evt-heal-amount block-input width-100", value: evt.healAmount || 50 })
+                el("input", { type: "number", className: "evt-heal-amount block-input medium-input", value: evt.healAmount || 50 })
             )
         );
 
         div.appendChild(
             el("div", { className: "evt-fields-spawn block-row" },
-                el("div", { className: "flex-row-gap10 flex-center mr-15" },
+                el("div", { className: "form-row-item" },
                     el("label", {}, LanguageManager.t("admin.enemyType")),
                     createCustomSelect([
                         { value: "basic", label: LanguageManager.t("admin.basic") },
                         { value: "speedy", label: LanguageManager.t("admin.speedy") },
                         { value: "tank", label: LanguageManager.t("admin.tank") },
                         { value: "random", label: LanguageManager.t("admin.random") }
-                    ], evt.enemyType || evt.spawnEnemy || "basic", null, "evt-spawn-type admin-compact-select width-150")
+                    ], evt.enemyType || evt.spawnEnemy || "basic", null, "evt-spawn-type admin-compact-select")
                 ),
-                el("div", { className: "flex-row-gap10 flex-center mr-15" },
+                el("div", { className: "form-row-item" },
                     el("label", {}, LanguageManager.t("admin.spawnCount")),
-                    el("input", { type: "number", className: "evt-spawn-count block-input width-80", value: evt.spawnCount !== undefined ? evt.spawnCount : 1 })
+                    el("input", { type: "number", className: "evt-spawn-count block-input compact-input", value: evt.spawnCount !== undefined ? evt.spawnCount : 1 })
                 ),
-                el("div", { className: "flex-row-gap10 flex-center mr-15" },
+                el("div", { className: "form-row-item" },
                     el("label", {}, LanguageManager.t("admin.minSpawnDistance")),
-                    el("input", { type: "number", className: "evt-min-spawn-dist block-input width-80", value: evt.minSpawnDistance !== undefined ? evt.minSpawnDistance : 5 })
+                    el("input", { type: "number", className: "evt-min-spawn-dist block-input compact-input", value: evt.minSpawnDistance !== undefined ? evt.minSpawnDistance : 5 })
                 ),
-                el("div", { className: "flex-row-gap10 flex-center" },
+                el("div", { className: "form-row-item" },
                     el("label", {}, LanguageManager.t("admin.maxSpawnDistance")),
-                    el("input", { type: "number", className: "evt-max-spawn-dist block-input width-80", value: evt.maxSpawnDistance !== undefined ? evt.maxSpawnDistance : 999 })
+                    el("input", { type: "number", className: "evt-max-spawn-dist block-input compact-input", value: evt.maxSpawnDistance !== undefined ? evt.maxSpawnDistance : 999 })
                 )
             )
         );
 
+        const spawnerConfigWeightFields = [];
+        const spawnerWeights = evt.enemyWeights || {};
+        for (const [typeKey, config] of Object.entries(ENEMY_TYPES)) {
+            const currentWeight = spawnerWeights[typeKey] !== undefined ? spawnerWeights[typeKey] : 0;
+            spawnerConfigWeightFields.push(
+                el("div", { className: "weight-field-group" },
+                    el("label", { className: "admin-label" }, `${config.label} (%) : `),
+                    el("input", {
+                        type: "number",
+                        min: "0",
+                        className: `evt-spawner-weight-${typeKey} block-input compact-input`,
+                        value: currentWeight
+                    })
+                )
+            );
+        }
+
         div.appendChild(
             el("div", { className: "evt-fields-spawnerConfig block-row" },
-                el("label", {}, LanguageManager.t("admin.spawnIntervalConfig")),
-                el("input", { type: "number", step: "0.1", className: "evt-spawn-interval block-input width-80 mr-15", value: evt.spawnInterval !== undefined ? evt.spawnInterval : 3 }),
-                el("label", {}, LanguageManager.t("admin.maxEnemies")),
-                el("input", { type: "number", className: "evt-spawn-max block-input", value: evt.maxEnemies !== undefined ? evt.maxEnemies : 20 })
+                el("div", { className: "form-row" },
+                    el("label", {}, LanguageManager.t("admin.spawnIntervalConfig")),
+                    el("input", { type: "number", step: "0.1", className: "evt-spawn-interval block-input compact-input", value: evt.spawnInterval !== undefined ? evt.spawnInterval : 3 }),
+                    el("label", {}, LanguageManager.t("admin.maxEnemies")),
+                    el("input", { type: "number", className: "evt-spawn-max block-input compact-input", value: evt.maxEnemies !== undefined ? evt.maxEnemies : 20 }),
+                    el("label", {}, "Dist. Min :"),
+                    el("input", { type: "number", className: "evt-spawner-min-dist block-input compact-input", value: evt.minSpawnDistance !== undefined ? evt.minSpawnDistance : 5 }),
+                    el("label", {}, "Dist. Max :"),
+                    el("input", { type: "number", className: "evt-spawner-max-dist block-input compact-input", value: evt.maxSpawnDistance !== undefined ? evt.maxSpawnDistance : 999 })
+                ),
+                el("div", { className: "form-row" },
+                    el("label", {}, "Arrêt spawner :"),
+                    createCustomSelect([
+                        { value: "none", label: "Infini / Aucun" },
+                        { value: "time", label: "Par temps" },
+                        { value: "spawn_count", label: "Par apparitions" },
+                        { value: "kills", label: "Par éliminations" }
+                    ], evt.spawnerEndCondition || "none", null, "evt-spawner-end-condition admin-compact-select"),
+                    el("label", {}, "Temps max (sec) :"),
+                    el("input", { type: "number", className: "evt-spawner-duration block-input compact-input", value: evt.spawnerDuration || '' }),
+                    el("label", {}, "Limite apparitions :"),
+                    el("input", { type: "number", className: "evt-spawner-spawn-limit block-input compact-input", value: evt.spawnerSpawnLimit || '' }),
+                    el("label", {}, "Ennemis à tuer :"),
+                    el("input", { type: "number", className: "evt-spawner-kill-target block-input compact-input", value: evt.spawnerKillTarget || '' })
+                ),
+                el("div", { className: "weights-container-wrapper" },
+                    el("strong", { className: "weights-label" }, "Poids d'apparition :"),
+                    el("div", { className: "spawner-weights-container" }, ...spawnerConfigWeightFields)
+                )
             )
         );
 
         div.appendChild(
             el("div", { className: "evt-fields-expandMap block-row" },
                 el("label", {}, LanguageManager.t("admin.expandSides")),
-                el("input", { type: "number", className: "evt-expand-sides block-input width-80 mr-15", value: evt.padSides !== undefined ? evt.padSides : 3 }),
+                el("input", { type: "number", className: "evt-expand-sides block-input compact-input", value: evt.padSides !== undefined ? evt.padSides : 3 }),
                 el("label", {}, LanguageManager.t("admin.expandTB")),
-                el("input", { type: "number", className: "evt-expand-tb block-input width-80", value: evt.padTB !== undefined ? evt.padTB : 5 })
+                el("input", { type: "number", className: "evt-expand-tb block-input compact-input", value: evt.padTB !== undefined ? evt.padTB : 5 })
             )
         );
 
         div.appendChild(
-            el("div", { className: "block-row flex-col-stretch mt-10" },
-                el("div", { className: "flex-row-gap10 flex-start" },
+            el("div", { className: "block-row evt-distance-container" },
+                el("div", { className: "form-row" },
                     el("label", {}, LanguageManager.t("admin.tileDistance")),
-                    el("input", { type: "number", className: "evt-tile-distance block-input width-80", value: evt.tileDistance !== undefined ? evt.tileDistance : 0 })
+                    el("input", { type: "number", className: "evt-tile-distance block-input compact-input", value: evt.tileDistance !== undefined ? evt.tileDistance : 0 })
                 )
             )
         );
 
         div.appendChild(
-            el("div", { className: "evt-fields-difficulty block-row flex-col-stretch mt-10" },
-                el("div", { className: "flex-row-gap10 flex-start" },
+            el("div", { className: "evt-fields-difficulty block-row" },
+                el("div", { className: "form-row" },
                     el("label", {}, LanguageManager.t("admin.difficultyMultiplier")),
-                    el("input", { type: "number", step: "0.1", className: "evt-difficulty block-input width-80", value: evt.difficultyMultiplier !== undefined ? evt.difficultyMultiplier : 1 })
+                    el("input", { type: "number", step: "0.1", className: "evt-difficulty block-input compact-input", value: evt.difficultyMultiplier !== undefined ? evt.difficultyMultiplier : 1 })
                 )
             )
         );
@@ -652,8 +710,8 @@ export class AdminView {
 
                 const padSidesInput = card.querySelector('.survive-padding-sides');
                 const padTBInput = card.querySelector('.survive-padding-tb');
-                const padSides = padSidesInput ? Number(padSidesInput.value) : (options.paddingSides !== undefined ? options.paddingSides : 3);
-                const padTB = padTBInput ? Number(padTBInput.value) : (options.paddingTopBottom !== undefined ? options.paddingTopBottom : 5);
+                const padSides = padSidesInput ? Number(padSidesInput.value) : 3;
+                const padTB = padTBInput ? Number(padTBInput.value) : 5;
 
                 keyboardGroup = new THREE.Group();
                 Keyboard.init(keyboardGroup, getExtendedMapLayout(padSides, padTB), decorType);
@@ -843,7 +901,9 @@ export class AdminView {
                 e.target.classList.contains('events-list')) {
                 renderEventsPreviews();
             }
-            if (e.target.classList.contains('survive-padding-sides') || 
+            if (e.target.classList.contains('evt-spawner-pad-sides') || 
+                e.target.classList.contains('evt-spawner-pad-tb') ||
+                e.target.classList.contains('survive-padding-sides') || 
                 e.target.classList.contains('survive-padding-tb')) {
                 renderDecor();
             }
@@ -900,7 +960,7 @@ export class AdminView {
         return el("div", { className: `survive-form story-event-block block-survive ${isSurvive ? '' : 'none'}` },
             el("div", { className: "block-title" }, LanguageManager.t("admin.surviveParams")),
             el("div", { className: "block-row" },
-                el("div", { className: "flex-1 min-w-150" },
+                el("div", { className: "form-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.decor")),
                     createCustomSelect([
                         { value: "default", label: LanguageManager.t("admin.default") },
@@ -909,41 +969,23 @@ export class AdminView {
                         { value: "dungeon", label: LanguageManager.t("admin.dungeon") }
                     ], options.decorType || "default", null, "survive-decor admin-compact-select")
                 ),
-                el("div", { className: "flex-1 min-w-100" },
+                el("div", { className: "form-group compact-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.duration")),
                     el("input", { type: "number", className: "survive-duration block-input", value: options.duration || '', placeholder: LanguageManager.t("admin.infinite") })
                 ),
-                el("div", { className: "flex-1 min-w-100" },
+                el("div", { className: "form-group compact-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.playerHp")),
                     el("input", { type: "number", className: "survive-hp block-input", value: options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : '', placeholder: LanguageManager.t("admin.immortal") })
                 )
             ),
-            el("div", { className: "block-row mt-15" },
-                el("div", { className: "flex-1 min-w-150" },
-                    el("label", { className: "admin-label" }, LanguageManager.t("admin.spawnInterval")),
-                    el("input", { type: "number", step: "0.1", className: "survive-spawn-interval block-input", value: options.spawnInterval !== undefined && options.spawnInterval !== null ? options.spawnInterval : '', placeholder: LanguageManager.t("admin.disabled") })
-                ),
-                el("div", { className: "flex-1 min-w-150" },
-                    el("label", { className: "admin-label" }, LanguageManager.t("admin.maxEnemies")),
-                    el("input", { type: "number", className: "survive-max-enemies block-input", value: options.maxEnemies !== undefined && options.maxEnemies !== null ? options.maxEnemies : '', placeholder: LanguageManager.t("admin.disabled") })
-                )
-            ),
-            el("div", { className: "block-row mt-15" },
-                el("div", { className: "flex-1 min-w-100" },
+            el("div", { className: "block-row" },
+                el("div", { className: "form-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.paddingTopBottom")),
-                    el("input", { type: "number", className: "survive-padding-tb block-input", value: options.paddingTopBottom !== undefined ? options.paddingTopBottom : 5 })
+                    el("input", { type: "number", className: "survive-padding-tb block-input", value: options.paddingTopBottom !== undefined && options.paddingTopBottom !== null ? options.paddingTopBottom : 5 })
                 ),
-                el("div", { className: "flex-1 min-w-100" },
+                el("div", { className: "form-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.paddingSides")),
-                    el("input", { type: "number", className: "survive-padding-sides block-input", value: options.paddingSides !== undefined ? options.paddingSides : 3 })
-                ),
-                el("div", { className: "flex-1 min-w-100" },
-                    el("label", { className: "admin-label" }, LanguageManager.t("admin.minSpawnDistance")),
-                    el("input", { type: "number", className: "survive-min-spawn-dist block-input", value: options.minSpawnDistance !== undefined ? options.minSpawnDistance : (options.spawnDistance !== undefined ? options.spawnDistance : 5) })
-                ),
-                el("div", { className: "flex-1 min-w-100" },
-                    el("label", { className: "admin-label" }, LanguageManager.t("admin.maxSpawnDistance")),
-                    el("input", { type: "number", className: "survive-max-spawn-dist block-input", value: options.maxSpawnDistance !== undefined ? options.maxSpawnDistance : 999 })
+                    el("input", { type: "number", className: "survive-padding-sides block-input", value: options.paddingSides !== undefined && options.paddingSides !== null ? options.paddingSides : 3 })
                 )
             )
         );
@@ -953,25 +995,25 @@ export class AdminView {
         return el("div", { className: `world-form story-event-block block-world ${isWorld ? '' : 'none'}` },
             el("div", { className: "block-title" }, LanguageManager.t("admin.worldParams")),
             el("div", { className: "block-row" },
-                el("div", { className: "flex-1 min-w-200" },
+                el("div", { className: "form-group wide-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.introType")),
                     createCustomSelect([
                         { value: "staircase", label: LanguageManager.t("admin.staircase") },
                         { value: "skyfall", label: LanguageManager.t("admin.skyfall") }
                     ], options.introType || "staircase", null, "world-intro admin-compact-select")
                 ),
-                el("div", { className: "flex-1 min-w-200" },
+                el("div", { className: "form-group wide-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.outroType")),
                     createCustomSelect([
                         { value: "DoorEvent", label: LanguageManager.t("admin.doorEvent") },
                         { value: "HoleEvent", label: LanguageManager.t("admin.holeEvent") }
                     ], options.outroType || "DoorEvent", null, "world-outro admin-compact-select")
                 ),
-                el("div", { className: "flex-1 min-w-100" },
+                el("div", { className: "form-group compact-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.playerHp")),
                     el("input", { type: "number", className: "world-hp block-input", value: options.playerHp !== undefined && options.playerHp !== null ? options.playerHp : '', placeholder: LanguageManager.t("admin.immortal") })
                 ),
-                el("div", { className: "flex-1 min-w-100" },
+                el("div", { className: "form-group compact-group" },
                     el("label", { className: "admin-label" }, LanguageManager.t("admin.worldDistance")),
                     el("input", { type: "number", className: "world-distance block-input", value: options.worldDistance !== undefined && options.worldDistance !== null ? options.worldDistance : 30, placeholder: "30" })
                 )
@@ -991,8 +1033,7 @@ export class AdminView {
     buildStoryEvents(levelNumber) {
         return el("div", { className: "admin-story-events" },
             el("div", { className: "events-section-title" }, LanguageManager.t("admin.storyEvents")),
-            el("div", { className: `story-events-container-${levelNumber} events-list` }),
-            el("button", { className: "add-story-event-btn btn-secondary", dataset: { level: levelNumber } }, LanguageManager.t("admin.addEvent"))
+            el("div", { className: `story-events-container-${levelNumber} events-list` })
         );
     }
 
@@ -1173,7 +1214,7 @@ export class AdminView {
         clear(sidebar);
 
         sidebar.appendChild(
-            el("div", { className: "flex-col-stretch w-100" },
+            el("div", { className: "reports-sidebar-container" },
                 el("h2", { className: "sidebar-title" }, LanguageManager.t("admin.reportedPosts")),
                 el("div", { id: "reports-list", className: "levels-list" })
             )
@@ -1228,7 +1269,7 @@ export class AdminView {
         if (!container) return;
         clear(container);
 
-        const reportsList = el("ul", { className: "reports-list mt-15" });
+        const reportsList = el("ul", { className: "reports-list" });
         if (post.reports && Array.isArray(post.reports)) {
             post.reports.forEach(r => {
                 reportsList.appendChild(el("li", { className: "report-item admin-report-item" },
@@ -1243,14 +1284,14 @@ export class AdminView {
 
         container.appendChild(
             el("div", { className: "admin-editor-card" },
-                el("h3", { className: "mb-15" }, LanguageManager.t("admin.postBy").replace("{id}", post.id).replace("{username}", post.username)),
-                el("div", { className: "post-content-preview p-15 mb-15" },
+                el("h3", { className: "report-detail-title" }, LanguageManager.t("admin.postBy").replace("{id}", post.id).replace("{username}", post.username)),
+                el("div", { className: "post-content-preview" },
                     post.content ? el("p", {}, post.content) : null,
                     post.image_url ? el("img", { src: post.image_url, className: "post-image-preview" }) : null
                 ),
                 el("h4", {}, `${LanguageManager.t("admin.reason")} (${LanguageManager.t("admin.reportsCount").replace("{count}", post.reports ? post.reports.length : 0)})`),
                 reportsList,
-                el("div", { className: "flex-row-gap10 mt-20" }, keepBtn, destroyBtn)
+                el("div", { className: "report-action-buttons" }, keepBtn, destroyBtn)
             )
         );
     }

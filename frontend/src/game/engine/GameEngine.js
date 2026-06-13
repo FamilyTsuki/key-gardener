@@ -196,6 +196,8 @@ export class GameEngine {
 
         this.gamePhase = newPhase;
 
+        await this.autoSave();
+
         if (this.gamePhase.init) {
             await this.gamePhase.init();
         }

@@ -8,6 +8,7 @@ import Projectile from "../models/Projectile.js";
 import { getKeyboardLayout, getExtendedMapLayout } from "../utilities/KEYBOARD.js";
 import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
+import { ENEMY_TYPES } from "../constants/EnemyTypes.js";
 
 
 
@@ -22,12 +23,28 @@ export class SurvivePhase extends GamePhase {
             this.spawnInterval = 3;
             this.maxEnemies = Infinity;
             this.storyEvents = [];
+            this.spawnerActive = true;
+            this.spawnerTime = 0;
+            this.spawnerEnemiesSpawned = 0;
+            this.spawnerKills = 0;
+            this.spawnerEndCondition = "none";
+            this.spawnerDuration = null;
+            this.spawnerSpawnLimit = null;
+            this.spawnerKillTarget = null;
         } else {
             this.decorType = options.decorType || "default";
             this.duration = options.duration !== undefined ? options.duration : 60;
             this.spawnInterval = options.spawnInterval !== undefined ? options.spawnInterval : null;
             this.maxEnemies = options.maxEnemies !== undefined ? options.maxEnemies : 0;
             this.storyEvents = (options.storyEvents || []).map(evt => ({ ...evt, isTriggered: false }));
+            this.spawnerActive = options.spawnInterval !== undefined && options.spawnInterval !== null && options.spawnInterval > 0;
+            this.spawnerTime = 0;
+            this.spawnerEnemiesSpawned = 0;
+            this.spawnerKills = 0;
+            this.spawnerEndCondition = options.spawnerEndCondition || "none";
+            this.spawnerDuration = options.spawnerDuration !== undefined && options.spawnerDuration !== null ? options.spawnerDuration : null;
+            this.spawnerSpawnLimit = options.spawnerSpawnLimit !== undefined && options.spawnerSpawnLimit !== null ? options.spawnerSpawnLimit : null;
+            this.spawnerKillTarget = options.spawnerKillTarget !== undefined && options.spawnerKillTarget !== null ? options.spawnerKillTarget : null;
         }
 
         this.decor = null;
@@ -59,8 +76,8 @@ export class SurvivePhase extends GamePhase {
         this.worldGroup.position.set(-16, 0, -3.2);
         this.worldGroupPivot.add(this.worldGroup);
 
-        const padSides = this.options.paddingSides !== undefined ? this.options.paddingSides : 0;
-        const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 0;
+        const padSides = this.options.paddingSides !== undefined ? this.options.paddingSides : 3;
+        const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 5;
         this.keyboard = Keyboard.init(this.worldGroup, getExtendedMapLayout(padSides, padTB), this.decorType);
 
         const enemyGltf = await ModelLoader.loadAsync("/asset/game_assets/models/bug.glb");
@@ -209,6 +226,23 @@ export class SurvivePhase extends GamePhase {
         } else if (eventToTrigger.actionType === "spawnerConfig") {
             this.spawnInterval = eventToTrigger.spawnInterval !== undefined ? eventToTrigger.spawnInterval : 3;
             this.maxEnemies = eventToTrigger.maxEnemies !== undefined ? eventToTrigger.maxEnemies : 20;
+            this.spawnerActive = true;
+            this.spawnerTime = 0;
+            this.spawnerEnemiesSpawned = 0;
+            this.spawnerKills = 0;
+            this.spawnerEndCondition = eventToTrigger.spawnerEndCondition || "none";
+            this.spawnerDuration = eventToTrigger.spawnerDuration !== undefined && eventToTrigger.spawnerDuration !== null ? eventToTrigger.spawnerDuration : null;
+            this.spawnerSpawnLimit = eventToTrigger.spawnerSpawnLimit !== undefined && eventToTrigger.spawnerSpawnLimit !== null ? eventToTrigger.spawnerSpawnLimit : null;
+            this.spawnerKillTarget = eventToTrigger.spawnerKillTarget !== undefined && eventToTrigger.spawnerKillTarget !== null ? eventToTrigger.spawnerKillTarget : null;
+            if (eventToTrigger.minSpawnDistance !== undefined) {
+                this.options.minSpawnDistance = eventToTrigger.minSpawnDistance;
+            }
+            if (eventToTrigger.maxSpawnDistance !== undefined) {
+                this.options.maxSpawnDistance = eventToTrigger.maxSpawnDistance;
+            }
+            if (eventToTrigger.enemyWeights !== undefined) {
+                this.options.enemyWeights = eventToTrigger.enemyWeights;
+            }
             console.log(`[SurvivePhase] Spawner Config Updated: interval=${this.spawnInterval}, max=${this.maxEnemies}`);
         } else if (eventToTrigger.actionType === "expandMap") {
             this.options.paddingSides = eventToTrigger.padSides !== undefined ? eventToTrigger.padSides : 3;
@@ -273,6 +307,23 @@ export class SurvivePhase extends GamePhase {
             }
         }
 
+        if (this.spawnerActive) {
+            this.spawnerTime += deltaTime;
+            let shouldStopSpawner = false;
+            if (this.spawnerEndCondition === "time" && this.spawnerDuration !== null) {
+                shouldStopSpawner = this.spawnerTime >= this.spawnerDuration;
+            } else if (this.spawnerEndCondition === "spawn_count" && this.spawnerSpawnLimit !== null) {
+                shouldStopSpawner = this.spawnerEnemiesSpawned >= this.spawnerSpawnLimit;
+            } else if (this.spawnerEndCondition === "kills" && this.spawnerKillTarget !== null) {
+                shouldStopSpawner = this.spawnerKills >= this.spawnerKillTarget;
+            }
+
+            if (shouldStopSpawner) {
+                this.spawnerActive = false;
+                console.log("[SurvivePhase] Spawner stopped due to end condition");
+            }
+        }
+
         if (this.storyEvents) {
             const eventToTrigger = this.storyEvents.find(evt => {
                 if (evt.isTriggered) return false;
@@ -305,7 +356,7 @@ export class SurvivePhase extends GamePhase {
 
         if (this.enemies && this.player) {
             if (this.player.isAlive()) {
-                if (this.spawnInterval !== null && this.spawnInterval !== undefined && this.spawnInterval > 0 && !this.isTransitioningToNextLevel) {
+                if (this.spawnerActive && this.spawnInterval !== null && this.spawnInterval !== undefined && this.spawnInterval > 0 && !this.isTransitioningToNextLevel) {
                     this.spawnTimer += deltaTime;
                     if (this.spawnTimer >= this.spawnInterval) {
                         const regularEnemiesCount = this.enemies.container.filter(e => e !== this.enemies.boss).length;
@@ -326,6 +377,9 @@ export class SurvivePhase extends GamePhase {
 
                 const deadCount = this.enemies.clearDead() || 0;
                 this.enemiesKilled += deadCount;
+                if (this.spawnerActive) {
+                    this.spawnerKills += deadCount;
+                }
                 if (deadCount > 0 && this.gameEngine.stats) {
                     for (let i = 0; i < deadCount; i++) {
                         this.gameEngine.stats.recordEnemyDefeated(false);
@@ -444,12 +498,29 @@ export class SurvivePhase extends GamePhase {
         if (!this.keyboard || !this.enemies) return;
 
         const keys = this.keyboard.keyboardLayout;
-        const minSpawnDist = options.minSpawnDistance !== undefined ? options.minSpawnDistance : 
+        let minSpawnDist = options.minSpawnDistance !== undefined ? options.minSpawnDistance : 
                              (this.options.minSpawnDistance !== undefined ? this.options.minSpawnDistance : 
                              (this.options.spawnDistance !== undefined ? this.options.spawnDistance : 5));
-        const maxSpawnDist = options.maxSpawnDistance !== undefined ? options.maxSpawnDistance : 
+        let maxSpawnDist = options.maxSpawnDistance !== undefined ? options.maxSpawnDistance : 
                              (this.options.maxSpawnDistance !== undefined ? this.options.maxSpawnDistance : 999);
         
+        let maxMapDist = 0;
+        if (this.player) {
+            for (const key of keys) {
+                const dx = key.rawPosition.x - this.player.x;
+                const dy = key.rawPosition.y - this.player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > maxMapDist) {
+                    maxMapDist = dist;
+                }
+            }
+        }
+
+        if (maxMapDist > 0) {
+            maxSpawnDist = Math.min(maxSpawnDist, maxMapDist);
+            minSpawnDist = Math.min(minSpawnDist, maxMapDist * 0.7);
+        }
+
         let randomKey;
         let attempts = 0;
         let dist = 1000;
@@ -472,22 +543,63 @@ export class SurvivePhase extends GamePhase {
                 (enemy.path && enemy.path.length > 0 && enemy.path[0].key === randomKey.key)
             );
 
-            if (randomKey.isGround && dist >= minSpawnDist && dist <= maxSpawnDist && !isOccupied) {
+            const isPlayerTile = this.player && (
+                randomKey.key === this.lastPlayerKey ||
+                (this.player.targetPosition && 
+                 this.player.targetPosition.x === randomKey.rawPosition.x && 
+                 this.player.targetPosition.y === randomKey.rawPosition.y)
+            );
+
+            let currentMinDist = minSpawnDist;
+            let currentMaxDist = maxSpawnDist;
+            if (attempts > 40) {
+                currentMinDist = Math.max(0, minSpawnDist - (attempts - 40) * 0.1);
+                currentMaxDist = maxSpawnDist + (attempts - 40) * 0.2;
+            }
+
+            if ((randomKey.isGround || minSpawnDist === 0) && dist >= currentMinDist && dist <= currentMaxDist && !isOccupied && !isPlayerTile) {
                 break;
             }
         } while (attempts < 100);
 
-        const types = ["basic", "speedy", "tank"];
-        let randomType = type || types[Math.floor(Math.random() * types.length)];
-        if (randomType === "random") {
-            randomType = types[Math.floor(Math.random() * types.length)];
+        let randomType = type;
+        if (!randomType || randomType === "random") {
+            const weights = this.options.enemyWeights || {};
+            const activeWeights = {};
+            let totalWeight = 0;
+            for (const key of Object.keys(ENEMY_TYPES)) {
+                const weight = weights[key] !== undefined ? Number(weights[key]) : 0;
+                if (weight > 0) {
+                    activeWeights[key] = weight;
+                    totalWeight += weight;
+                }
+            }
+
+            if (totalWeight > 0) {
+                let randomNum = Math.random() * totalWeight;
+                for (const [key, weight] of Object.entries(activeWeights)) {
+                    if (randomNum < weight) {
+                        randomType = key;
+                        break;
+                    }
+                    randomNum -= weight;
+                }
+            } else {
+                const enemyKeys = Object.keys(ENEMY_TYPES);
+                randomType = enemyKeys[Math.floor(Math.random() * enemyKeys.length)];
+            }
         }
-        if (!types.includes(randomType)) {
+
+        if (!ENEMY_TYPES[randomType]) {
             randomType = "basic";
         }
         
         this.enemies.spawnAt(randomKey, this.worldGroup, randomType, options);
         
+        if (this.spawnerActive) {
+            this.spawnerEnemiesSpawned++;
+        }
+
         if (this.lastPlayerKey) {
             this.enemies.updatePath(this.lastPlayerKey, this.keyboard);
         }

@@ -2,6 +2,7 @@ import Actor from "../Actor.js";
 import * as THREE from "three";
 import ModelLoader from "../../../core/utils/ModelLoader.js";
 import { AudioManager } from "../../managers/AudioManager.js";
+import { ENEMY_TYPES } from "../../constants/EnemyTypes.js";
 /**
  * Enemy class representing an adversary in the game.
  * Inherits from Actor.
@@ -53,19 +54,10 @@ export default class Enemy extends Actor {
         this.isJumping = false;
         this.baseScale = scale;
         
-        let defaultHp = 100;
-        if (type == "basic") {
-            this.color = 0x00ff00;
-            this.speed = 0.05;
-        } else if (type == "speedy") {
-            this.speed = 0.15;
-            this.color = 0x0000ff;
-            defaultHp = 50;
-        } else if (type == "tank") {
-            this.color = 0xff0000;
-            this.speed = 0.02;
-            defaultHp = 250;
-        }
+        const config = ENEMY_TYPES[type] || ENEMY_TYPES.basic;
+        this.color = config.color;
+        this.speed = config.speed;
+        const defaultHp = config.baseHp;
         
         this.hp = hp !== 100 ? hp : defaultHp;
         this.hpMax = hpMax !== 100 ? hpMax : defaultHp;

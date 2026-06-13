@@ -3,6 +3,7 @@ import NodeAStar from "../utilities/NodeAStar.js";
 import Boss from "../models/actors/Boss.js";
 import Enemy from "../models/actors/Enemy.js";
 import findBestPath from "../utilities/aStar.js";
+import { ENEMY_TYPES } from "../constants/EnemyTypes.js";
 
 
 
@@ -280,14 +281,8 @@ export default class Enemies {
             );
             return;
         }
-        let hp;
-        if (type == "basic") {
-            hp = 50 * (options.difficulty || 1);
-        } else if (type == "speedy") {
-            hp = 10 * (options.difficulty || 1);
-        } else if (type == "tank") {
-            hp = 100 * (options.difficulty || 1);
-        }
+        const config = ENEMY_TYPES[type] || ENEMY_TYPES.basic;
+        const hp = config.baseHp * (options.difficulty || 1);
         
         
         let position = keyObject.rawPosition;
