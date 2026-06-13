@@ -44,7 +44,7 @@ export const fr = {
         feature2Title: "Explorez les Profondeurs",
         feature2Desc: "Aventurez-vous dans des cavernes générées procéduralement. Récupérez d'anciennes reliques, débloquez des pouvoirs et affrontez des boss terrifiants tapis dans l'ombre.",
         motivationTitle: "Notre Vision",
-        motivationDesc: "Nous voulions transformer l'apprentissage de la dactylographie en une véritable expérience de survie haletante. Votre mémoire musculaire est votre armure, votre vitesse de frappe est votre puissance de feu.",
+        motivationDesc: "Nous voulions transformer l'apprentissage de la dactylographie en une véritable expérience immersive. Permetant au personne ayant besoin d'améliorer leur vitesse de frappe de le faire de manière ludique.",
         roadmapTitle: "La Feuille de Route",
         roadmapDesc1: "Génération procédurale de donjons 3D avec biomes dynamiques",
         roadmapDesc2: "Vaste arsenal de sorts déclenchés par des combos de frappe complexes",

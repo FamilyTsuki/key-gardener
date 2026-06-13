@@ -44,7 +44,7 @@ export const en = {
         feature2Title: "Uncover the Deep Unknown",
         feature2Desc: "Navigate procedurally generated caverns. Gather ancient relics, unlock powerful abilities, and confront terrifying bosses lurking in the dark.",
         motivationTitle: "The Vision",
-        motivationDesc: "We wanted to turn the mundane task of learning to type into a heart-pounding survival experience. Your muscle memory is your armor; your typing speed is your damage output.",
+        motivationDesc: "We wanted to transform learning touch typing into a truly immersive experience, allowing those who need to improve their typing speed to do so in a fun and engaging way.",
         roadmapTitle: "The Journey Ahead",
         roadmapDesc1: "Dynamic biomes and ever-changing 3D dungeon layouts",
         roadmapDesc2: "A vast arsenal of spells triggered by complex typing combos",

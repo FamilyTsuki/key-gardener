@@ -267,7 +267,7 @@ export default class Enemy extends Actor {
      * @param {Player} player - The player instance to check for collisions.
      * @param {number} deltaTime - Time elapsed since last frame.
      */
-    update(player, deltaTime = 0.016) {
+    update(player, deltaTime = 0.016, keyboardLayout = null) {
         if (this.isSpawning) {
             this.spawnProgress += deltaTime / this.spawnDuration;
             if (this.spawnProgress >= 1) {
@@ -275,7 +275,8 @@ export default class Enemy extends Actor {
                 this.spawnProgress = 1;
                 this.mesh.position.set(this.position.x * 3.2, 0, this.position.y * 3.2);
                 if (this.model) {
-                    this.model.position.y = 0.6;
+                    const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === this.actualKey) : null;
+                    this.model.position.y = this.getTileSurfaceHeight(currentKey);
                     this.model.rotation.x = 0;
                 }
                 if (this.hpSprite) this.hpSprite.visible = true;
@@ -287,8 +288,10 @@ export default class Enemy extends Actor {
                 const currentX = this.spawnSource.x + (this.position.x - this.spawnSource.x) * this.spawnProgress;
                 const currentY = this.spawnSource.y + (this.position.y - this.spawnSource.y) * this.spawnProgress;
                 
+                const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === this.actualKey) : null;
+                const targetHeight = this.getTileSurfaceHeight(currentKey);
                 const maxJumpHeight = Math.min(6.0, 2.0 + this.spawnDistance * 0.25);
-                const height = 0.6 + Math.sin(this.spawnProgress * Math.PI) * maxJumpHeight;
+                const height = targetHeight + Math.sin(this.spawnProgress * Math.PI) * maxJumpHeight;
                 
                 this.mesh.position.set(currentX * 3.2, 0, currentY * 3.2);
                 const lookTarget = new THREE.Vector3(this.position.x * 3.2, 0, this.position.y * 3.2);
@@ -364,8 +367,21 @@ export default class Enemy extends Actor {
                 const jumpAmplitude = 1.5;
 
                 if (this.model) {
+                    const startKey = keyboardLayout ? keyboardLayout.find(k => 
+                        Math.abs(k.rawPosition.x - this.startJumpPos.x) < 0.1 && 
+                        Math.abs(k.rawPosition.y - this.startJumpPos.y) < 0.1
+                    ) : null;
+                    const endKey = keyboardLayout ? keyboardLayout.find(k => 
+                        Math.abs(k.rawPosition.x - this.targetedPosition.x) < 0.1 && 
+                        Math.abs(k.rawPosition.y - this.targetedPosition.y) < 0.1
+                    ) : null;
+                    
+                    const startHeight = this.getTileSurfaceHeight(startKey);
+                    const endHeight = this.getTileSurfaceHeight(endKey);
+                    const baseHeight = startHeight + (endHeight - startHeight) * progression;
+
                     const sinePos = Math.sin(progression * Math.PI);
-                    this.model.position.y = 0.6 + sinePos * jumpAmplitude;
+                    this.model.position.y = baseHeight + sinePos * jumpAmplitude;
 
                     const stretchFactor = 0.3 * Math.sin(progression * Math.PI) * this.baseScale;
 
@@ -377,13 +393,22 @@ export default class Enemy extends Actor {
                 if (currentDist < 0.05) {
                     this.isJumping = false;
                     if (this.model) {
-                        this.model.position.y = 0.6;
+                        const endKey = keyboardLayout ? keyboardLayout.find(k => 
+                            Math.abs(k.rawPosition.x - this.targetedPosition.x) < 0.1 && 
+                            Math.abs(k.rawPosition.y - this.targetedPosition.y) < 0.1
+                        ) : null;
+                        this.model.position.y = this.getTileSurfaceHeight(endKey);
                         this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
                     }
                     this.position.x = this.#targetedPosition.x;
                     this.position.y = this.#targetedPosition.y;
                     this.totalJumpDist = 0;
                     this.jumpDelayTimer = 0.07 / this.speed;
+                }
+            } else {
+                if (this.model) {
+                    const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === this.actualKey) : null;
+                    this.model.position.y = this.getTileSurfaceHeight(currentKey);
                 }
             }
         }
@@ -417,13 +442,32 @@ export default class Enemy extends Actor {
             this.die();
         }
     }
-    /**
-     * Handles the enemy's death logic, removing it from the scene.
-     */
+
     die() {
         if (this.mesh && this.mesh.parent) {
             this.mesh.parent.remove(this.mesh);
             this.mesh.visible = false;
         }
+    }
+
+    getTileSurfaceHeight(keyObj) {
+        if (!keyObj || !keyObj.mesh) return 0.225;
+
+        const keyGroup = keyObj.mesh;
+        const targetMesh = keyObj.isGround ? keyGroup.children[0] : keyGroup.children[1];
+        let height = keyGroup.position.y;
+
+        if (targetMesh && targetMesh.geometry) {
+            if (!targetMesh.geometry.boundingBox) {
+                targetMesh.geometry.computeBoundingBox();
+            }
+            const bbox = targetMesh.geometry.boundingBox;
+            const halfHeight = (bbox.max.y - bbox.min.y) / 2;
+            height += halfHeight * targetMesh.scale.y;
+        } else {
+            height += keyObj.isGround ? 0.2 : 0.225;
+        }
+
+        return height + 0.45;
     }
 }

@@ -28,6 +28,7 @@ export default class Enemies {
         this.#container = [];
         this.#enemyModel = enemyModel;
         this.#fireBallModel = fireballModel;
+        this.keyboardLayout = keyboardLayout;
 
         for (const key of keyboardLayout) {
             const position = { x: key.x, y: key.y };
@@ -157,7 +158,7 @@ export default class Enemies {
                 continue;
             }
             if (enemy !== this.#boss) {
-                enemy.update(player, deltaTime);
+                enemy.update(player, deltaTime, this.keyboardLayout);
             }
         }
         
