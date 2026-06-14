@@ -1,6 +1,7 @@
 import ModelLoader from "../../core/utils/ModelLoader.js";
 import NodeAStar from "../utilities/NodeAStar.js";
 import Boss from "../models/actors/Boss.js";
+import BugBoss from "../models/actors/BugBoss.js";
 import Enemy from "../models/actors/Enemy.js";
 import findBestPath from "../utilities/aStar.js";
 import { ENEMY_TYPES } from "../constants/EnemyTypes.js";
@@ -184,10 +185,10 @@ export default class Enemies {
      */
     updatePath(playerKey, keyboard) {
         for (const enemy of this.#container) {
-            if (enemy.name !== "Octopus" && enemy && enemy.type !== "sniper" && enemy.type !== "blocker_worm" && enemy.type !== "hazard_worm") {
+            if (enemy.name !== "Octopus" && enemy.name !== "GiantBug" && enemy && enemy.type !== "sniper" && enemy.type !== "blocker_worm" && enemy.type !== "hazard_worm") {
                 const occupiedKeys = new Set();
                 for (const other of this.#container) {
-                    if (other !== enemy && other.name !== "Octopus" && !other.isDead) {
+                    if (other !== enemy && other.name !== "Octopus" && other.name !== "GiantBug" && !other.isDead) {
                         if (other.actualKey) {
                             occupiedKeys.add(other.actualKey);
                         }
@@ -331,6 +332,26 @@ export default class Enemies {
         );
         this.#container.push(this.#boss);
 
+        this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
+    }
+
+    async spawnBugBoss(scene) {
+        const bossRawPosition = { x: 5, y: -2 };
+
+        this.#boss = new BugBoss(
+            "GiantBug",
+            400,
+            bossRawPosition,
+            {
+                x: bossRawPosition.x,
+                y: bossRawPosition.y,
+                z: bossRawPosition.z,
+            },
+            { width: 1, height: 1 },
+            scene,
+            this.#fireBallModel
+        );
+        this.#container.push(this.#boss);
         this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
     }
 }

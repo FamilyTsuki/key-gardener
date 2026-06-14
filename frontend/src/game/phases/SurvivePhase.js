@@ -144,6 +144,10 @@ export class SurvivePhase extends GamePhase {
             await this.enemies.spawnBoss(this.worldGroup);
         }
 
+        if (this.options && this.options.bugBoss) {
+            await this.enemies.spawnBugBoss(this.worldGroup);
+        }
+
         this.waitForLoader().then(() => {
             this.isReady = true;
         });
@@ -190,7 +194,7 @@ export class SurvivePhase extends GamePhase {
 
         if (this.enemies) {
             for (const enemy of this.enemies.container) {
-                if (enemy.name !== "Octopus" && enemy) {
+                if (enemy.name !== "Octopus" && enemy.name !== "GiantBug" && enemy) {
                     const ePos = enemy.targetedPosition || enemy.rawPosition;
                     if (ePos) {
                         const newKeyAtEnemyTarget = this.keyboard.keyboardLayout.find(
@@ -221,7 +225,12 @@ export class SurvivePhase extends GamePhase {
             } 
         } else if (eventToTrigger.actionType === "spawnBoss") {
             if (this.enemies) {
-                this.enemies.spawnBoss(this.worldGroup);
+                const bossType = eventToTrigger.bossType || "octopus";
+                if (bossType === "giant_bug") {
+                    this.enemies.spawnBugBoss(this.worldGroup);
+                } else {
+                    this.enemies.spawnBoss(this.worldGroup);
+                }
             }
         } else if (eventToTrigger.actionType === "spawnerConfig") {
             this.spawnInterval = eventToTrigger.spawnInterval !== undefined ? eventToTrigger.spawnInterval : 3;
@@ -292,8 +301,18 @@ export class SurvivePhase extends GamePhase {
             return;
         }
 
-        this.gameEngine.camera.position.set(15, 18, 7);
-        this.gameEngine.camera.lookAt(15, 0, 3);
+        const hasBugBoss = this.enemies && this.enemies.boss && this.enemies.boss.name === "GiantBug" && !this.enemies.boss.isDead;
+        const targetCamY = hasBugBoss ? 20 : 18;
+        const targetCamZ = hasBugBoss ? 14 : 7;
+        const targetLookY = hasBugBoss ? 3 : 0;
+
+        const currentCamPos = this.gameEngine.camera.position;
+        currentCamPos.set(
+            15,
+            THREE.MathUtils.lerp(currentCamPos.y, targetCamY, 0.03),
+            THREE.MathUtils.lerp(currentCamPos.z, targetCamZ, 0.03)
+        );
+        this.gameEngine.camera.lookAt(15, targetLookY, 3);
 
         this.survivalTime += deltaTime;
 

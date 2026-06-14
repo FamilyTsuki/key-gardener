@@ -305,7 +305,7 @@
 .block-bridge { border-left: 4px solid #0d9488; }
 .block-flamewall { border-left: 4px solid #e11d48; }
 
-.evt-fields-dialogue, .evt-fields-heal, .evt-fields-spawn, .evt-fields-spawnerConfig, .evt-fields-difficulty {
+.evt-fields-dialogue, .evt-fields-heal, .evt-fields-spawn, .evt-fields-spawnerConfig, .evt-fields-difficulty, .evt-fields-spawnBoss {
     display: none;
 }
 
@@ -313,6 +313,7 @@
 .block-heal .evt-fields-heal { display: flex; }
 .block-spawn .evt-fields-spawn { display: flex; }
 .block-spawner-config .evt-fields-spawnerConfig { display: flex; }
+.block-spawn-boss .evt-fields-spawnBoss { display: flex; }
 .block-bridge .evt-fields-difficulty { display: flex; }
 .block-flamewall .evt-fields-difficulty { display: flex; }
 
@@ -486,6 +487,7 @@
 .story-event-block:not(.block-spawn) .evt-fields-spawn,
 .story-event-block:not(.block-spawner-config) .evt-fields-spawnerConfig,
 .story-event-block:not(.block-expand-map) .evt-fields-expandMap,
+.story-event-block:not(.block-spawn-boss) .evt-fields-spawnBoss,
 .story-event-block.block-bridge .evt-trigger-container,
 .story-event-block.block-flamewall .evt-trigger-container {
     display: none !important;

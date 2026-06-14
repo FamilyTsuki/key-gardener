@@ -356,6 +356,7 @@ export class AdminView {
                     padTB: block.querySelector('.evt-expand-tb') ? Number(block.querySelector('.evt-expand-tb').value) : 5,
                     tileDistance: Number(block.querySelector('.evt-tile-distance') ? block.querySelector('.evt-tile-distance').value : 0),
                     difficultyMultiplier: Number(block.querySelector('.evt-difficulty') ? block.querySelector('.evt-difficulty').value : 1),
+                    bossType: block.querySelector('.evt-boss-type') ? block.querySelector('.evt-boss-type').value : 'octopus',
                     isTriggered: false
                 };
             });
@@ -549,6 +550,16 @@ export class AdminView {
             el("div", { className: "evt-fields-heal block-row" },
                 el("label", {}, LanguageManager.t("admin.hp")),
                 el("input", { type: "number", className: "evt-heal-amount block-input medium-input", value: evt.healAmount || 50 })
+            )
+        );
+
+        div.appendChild(
+            el("div", { className: "evt-fields-spawnBoss block-row" },
+                el("label", {}, "Boss Type"),
+                createCustomSelect([
+                    { value: "octopus", label: "Octopus (Tentacle)" },
+                    { value: "giant_bug", label: "Giant Bug" }
+                ], evt.bossType || "octopus", null, "evt-boss-type admin-compact-select")
             )
         );
 
