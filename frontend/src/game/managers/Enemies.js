@@ -159,7 +159,7 @@ export default class Enemies {
                 continue;
             }
             if (enemy !== this.#boss) {
-                enemy.update(player, deltaTime, this.keyboardLayout);
+                enemy.update(player, deltaTime, this.keyboardLayout, projectiles);
             }
         }
         
@@ -184,7 +184,7 @@ export default class Enemies {
      */
     updatePath(playerKey, keyboard) {
         for (const enemy of this.#container) {
-            if (enemy.name !== "Octopus" && enemy) {
+            if (enemy.name !== "Octopus" && enemy && enemy.type !== "sniper" && enemy.type !== "blocker_worm" && enemy.type !== "hazard_worm") {
                 const occupiedKeys = new Set();
                 for (const other of this.#container) {
                     if (other !== enemy && other.name !== "Octopus" && !other.isDead) {
@@ -297,7 +297,8 @@ export default class Enemies {
             this.#enemyModel.clone(),
             { width: 1, height: 1 },
             crypto.randomUUID(),
-            options.scale || 1
+            options.scale || 1,
+            this.#fireBallModel
         );
 
         this.#container.push(enemy);

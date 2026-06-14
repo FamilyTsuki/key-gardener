@@ -560,6 +560,9 @@ export class AdminView {
                         { value: "basic", label: LanguageManager.t("admin.basic") },
                         { value: "speedy", label: LanguageManager.t("admin.speedy") },
                         { value: "tank", label: LanguageManager.t("admin.tank") },
+                        { value: "sniper", label: LanguageManager.t("admin.sniper") },
+                        { value: "blocker_worm", label: LanguageManager.t("admin.blocker_worm") },
+                        { value: "hazard_worm", label: LanguageManager.t("admin.hazard_worm") },
                         { value: "random", label: LanguageManager.t("admin.random") }
                     ], evt.enemyType || evt.spawnEnemy || "basic", null, "evt-spawn-type admin-compact-select")
                 ),

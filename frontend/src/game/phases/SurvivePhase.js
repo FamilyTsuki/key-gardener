@@ -398,6 +398,16 @@ export class SurvivePhase extends GamePhase {
         if (this.player) {
             this.player.update(deltaTime, this.keyboard ? this.keyboard.keyboardLayout : null);
             
+            const pTarget = this.player.targetPosition;
+            if (pTarget && this.keyboard) {
+                const actualKeyObj = this.keyboard.keyboardLayout.find(
+                    k => Math.abs(k.rawPosition.x - pTarget.x) < 0.1 && Math.abs(k.rawPosition.y - pTarget.y) < 0.1
+                );
+                if (actualKeyObj) {
+                    this.lastPlayerKey = actualKeyObj.key;
+                }
+            }
+            
             if (this.pendingSpell && !this.player.isMoving) {
                 const closestEnemy = this.enemies.findClosestEnemy(
                     this.player.position
@@ -486,7 +496,7 @@ export class SurvivePhase extends GamePhase {
                 tile.isPressed = isPlayerOnTile;
             });
 
-            this.keyboard.update();
+            this.keyboard.update(this.enemies);
         }
 
     }
@@ -521,53 +531,17 @@ export class SurvivePhase extends GamePhase {
             minSpawnDist = Math.min(minSpawnDist, maxMapDist * 0.7);
         }
 
-        let randomKey;
-        let attempts = 0;
-        let dist = 1000;
-        
-        do {
-            randomKey = keys[Math.floor(Math.random() * keys.length)];
-            attempts++;
-            
-            if (this.player) {
-                const dx = randomKey.rawPosition.x - this.player.x;
-                const dy = randomKey.rawPosition.y - this.player.y;
-                dist = Math.sqrt(dx * dx + dy * dy);
-            }
-
-            const isOccupied = this.enemies.container.some(enemy => 
-                enemy.actualKey === randomKey.key || 
-                (enemy.targetedPosition && 
-                 enemy.targetedPosition.x === randomKey.rawPosition.x && 
-                 enemy.targetedPosition.y === randomKey.rawPosition.y) ||
-                (enemy.path && enemy.path.length > 0 && enemy.path[0].key === randomKey.key)
-            );
-
-            const isPlayerTile = this.player && (
-                randomKey.key === this.lastPlayerKey ||
-                (this.player.targetPosition && 
-                 this.player.targetPosition.x === randomKey.rawPosition.x && 
-                 this.player.targetPosition.y === randomKey.rawPosition.y)
-            );
-
-            let currentMinDist = minSpawnDist;
-            let currentMaxDist = maxSpawnDist;
-            if (attempts > 40) {
-                currentMinDist = Math.max(0, minSpawnDist - (attempts - 40) * 0.1);
-                currentMaxDist = maxSpawnDist + (attempts - 40) * 0.2;
-            }
-
-            if ((randomKey.isGround || minSpawnDist === 0) && dist >= currentMinDist && dist <= currentMaxDist && !isOccupied && !isPlayerTile) {
-                break;
-            }
-        } while (attempts < 100);
-
         let randomType = type;
         if (!randomType || randomType === "random") {
-            const weights = this.options.enemyWeights || {};
+            const hasGroundTiles = keys.some(k => k.isGround);
+            const weights = { ...this.options.enemyWeights };
+            if (!hasGroundTiles) {
+                delete weights.sniper;
+            }
             const activeWeights = {};
             let totalWeight = 0;
             for (const key of Object.keys(ENEMY_TYPES)) {
+                if (!hasGroundTiles && key === "sniper") continue;
                 const weight = weights[key] !== undefined ? Number(weights[key]) : 0;
                 if (weight > 0) {
                     activeWeights[key] = weight;
@@ -585,7 +559,7 @@ export class SurvivePhase extends GamePhase {
                     randomNum -= weight;
                 }
             } else {
-                const enemyKeys = Object.keys(ENEMY_TYPES);
+                const enemyKeys = Object.keys(ENEMY_TYPES).filter(k => hasGroundTiles || k !== "sniper");
                 randomType = enemyKeys[Math.floor(Math.random() * enemyKeys.length)];
             }
         }
@@ -593,11 +567,61 @@ export class SurvivePhase extends GamePhase {
         if (!ENEMY_TYPES[randomType]) {
             randomType = "basic";
         }
-        
-        this.enemies.spawnAt(randomKey, this.worldGroup, randomType, options);
-        
-        if (this.spawnerActive) {
-            this.spawnerEnemiesSpawned++;
+
+        const typeAllowedKeys = keys.filter(key => {
+            if (randomType === "sniper") {
+                return key.isGround;
+            }
+            if (randomType === "blocker_worm" || randomType === "hazard_worm") {
+                return !key.isGround;
+            }
+            return key.isGround || minSpawnDist === 0;
+        });
+
+        if (typeAllowedKeys.length === 0) return;
+
+        let candidates = typeAllowedKeys.filter(key => {
+            const isOccupied = this.enemies.container.some(enemy => 
+                enemy.actualKey === key.key || 
+                (enemy.targetedPosition && 
+                 enemy.targetedPosition.x === key.rawPosition.x && 
+                 enemy.targetedPosition.y === key.rawPosition.y) ||
+                (enemy.path && enemy.path.length > 0 && enemy.path[0].key === key.key)
+            );
+            if (isOccupied) return false;
+
+            const isPlayerTile = this.player && (
+                key.key === this.lastPlayerKey ||
+                (this.player.targetPosition && 
+                 this.player.targetPosition.x === key.rawPosition.x && 
+                 this.player.targetPosition.y === key.rawPosition.y)
+            );
+            if (isPlayerTile) return false;
+
+            return true;
+        });
+
+        if (candidates.length === 0) return;
+
+        if (randomType !== "blocker_worm" && randomType !== "hazard_worm" && this.player) {
+            const distCandidates = candidates.filter(key => {
+                const dx = key.rawPosition.x - this.player.x;
+                const dy = key.rawPosition.y - this.player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                return dist >= minSpawnDist && dist <= maxSpawnDist;
+            });
+            if (distCandidates.length > 0) {
+                candidates = distCandidates;
+            }
+        }
+
+        const randomKey = candidates[Math.floor(Math.random() * candidates.length)];
+
+        if (randomKey) {
+            this.enemies.spawnAt(randomKey, this.worldGroup, randomType, options);
+            if (this.spawnerActive) {
+                this.spawnerEnemiesSpawned++;
+            }
         }
 
         if (this.lastPlayerKey) {
@@ -618,21 +642,34 @@ export class SurvivePhase extends GamePhase {
             return;
         }
 
-        target.isPressed = true;
         this.lastPlayerKey = target.key;
 
+        let moveResult = { blocked: false };
         if (this.player && this.enemies) {
-            this.player.move({
+            moveResult = this.player.move({
                 x: target.rawPosition.x,
                 y: target.rawPosition.y,
             }, this.keyboard ? this.keyboard.keyboardLayout : null);
         }
-        let word = this.player.handleKeyPress(event.key);
 
-        if (word) {
-            this.pendingSpell = word;
-        } else if (this.elCurrentWord && !this.pendingSpell) {
-            this.elCurrentWord.textContent = this.player.currentWord;
+        let allowed = true;
+        if (moveResult && moveResult.blocked) {
+            if (moveResult.wormKey.key === target.key && moveResult.hitWorm.type === "hazard_worm") {
+                allowed = true;
+            } else {
+                allowed = false;
+            }
+        }
+
+        if (allowed) {
+            target.isPressed = true;
+            
+            let word = this.player.handleKeyPress(event.key);
+            if (word) {
+                this.pendingSpell = word;
+            } else if (this.elCurrentWord && !this.pendingSpell) {
+                this.elCurrentWord.textContent = this.player.currentWord;
+            }
         }
     }
 

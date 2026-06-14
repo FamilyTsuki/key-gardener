@@ -71,6 +71,7 @@ export class DialogueBox {
      * @param {KeyboardEvent} e - The keyboard event.
      */
     handleKeyDown(e) {
+        if (e.repeat) return;
         if (!this.container.classList.contains("visible")) return;
         if (e.code === "Space" || e.code === "Enter") {
             e.preventDefault();

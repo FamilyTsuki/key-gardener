@@ -58,6 +58,7 @@ export default class Player extends Actor {
 
         this.onDeath = onDeath;
         this.statsManager = statsManager;
+        this.enemiesManager = enemiesManager;
 
         this.targetPosition = { x: position.x, y: position.y, z: position.z };
         this.startPosition = { x: position.x, y: position.y };
@@ -219,9 +220,47 @@ export default class Player extends Actor {
      * @param {Object} newPosition - The target position {x, y, z, offsetY}.
      */
     move(newPosition, keyboardLayout = null) {
+        if (this.pendingWormRepel) {
+            return { blocked: true, hitWorm: this.pendingWormRepel.worm, wormKey: this.pendingWormRepel.wormKey };
+        }
+        let actualNewPosition = { ...newPosition };
+        let repelInfo = null;
+
+        if (keyboardLayout && this.enemiesManager) {
+            const startPos = this.isMoving ? this.startPosition : this.position;
+            const pathKeys = getKeysOnSegment(startPos, newPosition, keyboardLayout);
+            for (let i = 1; i < pathKeys.length; i++) {
+                const keyObj = pathKeys[i];
+                const worm = this.enemiesManager.container.find(e => 
+                    !e.isDead && 
+                    (e.type === "blocker_worm" || e.type === "hazard_worm") && 
+                    e.actualKey === keyObj.key &&
+                    e.isBlocking
+                );
+                if (worm) {
+                    const stopKey = pathKeys[i - 1];
+                    
+                    actualNewPosition = {
+                        x: stopKey.rawPosition.x,
+                        y: stopKey.rawPosition.y,
+                        offsetY: this.getTileSurfaceHeight(stopKey)
+                    };
+                    
+                    repelInfo = {
+                        worm: worm,
+                        wormKey: keyObj,
+                        wormOffsetY: this.getTileSurfaceHeight(keyObj),
+                        applied: false
+                    };
+                    break;
+                }
+            }
+        }
+
         if (
-            this.targetPosition.x !== newPosition.x ||
-            this.targetPosition.y !== newPosition.y
+            this.targetPosition.x !== actualNewPosition.x ||
+            this.targetPosition.y !== actualNewPosition.y ||
+            repelInfo !== null
         ) {
             const now = Date.now();
             const timeSinceLastPress = now - (this.lastKeyPressTime || 0);
@@ -242,15 +281,16 @@ export default class Player extends Actor {
                 this.facingDirection = { x: dx / dist, y: dy / dist };
             }
             
-            this.targetPosition = newPosition;
+            this.targetPosition = actualNewPosition;
+            this.pendingWormRepel = repelInfo;
 
             this.startOffsetY = this.offsetY;
-            if (newPosition.offsetY !== undefined) {
-                this.targetOffsetY = newPosition.offsetY;
+            if (actualNewPosition.offsetY !== undefined) {
+                this.targetOffsetY = actualNewPosition.offsetY;
             } else {
                 const targetKey = keyboardLayout ? keyboardLayout.find(k => 
-                    Math.abs(k.rawPosition.x - newPosition.x) < 0.1 && 
-                    Math.abs(k.rawPosition.y - newPosition.y) < 0.1
+                    Math.abs(k.rawPosition.x - actualNewPosition.x) < 0.1 && 
+                    Math.abs(k.rawPosition.y - actualNewPosition.y) < 0.1
                 ) : null;
                 if (targetKey) {
                     this.targetOffsetY = this.getTileSurfaceHeight(targetKey);
@@ -272,6 +312,11 @@ export default class Player extends Actor {
 
             AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.5);
         }
+
+        if (repelInfo) {
+            return { blocked: true, hitWorm: repelInfo.worm, wormKey: repelInfo.wormKey };
+        }
+        return { blocked: false };
     }
 
     showGameOverScreen() {
@@ -348,6 +393,53 @@ export default class Player extends Actor {
             this.lastHp = this.hp;
         }
 
+        if (!this.isMoving && keyboardLayout && this.enemiesManager) {
+            const currentKey = keyboardLayout.find(k => 
+                Math.abs(k.rawPosition.x - this.x) < 0.1 && 
+                Math.abs(k.rawPosition.y - this.y) < 0.1
+            );
+            if (currentKey) {
+                const worm = this.enemiesManager.container.find(e => 
+                    !e.isDead && 
+                    (e.type === "blocker_worm" || e.type === "hazard_worm") && 
+                    e.actualKey === currentKey.key &&
+                    e.isBlocking
+                );
+                if (worm) {
+                    const neighbors = keyboardLayout.filter(k => 
+                        !k.isGround &&
+                        k.key !== currentKey.key &&
+                        Math.abs(k.rawPosition.x - currentKey.rawPosition.x) <= 1.1 &&
+                        Math.abs(k.rawPosition.y - currentKey.rawPosition.y) <= 1.1
+                    );
+                    const safeNeighbors = neighbors.filter(n => {
+                        const hasWorm = this.enemiesManager.container.some(e => 
+                            !e.isDead && 
+                            (e.type === "blocker_worm" || e.type === "hazard_worm") && 
+                            e.actualKey === n.key &&
+                            e.isBlocking
+                        );
+                        return !hasWorm;
+                    });
+                    const repelKey = safeNeighbors[0] || neighbors[0];
+                    if (repelKey) {
+                        if (worm.type === "hazard_worm") {
+                            this.damage(20, "Brûlé par un ver informatique");
+                            AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.6);
+                        } else {
+                            AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.3);
+                        }
+
+                        this.move({
+                            x: repelKey.rawPosition.x,
+                            y: repelKey.rawPosition.y,
+                            offsetY: this.getTileSurfaceHeight(repelKey)
+                        }, keyboardLayout);
+                    }
+                }
+            }
+        }
+
         this.lastX = this.x;
         this.lastY = this.y;
 
@@ -361,22 +453,66 @@ export default class Player extends Actor {
                 this.isMoving = false;
                 this.x = this.targetPosition.x;
                 this.y = this.targetPosition.y;
+                this.offsetY = this.targetOffsetY;
+                this.pendingWormRepel = null;
 
                 AudioManager.playSFX("/asset/game_assets/sounds/fall.wav", "player", 0.4);
             } else {
-                this.x =
-                    this.startPosition.x +
-                    (this.targetPosition.x - this.startPosition.x) *
-                        this.movementProgress;
-                this.y =
-                    this.startPosition.y +
-                    (this.targetPosition.y - this.startPosition.y) *
-                        this.movementProgress;
+                if (this.pendingWormRepel) {
+                    if (this.movementProgress < 0.5) {
+                        const progress = this.movementProgress * 2;
+                        this.x =
+                            this.startPosition.x +
+                            (this.pendingWormRepel.wormKey.rawPosition.x - this.startPosition.x) *
+                                progress;
+                        this.y =
+                            this.startPosition.y +
+                            (this.pendingWormRepel.wormKey.rawPosition.y - this.startPosition.y) *
+                                progress;
+                        this.offsetY =
+                            this.startOffsetY +
+                            (this.pendingWormRepel.wormOffsetY - this.startOffsetY) *
+                                progress;
+                    } else {
+                        if (!this.pendingWormRepel.applied) {
+                            this.pendingWormRepel.applied = true;
+                            const { worm } = this.pendingWormRepel;
+                            if (worm.type === "hazard_worm") {
+                                this.damage(20, "Brûlé par un ver informatique");
+                                AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.6);
+                            } else {
+                                AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.3);
+                            }
+                        }
+                        const progress = (this.movementProgress - 0.5) * 2;
+                        this.x =
+                            this.pendingWormRepel.wormKey.rawPosition.x +
+                            (this.targetPosition.x - this.pendingWormRepel.wormKey.rawPosition.x) *
+                                progress;
+                        this.y =
+                            this.pendingWormRepel.wormKey.rawPosition.y +
+                            (this.targetPosition.y - this.pendingWormRepel.wormKey.rawPosition.y) *
+                                progress;
+                        this.offsetY =
+                            this.pendingWormRepel.wormOffsetY +
+                            (this.targetOffsetY - this.pendingWormRepel.wormOffsetY) *
+                                progress;
+                    }
+                } else {
+                    this.x =
+                        this.startPosition.x +
+                        (this.targetPosition.x - this.startPosition.x) *
+                            this.movementProgress;
+                    this.y =
+                        this.startPosition.y +
+                        (this.targetPosition.y - this.startPosition.y) *
+                            this.movementProgress;
+                    this.offsetY =
+                        this.startOffsetY +
+                        (this.targetOffsetY - this.startOffsetY) *
+                            this.movementProgress;
+                }
             }
-            
-            this.offsetY = 
-                this.startOffsetY + 
-                (this.targetOffsetY - this.startOffsetY) * this.movementProgress;
         }
 
         if (this.mesh) {
@@ -399,8 +535,14 @@ export default class Player extends Actor {
                         0 +
                         Math.sin(this.movementProgress * Math.PI) * jumpAmplitude;
 
-                    const dx = this.targetPosition.x - this.startPosition.x;
-                    const dy = this.targetPosition.y - this.startPosition.y;
+                    let dx, dy;
+                    if (this.pendingWormRepel) {
+                        dx = this.pendingWormRepel.wormKey.rawPosition.x - this.startPosition.x;
+                        dy = this.pendingWormRepel.wormKey.rawPosition.y - this.startPosition.y;
+                    } else {
+                        dx = this.targetPosition.x - this.startPosition.x;
+                        dy = this.targetPosition.y - this.startPosition.y;
+                    }
                     const jumpDistance = Math.sqrt(dx * dx + dy * dy);
                     
                     const maxTilt = Math.min(jumpDistance * 0.1, 0.6);
@@ -482,6 +624,10 @@ export default class Player extends Actor {
      */
     damage(amount, reason = null) {
         this.hp -= amount;
+
+        if (typeof window.startShake === "function") {
+            window.startShake(0.6);
+        }
 
         if (this.mesh && this.mesh.position) {
             window.dispatchEvent(new CustomEvent("spawn_floating_text", {
@@ -593,4 +739,42 @@ export default class Player extends Actor {
 
         return height + 0.05;
     }
+}
+
+function distanceToSegment(p, a, b) {
+    const abX = b.x - a.x;
+    const abY = b.y - a.y;
+    const apX = p.x - a.x;
+    const apY = p.y - a.y;
+    
+    const ab2 = abX * abX + abY * abY;
+    if (ab2 === 0) return Math.sqrt(apX * apX + apY * apY);
+    
+    let t = (apX * abX + apY * abY) / ab2;
+    t = Math.max(0, Math.min(1, t));
+    
+    const projX = a.x + t * abX;
+    const projY = a.y + t * abY;
+    
+    const dx = p.x - projX;
+    const dy = p.y - projY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+function getKeysOnSegment(start, end, keyboardLayout) {
+    const keys = [];
+    for (const key of keyboardLayout) {
+        if (key.isGround) continue;
+        
+        const dist = distanceToSegment(key.rawPosition, start, end);
+        if (dist < 0.45) {
+            keys.push(key);
+        }
+    }
+    keys.sort((k1, k2) => {
+        const d1 = Math.pow(k1.rawPosition.x - start.x, 2) + Math.pow(k1.rawPosition.y - start.y, 2);
+        const d2 = Math.pow(k2.rawPosition.x - start.x, 2) + Math.pow(k2.rawPosition.y - start.y, 2);
+        return d1 - d2;
+    });
+    return keys;
 }

@@ -64,6 +64,7 @@ export class GameEngine {
 
         this.onResize = () => this.resize();
         this.onKeyDown = (e) => {
+            if (e.repeat) return;
             if (this.gamePhase && typeof this.gamePhase.handleKeyDown === "function" && !this.isPaused) {
                 this.gamePhase.handleKeyDown(e);
             }

@@ -41,6 +41,11 @@ export default class Projectile extends DamageObject {
         this.spacing = spacing;
         this.scene = scene;
         this.mesh = new THREE.Group();
+        this.mesh.position.set(
+            position.x * spacing,
+            1.5,
+            position.y * spacing
+        );
         this.scene.add(this.mesh);
         if (this.team !== "player") {
             const lineLength = 10 * spacing;
@@ -67,7 +72,7 @@ export default class Projectile extends DamageObject {
         }
         if (modelSource) {
             const model = modelSource.clone();
-            model.visible = true;
+            model.visible = this.team === "player";
             model.traverse((child) => {
                 child.visible = true;
                 if (child.isMesh) {

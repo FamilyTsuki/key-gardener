@@ -214,13 +214,14 @@ export default class Keyboard {
     /**
      * Updates the visuals of the keys based on their state (e.g., pressed).
      */
-    update() {
+    update(enemiesManager = null) {
         const isStyx = this.theme === "styx";
         const isDungeon = this.theme === "dungeon";
         
         const pressedColor = isStyx ? 0x00ffff : isDungeon ? 0xff3300 : 0xc5a059;
         const unpressedColor = isStyx ? 0x1d2432 : isDungeon ? 0xaaaaaa : 0x111111;
         const pressedY = isStyx ? 0.0 : isDungeon ? -0.1 : 0.05;
+
 
         this.#keyboardLayout.forEach((keyObj) => {
             if (keyObj.isGround) return;

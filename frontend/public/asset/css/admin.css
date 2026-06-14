@@ -30,6 +30,22 @@
     padding-bottom: 12px;
 }
 
+.sidebar-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.sidebar-actions button {
+    flex: 1;
+    text-align: center;
+}
+
+.btn-secondary.btn-sm {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+}
+
 .levels-list {
     flex: 1;
     overflow-y: auto;

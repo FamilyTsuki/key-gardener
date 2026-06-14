@@ -19,6 +19,27 @@ export const ENEMY_TYPES = {
         speed: 0.02,
         baseHp: 100,
         label: "Tank"
+    },
+    sniper: {
+        id: "sniper",
+        color: 0x9b59b6,
+        speed: 0,
+        baseHp: 40,
+        label: "Sniper"
+    },
+    blocker_worm: {
+        id: "blocker_worm",
+        color: 0xe67e22,
+        speed: 0,
+        baseHp: 30,
+        label: "Blocker Worm"
+    },
+    hazard_worm: {
+        id: "hazard_worm",
+        color: 0xe74c3c,
+        speed: 0,
+        baseHp: 30,
+        label: "Hazard Worm"
     }
 };
 

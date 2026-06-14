@@ -1,4 +1,5 @@
 import Actor from "../Actor.js";
+import Projectile from "../Projectile.js";
 import * as THREE from "three";
 import ModelLoader from "../../../core/utils/ModelLoader.js";
 import { AudioManager } from "../../managers/AudioManager.js";
@@ -39,9 +40,12 @@ export default class Enemy extends Actor {
         model = undefined,
         size = { width: 1, height: 1 },
         id = crypto.randomUUID(),
-        scale = 1
+        scale = 1,
+        projectileModel = null
     ) {
         super(id, hp, hpMax, position, position, size, model);
+        this.type = type;
+        this.projectileModel = projectileModel;
         this.#actualKey = actualKey;
         this.#path = [];
         this.#targetedPosition = { x: position.x, y: position.y };
@@ -65,27 +69,48 @@ export default class Enemy extends Actor {
         this.isSpawning = true;
         this.spawnProgress = 0;
 
-        const distLeft = position.x - (-12);
-        const distRight = 22 - position.x;
-        const distTop = position.y - (-15);
+        if (this.type === "blocker_worm" || this.type === "hazard_worm") {
+            this.spawnDuration = 1.3;
+            this.spawnSource = { x: position.x, y: position.y };
+            this.spawnDistance = 0;
 
-        let spawnX, spawnY;
-        if (distLeft < distRight && distLeft < distTop) {
-            spawnX = -12;
-            spawnY = position.y + (Math.random() - 0.5) * 2;
-        } else if (distRight < distLeft && distRight < distTop) {
-            spawnX = 22;
-            spawnY = position.y + (Math.random() - 0.5) * 2;
+            const spacing = 3.2;
+            const geoWidth = 1.0 * spacing * 0.9;
+            const geoHeight = 1.0 * spacing * 0.9;
+            const geometry = new THREE.PlaneGeometry(geoWidth, geoHeight);
+            this.spawnZoneMaterial = new THREE.MeshBasicMaterial({
+                color: 0xff0000,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+            this.spawnZoneMesh = new THREE.Mesh(geometry, this.spawnZoneMaterial);
+            this.spawnZoneMesh.rotation.x = -Math.PI / 2;
+            this.spawnZoneMesh.position.set(position.x * 3.2, 0.4, position.y * 3.2);
+            scene.add(this.spawnZoneMesh);
         } else {
-            spawnX = position.x + (Math.random() - 0.5) * 2;
-            spawnY = -15;
-        }
-        this.spawnSource = { x: spawnX, y: spawnY };
+            const distLeft = position.x - (-12);
+            const distRight = 22 - position.x;
+            const distTop = position.y - (-15);
 
-        const dx = position.x - this.spawnSource.x;
-        const dy = position.y - this.spawnSource.y;
-        this.spawnDistance = Math.sqrt(dx * dx + dy * dy);
-        this.spawnDuration = Math.max(0.7, Math.min(1.3, this.spawnDistance * 0.05));
+            let spawnX, spawnY;
+            if (distLeft < distRight && distLeft < distTop) {
+                spawnX = -12;
+                spawnY = position.y + (Math.random() - 0.5) * 2;
+            } else if (distRight < distLeft && distRight < distTop) {
+                spawnX = 22;
+                spawnY = position.y + (Math.random() - 0.5) * 2;
+            } else {
+                spawnX = position.x + (Math.random() - 0.5) * 2;
+                spawnY = -15;
+            }
+            this.spawnSource = { x: spawnX, y: spawnY };
+
+            const dx = position.x - this.spawnSource.x;
+            const dy = position.y - this.spawnSource.y;
+            this.spawnDistance = Math.sqrt(dx * dx + dy * dy);
+            this.spawnDuration = Math.max(0.7, Math.min(1.3, this.spawnDistance * 0.05));
+        }
 
         scene.add(this.mesh);
 
@@ -95,7 +120,11 @@ export default class Enemy extends Actor {
         bugTexture.colorSpace = THREE.SRGBColorSpace;
         ModelLoader.load("/asset/game_assets/models/bug.glb", (gltf) => {
             this.model = gltf.scene;
-            this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
+            if (this.type === "blocker_worm" || this.type === "hazard_worm") {
+                this.model.scale.set(1.0 * this.baseScale, 1.3 * this.baseScale, 2.5 * this.baseScale);
+            } else {
+                this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
+            }
 
             this.model.rotation.y = Math.PI / 2;
             this.model.traverse((child) => {
@@ -114,6 +143,10 @@ export default class Enemy extends Actor {
                 this.hpSprite.position.set(0, 1.5, 0);
             }
             this.model.position.y = 0.6;
+            if (this.type === "blocker_worm" || this.type === "hazard_worm") {
+                const elapsedSpawnTime = this.spawnProgress * this.spawnDuration;
+                this.model.visible = !this.isSpawning || (elapsedSpawnTime >= 1.0);
+            }
             this.mesh.add(this.model);
         });
         const canvas = document.createElement("canvas");
@@ -145,6 +178,13 @@ export default class Enemy extends Actor {
     }
     set actualKey(val) {
         this.#actualKey = val;
+    }
+
+    get isBlocking() {
+        if (this.type === "blocker_worm" || this.type === "hazard_worm") {
+            return !this.isSpawning || (this.spawnProgress * this.spawnDuration >= 1.0);
+        }
+        return true;
     }
 
     /**
@@ -259,7 +299,7 @@ export default class Enemy extends Actor {
      * @param {Player} player - The player instance to check for collisions.
      * @param {number} deltaTime - Time elapsed since last frame.
      */
-    update(player, deltaTime = 0.016, keyboardLayout = null) {
+    update(player, deltaTime = 0.016, keyboardLayout = null, projectiles = null) {
         if (this.isSpawning) {
             this.spawnProgress += deltaTime / this.spawnDuration;
             if (this.spawnProgress >= 1) {
@@ -270,6 +310,18 @@ export default class Enemy extends Actor {
                     const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === this.actualKey) : null;
                     this.model.position.y = this.getTileSurfaceHeight(currentKey);
                     this.model.rotation.x = 0;
+                    this.model.scale.set(
+                        this.type === "blocker_worm" || this.type === "hazard_worm" ? 1.0 * this.baseScale : 1.3 * this.baseScale,
+                        this.type === "blocker_worm" || this.type === "hazard_worm" ? 1.3 * this.baseScale : 1.3 * this.baseScale,
+                        this.type === "blocker_worm" || this.type === "hazard_worm" ? 2.5 * this.baseScale : 1.3 * this.baseScale
+                    );
+                    this.model.visible = true;
+                }
+                if (this.spawnZoneMesh) {
+                    this.scene.remove(this.spawnZoneMesh);
+                    this.spawnZoneMesh.geometry.dispose();
+                    this.spawnZoneMaterial.dispose();
+                    this.spawnZoneMesh = null;
                 }
                 if (this.hpSprite) this.hpSprite.visible = true;
                 
@@ -277,28 +329,117 @@ export default class Enemy extends Actor {
                 
                 this.jumpDelayTimer = 0.07 / this.speed;
             } else {
-                const currentX = this.spawnSource.x + (this.position.x - this.spawnSource.x) * this.spawnProgress;
-                const currentY = this.spawnSource.y + (this.position.y - this.spawnSource.y) * this.spawnProgress;
-                
-                const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === this.actualKey) : null;
-                const targetHeight = this.getTileSurfaceHeight(currentKey);
-                const maxJumpHeight = Math.min(6.0, 2.0 + this.spawnDistance * 0.25);
-                const height = targetHeight + Math.sin(this.spawnProgress * Math.PI) * maxJumpHeight;
-                
-                this.mesh.position.set(currentX * 3.2, 0, currentY * 3.2);
-                const lookTarget = new THREE.Vector3(this.position.x * 3.2, 0, this.position.y * 3.2);
-                if (this.mesh.parent) {
-                    this.mesh.parent.localToWorld(lookTarget);
-                }
-                this.mesh.lookAt(lookTarget);
+                if (this.type === "blocker_worm" || this.type === "hazard_worm") {
+                    const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === this.actualKey) : null;
+                    
+                    if (this.spawnZoneMesh && currentKey && currentKey.mesh) {
+                        const keyGroup = currentKey.mesh;
+                        const targetMesh = currentKey.isGround ? keyGroup.children[0] : keyGroup.children[1];
+                        let height = keyGroup.position.y;
+                        if (targetMesh && targetMesh.geometry) {
+                            if (!targetMesh.geometry.boundingBox) {
+                                targetMesh.geometry.computeBoundingBox();
+                            }
+                            const bbox = targetMesh.geometry.boundingBox;
+                            const halfHeight = (bbox.max.y - bbox.min.y) / 2;
+                            height += halfHeight * targetMesh.scale.y;
+                        } else {
+                            height += 0.225;
+                        }
+                        this.spawnZoneMesh.position.y = height + 0.01;
+                    }
 
-                if (this.model) {
-                    this.model.position.y = height;
-                    this.model.rotation.x = this.spawnProgress * Math.PI * 2;
+                    const elapsedSpawnTime = this.spawnProgress * this.spawnDuration;
+                    if (elapsedSpawnTime < 1.0) {
+                        if (this.model) {
+                            this.model.visible = false;
+                        }
+                        if (this.spawnZoneMesh) {
+                            this.spawnZoneMesh.visible = true;
+                        }
+                    } else {
+                        if (this.model) {
+                            this.model.visible = true;
+                            const targetHeight = this.getTileSurfaceHeight(currentKey);
+                            const emergeProgress = (elapsedSpawnTime - 1.0) / 0.3;
+                            const height = targetHeight - 2.0 + (emergeProgress * 2.0);
+                            this.model.position.y = height;
+                            this.model.rotation.x = 0;
+                        }
+                        if (this.spawnZoneMesh) {
+                            this.spawnZoneMesh.visible = false;
+                        }
+                    }
+
+                    this.mesh.position.set(this.position.x * 3.2, 0, this.position.y * 3.2);
+
+                    const spacing = 3.2;
+                    const targetPos = new THREE.Vector3(player.position.x * spacing, 0, player.position.y * spacing);
+                    if (this.mesh.parent) {
+                        this.mesh.parent.localToWorld(targetPos);
+                    }
+                    const currentQ = this.mesh.quaternion.clone();
+                    this.mesh.lookAt(targetPos);
+                    const targetQ = this.mesh.quaternion.clone();
+                    this.mesh.quaternion.copy(currentQ);
+                    this.mesh.quaternion.slerp(targetQ, 0.15);
+
+                    if (this.hpSprite) this.hpSprite.visible = false;
+                } else {
+                    const currentX = this.spawnSource.x + (this.position.x - this.spawnSource.x) * this.spawnProgress;
+                    const currentY = this.spawnSource.y + (this.position.y - this.spawnSource.y) * this.spawnProgress;
+                    
+                    const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === this.actualKey) : null;
+                    const targetHeight = this.getTileSurfaceHeight(currentKey);
+                    const maxJumpHeight = Math.min(6.0, 2.0 + this.spawnDistance * 0.25);
+                    const height = targetHeight + Math.sin(this.spawnProgress * Math.PI) * maxJumpHeight;
+                    
+                    this.mesh.position.set(currentX * 3.2, 0, currentY * 3.2);
+                    const lookTarget = new THREE.Vector3(this.position.x * 3.2, 0, this.position.y * 3.2);
+                    if (this.mesh.parent) {
+                        this.mesh.parent.localToWorld(lookTarget);
+                    }
+                    this.mesh.lookAt(lookTarget);
+
+                    if (this.model) {
+                        this.model.position.y = height;
+                        this.model.rotation.x = this.spawnProgress * Math.PI * 2;
+                    }
+                    if (this.hpSprite) this.hpSprite.visible = false;
                 }
-                if (this.hpSprite) this.hpSprite.visible = false;
                 
                 return;
+            }
+        }
+
+        if (this.type === "sniper" && !this.isDead) {
+            this.shootTimer = (this.shootTimer || 0) + deltaTime;
+            if (this.shootTimer >= 3.0) {
+                this.shootTimer = 0;
+                if (projectiles && this.projectileModel) {
+                    const dx = player.position.x - this.position.x;
+                    const dy = player.position.y - this.position.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist > 0) {
+                        const speed = 0.08;
+                        const velocity = {
+                            x: (dx / dist) * speed,
+                            y: (dy / dist) * speed
+                        };
+                        projectiles.push(
+                            new Projectile(
+                                { x: this.position.x, y: this.position.y },
+                                { width: 0.4, height: 0.4 },
+                                15,
+                                velocity,
+                                this.scene,
+                                "enemy",
+                                3.2,
+                                this.projectileModel
+                            )
+                        );
+                    }
+                }
             }
         }
 
@@ -347,6 +488,16 @@ export default class Enemy extends Actor {
                     this.mesh.parent.localToWorld(targetPos);
                 }
                 this.mesh.lookAt(targetPos);
+            } else if ((this.type === "sniper" || this.type === "blocker_worm" || this.type === "hazard_worm") && !this.isDead && !this.isSpawning) {
+                const targetPos = new THREE.Vector3(player.position.x * spacing, 0, player.position.y * spacing);
+                if (this.mesh.parent) {
+                    this.mesh.parent.localToWorld(targetPos);
+                }
+                const currentQ = this.mesh.quaternion.clone();
+                this.mesh.lookAt(targetPos);
+                const targetQ = this.mesh.quaternion.clone();
+                this.mesh.quaternion.copy(currentQ);
+                this.mesh.quaternion.slerp(targetQ, 0.15);
             }
 
             if (this.isJumping) {
@@ -405,26 +556,29 @@ export default class Enemy extends Actor {
             }
         }
 
-        let collision = this.checkCollision(player);
-        
-        if (!collision && player.isMoving && player.lastX !== undefined) {
-            const minX = Math.min(player.lastX, player.x);
-            const maxX = Math.max(player.lastX, player.x) + player.size.width;
-            const minY = Math.min(player.lastY, player.y);
-            const maxY = Math.max(player.lastY, player.y) + player.size.height;
+        let collision = false;
+        if (this.type !== "blocker_worm" && this.type !== "hazard_worm") {
+            collision = this.checkCollision(player);
+            
+            if (!collision && player.isMoving && player.lastX !== undefined) {
+                const minX = Math.min(player.lastX, player.x);
+                const maxX = Math.max(player.lastX, player.x) + player.size.width;
+                const minY = Math.min(player.lastY, player.y);
+                const maxY = Math.max(player.lastY, player.y) + player.size.height;
 
-            const enemyMinX = this.position.x;
-            const enemyMaxX = this.position.x + this.size.width;
-            const enemyMinY = this.position.y;
-            const enemyMaxY = this.position.y + this.size.height;
+                const enemyMinX = this.position.x;
+                const enemyMaxX = this.position.x + this.size.width;
+                const enemyMinY = this.position.y;
+                const enemyMaxY = this.position.y + this.size.height;
 
-            if (
-                enemyMinX < maxX &&
-                enemyMaxX > minX &&
-                enemyMinY < maxY &&
-                enemyMaxY > minY
-            ) {
-                collision = true;
+                if (
+                    enemyMinX < maxX &&
+                    enemyMaxX > minX &&
+                    enemyMinY < maxY &&
+                    enemyMaxY > minY
+                ) {
+                    collision = true;
+                }
             }
         }
 
@@ -436,6 +590,12 @@ export default class Enemy extends Actor {
     }
 
     die() {
+        if (this.spawnZoneMesh) {
+            this.scene.remove(this.spawnZoneMesh);
+            this.spawnZoneMesh.geometry.dispose();
+            this.spawnZoneMaterial.dispose();
+            this.spawnZoneMesh = null;
+        }
         if (this.mesh && this.mesh.parent) {
             this.mesh.parent.remove(this.mesh);
             this.mesh.visible = false;
