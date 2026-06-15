@@ -1,7 +1,7 @@
 import { GamePhase } from "./GamePhase.js";
 import * as THREE from "three";
 import ModelLoader from "../../core/utils/ModelLoader.js";
-import SocketService from "../../core/services/SocketService.js";
+import SocketService from "../../core/services/SocketService.js?v=1";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { DuelDecorBuilder } from "../utilities/DuelDecorBuilder.js";

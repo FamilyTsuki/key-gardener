@@ -1,7 +1,7 @@
 import { el } from "../../core/utils/DOMBuilder.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
-import SocketService from "../../core/services/SocketService.js";
+import SocketService from "../../core/services/SocketService.js?v=1";
 import AbstractView from "../../core/views/AbstractView.js";
 
 export class SocialView extends AbstractView {

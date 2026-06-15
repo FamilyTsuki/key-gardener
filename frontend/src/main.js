@@ -32,7 +32,7 @@ window.fetch = async function (...args) {
 import Router from "./core/Router.js";
 import Navbar from "./website/components/Navbar.js";
 import { EasterEgg } from "./website/components/EasterEgg.js";
-import SocketService from "./core/services/SocketService.js";
+import SocketService from "./core/services/SocketService.js?v=1";
 import { FlashMessageManager } from "./core/utils/FlashMessageManager.js";
 
 console.log("Website UI initialized");

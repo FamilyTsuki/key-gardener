@@ -3,7 +3,7 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
-import SocketService from "../../core/services/SocketService.js";
+import SocketService from "../../core/services/SocketService.js?v=1";
 
 /**
  * View for user authentication (login, forgot password, reset password).

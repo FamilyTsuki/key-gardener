@@ -1,4 +1,4 @@
-import SocketService from "./SocketService.js";
+import SocketService from "./SocketService.js?v=1";
 
 /**
  * Service to handle authentication and user account operations.

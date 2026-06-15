@@ -5,7 +5,7 @@ import { PostsService } from "../../core/services/posts.service.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { WarningPopupManager } from "../../core/utils/ModerationWarning.js";
-import SocketService from "../../core/services/SocketService.js";
+import SocketService from "../../core/services/SocketService.js?v=1";
 
 /**
  * View for the community hub displaying posts and interactions.
