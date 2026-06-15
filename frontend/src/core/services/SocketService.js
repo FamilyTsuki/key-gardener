@@ -58,6 +58,18 @@ class SocketService {
             this.socket.emit(event, data);
         }
     }
+
+    disconnect() {
+        if (this.socket) {
+            this.socket.disconnect();
+            this.socket = null;
+        }
+    }
+
+    registerUser() {
+        this.disconnect();
+        this.connect();
+    }
 }
 
 export default new SocketService();

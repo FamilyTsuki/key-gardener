@@ -1,3 +1,5 @@
+import SocketService from "./SocketService.js";
+
 /**
  * Service to handle authentication and user account operations.
  */
@@ -114,6 +116,7 @@ export class AuthService {
         localStorage.removeItem("authToken");
         localStorage.removeItem("username");
         localStorage.removeItem("userId");
+        SocketService.disconnect();
     }
 
     /**
