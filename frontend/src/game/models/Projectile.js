@@ -94,20 +94,7 @@ export default class Projectile extends DamageObject {
 
         AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", this.team === "player" ? "player" : "enemy", 0.5);
 
-        if (this.mesh) {
-            const hitBoxGeo = new THREE.BoxGeometry(
-                this.size.width * this.spacing,
-                this.size.height * this.spacing,
-                this.size.height * this.spacing
-            );
-            const hitBoxMat = new THREE.MeshBasicMaterial({
-                color: 0xff0000,
-                wireframe: true,
-            });
 
-            this.debugBox = new THREE.Mesh(hitBoxGeo, hitBoxMat);
-            this.mesh.add(this.debugBox);
-        }
     }
 
     /**
