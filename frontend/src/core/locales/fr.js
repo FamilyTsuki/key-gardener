@@ -35,7 +35,7 @@ export const fr = {
     // HomeView
     home: {
         title: "{gameName}",
-        description: "Votre clavier est votre seule arme. Plongez dans l'abîme, tapez à toute vitesse pour lancer vos sorts et survivez à des hordes de monstres dans ce RPG dactylographique sous haute tension.",
+        description: "longez dans un monde où votre clavier est votre seule arme. Apprenez à taper naturellement en vous immergeant dans un univers à la fois numérique et fantastique — lancez des sorts, survivez aux hordes et traquez le Virus qui corrompt le système.",
         startGame: "Commencer le jeu",
         whyTitle: "La Dactylographie Réinventée",
         whyDesc: "Oubliez les cours de frappe ennuyeux. {gameName} fusionne progression rogue-lite, exploration de donjons et combats de mots intenses dans une épreuve impitoyable de vitesse et de précision.",

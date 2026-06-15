@@ -35,7 +35,7 @@ export const en = {
     // HomeView
     home: {
         title: "{gameName}",
-        description: "Your keyboard is your only weapon. Plunge into the abyss, type fast to cast spells, and survive hordes of relentless monsters in this adrenaline-fueled typing RPG.",
+        description: "Dive into a world where your keyboard is your only weapon. Learn to type naturally by immersing yourself in a universe blending digital and fantasy — cast spells, survive the hordes, and hunt the Virus corrupting the system.",
         startGame: "Start Game",
         whyTitle: "Typing Reimagined",
         whyDesc: "Forget boring typing tutors. {gameName} fuses rogue-lite progression, intense dungeon crawling, and fast-paced word combat into an unforgiving trial of speed and accuracy.",
