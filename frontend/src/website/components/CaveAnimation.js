@@ -154,7 +154,7 @@ export class CaveAnimation {
                 this.scrollArrowGroup = arrowGroup;
             });
             
-            ModelLoader.load('/asset/game_assets/models/player.glb', (gltf) => {
+            ModelLoader.load('/asset/game_assets/models/player_3.glb', (gltf) => {
                 const playerMesh = gltf.scene;
                 
                 const absoluteHolePos = this.config.holePosition.clone();
@@ -270,7 +270,7 @@ export class CaveAnimation {
                 verifyLoadingStatus();
             });
             
-            ModelLoader.load('/asset/game_assets/models/bug.glb', (gltf) => {
+            ModelLoader.load('/asset/game_assets/models/bug_2.glb', (gltf) => {
                 const bugMeshObject = gltf.scene;
                 bugMeshObject.scale.set(12, 12, 12);
                 
@@ -285,7 +285,7 @@ export class CaveAnimation {
                 const bugPosition = dioramaCenter.clone().add(rightDirection.clone().multiplyScalar(-14));
 
                 bugMeshObject.position.copy(bugPosition);
-                bugMeshObject.position.y += 2;
+                bugMeshObject.position.y += 6;
                 
                 bugMeshObject.lookAt(playerPosition);
                 bugMeshObject.rotateX(-Math.PI / 6);

@@ -1,4 +1,11 @@
 const errorHandler = (err, req, res, next) => {
+    if (err instanceof URIError) {
+        return res.status(400).json({
+            success: false,
+            message: 'Failed to decode URI'
+        });
+    }
+
     console.error(err.stack);
 
     res.status(err.status || 500).json({
