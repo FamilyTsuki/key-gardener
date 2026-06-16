@@ -74,6 +74,7 @@ export class IntroPhase extends GamePhase {
         rift.className = "cinematic-rift ";
         rift.src = "/asset/game_assets/textures/shift.webp";
         rift.alt = "rift";
+        rift.setAttribute("draggable", "false");
 
         this.container.appendChild(video);
         this.container.appendChild(rift);

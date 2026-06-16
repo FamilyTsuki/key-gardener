@@ -575,7 +575,7 @@ body.in-game {
 
 
 .jail-ui {
-    position: absolute;
+    position: fixed;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -710,7 +710,7 @@ body.in-game {
 }
 
 .stun-ui {
-    position: absolute;
+    position: fixed;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -821,5 +821,189 @@ body.in-game {
     color: #ffdd44;
     font-size: 36px;
     text-shadow: 0 0 8px rgba(255,221,68,0.5), 0 0 15px rgba(0,0,0,0.8);
+}
+
+
+.duel-end-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20000;
+    backdrop-filter: blur(10px);
+    background-color: rgba(5, 7, 15, 0.85);
+    animation: fadeInEnd 0.6s ease-out forwards;
+}
+
+.duel-end-overlay.duel-end-victory {
+    box-shadow: inset 0 0 100px rgba(0, 255, 102, 0.25);
+}
+
+.duel-end-overlay.duel-end-defeat {
+    box-shadow: inset 0 0 100px rgba(255, 0, 85, 0.25);
+}
+
+.duel-end-box {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    transform: scale(0.7);
+    opacity: 0;
+    animation: scaleInBox 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+}
+
+.duel-end-victory .duel-end-box {
+    border-color: rgba(0, 255, 102, 0.4);
+    box-shadow: 0 20px 50px rgba(0, 255, 102, 0.15), 0 0 30px rgba(0, 255, 102, 0.05);
+}
+
+.duel-end-defeat .duel-end-box {
+    border-color: rgba(255, 0, 85, 0.4);
+    box-shadow: 0 20px 50px rgba(255, 0, 85, 0.15), 0 0 30px rgba(255, 0, 85, 0.05);
+}
+
+.duel-end-badge {
+    font-size: 64px;
+    line-height: 1;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 15px currentColor);
+    animation: pulseBadge 2s infinite alternate ease-in-out;
+}
+
+.duel-end-victory .duel-end-badge {
+    color: #00ff66;
+}
+
+.duel-end-defeat .duel-end-badge {
+    color: #ff0055;
+}
+
+.duel-end-title {
+    font-size: 36px;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.duel-end-victory .duel-end-title {
+    background: linear-gradient(135deg, #00ff66, #00ffcc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.duel-end-defeat .duel-end-title {
+    background: linear-gradient(135deg, #ff0055, #ff5500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.duel-end-subtitle {
+    color: #94a3b8;
+    font-size: 16px;
+    margin: 0 0 30px 0;
+}
+
+.duel-end-stats {
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.duel-end-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+}
+
+.duel-end-stat-label {
+    color: #94a3b8;
+}
+
+.duel-end-stat-val {
+    color: #f8fafc;
+    font-weight: 700;
+    font-family: monospace;
+    font-size: 18px;
+}
+
+.duel-end-victory .duel-end-stat-val {
+    color: #00ff66;
+}
+
+.duel-end-defeat .duel-end-stat-val {
+    color: #ff0055;
+}
+
+.duel-end-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.duel-end-victory .duel-end-btn {
+    background: linear-gradient(135deg, #00ff66, #00b344);
+    color: #05070f;
+    box-shadow: 0 4px 15px rgba(0, 255, 102, 0.3);
+}
+
+.duel-end-victory .duel-end-btn:hover {
+    box-shadow: 0 6px 20px rgba(0, 255, 102, 0.5);
+    transform: translateY(-2px);
+}
+
+.duel-end-defeat .duel-end-btn {
+    background: linear-gradient(135deg, #ff0055, #b3003b);
+    color: #f8fafc;
+    box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+}
+
+.duel-end-defeat .duel-end-btn:hover {
+    box-shadow: 0 6px 20px rgba(255, 0, 85, 0.5);
+    transform: translateY(-2px);
+}
+
+@keyframes fadeInEnd {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleInBox {
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes pulseBadge {
+    from {
+        transform: scale(1);
+        filter: drop-shadow(0 0 10px currentColor);
+    }
+    to {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 25px currentColor);
+    }
 }
 

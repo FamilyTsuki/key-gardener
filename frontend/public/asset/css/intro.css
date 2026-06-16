@@ -232,6 +232,10 @@
     pointer-events: none;
     object-fit: cover;
     filter: blur(3px) drop-shadow(0 0 15px rgb(39, 131, 181));
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
 }
 
 .cinematic-rift.visible {
@@ -291,7 +295,7 @@
     transform: translateY(-80%);
     width: 600px;
     height: 450px;
-    background-image: url("/asset/game_assets/textures/.");
+    background-image: url("/asset/game_assets/textures/bull.webp");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center bottom;

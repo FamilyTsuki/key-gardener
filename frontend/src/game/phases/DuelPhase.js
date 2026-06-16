@@ -55,6 +55,13 @@ export class DuelPhase extends GamePhase {
         this.baseWpm = this.localData.wpm || 30;
         this.duelStartTime = null;
         this.wpmUpdateTimer = 0;
+
+        this.boundOnSpellSpawned = this.onSpellSpawned.bind(this);
+        this.boundOnSpellBlocked = this.onSpellBlocked.bind(this);
+        this.boundOnHpUpdate = this.onHpUpdate.bind(this);
+        this.boundOnDuelEnded = this.onDuelEnded.bind(this);
+        this.boundOnOpponentMove = this.onOpponentMove.bind(this);
+        this.boundOnStartCountdown = this.onStartCountdown.bind(this);
     }
 
     /**
@@ -125,12 +132,12 @@ export class DuelPhase extends GamePhase {
 
         this.buildUI();
 
-        SocketService.on('spell_spawned', this.onSpellSpawned.bind(this));
-        SocketService.on('spell_blocked', this.onSpellBlocked.bind(this));
-        SocketService.on('hp_update', this.onHpUpdate.bind(this));
-        SocketService.on('duel_ended', this.onDuelEnded.bind(this));
-        SocketService.on('opponent_move', this.onOpponentMove.bind(this));
-        SocketService.on('start_countdown', this.onStartCountdown.bind(this));
+        SocketService.on('spell_spawned', this.boundOnSpellSpawned);
+        SocketService.on('spell_blocked', this.boundOnSpellBlocked);
+        SocketService.on('hp_update', this.boundOnHpUpdate);
+        SocketService.on('duel_ended', this.boundOnDuelEnded);
+        SocketService.on('opponent_move', this.boundOnOpponentMove);
+        SocketService.on('start_countdown', this.boundOnStartCountdown);
 
         const baseLightLen = Math.max(3, Math.floor(this.baseWpm / 15));
         const baseRandomLen = Math.max(4, Math.floor(this.baseWpm / 12));
@@ -226,7 +233,10 @@ export class DuelPhase extends GamePhase {
      * @returns {string} The randomly picked word.
      */
     getRandomWord(length) {
-        const words = LanguageManager.t("game.jumpWords") || ["fire", "ice", "bolt", "storm", "blast", "strike", "burn"];
+        let words = LanguageManager.t("game.jumpWords");
+        if (!Array.isArray(words)) {
+            words = ["fire", "ice", "bolt", "storm", "blast", "strike", "burn"];
+        }
         const filtered = words.filter(w => w.length === length || Math.abs(w.length - length) <= 1);
         if (filtered.length > 0) return filtered[Math.floor(Math.random() * filtered.length)];
         return words[Math.floor(Math.random() * words.length)];
@@ -710,6 +720,12 @@ export class DuelPhase extends GamePhase {
         if (index !== -1) {
             this.projectiles[index].destroy();
             this.projectiles.splice(index, 1);
+            
+            const incoming = this.projectiles.filter(p => p.targetId == this.localData.id);
+            if (incoming.length === 0) {
+                this.currentTypedDefense = "";
+            }
+            
             this.updateDefensesUI();
         }
     }
@@ -775,11 +791,6 @@ export class DuelPhase extends GamePhase {
         }
     }
 
-    /**
-     * Handles the termination of the duel, displaying victory/defeat messages and redirecting to the social view.
-     * @param {Object} data - Payload containing the winner ID or disconnect reason.
-     * @returns {void}
-     */
     onDuelEnded(data) {
         this.isDuelOver = true;
         let won = false;
@@ -788,13 +799,51 @@ export class DuelPhase extends GamePhase {
         } else {
             won = data.winnerId == this.localData.id;
         }
-        FlashMessageManager.show(
-            won ? LanguageManager.t("duel.victory") : LanguageManager.t("duel.defeat"),
-            won ? "success" : "error"
+
+        const overlayClass = won ? "duel-end-victory" : "duel-end-defeat";
+        const titleText = won 
+            ? (LanguageManager.t("duel.victoryTitle") || "VICTOIRE !") 
+            : (LanguageManager.t("duel.defeatTitle") || "DÉFAITE...");
+        const subtitleText = won 
+            ? (LanguageManager.t("duel.victorySubtitle") || "Vous avez triomphé dans l'arène !") 
+            : (LanguageManager.t("duel.defeatSubtitle") || "Votre adversaire a été plus rapide...");
+        const icon = won ? "🏆" : "💀";
+
+        const finalWpm = Math.round(this.getCurrentWpm());
+        const durationSecs = this.duelStartTime ? Math.floor((Date.now() - this.duelStartTime) / 1000) : 0;
+        const durationText = `${Math.floor(durationSecs / 60)}m ${durationSecs % 60}s`;
+
+        this.endOverlay = el("div", { className: `duel-end-overlay ${overlayClass}` },
+            el("div", { className: "duel-end-box" },
+                el("div", { className: "duel-end-badge" }, icon),
+                el("h1", { className: "duel-end-title" }, titleText),
+                el("p", { className: "duel-end-subtitle" }, subtitleText),
+                el("div", { className: "duel-end-stats" },
+                    el("div", { className: "duel-end-stat-item" },
+                        el("span", { className: "duel-end-stat-label" }, "Mots par Minute (WPM)"),
+                        el("span", { className: "duel-end-stat-val" }, finalWpm)
+                    ),
+                    el("div", { className: "duel-end-stat-item" },
+                        el("span", { className: "duel-end-stat-label" }, "Frappes Réussies"),
+                        el("span", { className: "duel-end-stat-val" }, this.successfulStrokesCount)
+                    ),
+                    el("div", { className: "duel-end-stat-item" },
+                        el("span", { className: "duel-end-stat-label" }, "Durée du Combat"),
+                        el("span", { className: "duel-end-stat-val" }, durationText)
+                    )
+                ),
+                el("button", { 
+                    className: "btn-primary duel-end-btn",
+                    onclick: () => {
+                        this.endOverlay.remove();
+                        this.endOverlay = null;
+                        window.appRouter.navigateTo("/social");
+                    }
+                }, LanguageManager.t("social.closeBtn") || "Fermer")
+            )
         );
-        setTimeout(() => {
-            window.location.hash = "#social";
-        }, 3000);
+
+        document.body.appendChild(this.endOverlay);
     }
 
     /**
@@ -974,6 +1023,7 @@ export class DuelPhase extends GamePhase {
                             SocketService.emit('take_damage', { 
                                 spellId: p.id 
                             });
+                            this.currentTypedDefense = "";
                             
                             if (p instanceof JailSpell) {
                                 this.activateJailLocal();
@@ -981,6 +1031,12 @@ export class DuelPhase extends GamePhase {
                         }
                     }
                     this.projectiles.splice(i, 1);
+                    
+                    const incoming = this.projectiles.filter(proj => proj.targetId == this.localData.id);
+                    if (incoming.length === 0) {
+                        this.currentTypedDefense = "";
+                    }
+                    
                     this.updateDefensesUI();
                 }
             } else {
@@ -1047,6 +1103,10 @@ export class DuelPhase extends GamePhase {
             this.stunUI.remove();
             this.stunUI = null;
         }
+        if (this.endOverlay) {
+            this.endOverlay.remove();
+            this.endOverlay = null;
+        }
         if (this.localJailCage && this.localJailCage.parent) {
             this.localJailCage.parent.remove(this.localJailCage);
             this.localJailCage = null;
@@ -1087,11 +1147,11 @@ export class DuelPhase extends GamePhase {
             window.removeEventListener("settings_updated", this.settingsListener);
         }
         
-        SocketService.off('spell_spawned', this.onSpellSpawned.bind(this));
-        SocketService.off('spell_blocked', this.onSpellBlocked.bind(this));
-        SocketService.off('hp_update', this.onHpUpdate.bind(this));
-        SocketService.off('duel_ended', this.onDuelEnded.bind(this));
-        SocketService.off('opponent_move', this.onOpponentMove.bind(this));
-        SocketService.off('start_countdown', this.onStartCountdown.bind(this));
+        SocketService.off('spell_spawned', this.boundOnSpellSpawned);
+        SocketService.off('spell_blocked', this.boundOnSpellBlocked);
+        SocketService.off('hp_update', this.boundOnHpUpdate);
+        SocketService.off('duel_ended', this.boundOnDuelEnded);
+        SocketService.off('opponent_move', this.boundOnOpponentMove);
+        SocketService.off('start_countdown', this.boundOnStartCountdown);
     }
 }

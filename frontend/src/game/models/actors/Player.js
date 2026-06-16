@@ -175,6 +175,10 @@ export default class Player extends Actor {
             gameOverScreen.remove();
         }
 
+        if (this.scene && this.mesh) {
+            this.scene.remove(this.mesh);
+        }
+
         if (typeof super.destroy === "function") {
             super.destroy();
         }

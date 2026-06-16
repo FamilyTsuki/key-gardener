@@ -253,10 +253,6 @@ class DuelManager {
         const index = duel.spellsInFlight.findIndex(s => s.id === spellId);
         if (index !== -1) {
             const spell = duel.spellsInFlight[index];
-            const elapsed = Date.now() - spell.castTime;
-            if (elapsed < spell.requiredLength * 80) {
-                return;
-            }
 
             if (spell.timeoutId) {
                 clearTimeout(spell.timeoutId);

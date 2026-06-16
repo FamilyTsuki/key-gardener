@@ -270,7 +270,7 @@ export class CaveAnimation {
                 verifyLoadingStatus();
             });
             
-            ModelLoader.load('/asset/game_assets/models/bug_2.glb', (gltf) => {
+            ModelLoader.load('/asset/game_assets/models/bug.glb', (gltf) => {
                 const bugMeshObject = gltf.scene;
                 bugMeshObject.scale.set(12, 12, 12);
                 
