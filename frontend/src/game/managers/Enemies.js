@@ -1,4 +1,5 @@
 import ModelLoader from "../../core/utils/ModelLoader.js";
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
 import NodeAStar from "../utilities/NodeAStar.js";
 import Boss from "../models/actors/Boss.js";
 import BugBoss from "../models/actors/BugBoss.js";
@@ -17,6 +18,7 @@ export default class Enemies {
     #boss;
     #enemyModel;
     #fireBallModel;
+    #riggedModels;
     bosnus = 0;
 
     /**
@@ -24,12 +26,14 @@ export default class Enemies {
      * @param {Array<Object>} keyboardLayout - The layout of keys on the keyboard.
      * @param {THREE.Group} enemyModel - The 3D model for basic enemies.
      * @param {THREE.Group} fireballModel - The 3D model for the fireball projectile.
+     * @param {Map<string, Object>} [riggedModels=new Map()] - Optional map of type -> GLTF for rigged models.
      */
-    constructor(keyboardLayout, enemyModel, fireballModel) {
+    constructor(keyboardLayout, enemyModel, fireballModel, riggedModels = new Map()) {
         this.#aStarGrid = new Map();
         this.#container = [];
         this.#enemyModel = enemyModel;
         this.#fireBallModel = fireballModel;
+        this.#riggedModels = riggedModels;
         this.keyboardLayout = keyboardLayout;
 
         for (const key of keyboardLayout) {
@@ -285,8 +289,16 @@ export default class Enemies {
         const config = ENEMY_TYPES[type] || ENEMY_TYPES.basic;
         const hp = config.baseHp * (options.difficulty || 1);
         
-        
         let position = keyObject.rawPosition;
+
+        const riggedGltf = this.#riggedModels.get(type);
+        let modelToUse;
+        if (riggedGltf) {
+            const clonedScene = SkeletonUtils.clone(riggedGltf.scene);
+            modelToUse = { scene: clonedScene, animations: riggedGltf.animations || [] };
+        } else {
+            modelToUse = this.#enemyModel.clone();
+        }
 
         const enemy = new Enemy(
             type,
@@ -295,7 +307,7 @@ export default class Enemies {
             position,
             hp,
             hp,
-            this.#enemyModel.clone(),
+            modelToUse,
             { width: 1, height: 1 },
             crypto.randomUUID(),
             options.scale || 1,

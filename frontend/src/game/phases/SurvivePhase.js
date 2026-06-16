@@ -80,15 +80,20 @@ export class SurvivePhase extends GamePhase {
         const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 5;
         this.keyboard = Keyboard.init(this.worldGroup, getExtendedMapLayout(padSides, padTB), this.decorType);
 
-        const enemyGltf = await ModelLoader.loadAsync("/asset/game_assets/models/bug.glb");
-        const fireballGltf = await ModelLoader.loadAsync(
-            "/asset/game_assets/models/fireball.glb"
-        );
+        const [enemyGltf, riggedGltf, fireballGltf] = await Promise.all([
+            ModelLoader.loadAsync("/asset/game_assets/models/bug.glb"),
+            ModelLoader.loadAsync("/asset/game_assets/models/bug_2.glb"),
+            ModelLoader.loadAsync("/asset/game_assets/models/fireball.glb"),
+        ]);
+
+        const riggedModels = new Map();
+        riggedModels.set("rigged", riggedGltf);
 
         this.enemies = new Enemies(
             this.keyboard.keyboardLayout,
             enemyGltf.scene,
-            fireballGltf.scene
+            fireballGltf.scene,
+            riggedModels
         );
 
         this.lastPlayerKey = "A";

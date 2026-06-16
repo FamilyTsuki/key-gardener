@@ -114,12 +114,11 @@ export default class Enemy extends Actor {
 
         scene.add(this.mesh);
 
-        const textureLoader = new THREE.TextureLoader();
-        const bugTexture = textureLoader.load("/asset/game_assets/textures/bug.webp");
-        bugTexture.flipY = false;
-        bugTexture.colorSpace = THREE.SRGBColorSpace;
-        ModelLoader.load("/asset/game_assets/models/bug.glb", (gltf) => {
-            this.model = gltf.scene;
+        this.animationMixer = null;
+
+        const resolveModel = (gltfOrScene, animations) => {
+            this.model = gltfOrScene.scene ? gltfOrScene.scene : gltfOrScene;
+
             if (this.type === "blocker_worm" || this.type === "hazard_worm") {
                 this.model.scale.set(1.0 * this.baseScale, 1.3 * this.baseScale, 2.5 * this.baseScale);
             } else {
@@ -128,18 +127,26 @@ export default class Enemy extends Actor {
 
             this.model.rotation.y = Math.PI / 2;
             this.model.traverse((child) => {
-                if (child.isMesh) {
+                if (child.isMesh || child.isSkinnedMesh) {
                     child.material = new THREE.MeshLambertMaterial({
                         color: this.color,
+                        skinning: child.isSkinnedMesh,
                     });
-
+                    child.castShadow = true;
                     child.material.needsUpdate = true;
                 }
             });
 
+            const clipList = animations || (gltfOrScene.animations) || [];
+            if (clipList.length > 0) {
+                this.animationMixer = new THREE.AnimationMixer(this.model);
+                const idleClip = THREE.AnimationClip.findByName(clipList, "idle") || clipList[0];
+                const action = this.animationMixer.clipAction(idleClip);
+                action.play();
+            }
+
             if (this.hpSprite) {
                 this.model.add(this.hpSprite);
-
                 this.hpSprite.position.set(0, 1.5, 0);
             }
             this.model.position.y = 0.6;
@@ -148,7 +155,15 @@ export default class Enemy extends Actor {
                 this.model.visible = !this.isSpawning || (elapsedSpawnTime >= 1.0);
             }
             this.mesh.add(this.model);
-        });
+        };
+
+        if (model) {
+            resolveModel(model, model.animations || []);
+        } else {
+            ModelLoader.load("/asset/game_assets/models/bug.glb", (gltf) => {
+                resolveModel(gltf, gltf.animations || []);
+            });
+        }
         const canvas = document.createElement("canvas");
         canvas.width = 256;
         canvas.height = 64;
@@ -300,6 +315,10 @@ export default class Enemy extends Actor {
      * @param {number} deltaTime - Time elapsed since last frame.
      */
     update(player, deltaTime = 0.016, keyboardLayout = null, projectiles = null) {
+        if (this.animationMixer) {
+            this.animationMixer.update(deltaTime);
+        }
+
         if (this.isSpawning) {
             this.spawnProgress += deltaTime / this.spawnDuration;
             if (this.spawnProgress >= 1) {
@@ -590,6 +609,11 @@ export default class Enemy extends Actor {
     }
 
     die() {
+        if (this.animationMixer) {
+            this.animationMixer.stopAllAction();
+            this.animationMixer.uncacheRoot(this.model);
+            this.animationMixer = null;
+        }
         if (this.spawnZoneMesh) {
             this.scene.remove(this.spawnZoneMesh);
             this.spawnZoneMesh.geometry.dispose();

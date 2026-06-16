@@ -40,6 +40,13 @@ export const ENEMY_TYPES = {
         speed: 0,
         baseHp: 30,
         label: "Hazard Worm"
+    },
+    rigged: {
+        id: "rigged",
+        color: 0x8e44ad,
+        speed: 0.08,
+        baseHp: 75,
+        label: "Rigged"
     }
 };
 
