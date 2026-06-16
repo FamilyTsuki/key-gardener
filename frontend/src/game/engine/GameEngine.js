@@ -4,6 +4,7 @@ import { IntroPhase } from "../phases/IntroPhase.js";
 import { SurvivePhase } from "../phases/SurvivePhase.js";
 import { InfiniteVoidPhase } from "../phases/InfiniteVoidPhase.js";
 import { DuelPhase } from "../phases/DuelPhase.js";
+import { FallPhase } from "../phases/FallPhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
 import { HoleEvent } from "../events/HoleEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
@@ -114,7 +115,8 @@ export class GameEngine {
         if (
             initialPhaseName === "world" ||
             initialPhaseName === "survive" ||
-            initialPhaseName === "void"
+            initialPhaseName === "void" ||
+            initialPhaseName === "fall"
         ) {
             await this.loadLevel(this.currentLevel);
         } else {
@@ -144,6 +146,9 @@ export class GameEngine {
                         return;
                     } else if (phaseType === "void") {
                         await this.setPhase(new InfiniteVoidPhase(this, options));
+                        return;
+                    } else if (phaseType === "fall") {
+                        await this.setPhase(new FallPhase(this, options));
                         return;
                     } else if (phaseType === "world") {
                         const eventMap = {
@@ -300,6 +305,8 @@ export class GameEngine {
                 phase = "survive";
             } else if (phaseName === "InfiniteVoidPhase") {
                 phase = "void";
+            } else if (phaseName === "FallPhase") {
+                phase = "fall";
             }
         }
 

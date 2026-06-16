@@ -174,6 +174,8 @@ export default class GameView extends AbstractView {
                 phase = "survive";
             } else if (phaseName === "InfiniteVoidPhase") {
                 phase = "void";
+            } else if (phaseName === "FallPhase") {
+                phase = "fall";
             }
         }
 

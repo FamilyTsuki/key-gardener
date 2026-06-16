@@ -158,6 +158,7 @@ export class AdminView {
             case "survive": return LanguageManager.t("admin.survivePhase");
             case "world": return LanguageManager.t("admin.worldPhase");
             case "void": return LanguageManager.t("admin.voidPhase");
+            case "fall": return LanguageManager.t("admin.fallPhase");
             default: return phaseType;
         }
     }
@@ -185,10 +186,12 @@ export class AdminView {
         const isSurvive = level.phase_type === "survive";
         const isWorld = level.phase_type === "world";
         const isVoid = level.phase_type === "void";
+        const isFall = level.phase_type === "fall";
 
         const surviveForm = this.buildSurviveForm(options, isSurvive);
         const worldForm = this.buildWorldForm(options, isWorld);
         const voidForm = this.buildVoidForm(isVoid);
+        const fallForm = this.buildFallForm(isFall);
         const storyEvents = this.buildStoryEvents(level.level_number);
 
         clear(container);
@@ -220,12 +223,14 @@ export class AdminView {
                     createCustomSelect([
                         { value: "survive", label: LanguageManager.t("admin.survivePhase") },
                         { value: "world", label: LanguageManager.t("admin.worldPhase") },
-                        { value: "void", label: LanguageManager.t("admin.voidPhase") }
+                        { value: "void", label: LanguageManager.t("admin.voidPhase") },
+                        { value: "fall", label: LanguageManager.t("admin.fallPhase") }
                     ], level.phase_type || "survive", null, "phase-type-select admin-compact-select")
                 ),
                 surviveForm,
                 worldForm,
                 voidForm,
+                fallForm,
                 storyEvents,
                 el("div", { className: "editor-actions-row" },
                     el("button", { className: "add-story-event-btn btn-secondary", dataset: { level: level.level_number } }, LanguageManager.t("admin.addEvent")),
@@ -294,20 +299,29 @@ export class AdminView {
         const surviveDiv = card.querySelector('.survive-form');
         const worldDiv = card.querySelector('.world-form');
         const voidDiv = card.querySelector('.void-form');
+        const fallDiv = card.querySelector('.fall-form');
 
         typeSelect.addEventListener('change', (e) => {
             if (e.target.value === 'survive') {
                 surviveDiv.classList.remove('none');
                 worldDiv.classList.add('none');
                 voidDiv.classList.add('none');
+                fallDiv.classList.add('none');
             } else if (e.target.value === 'world') {
                 surviveDiv.classList.add('none');
                 worldDiv.classList.remove('none');
                 voidDiv.classList.add('none');
+                fallDiv.classList.add('none');
             } else if (e.target.value === 'void') {
                 surviveDiv.classList.add('none');
                 worldDiv.classList.add('none');
                 voidDiv.classList.remove('none');
+                fallDiv.classList.add('none');
+            } else if (e.target.value === 'fall') {
+                surviveDiv.classList.add('none');
+                worldDiv.classList.add('none');
+                voidDiv.classList.add('none');
+                fallDiv.classList.remove('none');
             }
             storyContainer.innerHTML = '';
         });
@@ -371,6 +385,8 @@ export class AdminView {
                     storyEvents: gatheredStoryEvents
                 };
             } else if (phaseType === 'void') {
+                parsedOptions = {};
+            } else if (phaseType === 'fall') {
                 parsedOptions = {};
             } else {
                 const eventsList = [];
@@ -747,6 +763,18 @@ export class AdminView {
                 
                 if (playerMesh) playerMesh.position.set(0, 1.35, 10);
                 else targetPlayerPos.set(0, 1.35, 10);
+            } else if (phaseType === "fall") {
+                camera.position.set(20, 20, 10);
+                camera.lookAt(0, 0, 0);
+                scene.background = new THREE.Color(0x0a0c10);
+                scene.fog = null;
+                
+                const fallCreature = new FallCreature(scene, { x: 0, y: -6, z: -30 });
+                fallCreature.init();
+                currentDecor = fallCreature.mesh;
+                
+                if (playerMesh) playerMesh.position.set(0, 1.35, 10);
+                else targetPlayerPos.set(0, 1.35, 10);
             } else {
                 camera.position.set(12, 110, 15);
                 camera.lookAt(12, 0, -38);
@@ -1040,6 +1068,15 @@ export class AdminView {
             el("div", { className: "block-title" }, LanguageManager.t("admin.voidParams")),
             el("div", { className: "block-row" },
                 el("p", { className: "admin-void-desc" }, LanguageManager.t("admin.voidDesc"))
+            )
+        );
+    }
+
+    buildFallForm(isFall) {
+        return el("div", { className: `fall-form story-event-block block-void ${isFall ? '' : 'none'}` },
+            el("div", { className: "block-title" }, LanguageManager.t("admin.fallParams")),
+            el("div", { className: "block-row" },
+                el("p", { className: "admin-fall-desc" }, LanguageManager.t("admin.fallDesc"))
             )
         );
     }
