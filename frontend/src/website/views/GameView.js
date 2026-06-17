@@ -112,14 +112,18 @@ export default class GameView extends AbstractView {
                     )
                 ),
                 el("div", { className: "column-world", id: "column-world" },
-                    el("span", { className: "column-text", id: "left-column" }, "left" ),
-                    el("span", { className: "column-text", id: "center-column" }, "center" ),
-                    el("span", { className: "column-text", id: "right-column" }, "right" )  
+                    el("span", { className: "column-text glitch-text", id: "left-column" }, "left" ),
+                    el("span", { className: "column-text glitch-text", id: "center-column" }, "center" ),
+                    el("span", { className: "column-text glitch-text", id: "right-column" }, "right" )  
                 ),
                 el("div", { className: "column-warn-icon-container", id: "column-warn-icon-container" },
                     el("img", { src: "/asset/game_assets/textures/warn.png", className: "column-warn-img", id: "left-warn-img" }),
                     el("img", { src: "/asset/game_assets/textures/warn.png", className: "column-warn-img", id: "center-warn-img" }),
                     el("img", { src: "/asset/game_assets/textures/warn.png", className: "column-warn-img", id: "right-warn-img" })  
+                ),
+                el("div", { className: "deep-container", id: "deep-container" },
+                    el("span", { className: "deep-text glitch-text" }, "deep : "),
+                    el("span", { className: "deep-number glitch-text" }, "1")
                 )
 
 

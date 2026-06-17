@@ -1033,3 +1033,14 @@ body.in-game {
     width: 20dvw;
     height: 20dvw;
 }
+
+.deep-container{
+    position: absolute;
+    top: 3%;
+    left: 3%;
+    
+    display: flex;
+    justify-content: left;
+    flex-direction: row;
+    width: 100dvw;
+}

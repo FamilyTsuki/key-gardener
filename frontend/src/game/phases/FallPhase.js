@@ -2,42 +2,52 @@ import { GamePhase } from "./GamePhase.js";
 import * as THREE from "three";
 import Player from "../models/actors/Player.js";
 import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
-
 export class FallPhase extends GamePhase {
     constructor(gameEngine, options = {}) {
         super(gameEngine);
-        
+
         this.decorType = typeof options === "string" ? options : (options.decorType || "default");
-        
         this.decor = null;
         this.player = null;
         this.worldGroupPivot = null;
         this.worldGroup = null;
         this.isReady = false;
-
         this.scrollingWalls = [];
         this.particles = [];
         this.disposables = [];
         this.wallContainer = null;
         this.particleContainer = null;
-
         this.laneWords = ["left", "right", "center"];
         this.currentTypedWord = "";
-
         this.obstacles = [];
         this.pendingObstacles = [];
         this.obstacleSpawnTimer = 0;
-        this.obstacleSpawnInterval = 1.8;
-        this.obstacleSpeed = 20;
-
-        this.obstacleGeometry = new THREE.BoxGeometry(10.5, 4.5, 30.5);
-        this.obstacleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        this.obstacleSpawnInterval = 4.8;
+        this.gravity = 15;
+        this.terminalVelocity = 250;
+        this.baseVelocity = 50;
+        this.currentVelocity = this.baseVelocity;
+        
+        this.obstacleGeometry = new THREE.ConeGeometry(3, 8, 8);
+        this.obstacleMaterial = new THREE.MeshStandardMaterial({ color: 0x00fcff });
         this.disposables.push(this.obstacleGeometry, this.obstacleMaterial);
+        
+        this.deep = 0;
+        this.textScrambleInstances = []
     }
 
     async init() {
         const scene = this.gameEngine.scene;
+        const textElements = document.querySelectorAll(".glitch-text");
+
+        textElements.forEach(el => {
+        const instance = new TextScramble(el);
+        instance.revealSpeed = 2; 
+        instance.setText(el.innerText); 
         
+        this.textScrambleInstances.push(instance);
+    });
+
         this.worldGroupPivot = new THREE.Group();
         this.worldGroupPivot.position.set(16, 0, 3.2);
         scene.add(this.worldGroupPivot);
@@ -241,6 +251,16 @@ export class FallPhase extends GamePhase {
         return null;
     }
 
+    getDeepElement() {
+        return document.getElementById("deep-container");
+    }  
+    updateDeep(currentDeep) {
+        const deepElement = this.getDeepElement().children[1];
+        if (deepElement) {
+            deepElement.innerHTML = Math.trunc(currentDeep);
+        }
+    }
+
     resetWarnIcons() {
         const icons = ["left-warn-img", "center-warn-img", "right-warn-img"];
         icons.forEach(id => {
@@ -301,149 +321,161 @@ export class FallPhase extends GamePhase {
     update(deltaTime) {
         if (!this.isReady) return;
         
-        const wallScrollSpeed = 30;
-        if (!this.player.isAlive()) {
-            return;
-        }
-        
+        if (!this.player.isAlive()) return;
+
+        this.currentVelocity = Math.min(this.currentVelocity + (this.gravity * deltaTime), this.terminalVelocity);
+        const movementDelta = this.currentVelocity * deltaTime;
+
+        this.deep += movementDelta;
+        this.updateDeep(this.deep);
+
+        this.textScrambleInstances.forEach(instance => {
+            instance.updateIntensity(this.deep);
+        });
+
         this.scrollingWalls.forEach(wallGroupSegment => {
-            wallGroupSegment.position.y += wallScrollSpeed * deltaTime;
+            wallGroupSegment.position.y += movementDelta;
             if (wallGroupSegment.position.y >= 400) {
                 wallGroupSegment.position.y -= 800;
             }
         });
 
-        const particleScrollSpeed = 70;
-        this.particles.forEach(particle => {
-            particle.position.y += particleScrollSpeed * deltaTime;
-            if (particle.position.y > 60) {
-                particle.position.y -= 100;
-            }
+    this.particles.forEach(particle => {
+        particle.position.y += movementDelta * 1.5;
+        if (particle.position.y > 60) {
+            particle.position.y -= 100;
+        }
+    });
+
+    this.obstacleSpawnTimer += deltaTime;
+    if (this.obstacleSpawnTimer >= this.obstacleSpawnInterval) {
+        const lanes = [-6, 0, 6];
+        const targetLane = lanes[Math.floor(Math.random() * lanes.length)];
+        
+        this.pendingObstacles.push({
+            lane: targetLane,
+            timer: 0,
+            toggles: 0,
+            isVisible: false
         });
+        this.obstacleSpawnTimer = 0;
+    }
 
-        this.obstacleSpawnTimer += deltaTime;
-        if (this.obstacleSpawnTimer >= this.obstacleSpawnInterval) {
-            const lanes = [-6, 0, 6];
-            const targetLane = lanes[Math.floor(Math.random() * lanes.length)];
-            
-            this.pendingObstacles.push({
-                lane: targetLane,
-                timer: 0,
-                toggles: 0,
-                isVisible: false
-            });
-            this.obstacleSpawnTimer = 0;
-        }
+    for (let i = this.pendingObstacles.length - 1; i >= 0; i--) {
+        const pending = this.pendingObstacles[i];
+        pending.timer += deltaTime;
 
-        for (let i = this.pendingObstacles.length - 1; i >= 0; i--) {
-            const pending = this.pendingObstacles[i];
-            pending.timer += deltaTime;
+        if (pending.timer >= 0.40) {
+            pending.timer = 0;
+            pending.toggles++;
+            pending.isVisible = !pending.isVisible;
 
-            if (pending.timer >= 0.15) {
-                pending.timer = 0;
-                pending.toggles++;
-                pending.isVisible = !pending.isVisible;
-
-                const warnEl = this.getWarnElement(pending.lane);
-                if (warnEl) {
-                    warnEl.style.visibility = pending.isVisible ? "visible" : "hidden";
-                }
-
-                if (pending.toggles >= 6) {
-                    if (warnEl) warnEl.style.visibility = "hidden";
-                    this.spawnObstacle(pending.lane);
-                    this.pendingObstacles.splice(i, 1);
-                }
-            }
-        }
-
-        for (let i = this.obstacles.length - 1; i >= 0; i--) {
-            const obstacleMesh = this.obstacles[i];
-            obstacleMesh.position.y += this.obstacleSpeed * deltaTime;
-
-            if (this.player && this.player.mesh) {
-                const distanceY = Math.abs(obstacleMesh.position.y - this.player.mesh.position.y);
-                const distanceX = Math.abs(obstacleMesh.position.x - this.player.mesh.position.x);
-
-                if (distanceY < 3.5 && distanceX < 8.0 && !obstacleMesh.userData.isHit) {
-                    this.player.damage(20, "Percuté par un obstacle en chute libre");
-                    obstacleMesh.userData.isHit = true;
-                    obstacleMesh.visible = false;
-                }
+            const warnEl = this.getWarnElement(pending.lane);
+            if (warnEl) {
+                warnEl.style.visibility = pending.isVisible ? "visible" : "hidden";
             }
 
-            if (obstacleMesh.position.y > 50) {
-                this.wallContainer.remove(obstacleMesh);
-                this.obstacles.splice(i, 1);
-            }
-        }
-
-        if (this.player) {
-            this.player.update(deltaTime, null);
-            
-            if (this.player.mesh) {
-                this.player.mesh.rotation.set(0, Math.PI, 0); 
-            }
-
-            if (this.player.playerModel) {
-                if (this.fallTime === undefined) this.fallTime = 0;
-                this.fallTime += deltaTime;
-
-                const positionShakeIntensity = 0.03;
-                const positionShakeX = (Math.random() - 0.5) * positionShakeIntensity;
-                const positionShakeZ = (Math.random() - 0.5) * positionShakeIntensity;
-
-                const verticalFloatAmplitude = 0.5;
-                const verticalFloatSpeedA = 1.2;
-                const verticalFloatSpeedB = 0.7;
-                const floatY = (Math.sin(this.fallTime * verticalFloatSpeedA) + Math.sin(this.fallTime * verticalFloatSpeedB)) * 0.5 * verticalFloatAmplitude;
-
-                const horizontalFloatAmplitude = 0.3;
-                const horizontalFloatSpeedA = 0.9;
-                const horizontalFloatSpeedB = 1.4;
-                const floatX = (Math.cos(this.fallTime * horizontalFloatSpeedA) + Math.sin(this.fallTime * horizontalFloatSpeedB)) * 0.5 * horizontalFloatAmplitude;
-
-                this.player.playerModel.position.set(floatX + positionShakeX, floatY, positionShakeZ);
-                this.player.playerModel.scale.set(1.95, 1.95, 1.95);
-                
-                const diveTiltX = -Math.PI; 
-                let targetRoll = 0;
-                
-                if (this.player.isMoving) {
-                    const dx = this.player.targetPosition.x - this.player.startPosition.x;
-                    targetRoll = dx > 0 ? -0.4 : 0.4;
-                }
-                
-                if (this.currentRoll === undefined) this.currentRoll = 0;
-
-                this.currentRoll = THREE.MathUtils.lerp(this.currentRoll, targetRoll, deltaTime * 6);
-                
-                const rotationShakeIntensity = 0.015;
-                const rotationShakeX = (Math.random() - 0.5) * rotationShakeIntensity;
-                const rotationShakeZ = (Math.random() - 0.5) * rotationShakeIntensity;
-
-                this.player.playerModel.rotation.set(
-                    diveTiltX + rotationShakeX, 
-                    0, 
-                    -this.currentRoll + rotationShakeZ
-                );
-            }
-        }
-
-        if (this.decor) {
-            const waveData = this.decor.update(deltaTime) || { y: 0, rotationX: 0, rotationZ: 0 };
-            if (this.worldGroupPivot) {
-                if (typeof waveData === "number") {
-                    this.worldGroupPivot.position.y = waveData;
-                } else {
-                    this.worldGroupPivot.position.y = waveData.y;
-                    this.worldGroupPivot.rotation.x = waveData.rotationX;
-                    this.worldGroupPivot.rotation.z = waveData.rotationZ;
-                }
+            if (pending.toggles >= 6) {
+                if (warnEl) warnEl.style.visibility = "hidden";
+                this.spawnObstacle(pending.lane);
+                this.pendingObstacles.splice(i, 1);
             }
         }
     }
 
+    for (let i = this.obstacles.length - 1; i >= 0; i--) {
+        const obstacleMesh = this.obstacles[i];
+        obstacleMesh.position.y += movementDelta;
+
+        if (this.player && this.player.mesh) {
+            const distanceY = Math.abs(obstacleMesh.position.y - this.player.mesh.position.y);
+            const distanceX = Math.abs(obstacleMesh.position.x - this.player.mesh.position.x);
+
+            if (distanceY < 3.5 && distanceX < 8.0 && !obstacleMesh.userData.isHit) {
+                this.player.damage(20, "Percuté par un obstacle en chute libre");
+                obstacleMesh.userData.isHit = true;
+                obstacleMesh.visible = false;
+            }
+        }
+
+        if (obstacleMesh.position.y > 50) {
+            this.wallContainer.remove(obstacleMesh);
+            this.obstacles.splice(i, 1);
+        }
+    }
+
+    if (this.player) {
+        this.player.update(deltaTime, null);
+        
+        if (this.player.mesh) {
+            this.player.mesh.rotation.set(0, Math.PI, 0); 
+        }
+
+        if (this.player.playerModel) {
+            if (this.fallTime === undefined) this.fallTime = 0;
+            this.fallTime += deltaTime;
+
+            const positionShakeIntensity = 0.03;
+            const positionShakeX = (Math.random() - 0.5) * positionShakeIntensity;
+            const positionShakeZ = (Math.random() - 0.5) * positionShakeIntensity;
+
+            const verticalFloatAmplitude = 0.5;
+            const verticalFloatSpeedA = 1.2;
+            const verticalFloatSpeedB = 0.7;
+            const floatY = (Math.sin(this.fallTime * verticalFloatSpeedA) + Math.sin(this.fallTime * verticalFloatSpeedB)) * 0.5 * verticalFloatAmplitude;
+
+            const horizontalFloatAmplitude = 0.3;
+            const horizontalFloatSpeedA = 0.9;
+            const horizontalFloatSpeedB = 1.4;
+            const floatX = (Math.cos(this.fallTime * horizontalFloatSpeedA) + Math.sin(this.fallTime * horizontalFloatSpeedB)) * 0.5 * horizontalFloatAmplitude;
+
+            this.player.playerModel.position.set(floatX + positionShakeX, floatY, positionShakeZ);
+            this.player.playerModel.scale.set(1.95, 1.95, 1.95);
+            
+            const diveTiltX = -Math.PI; 
+            let targetRoll = 0;
+            
+            if (this.player.isMoving) {
+                const dx = this.player.targetPosition.x - this.player.startPosition.x;
+                targetRoll = dx > 0 ? -0.4 : 0.4;
+            }
+            
+            if (this.currentRoll === undefined) this.currentRoll = 0;
+
+            this.currentRoll = THREE.MathUtils.lerp(this.currentRoll, targetRoll, deltaTime * 6);
+            
+            const rotationShakeIntensity = 0.015;
+            const rotationShakeX = (Math.random() - 0.5) * rotationShakeIntensity;
+            const rotationShakeZ = (Math.random() - 0.5) * rotationShakeIntensity;
+
+            this.player.playerModel.rotation.set(
+                diveTiltX + rotationShakeX, 
+                0, 
+                -this.currentRoll + rotationShakeZ
+            );
+        }
+    }
+
+    if (this.decor) {
+        const waveData = this.decor.update(deltaTime) || { y: 0, rotationX: 0, rotationZ: 0 };
+        if (this.worldGroupPivot) {
+            if (typeof waveData === "number") {
+                this.worldGroupPivot.position.y = waveData;
+            } else {
+                this.worldGroupPivot.position.y = waveData.y;
+                this.worldGroupPivot.rotation.x = waveData.rotationX;
+                this.worldGroupPivot.rotation.z = waveData.rotationZ;
+            }
+        }
+    }
+
+    this.deep += movementDelta;
+    this.updateDeep(this.deep);
+
+    if (this.textScrambleInstance) {
+        this.textScrambleInstance.updateIntensity(this.deep);
+    }
+}
     draw() {
     }
     
@@ -497,9 +529,9 @@ export class FallPhase extends GamePhase {
         const leftColumn = document.getElementById("left-column");
         const centerColumn = document.getElementById("center-column");
         const rightColumn = document.getElementById("right-column");
-        if (leftColumn) leftColumn.innerHTML = "";
-        if (centerColumn) centerColumn.innerHTML = "";
-        if (rightColumn) rightColumn.innerHTML = "";
+        if (leftColumn) leftColumn.innerHTML = "left";
+        if (centerColumn) centerColumn.innerHTML = "center";
+        if (rightColumn) rightColumn.innerHTML = "right";
         
         this.resetWarnIcons();
 
@@ -514,5 +546,125 @@ export class FallPhase extends GamePhase {
         this.obstacles = [];
         this.pendingObstacles = [];
         this.disposables = [];
+    }
+}
+class TextScramble {
+    constructor(el) {
+        this.el = el;
+        this.charSets = {
+            tech1: '!<>-_\\/[]{}—=+*^?#_',
+            tech2: '!<>-_\\/[]{}—=+*^?#$%&()~',
+            math: '01︎10︎101︎01︎+=-×÷',
+            cryptic: '¥¤§Ω∑∆√∞≈≠≤≥',
+            mixed: 'あ㐀明る日¥£€$¢₽₹₿',
+            alphabet: 'abcdefghijklmnopqrstuvwxyz',
+            matrix1: 'ラドクリフマラソンわたしワタシんょンョたばこタバコとうきょうトウキョウ',
+            matrix2: '日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ',
+            matrix3: '字型大小女巧偉周年',
+            matrix4: '九七二人入八力十下三千上口土夕大女子小山川五天中六円手文日月木水火犬王正出本右四左玉生田白目石立百年休先名字早気竹糸耳虫村男町花見貝赤足車学林空金雨青草音',
+            emoji1: Array.from('😀😁😂🤣😃😄😅😆😉😊😋😎😍😘🥰😗😙😚🤗🤔😐😑😶🙄😏😮😯😲😴🤤🤤😪😵🤯🤪🤩🥳🥺🥵🥴🥺'),
+            emoji2: Array.from('🏠🏢🏥🏦🏨🏫🏬🏭🏯🏰🏟️🎡🎢🎠⛲🎪🗼🗽🗿🌉'),
+            emoji3: Array.from('🍎🍊🍋🍌🍉🍇🍓🍈🍒🍑🥭🍍🥥🥝🥑🍆🥕🌽🌶️🍄🌰🍞')
+        };
+        
+        this.chars = this.charSets.tech1;
+        this.revealSpeed = 1;
+        this.baseChangeFrequency = 0.28;
+        this.changeFrequency = this.baseChangeFrequency;
+        this.highlightColor = '#00ff88';
+        this.glowIntensity = 8;
+        this.activeGlowIntensity = 12;
+        this.queue = [];
+        this.frame = 0;
+        this.frameRequest = null;
+        this.resolve = null;
+
+        this.update = this.update.bind(this);
+    }
+
+    updateIntensity(deep) {
+    const startThreshold = 1500; // Pas de glitch avant 1500m
+    const maxDepth = 20000;      // Intensité max à 20000m
+
+    if (deep < startThreshold) {
+        // En dessous de 1500m : aucun glitch
+        this.changeFrequency = 0;
+    } else {
+        // On calcule le facteur de progression UNIQUEMENT sur la distance restante
+        // (deep - 1500) permet de commencer à 0 à partir de 1500m
+        const factor = Math.min((deep - startThreshold) / (maxDepth - startThreshold), 1);
+        
+        const minFrequency = 0.02;
+        const maxFrequency = 0.9;
+        
+        this.changeFrequency = minFrequency + (factor * (maxFrequency - minFrequency));
+    }
+    
+    // Règle une valeur fixe positive pour éviter la division par zéro
+    this.revealSpeed = 5; 
+}
+
+    setCharSet(setName) {
+        if (this.charSets[setName]) {
+            this.chars = this.charSets[setName];
+            return true;
+        }
+        return false;
+    }
+
+    setText(newText) {
+        const oldText = this.el.innerText;
+        const length = Math.max(oldText.length, newText.length);
+        const promise = new Promise(resolve => this.resolve = resolve);
+        this.queue = [];
+
+        for (let i = 0; i < length; i++) {
+            const from = oldText[i] || '';
+            const to = newText[i] || '';
+            const start = Math.floor(Math.random() * (40 / this.revealSpeed));
+            const end = start + Math.floor(Math.random() * (40 / this.revealSpeed));
+            this.queue.push({ from, to, start, end });
+        }
+
+        cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+        return promise;
+    }
+
+    update() {
+        let output = '';
+
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+            let { from, to, start, end, char } = this.queue[i];
+
+            // SI le caractère est déjà révélé (frame >= end)
+            if (this.frame >= end) {
+                // On glitch encore un peu selon la fréquence actuelle
+                if (Math.random() < this.changeFrequency) {
+                    char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                    output += `<span class="scrambling" style="color: ${this.highlightColor}; text-shadow: 0 0 ${this.activeGlowIntensity}px currentColor;">${char}</span>`;
+                } else {
+                    // Sinon on affiche le caractère réel
+                    output += to;
+                }
+            } 
+            // SINON on est dans la phase d'animation de révélation
+            else if (this.frame >= start) {
+                if (!char || Math.random() < this.changeFrequency) {
+                    char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                    this.queue[i].char = char;
+                }
+                output += `<span class="scrambling" style="color: ${this.highlightColor}; text-shadow: 0 0 ${this.activeGlowIntensity}px currentColor;">${char}</span>`;
+            } else {
+                output += from;
+            }
+        }
+
+        this.el.innerHTML = output;
+
+        // ON NE S'ARRÊTE JAMAIS : on demande la prochaine frame en continu
+        this.frameRequest = requestAnimationFrame(this.update);
+        this.frame++;
     }
 }

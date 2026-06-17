@@ -35,7 +35,6 @@
     font-size: clamp(40px, 7vw, 90px);
     font-weight: 900;
     color: #c0504d;
-    text-transform: uppercase;
     letter-spacing: 8px;
 }
 
