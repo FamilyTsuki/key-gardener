@@ -373,6 +373,7 @@ export default class Player extends Actor {
     update(deltaTime = 0.0166, keyboardLayout = null) {
         if (!this.isAlive()) {
             if (!this.deathAnimationPlayed) {
+                this.updateHpBar();
                 if (this.playerModel) {
                     this.playerModel.rotation.x = -Math.PI / 2;
                     this.playerModel.position.y = 0.5;

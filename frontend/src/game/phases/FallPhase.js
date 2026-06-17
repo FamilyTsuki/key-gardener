@@ -20,6 +20,19 @@ export class FallPhase extends GamePhase {
         this.disposables = [];
         this.wallContainer = null;
         this.particleContainer = null;
+
+        this.laneWords = ["left", "right", "center"];
+        this.currentTypedWord = "";
+        this.uiCurrentWord = null;
+
+        this.obstacles = [];
+        this.obstacleSpawnTimer = 0;
+        this.obstacleSpawnInterval = 1.5;
+        this.obstacleSpeed = 20;
+
+        this.obstacleGeometry = new THREE.BoxGeometry(10.5, 4.5, 30.5);
+        this.obstacleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        this.disposables.push(this.obstacleGeometry, this.obstacleMaterial);
     }
 
     async init() {
@@ -46,11 +59,34 @@ export class FallPhase extends GamePhase {
             this.gameEngine.stats
         );
 
+        this.player.allowSpeedUp = false;
+        this.player.movementDuration = 35;
+
         this.decor = SurviveDecorBuilder.buildDecor(this.decorType, scene);
         
         this.buildMineWalls(scene);
         this.buildMineParticles(scene);
 
+        this.uiCurrentWord = document.getElementById("currentWord");
+        if (this.uiCurrentWord && this.uiCurrentWord.parentElement) {
+            this.uiCurrentWord.parentElement.classList.remove("none");
+            this.uiCurrentWord.textContent = "";
+        }
+
+        this.gameEngine.camera.position.set(0, -10, 70);
+        this.gameEngine.camera.lookAt(0, -10, 0);
+
+        if (this.player.loadPromise) {
+            await this.player.loadPromise;
+            
+            if (this.player.mesh) {
+                this.player.mesh.rotation.set(0, Math.PI, 0);
+            }
+            if (this.player.playerModel) {
+                this.player.playerModel.rotation.set(-Math.PI, 0, 0);
+                this.player.playerModel.position.y = 0;
+            }
+        }
         this.waitForLoader().then(() => {
             this.isReady = true;
         });
@@ -73,16 +109,16 @@ export class FallPhase extends GamePhase {
             opacity: 0.6 
         });
 
-        const baseWallBack = this.createChaoticWall(160, 200, wallMaterial, wallEdgesMaterial);
-        baseWallBack.position.set(16, 0, -25);
+        const baseWallBack = this.createChaoticWall(200, 200, wallMaterial, wallEdgesMaterial);
+        baseWallBack.position.set(16, 0, 15);
         
-        const baseWallLeft = this.createChaoticWall(160, 200, wallMaterial, wallEdgesMaterial);
+        const baseWallLeft = this.createChaoticWall(200, 200, wallMaterial, wallEdgesMaterial);
         baseWallLeft.rotation.y = Math.PI / 2;
-        baseWallLeft.position.set(-40, 0, 0);
+        baseWallLeft.position.set(-40, 0, 40);
         
-        const baseWallRight = this.createChaoticWall(160, 200, wallMaterial, wallEdgesMaterial);
+        const baseWallRight = this.createChaoticWall(200, 200, wallMaterial, wallEdgesMaterial);
         baseWallRight.rotation.y = -Math.PI / 2;
-        baseWallRight.position.set(72, 0, 0);
+        baseWallRight.position.set(40, 0, 10);
         
         for (let i = 0; i < 4; i++) {
             const wallGroupSegment = new THREE.Group();
@@ -118,7 +154,7 @@ export class FallPhase extends GamePhase {
                 positions.setY(i, y + chaosY);
             }
 
-            const chaosZ = (Math.random() - 0.5) * 20.0 + Math.sin(x * 0.1) * 15.0 + Math.cos(y * 0.1) * 15.0;
+            const chaosZ = (Math.random() - 0.5) * 20.0 + Math.sin(x * 0.1) * 15.0 + Math.cos(y * 0.05) * 10.0;
             positions.setZ(i, chaosZ);
         }
 
@@ -150,7 +186,7 @@ export class FallPhase extends GamePhase {
         return mesh;
     }
 
-   buildMineParticles(scene) {
+    buildMineParticles(scene) {
         this.particleContainer = new THREE.Group();
         scene.add(this.particleContainer);
 
@@ -175,6 +211,81 @@ export class FallPhase extends GamePhase {
             this.particleContainer.add(line);
             this.particles.push(line);
         }
+    }
+    buildLaneLabels(scene) {
+        this.laneLabelsContainer = new THREE.Group();
+        scene.add(this.laneLabelsContainer);
+
+        const lanes = [
+            { word: "LEFT", x: -3.2 },
+            { word: "CENTER", x: 0 },
+            { word: "RIGHT", x: 3.2 }
+        ];
+
+        lanes.forEach(lane => {
+            const canvas = document.createElement("canvas");
+            canvas.width = 256;
+            canvas.height = 128;
+            const context = canvas.getContext("2d");
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            
+            context.fillStyle = "rgba(0, 0, 0, 0.5)";
+            context.beginPath();
+            context.roundRect(10, 20, 236, 88, 15);
+            context.fill();
+
+            context.font = "bold 42px sans-serif";
+            context.textAlign = "center";
+            context.textBaseline = "middle";
+            context.fillStyle = "#ffffff";
+            context.fillText(lane.word, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(material);
+
+            sprite.scale.set(10, 5, 1);
+            sprite.position.set(lane.x, 40, 0);
+
+            this.laneLabelsContainer.add(sprite);
+            this.disposables.push(texture, material);
+        });
+    }
+
+    spawnObstacle() {
+        const lanes = [-6, 0, 6];
+        const targetLane = lanes[Math.floor(Math.random() * lanes.length)];
+        const obstacleMesh = new THREE.Mesh(this.obstacleGeometry, this.obstacleMaterial);
+        
+        const playerSpacingX = this.player ? this.player.spacingX : 3.2;
+        const playerSpacingZ = this.player ? this.player.spacingZ : 3.2;
+        
+        obstacleMesh.position.set(
+            targetLane * playerSpacingX,
+            -200,
+            (this.player ? this.player.targetPosition.y : 0) * playerSpacingZ
+        );
+        
+        obstacleMesh.userData = { lane: targetLane, isHit: false };
+        
+        this.wallContainer.add(obstacleMesh);
+        this.obstacles.push(obstacleMesh);
+    }
+
+    updateUIWord() {
+        if (this.uiCurrentWord) {
+            this.uiCurrentWord.textContent = this.currentTypedWord;
+        }
+    }
+
+    movePlayerToLane(laneX) {
+        this.player.move({ 
+            x: laneX * 6, 
+            y: this.player.targetPosition.y 
+        });
+        this.currentTypedWord = "";
+        this.updateUIWord();
     }
     
     waitForLoader() {
@@ -201,8 +312,11 @@ export class FallPhase extends GamePhase {
 
     update(deltaTime) {
         if (!this.isReady) return;
-
+        
         const wallScrollSpeed = 30;
+        if (!this.player.isAlive()) {
+            return;
+        }
         this.scrollingWalls.forEach(wallGroupSegment => {
             wallGroupSegment.position.y += wallScrollSpeed * deltaTime;
             if (wallGroupSegment.position.y >= 400) {
@@ -218,24 +332,58 @@ export class FallPhase extends GamePhase {
             }
         });
 
+        this.obstacleSpawnTimer += deltaTime;
+        if (this.obstacleSpawnTimer >= this.obstacleSpawnInterval) {
+            this.spawnObstacle();
+            this.obstacleSpawnTimer = 0;
+        }
+
+        for (let i = this.obstacles.length - 1; i >= 0; i--) {
+            const obstacleMesh = this.obstacles[i];
+            obstacleMesh.position.y += this.obstacleSpeed * deltaTime;
+
+            if (this.player && this.player.mesh) {
+                const distanceY = Math.abs(obstacleMesh.position.y - this.player.mesh.position.y);
+                if (distanceY < 1.5 && !obstacleMesh.userData.isHit && obstacleMesh.userData.lane === this.player.targetPosition.x) {
+                    this.player.damage(20, "Percuté par un obstacle en chute libre");
+                    obstacleMesh.userData.isHit = true;
+                    obstacleMesh.visible = false;
+                }
+            }
+
+            if (obstacleMesh.position.y > 50) {
+                this.wallContainer.remove(obstacleMesh);
+                this.obstacles.splice(i, 1);
+            }
+        }
+
         if (this.player) {
             this.player.update(deltaTime, null);
             
             if (this.player.mesh) {
-                const playerWorldPosition = new THREE.Vector3();
-                this.player.mesh.getWorldPosition(playerWorldPosition);
-                
-                this.gameEngine.camera.position.lerp(
-                    new THREE.Vector3(
-                        playerWorldPosition.x,
-                        playerWorldPosition.y + 10,
-                        playerWorldPosition.z + 15
-                    ),
-                    0.05
-                );
-                
-                this.gameEngine.camera.lookAt(playerWorldPosition);
+                this.player.mesh.rotation.set(0, Math.PI, 0); 
             }
+
+            if (this.player.playerModel) {
+                this.player.playerModel.position.y = 0;
+                this.player.playerModel.scale.set(1.95, 1.95, 1.95);
+                
+                const diveTiltX = -Math.PI; 
+                
+                let targetRoll = 0;
+                
+                if (this.player.isMoving) {
+                    const dx = this.player.targetPosition.x - this.player.startPosition.x;
+                    targetRoll = dx > 0 ? -0.4 : 0.4;
+                }
+                
+                if (this.currentRoll === undefined) this.currentRoll = 0;
+
+                this.currentRoll = THREE.MathUtils.lerp(this.currentRoll, targetRoll, deltaTime * 6);
+                
+                this.player.playerModel.rotation.set(diveTiltX, 0, -this.currentRoll);
+            }
+            
         }
 
         if (this.decor) {
@@ -251,11 +399,36 @@ export class FallPhase extends GamePhase {
             }
         }
     }
-
     draw() {
     }
 
     handleKeyDown(event) {
+        if (!this.isReady || !this.player || this.player.isMoving) return;
+
+        if (event.key === "Backspace") {
+            this.currentTypedWord = this.currentTypedWord.slice(0, -1);
+            this.updateUIWord();
+            return;
+        }
+
+        if (event.key.length === 1 && event.key.match(/[a-z]/i)) {
+            this.currentTypedWord += event.key.toLowerCase();
+            
+            const isValidPrefix = this.laneWords.some(word => word.startsWith(this.currentTypedWord));
+
+            if (!isValidPrefix) {
+                this.currentTypedWord = "";
+            } else {
+                if (this.currentTypedWord === "left") {
+                    this.movePlayerToLane(-1);
+                } else if (this.currentTypedWord === "right") {
+                    this.movePlayerToLane(1);
+                } else if (this.currentTypedWord === "center") {
+                    this.movePlayerToLane(0);
+                }
+            }
+            this.updateUIWord();
+        }
     }
 
     cleanup() {
@@ -275,6 +448,13 @@ export class FallPhase extends GamePhase {
         if (this.particleContainer) {
             this.gameEngine.scene.remove(this.particleContainer);
         }
+
+        if (this.uiCurrentWord) {
+            this.uiCurrentWord.textContent = "";
+            if (this.uiCurrentWord.parentElement) {
+                this.uiCurrentWord.parentElement.classList.add("none");
+            }
+        }
         
         this.disposables.forEach(resource => {
             if (resource.dispose) {
@@ -284,6 +464,7 @@ export class FallPhase extends GamePhase {
         
         this.scrollingWalls = [];
         this.particles = [];
+        this.obstacles = [];
         this.disposables = [];
     }
 }
