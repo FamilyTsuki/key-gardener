@@ -223,7 +223,7 @@ export class FallPhase extends GamePhase {
             if (typed.length > 0 && targetWord.startsWith(typed)) {
                 const matchedPart = targetWord.substring(0, typed.length).toUpperCase();
                 const remainingPart = targetWord.substring(typed.length).toUpperCase();
-                el.innerHTML = `<span style="color: #ffd700;">${matchedPart}</span>${remainingPart}`;
+                el.innerHTML = `<span style="color: #abff44ff;">${matchedPart}</span>${remainingPart}`;
             } else {
                 el.innerHTML = targetWord.toUpperCase();
             }
@@ -386,11 +386,27 @@ export class FallPhase extends GamePhase {
             }
 
             if (this.player.playerModel) {
-                this.player.playerModel.position.y = 0;
+                if (this.fallTime === undefined) this.fallTime = 0;
+                this.fallTime += deltaTime;
+
+                const positionShakeIntensity = 0.03;
+                const positionShakeX = (Math.random() - 0.5) * positionShakeIntensity;
+                const positionShakeZ = (Math.random() - 0.5) * positionShakeIntensity;
+
+                const verticalFloatAmplitude = 0.5;
+                const verticalFloatSpeedA = 1.2;
+                const verticalFloatSpeedB = 0.7;
+                const floatY = (Math.sin(this.fallTime * verticalFloatSpeedA) + Math.sin(this.fallTime * verticalFloatSpeedB)) * 0.5 * verticalFloatAmplitude;
+
+                const horizontalFloatAmplitude = 0.3;
+                const horizontalFloatSpeedA = 0.9;
+                const horizontalFloatSpeedB = 1.4;
+                const floatX = (Math.cos(this.fallTime * horizontalFloatSpeedA) + Math.sin(this.fallTime * horizontalFloatSpeedB)) * 0.5 * horizontalFloatAmplitude;
+
+                this.player.playerModel.position.set(floatX + positionShakeX, floatY, positionShakeZ);
                 this.player.playerModel.scale.set(1.95, 1.95, 1.95);
                 
                 const diveTiltX = -Math.PI; 
-                
                 let targetRoll = 0;
                 
                 if (this.player.isMoving) {
@@ -402,7 +418,15 @@ export class FallPhase extends GamePhase {
 
                 this.currentRoll = THREE.MathUtils.lerp(this.currentRoll, targetRoll, deltaTime * 6);
                 
-                this.player.playerModel.rotation.set(diveTiltX, 0, -this.currentRoll);
+                const rotationShakeIntensity = 0.015;
+                const rotationShakeX = (Math.random() - 0.5) * rotationShakeIntensity;
+                const rotationShakeZ = (Math.random() - 0.5) * rotationShakeIntensity;
+
+                this.player.playerModel.rotation.set(
+                    diveTiltX + rotationShakeX, 
+                    0, 
+                    -this.currentRoll + rotationShakeZ
+                );
             }
         }
 
