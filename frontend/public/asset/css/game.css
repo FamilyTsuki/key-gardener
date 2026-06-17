@@ -1007,3 +1007,29 @@ body.in-game {
     }
 }
 
+.column-world {
+    position: absolute;
+    top: 15%;
+    
+    display: flex;
+    justify-content: space-around;
+    width: 100dvw;
+}
+
+.column-text{
+    color: white;
+    font-size: 34px;
+    font-weight: 700;
+}
+.column-warn-icon-container{
+    position: absolute;
+    top: 40%;
+    
+    display: flex;
+    justify-content: space-around;
+    width: 100dvw;
+}
+.column-warn-img{
+    width: 20dvw;
+    height: 20dvw;
+}

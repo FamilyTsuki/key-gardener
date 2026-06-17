@@ -23,11 +23,11 @@ export class FallPhase extends GamePhase {
 
         this.laneWords = ["left", "right", "center"];
         this.currentTypedWord = "";
-        this.uiCurrentWord = null;
 
         this.obstacles = [];
+        this.pendingObstacles = [];
         this.obstacleSpawnTimer = 0;
-        this.obstacleSpawnInterval = 1.5;
+        this.obstacleSpawnInterval = 1.8;
         this.obstacleSpeed = 20;
 
         this.obstacleGeometry = new THREE.BoxGeometry(10.5, 4.5, 30.5);
@@ -66,15 +66,12 @@ export class FallPhase extends GamePhase {
         
         this.buildMineWalls(scene);
         this.buildMineParticles(scene);
-
-        this.uiCurrentWord = document.getElementById("currentWord");
-        if (this.uiCurrentWord && this.uiCurrentWord.parentElement) {
-            this.uiCurrentWord.parentElement.classList.remove("none");
-            this.uiCurrentWord.textContent = "";
-        }
+        this.updateColumnsText();
 
         this.gameEngine.camera.position.set(0, -10, 70);
         this.gameEngine.camera.lookAt(0, -10, 0);
+
+        this.resetWarnIcons();
 
         if (this.player.loadPromise) {
             await this.player.loadPromise;
@@ -87,6 +84,7 @@ export class FallPhase extends GamePhase {
                 this.player.playerModel.position.y = 0;
             }
         }
+        
         this.waitForLoader().then(() => {
             this.isReady = true;
         });
@@ -212,50 +210,46 @@ export class FallPhase extends GamePhase {
             this.particles.push(line);
         }
     }
-    buildLaneLabels(scene) {
-        this.laneLabelsContainer = new THREE.Group();
-        scene.add(this.laneLabelsContainer);
 
-        const lanes = [
-            { word: "LEFT", x: -3.2 },
-            { word: "CENTER", x: 0 },
-            { word: "RIGHT", x: 3.2 }
-        ];
+    updateColumnsText() {
+        const leftColumn = document.getElementById("left-column");
+        const centerColumn = document.getElementById("center-column");
+        const rightColumn = document.getElementById("right-column");
 
-        lanes.forEach(lane => {
-            const canvas = document.createElement("canvas");
-            canvas.width = 256;
-            canvas.height = 128;
-            const context = canvas.getContext("2d");
-
-            context.clearRect(0, 0, canvas.width, canvas.height);
+        const updateElement = (el, targetWord) => {
+            if (!el) return;
+            const typed = this.currentTypedWord.toLowerCase();
             
-            context.fillStyle = "rgba(0, 0, 0, 0.5)";
-            context.beginPath();
-            context.roundRect(10, 20, 236, 88, 15);
-            context.fill();
+            if (typed.length > 0 && targetWord.startsWith(typed)) {
+                const matchedPart = targetWord.substring(0, typed.length).toUpperCase();
+                const remainingPart = targetWord.substring(typed.length).toUpperCase();
+                el.innerHTML = `<span style="color: #ffd700;">${matchedPart}</span>${remainingPart}`;
+            } else {
+                el.innerHTML = targetWord.toUpperCase();
+            }
+        };
 
-            context.font = "bold 42px sans-serif";
-            context.textAlign = "center";
-            context.textBaseline = "middle";
-            context.fillStyle = "#ffffff";
-            context.fillText(lane.word, canvas.width / 2, canvas.height / 2);
+        updateElement(leftColumn, "left");
+        updateElement(centerColumn, "center");
+        updateElement(rightColumn, "right");
+    }
 
-            const texture = new THREE.CanvasTexture(canvas);
-            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
-            const sprite = new THREE.Sprite(material);
+    getWarnElement(laneX) {
+        if (laneX === -6) return document.getElementById("left-warn-img");
+        if (laneX === 0) return document.getElementById("center-warn-img");
+        if (laneX === 6) return document.getElementById("right-warn-img");
+        return null;
+    }
 
-            sprite.scale.set(10, 5, 1);
-            sprite.position.set(lane.x, 40, 0);
-
-            this.laneLabelsContainer.add(sprite);
-            this.disposables.push(texture, material);
+    resetWarnIcons() {
+        const icons = ["left-warn-img", "center-warn-img", "right-warn-img"];
+        icons.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.visibility = "hidden";
         });
     }
 
-    spawnObstacle() {
-        const lanes = [-6, 0, 6];
-        const targetLane = lanes[Math.floor(Math.random() * lanes.length)];
+    spawnObstacle(targetLane) {
         const obstacleMesh = new THREE.Mesh(this.obstacleGeometry, this.obstacleMaterial);
         
         const playerSpacingX = this.player ? this.player.spacingX : 3.2;
@@ -263,7 +257,7 @@ export class FallPhase extends GamePhase {
         
         obstacleMesh.position.set(
             targetLane * playerSpacingX,
-            -200,
+            -60,
             (this.player ? this.player.targetPosition.y : 0) * playerSpacingZ
         );
         
@@ -273,19 +267,13 @@ export class FallPhase extends GamePhase {
         this.obstacles.push(obstacleMesh);
     }
 
-    updateUIWord() {
-        if (this.uiCurrentWord) {
-            this.uiCurrentWord.textContent = this.currentTypedWord;
-        }
-    }
-
     movePlayerToLane(laneX) {
         this.player.move({ 
             x: laneX * 6, 
             y: this.player.targetPosition.y 
         });
         this.currentTypedWord = "";
-        this.updateUIWord();
+        this.updateColumnsText();
     }
     
     waitForLoader() {
@@ -317,6 +305,7 @@ export class FallPhase extends GamePhase {
         if (!this.player.isAlive()) {
             return;
         }
+        
         this.scrollingWalls.forEach(wallGroupSegment => {
             wallGroupSegment.position.y += wallScrollSpeed * deltaTime;
             if (wallGroupSegment.position.y >= 400) {
@@ -334,8 +323,38 @@ export class FallPhase extends GamePhase {
 
         this.obstacleSpawnTimer += deltaTime;
         if (this.obstacleSpawnTimer >= this.obstacleSpawnInterval) {
-            this.spawnObstacle();
+            const lanes = [-6, 0, 6];
+            const targetLane = lanes[Math.floor(Math.random() * lanes.length)];
+            
+            this.pendingObstacles.push({
+                lane: targetLane,
+                timer: 0,
+                toggles: 0,
+                isVisible: false
+            });
             this.obstacleSpawnTimer = 0;
+        }
+
+        for (let i = this.pendingObstacles.length - 1; i >= 0; i--) {
+            const pending = this.pendingObstacles[i];
+            pending.timer += deltaTime;
+
+            if (pending.timer >= 0.15) {
+                pending.timer = 0;
+                pending.toggles++;
+                pending.isVisible = !pending.isVisible;
+
+                const warnEl = this.getWarnElement(pending.lane);
+                if (warnEl) {
+                    warnEl.style.visibility = pending.isVisible ? "visible" : "hidden";
+                }
+
+                if (pending.toggles >= 6) {
+                    if (warnEl) warnEl.style.visibility = "hidden";
+                    this.spawnObstacle(pending.lane);
+                    this.pendingObstacles.splice(i, 1);
+                }
+            }
         }
 
         for (let i = this.obstacles.length - 1; i >= 0; i--) {
@@ -344,7 +363,9 @@ export class FallPhase extends GamePhase {
 
             if (this.player && this.player.mesh) {
                 const distanceY = Math.abs(obstacleMesh.position.y - this.player.mesh.position.y);
-                if (distanceY < 1.5 && !obstacleMesh.userData.isHit && obstacleMesh.userData.lane === this.player.targetPosition.x) {
+                const distanceX = Math.abs(obstacleMesh.position.x - this.player.mesh.position.x);
+
+                if (distanceY < 3.5 && distanceX < 8.0 && !obstacleMesh.userData.isHit) {
                     this.player.damage(20, "Percuté par un obstacle en chute libre");
                     obstacleMesh.userData.isHit = true;
                     obstacleMesh.visible = false;
@@ -383,7 +404,6 @@ export class FallPhase extends GamePhase {
                 
                 this.player.playerModel.rotation.set(diveTiltX, 0, -this.currentRoll);
             }
-            
         }
 
         if (this.decor) {
@@ -399,15 +419,16 @@ export class FallPhase extends GamePhase {
             }
         }
     }
+
     draw() {
     }
-
+    
     handleKeyDown(event) {
         if (!this.isReady || !this.player || this.player.isMoving) return;
 
         if (event.key === "Backspace") {
             this.currentTypedWord = this.currentTypedWord.slice(0, -1);
-            this.updateUIWord();
+            this.updateColumnsText();
             return;
         }
 
@@ -427,7 +448,7 @@ export class FallPhase extends GamePhase {
                     this.movePlayerToLane(0);
                 }
             }
-            this.updateUIWord();
+            this.updateColumnsText();
         }
     }
 
@@ -449,13 +470,15 @@ export class FallPhase extends GamePhase {
             this.gameEngine.scene.remove(this.particleContainer);
         }
 
-        if (this.uiCurrentWord) {
-            this.uiCurrentWord.textContent = "";
-            if (this.uiCurrentWord.parentElement) {
-                this.uiCurrentWord.parentElement.classList.add("none");
-            }
-        }
+        const leftColumn = document.getElementById("left-column");
+        const centerColumn = document.getElementById("center-column");
+        const rightColumn = document.getElementById("right-column");
+        if (leftColumn) leftColumn.innerHTML = "";
+        if (centerColumn) centerColumn.innerHTML = "";
+        if (rightColumn) rightColumn.innerHTML = "";
         
+        this.resetWarnIcons();
+
         this.disposables.forEach(resource => {
             if (resource.dispose) {
                 resource.dispose();
@@ -465,6 +488,7 @@ export class FallPhase extends GamePhase {
         this.scrollingWalls = [];
         this.particles = [];
         this.obstacles = [];
+        this.pendingObstacles = [];
         this.disposables = [];
     }
 }
