@@ -143,7 +143,7 @@ export class AudioManager {
         }
 
         const categoryVolume = SettingsManager.getVolume(category);
-        const finalVolume = Math.max(0, Math.min(1, baseVolume * categoryVolume));
+        const finalVolume = Math.max(0, baseVolume * categoryVolume);
 
         const sourceNode = this.audioContext.createBufferSource();
         sourceNode.buffer = this.audioBuffers.get(path);
@@ -161,6 +161,51 @@ export class AudioManager {
         sourceNode.start(0);
 
         return sourceNode;
+    }
+
+    static createLoopingSFX(path, category, baseVolume = 1.0) {
+        if (!this.isUnlocked || !this.audioContext || !this.audioBuffers.has(path)) {
+            return null;
+        }
+
+        const categoryVolume = SettingsManager.getVolume(category);
+        const finalVolume = Math.max(0, baseVolume * categoryVolume);
+
+        const sourceNode = this.audioContext.createBufferSource();
+        sourceNode.buffer = this.audioBuffers.get(path);
+        sourceNode.loop = true;
+
+        const gainNode = this.audioContext.createGain();
+        gainNode.gain.value = finalVolume;
+
+        let pannerNode = null;
+        if (this.audioContext.createStereoPanner) {
+            pannerNode = this.audioContext.createStereoPanner();
+            pannerNode.pan.value = 0;
+            sourceNode.connect(pannerNode);
+            pannerNode.connect(gainNode);
+        } else {
+            sourceNode.connect(gainNode);
+        }
+
+        gainNode.connect(this.audioContext.destination);
+
+        if (this.useCaveEcho && this.reverbNode) {
+            gainNode.connect(this.reverbNode);
+        }
+
+        sourceNode.start(0);
+
+        return {
+            sourceNode,
+            gainNode,
+            pannerNode,
+            baseVolume,
+            category,
+            stop: () => {
+                try { sourceNode.stop(); } catch (e) {}
+            }
+        };
     }
 
     static playMusic(path, baseVolume = 1.0) {

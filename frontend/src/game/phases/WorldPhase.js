@@ -28,6 +28,7 @@ export class WorldPhase extends GamePhase {
         this.arrivalZ = 0;
         this.targetY = 0;
         this.activeIntroType = null;
+        this.startSkyfall = false;
         
         if (Array.isArray(options)) {
             this.options = {};
@@ -158,25 +159,34 @@ export class WorldPhase extends GamePhase {
         this.elapsedTime += deltaTime;
 
         if (this.isPlayingIntro && this.activeIntroType === "skyfall") {
-            if (this.dropSpeed === 0) {
-                AudioManager.playSFX("/asset/game_assets/sounds/long-fall.wav", "player", 1);
-            }
-            this.dropSpeed += 25 * deltaTime;
-            this.player.offsetY -= this.dropSpeed * deltaTime;
+            if (this.startSkyfall) {
+                if (this.dropSpeed === 0) {
+                    this.fallSoundSource = AudioManager.playSFX("/asset/game_assets/sounds/long-fall.wav", "player", 5.0);
+                }
+                this.dropSpeed += 25 * deltaTime;
+                this.player.offsetY -= this.dropSpeed * deltaTime;
 
-            this.camera.position.set(
-                this.arrivalX + 5,
-                this.targetY + 21,
-                this.arrivalZ + 14
-            );
-            this.camera.lookAt(this.arrivalX, this.player.offsetY, this.arrivalZ);
+                this.camera.position.set(
+                    this.arrivalX + 5,
+                    this.targetY + 21,
+                    this.arrivalZ + 14
+                );
+                this.camera.lookAt(this.arrivalX, this.player.offsetY, this.arrivalZ);
 
-            if (this.player.offsetY <= this.targetY) {
-                this.player.offsetY = this.targetY;
-                this.camera.lookAt(this.arrivalX, this.targetY, this.arrivalZ);
-                
-                
-                AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.5);
+                if (this.player.offsetY <= this.targetY) {
+                    if (this.fallSoundSource) {
+                        try {
+                            this.fallSoundSource.stop();
+                        } catch (e) {
+                            console.warn("Could not stop fall sound", e);
+                        }
+                        this.fallSoundSource = null;
+                    }
+                    this.player.offsetY = this.targetY;
+                    this.camera.lookAt(this.arrivalX, this.targetY, this.arrivalZ);
+                    
+                    
+                    AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.5);
                 const loader = new THREE.TextureLoader();
                 loader.load('/asset/game_assets/textures/break.webp', (texture) => {
                     const geometry = new THREE.PlaneGeometry(2.5, 2.5);
@@ -199,6 +209,7 @@ export class WorldPhase extends GamePhase {
                 this.stunTimer = 0.8;
                 this.cameraShakeTime = 0.4;
             }
+        }
         }
 
         if (this.isStunnedAfterFall) {
@@ -242,7 +253,8 @@ export class WorldPhase extends GamePhase {
             }
         }
 
-        this.player.update(deltaTime, this.worldMap ? this.worldMap.mapLayout : null);
+        const layout = this.isPlayingIntro ? null : (this.worldMap ? this.worldMap.mapLayout : null);
+        this.player.update(deltaTime, layout);
         if (this.player && this.player.mesh) {
             if (this.isStunnedAfterFall) {
                 let percentage = 1.0;
@@ -393,16 +405,19 @@ export class WorldPhase extends GamePhase {
             arrivalY + 21,
             arrivalZ + 14
         );
-        this.camera.lookAt(arrivalX, arrivalY, arrivalZ);
 
         if (introType === "skyfall") {
             this.player.offsetY = arrivalY + 40;
+            this.camera.lookAt(arrivalX, this.player.offsetY, arrivalZ);
+            
             this.player.update();
             this.draw();
             
             await this.waitForLoader();
             this.dropSpeed = 0;
+            this.startSkyfall = true;
         } else if (introType === "staircase") {
+            this.camera.lookAt(arrivalX, arrivalY, arrivalZ);
             const stairsTiles = this.worldMap.mapLayout.filter(t => t.role === "stairs").sort((a, b) => b.baseY - a.baseY);
             
             this.player.update();
@@ -453,6 +468,7 @@ export class WorldPhase extends GamePhase {
         }
 
         if (this.isTransitioning) return;
+        if (this.isStunnedAfterFall) return;
 
         const keyName = event.key.toUpperCase();
 

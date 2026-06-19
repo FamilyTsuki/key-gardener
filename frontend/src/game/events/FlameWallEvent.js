@@ -1,6 +1,8 @@
 import { WorldEvent } from "./WorldEvent.js";
 import * as THREE from "three";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { AudioManager } from "../managers/AudioManager.js";
+import { SettingsManager } from "../../core/utils/SettingsManager.js";
 
 export class FlameWallEvent extends WorldEvent {
     /**
@@ -25,7 +27,7 @@ export class FlameWallEvent extends WorldEvent {
     async init(worldPhase, scene) {
         this.wallGroup = new THREE.Group();
         
-        this.createBasePlane();
+        this.createBaseCube();
         this.createParticles();
         this.createFireLight();
         this.positionWallBehindPlayer(worldPhase);
@@ -33,13 +35,16 @@ export class FlameWallEvent extends WorldEvent {
         this.wallGroup.rotation.y = -Math.PI / 6;
         
         scene.add(this.wallGroup);
+        
+        await AudioManager.preloadSound("/asset/game_assets/sounds/fire_wall.wav");
+        this.fireSound = AudioManager.createLoopingSFX("/asset/game_assets/sounds/fire_wall.wav", "environment", 1.0);
     }
 
     /**
-     * Creates the base plane mesh for the fire wall.
+     * Creates the base cube mesh for the fire wall so it has depth.
      */
-    createBasePlane() {
-        const geometry = new THREE.PlaneGeometry(150, 40);
+    createBaseCube() {
+        const geometry = new THREE.BoxGeometry(150, 80, 50);
         const material = new THREE.MeshBasicMaterial({
             color: 0xff4400,
             transparent: true,
@@ -47,9 +52,9 @@ export class FlameWallEvent extends WorldEvent {
             side: THREE.DoubleSide,
             blending: THREE.AdditiveBlending
         });
-        const plane = new THREE.Mesh(geometry, material);
-        plane.position.y = 20;
-        this.wallGroup.add(plane);
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.set(0, 20, 25);
+        this.wallGroup.add(cube);
     }
 
     /**
@@ -128,6 +133,20 @@ export class FlameWallEvent extends WorldEvent {
         this.wallGroup.translateZ(-this.speed * deltaTime);
         this.updateParticles(deltaTime);
         this.checkCollisionWithPlayer(worldPhase);
+        
+        if (this.fireSound && this.fireSound.gainNode && worldPhase.player && worldPhase.player.mesh) {
+            const distance = Math.max(0, this.wallGroup.position.z - worldPhase.player.mesh.position.z);
+            let volume = 1.0 - (distance / 30);
+            if (volume < 0) volume = 0;
+            if (volume > 1) volume = 1;
+            
+            const maxVolume = 0.15; 
+            this.fireSound.gainNode.gain.value = volume * maxVolume * SettingsManager.getVolume(this.fireSound.category);
+            
+            if (this.fireSound.pannerNode) {
+                this.fireSound.pannerNode.pan.value = -0.6;
+            }
+        }
     }
 
     /**
@@ -210,6 +229,11 @@ export class FlameWallEvent extends WorldEvent {
             if (child.material) child.material.dispose();
         });
         this.wallGroup = null;
+
+        if (this.fireSound) {
+            this.fireSound.stop();
+            this.fireSound = null;
+        }
     }
 
     /**
