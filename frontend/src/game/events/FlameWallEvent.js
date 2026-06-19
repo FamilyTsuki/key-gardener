@@ -234,6 +234,11 @@ export class FlameWallEvent extends WorldEvent {
      * @param {Object} worldPhase
      */
     cleanupWallGroup(worldPhase) {
+        if (this.fireSound) {
+            this.fireSound.stop();
+            this.fireSound = null;
+        }
+
         if (!this.wallGroup) return;
 
         worldPhase.gameEngine.scene.remove(this.wallGroup);
@@ -242,11 +247,6 @@ export class FlameWallEvent extends WorldEvent {
             if (child.material) child.material.dispose();
         });
         this.wallGroup = null;
-
-        if (this.fireSound) {
-            this.fireSound.stop();
-            this.fireSound = null;
-        }
     }
 
     /**

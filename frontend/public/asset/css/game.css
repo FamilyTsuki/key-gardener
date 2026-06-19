@@ -1201,12 +1201,13 @@ body.dialogue-active .player-hud {
     align-items: center;
     gap: 10px;
     z-index: 10000;
+    white-space: nowrap;
 }
 
 .deep-text {
     font-family: monospace;
     display: inline-block;
-    width: 8ch;
+    white-space: nowrap;
 }
 
 .deep-number {
@@ -1215,6 +1216,6 @@ body.dialogue-active .player-hud {
 
 .deep-text, .deep-number {
     color: white;
-    font-size: clamp(24px, 5vw, 42px);
+    font-size: clamp(16px, 2.5vw, 26px);
     font-weight: 700;
 }

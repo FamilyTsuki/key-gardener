@@ -85,7 +85,7 @@ export class BridgeWordState {
             }
         }
 
-        if (needsUIUpdate) this.emit("words_updated", this.activeWords);
+        if (needsUIUpdate || this.activeWords.length > 0) this.emit("words_updated", this.activeWords);
     }
 
     spawnWord() {

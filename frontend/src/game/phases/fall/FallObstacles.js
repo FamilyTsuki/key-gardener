@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { AudioManager } from "../../managers/AudioManager.js";
 
 export class FallObstacles {
     constructor(phase) {
@@ -46,7 +47,12 @@ export class FallObstacles {
                 pending.isVisible = !pending.isVisible;
 
                 const warnEl = this.phase.ui.getWarnElement(pending.lane);
-                if (warnEl) warnEl.style.visibility = pending.isVisible ? "visible" : "hidden";
+                if (warnEl) {
+                    warnEl.style.visibility = pending.isVisible ? "visible" : "hidden";
+                    if (pending.isVisible) {
+                        AudioManager.playSFX("/asset/game_assets/sounds/warn.wav", "environment", 0.6);
+                    }
+                }
 
                 if (pending.toggles >= 6) {
                     if (warnEl) warnEl.style.visibility = "hidden";

@@ -1,5 +1,6 @@
 import { GamePhase } from "./GamePhase.js";
 import Player from "../models/actors/Player.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 import { FallRenderer } from "./fall/FallRenderer.js";
 import { FallObstacles } from "./fall/FallObstacles.js";
@@ -27,6 +28,8 @@ export class FallPhase extends GamePhase {
         this.ui.init();
         this.renderer.init(scene, this.gameEngine.camera, this.decorType);
 
+        AudioManager.preloadSound("/asset/game_assets/sounds/warn.wav");
+
         this.player = new Player(
             "Hero", 100, 100, { x: 0, y: 15, z: 5 }, { width: 0.4, height: 0.4 },
             this.renderer.worldGroup, null, null,
@@ -48,6 +51,9 @@ export class FallPhase extends GamePhase {
                 this.player.renderer.playerModel.position.y = 0;
             }
         }
+
+        this.windAmbiance = AudioManager.playAmbiance("/asset/game_assets/sounds/wind.wav", 0.8);
+        this.caveAmbiance = AudioManager.playAmbiance("/asset/game_assets/sounds/cave.wav", 0.5);
         
         this.waitForLoader().then(() => {
             this.state.isReady = true;
@@ -118,6 +124,15 @@ export class FallPhase extends GamePhase {
     }
 
     cleanup() {
+        if (this.windAmbiance) {
+            this.windAmbiance.stop();
+            this.windAmbiance = null;
+        }
+        if (this.caveAmbiance) {
+            this.caveAmbiance.stop();
+            this.caveAmbiance = null;
+        }
+
         if (this.player && this.player.mesh && this.renderer.worldGroup) {
             this.renderer.worldGroup.remove(this.player.mesh);
         }
