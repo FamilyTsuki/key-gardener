@@ -4,6 +4,7 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import { DeviceCapabilitiesDetector } from "../../core/utils/DeviceCapabilitiesDetector.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { SettingsManager } from "../../core/utils/SettingsManager.js";
 /**
  * Represents HomeView.
  */
@@ -87,6 +88,11 @@ export default class HomeView extends AbstractView {
                                     dataset: { link: true },
                                     className: "start-btn hidden",
                                     id: "start-btn",
+                                    onclick: (e) => {
+                                        if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
+                                            document.documentElement.requestFullscreen().catch(err => console.warn(err));
+                                        }
+                                    }
                                 },
                                 LanguageManager.t("home.startGame")
                             )

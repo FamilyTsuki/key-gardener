@@ -3,6 +3,7 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import { SaveService } from "../../core/services/save.service.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { SettingsManager } from "../../core/utils/SettingsManager.js";
 
 /**
  * View for managing game save slots.
@@ -140,7 +141,12 @@ export default class SaveView extends AbstractView {
                 )
             );
 
-            const launchGame = () => this.startGame(slot, save.game_state);
+            const launchGame = () => {
+                if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => console.warn(err));
+                }
+                this.startGame(slot, save.game_state);
+            };
 
             actionButtons = el(
                 "div",
@@ -205,12 +211,16 @@ export default class SaveView extends AbstractView {
                 el("div", { className: "save-empty" }, LanguageManager.t("save.emptySlot"))
             );
 
-            const newGame = () =>
+            const newGame = () => {
+                if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => console.warn(err));
+                }
                 this.startGame(slot, {
                     name: `Hero Slot ${slot}`,
                     phase: 0,
                     score: 0,
                 });
+            };
 
             actionButtons = el(
                 "div",

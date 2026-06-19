@@ -118,6 +118,10 @@ body.in-game #app {
     margin-top: 0 !important;
 }
 
+html:has(body.in-game), body.in-game {
+    overflow: hidden !important;
+}
+
 #page-transition {
     position: fixed;
     top: 0;

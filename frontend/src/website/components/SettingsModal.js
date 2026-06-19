@@ -74,6 +74,31 @@ export class SettingsModal {
             layoutSelect
         );
 
+        const currentFullscreen = settings.fullscreen ? "true" : "false";
+        const fullscreenSelect = createCustomSelect([
+            { value: "true", label: LanguageManager.t("settings.yes") || "Oui" },
+            { value: "false", label: LanguageManager.t("settings.no") || "Non" }
+        ], currentFullscreen, (newValue) => {
+            SettingsManager.saveSettings({ fullscreen: newValue === "true" });
+        }, "settings-compact-select");
+
+        const fullscreenRow = el("div", { className: "settings-row" },
+            el("label", {}, LanguageManager.t("settings.fullscreen") || "Plein écran"),
+            fullscreenSelect
+        );
+
+        const toggleFullscreenBtn = el("button", {
+            className: "btn-primary mb-10",
+            style: "margin-bottom: 15px;",
+            onclick: () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => console.warn(err));
+                } else if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }, LanguageManager.t("settings.toggleFullscreen") || "Basculer en Plein Écran");
+
         const closeBtn = el("button", {
             className: "settings-close-btn",
             onclick: () => this.close()
@@ -98,10 +123,29 @@ export class SettingsModal {
                 playerSlider,
                 langRow,
                 layoutRow,
+                fullscreenRow,
+                toggleFullscreenBtn,
                 closeBtn,
                 saveAndQuitBtn
             )
         );
+
+        this.modalEl.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                const focusables = Array.from(this.modalEl.querySelectorAll('input[type="range"], .custom-select-container, button'));
+                const currentIndex = focusables.indexOf(document.activeElement);
+                
+                if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    const nextIndex = (currentIndex + 1) % focusables.length;
+                    focusables[nextIndex].focus();
+                } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const prevIndex = currentIndex <= 0 ? focusables.length - 1 : currentIndex - 1;
+                    focusables[prevIndex].focus();
+                }
+            }
+        });
 
         return this.modalEl;
     }
@@ -111,6 +155,12 @@ export class SettingsModal {
             this.engine.isPaused = true;
         }
         document.body.appendChild(this.render());
+        
+        // Auto-focus the first focusable element when opened
+        const firstFocusable = this.modalEl.querySelector('input[type="range"], .custom-select-container, button');
+        if (firstFocusable) {
+            firstFocusable.focus();
+        }
     }
 
     close() {

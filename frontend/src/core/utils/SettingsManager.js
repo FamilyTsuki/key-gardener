@@ -5,6 +5,7 @@ export class SettingsManager {
         return {
             language: isFrench ? "fr" : "en",
             keyboardLayout: isFrench ? "AZERTY" : "QWERTY",
+            fullscreen: false,
             volume: {
                 global: 1.0,
                 music: 1.0,
@@ -27,6 +28,7 @@ export class SettingsManager {
                 return {
                     language: parsed.language || this.DEFAULT_SETTINGS.language,
                     keyboardLayout: parsed.keyboardLayout || this.DEFAULT_SETTINGS.keyboardLayout,
+                    fullscreen: parsed.fullscreen !== undefined ? parsed.fullscreen : this.DEFAULT_SETTINGS.fullscreen,
                     volume: { ...this.DEFAULT_SETTINGS.volume, ...(parsed.volume || {}) }
                 };
             }
@@ -45,6 +47,7 @@ export class SettingsManager {
         const merged = {
             language: newSettings.language || current.language,
             keyboardLayout: newSettings.keyboardLayout || current.keyboardLayout,
+            fullscreen: newSettings.fullscreen !== undefined ? newSettings.fullscreen : current.fullscreen,
             volume: { ...current.volume, ...(newSettings.volume || {}) }
         };
         localStorage.setItem("game_settings", JSON.stringify(merged));

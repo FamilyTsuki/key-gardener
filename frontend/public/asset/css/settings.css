@@ -69,9 +69,27 @@
     border-radius: 12px;
     width: 90%;
     max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
     color: var(--text-color);
     font-family: var(--font-main);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.settings-modal-content::-webkit-scrollbar {
+    width: 12px;
+}
+.settings-modal-content::-webkit-scrollbar-track {
+    background: var(--dark-overlay-dense);
+    border-radius: 6px;
+    margin: 4px 0;
+}
+.settings-modal-content::-webkit-scrollbar-thumb {
+    background: var(--card-border);
+    border-radius: 6px;
+}
+.settings-modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
 }
 
 .settings-modal-content h2 {

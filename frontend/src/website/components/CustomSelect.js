@@ -60,6 +60,36 @@ export function createCustomSelect(options, selectedValue, onChange, className =
         }
     });
 
+    container.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            container.classList.toggle("open");
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+            e.preventDefault();
+            const currentIndex = options.findIndex(o => o.value === selectedOption.value);
+            let nextIndex;
+            if (e.key === "ArrowRight") {
+                nextIndex = (currentIndex + 1) % options.length;
+            } else {
+                nextIndex = (currentIndex - 1 + options.length) % options.length;
+            }
+            
+            const nextOpt = options[nextIndex];
+            displaySpan.textContent = nextOpt.label;
+            
+            Array.from(optionsContainer.children).forEach(child => child.classList.remove("selected"));
+            if (optionsContainer.children[nextIndex]) {
+                optionsContainer.children[nextIndex].classList.add("selected");
+            }
+            
+            if (selectedOption.value !== nextOpt.value) {
+                selectedOption = nextOpt;
+                if (onChange) onChange(nextOpt.value);
+                container.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+        }
+    });
+
     Object.defineProperty(container, 'value', {
         get: () => selectedOption.value,
         set: (newValue) => {

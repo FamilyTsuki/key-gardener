@@ -349,6 +349,10 @@ export const fr = {
         volumePlayer: "Joueur (Effets)",
         language: "Langue",
         keyboardLayout: "Disposition du clavier",
+        fullscreen: "Plein Écran au lancement",
+        toggleFullscreen: "Basculer en Plein Écran",
+        yes: "Oui",
+        no: "Non",
         close: "Fermer"
     },
     notFound: {

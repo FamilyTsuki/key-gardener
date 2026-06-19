@@ -348,6 +348,10 @@ export const en = {
         volumePlayer: "Player (Effects)",
         language: "Language",
         keyboardLayout: "Keyboard Layout",
+        fullscreen: "Fullscreen on launch",
+        toggleFullscreen: "Toggle Fullscreen",
+        yes: "Yes",
+        no: "No",
         close: "Close"
     },
     notFound: {

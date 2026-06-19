@@ -6,6 +6,7 @@ import { GameEngine } from "../../game/engine/GameEngine.js";
 import { SaveService } from "../../core/services/save.service.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { SettingsModal } from "../components/SettingsModal.js";
+import { SettingsManager } from "../../core/utils/SettingsManager.js";
 
 /**
  * View for the main game interface.
