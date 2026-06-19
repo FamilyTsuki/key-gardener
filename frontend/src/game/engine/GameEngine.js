@@ -17,6 +17,8 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { FloatingTextManager } from "../ui/FloatingTextManager.js";
 import ModelLoader from "../../core/utils/ModelLoader.js";
 import { PerformanceDetector } from "../../core/utils/PerformanceDetector.js";
+import { AudioManager } from "../managers/AudioManager.js";
+import ProjectilePool from "../models/ProjectilePool.js";
 
 /**
  * Represents the main game engine that manages scenes, phases, and the render loop.
@@ -207,6 +209,8 @@ export class GameEngine {
             this.gamePhase.cleanup();
         }
 
+        ProjectilePool.clear();
+
         this.gamePhase = newPhase;
 
         await this.autoSave();
@@ -271,15 +275,55 @@ export class GameEngine {
                 }
             }
 
+            const sounds = [];
+            if (phaseType === "fall") {
+                sounds.push("/asset/game_assets/sounds/wind.wav");
+                sounds.push("/asset/game_assets/sounds/cave.wav");
+                sounds.push("/asset/game_assets/sounds/warn.wav");
+            } else if (phaseType === "world") {
+                sounds.push("/asset/game_assets/sounds/cave.wav");
+                sounds.push("/asset/game_assets/sounds/jump.wav");
+                sounds.push("/asset/game_assets/sounds/fall.wav");
+                sounds.push("/asset/game_assets/sounds/impact.wav");
+                sounds.push("/asset/game_assets/sounds/long-fall.wav");
+                sounds.push("/asset/game_assets/sounds/fire_wall.wav");
+                sounds.push("/asset/game_assets/sounds/big-jump.wav");
+            } else if (phaseType === "survive" || phaseType === "void") {
+                sounds.push("/asset/game_assets/sounds/cave.wav");
+                sounds.push("/asset/game_assets/sounds/jump.wav");
+                sounds.push("/asset/game_assets/sounds/impact.wav");
+                sounds.push("/asset/game_assets/sounds/fire.wav");
+                sounds.push("/asset/game_assets/sounds/bonk.wav");
+                sounds.push("/asset/game_assets/sounds/damage_1.wav");
+                sounds.push("/asset/game_assets/sounds/damage_2.wav");
+                sounds.push("/asset/game_assets/sounds/damage_3.wav");
+            }
+
             for (const assetUrl of assets) {
+                const loadModelTask = () => {
+                    ModelLoader.loadAsync(assetUrl).then(gltf => {
+                        if (gltf && gltf.scene && this.renderer && this.camera) {
+                            this.renderer.compile(gltf.scene, this.camera);
+                        }
+                    }).catch(() => {});
+                };
+
                 if (window.requestIdleCallback) {
-                    window.requestIdleCallback(() => {
-                        ModelLoader.loadAsync(assetUrl).catch(() => {});
-                    });
+                    window.requestIdleCallback(loadModelTask);
                 } else {
-                    setTimeout(() => {
-                        ModelLoader.loadAsync(assetUrl).catch(() => {});
-                    }, 0);
+                    setTimeout(loadModelTask, 0);
+                }
+            }
+
+            for (const soundUrl of sounds) {
+                const loadSoundTask = () => {
+                    AudioManager.preloadSound(soundUrl).catch(() => {});
+                };
+
+                if (window.requestIdleCallback) {
+                    window.requestIdleCallback(loadSoundTask);
+                } else {
+                    setTimeout(loadSoundTask, 0);
                 }
             }
         } catch (e) {

@@ -1,4 +1,4 @@
-import Projectile from "../Projectile.js";
+import ProjectilePool from "../ProjectilePool.js";
 import Spell from "../Spell.js";
 
 /**
@@ -52,7 +52,7 @@ export default class ProjectileLuncher extends Spell {
       y: player.y,
     };
 
-    return new Projectile(
+    return ProjectilePool.get(
       startPosition,
       projectileSize,
       this.damage,
@@ -60,7 +60,7 @@ export default class ProjectileLuncher extends Spell {
       scene,
       "player",
       3.2,
-      this.#projectileModel,
+      this.#projectileModel
     );
   }
 

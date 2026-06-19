@@ -156,12 +156,88 @@ export default class Projectile extends DamageObject {
     /**
      * Destroys the projectile and removes it from the scene.
      */
+    reset(
+        position,
+        size,
+        damage,
+        velocity,
+        team = "player",
+        spacing = 3.2
+    ) {
+        this.position = position;
+        this.size = size;
+        this.damage = damage;
+        this.isDead = false;
+        this.timer = 0;
+        this.isFlying = false;
+
+        this.velocity = velocity;
+        this.team = team;
+        this.spacing = spacing;
+
+        this.mesh.position.set(
+            position.x * spacing,
+            1.5,
+            position.y * spacing
+        );
+        this.mesh.visible = true;
+        this.scene.add(this.mesh);
+
+        if (this.projectileModel) {
+            this.projectileModel.visible = this.team === "player";
+        }
+
+        if (this.lineMesh && this.lineMesh.parent) {
+            this.scene.remove(this.lineMesh);
+        }
+        this.lineMesh = null;
+
+        if (this.team !== "player") {
+            const lineLength = 10 * spacing;
+            const lineGeo = new THREE.PlaneGeometry(0.3 * spacing, lineLength);
+            lineGeo.translate(0, -lineLength / 2, 0);
+            this.lineMaterial = new THREE.MeshBasicMaterial({
+                color: 0xff0000,
+                transparent: true,
+                opacity: 0.2,
+                side: THREE.DoubleSide,
+            });
+            this.lineMesh = new THREE.Mesh(lineGeo, this.lineMaterial);
+            this.lineMesh.rotation.x = -Math.PI / 2;
+
+            const angle = Math.atan2(velocity.x, velocity.y);
+            this.lineMesh.rotation.z = angle;
+
+            this.lineMesh.position.set(
+                position.x * spacing,
+                0.1,
+                position.y * spacing
+            );
+            this.scene.add(this.lineMesh);
+        }
+
+        AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", this.team === "player" ? "player" : "enemy", 0.5);
+    }
+
     die() {
         this.isDead = true;
         if (this.mesh) {
             if (this.mesh.parent) {
                 this.mesh.parent.remove(this.mesh);
             }
+            this.mesh.visible = false;
+        }
+        if (this.lineMesh && this.lineMesh.parent) {
+            this.scene.remove(this.lineMesh);
+            this.lineMesh.geometry.dispose();
+            this.lineMaterial.dispose();
+            this.lineMesh = null;
+        }
+    }
+
+    destroy() {
+        this.die();
+        if (this.mesh) {
             this.mesh.traverse((child) => {
                 if (child.isMesh) {
                     if (child.geometry) {
@@ -176,12 +252,6 @@ export default class Projectile extends DamageObject {
                     }
                 }
             });
-            this.mesh.visible = false;
-        }
-        if (this.lineMesh && this.lineMesh.parent) {
-            this.scene.remove(this.lineMesh);
-            this.lineMesh.geometry.dispose();
-            this.lineMaterial.dispose();
         }
     }
 

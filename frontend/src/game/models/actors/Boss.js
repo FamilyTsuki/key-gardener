@@ -1,5 +1,5 @@
 import Actor from "../Actor.js";
-import Projectile from "../Projectile.js";
+import ProjectilePool from "../ProjectilePool.js";
 import Bonk from "../Bonk.js";
 import * as THREE from "three";
 
@@ -237,7 +237,7 @@ export default class Boss extends Actor {
       };
 
       projectiles.push(
-        new Projectile(
+        ProjectilePool.get(
           { x: this.rawPosition.x, y: this.rawPosition.y },
           { width: 0.4, height: 0.4 },
           10,
@@ -245,8 +245,8 @@ export default class Boss extends Actor {
           this.scene,
           "boss",
           3.2,
-          this.fireballModel,
-        ),
+          this.fireballModel
+        )
       );
     }
   }

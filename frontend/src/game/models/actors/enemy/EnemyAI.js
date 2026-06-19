@@ -1,4 +1,4 @@
-import Projectile from "../../Projectile.js";
+import ProjectilePool from "../../ProjectilePool.js";
 
 export class EnemyAI {
     constructor(state, movement) {
@@ -29,7 +29,7 @@ export class EnemyAI {
             const velocity = { x: (dx / dist) * speed, y: (dy / dist) * speed };
             
             projectiles.push(
-                new Projectile(
+                ProjectilePool.get(
                     { x: this.movement.position.x, y: this.movement.position.y },
                     { width: 0.4, height: 0.4 },
                     15,

@@ -1,5 +1,5 @@
 import Actor from "../Actor.js";
-import Projectile from "../Projectile.js";
+import ProjectilePool from "../ProjectilePool.js";
 import Bonk from "../Bonk.js";
 import * as THREE from "three";
 import ModelLoader from "../../../core/utils/ModelLoader.js";
@@ -223,7 +223,7 @@ export default class BugBoss extends Actor {
             };
 
             projectiles.push(
-                new Projectile(
+                ProjectilePool.get(
                     { x: this.rawPosition.x, y: this.rawPosition.y },
                     { width: 0.5, height: 0.5 },
                     15,

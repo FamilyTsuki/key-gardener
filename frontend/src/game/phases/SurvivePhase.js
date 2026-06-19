@@ -1,5 +1,6 @@
 import { GamePhase } from "./GamePhase.js";
 import ModelLoader from "../../core/utils/ModelLoader.js";
+import ProjectilePool from "../models/ProjectilePool.js";
 import Enemies from "../managers/Enemies.js";
 import Keyboard from "../managers/Keyboard.js";
 import Player from "../models/actors/Player.js";
@@ -196,7 +197,10 @@ export class SurvivePhase extends GamePhase {
             }
             
             if (p.position && (Math.abs(p.position.x) > 50 || Math.abs(p.position.y) > 50)) p.die();
-            if (p.isDead) this.projectiles.splice(i, 1);
+            if (p.isDead) {
+                this.projectiles.splice(i, 1);
+                ProjectilePool.recycle(p);
+            }
         }
 
         for (let i = this.bonks.length - 1; i >= 0; i--) {
