@@ -152,7 +152,7 @@ export class WorldPhase extends GamePhase {
     }
 
     update(deltaTime) {
-        if (!this.player) {
+        if (!this.player || !this.player.isAlive()) {
             return;
         }
 

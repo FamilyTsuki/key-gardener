@@ -65,13 +65,13 @@ export class PlayerUI {
     }
 
     showGameOverScreen(reason, onDeathCallback) {
-        const canvas = document.getElementById("game-canvas");
-        if (canvas) canvas.classList.add("player-dead");
+        const container = document.querySelector(".game-container");
+        if (container) container.classList.add("player-dead");
 
         const screen = this.buildGameOverDOM(reason);
         document.body.appendChild(screen);
 
-        this.scheduleGameOverTransitions(screen, canvas, onDeathCallback);
+        this.scheduleGameOverTransitions(screen, container, onDeathCallback);
     }
 
     buildGameOverDOM(reason) {
@@ -96,17 +96,17 @@ export class PlayerUI {
         return screen;
     }
 
-    scheduleGameOverTransitions(screen, canvas, onDeathCallback) {
+    scheduleGameOverTransitions(screen, container, onDeathCallback) {
         setTimeout(() => {
             screen.classList.add("fading-out");
-            if (canvas) {
-                canvas.classList.remove("player-dead");
-                canvas.classList.add("player-restarting");
+            if (container) {
+                container.classList.remove("player-dead");
+                container.classList.add("player-restarting");
             }
 
             setTimeout(() => {
                 screen.remove();
-                if (canvas) canvas.classList.remove("player-restarting");
+                if (container) container.classList.remove("player-restarting");
                 if (onDeathCallback) onDeathCallback();
             }, 1200);
         }, 8000);

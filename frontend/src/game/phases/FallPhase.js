@@ -102,6 +102,8 @@ export class FallPhase extends GamePhase {
     }
 
     update(deltaTime) {
+        if (this.player && !this.player.isAlive()) return;
+
         const movementDelta = this.state.update(deltaTime);
         if (movementDelta === 0 && (!this.state.isReady || this.state.isPhaseEnded)) return;
 

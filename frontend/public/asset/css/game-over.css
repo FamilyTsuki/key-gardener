@@ -57,11 +57,11 @@
     100% { opacity: 1; background: #000; }
 }
 
-#game-canvas.player-dead {
+.game-container.player-dead {
     animation: canvas-desaturate 2.5s ease-out forwards;
 }
 
-#game-canvas.player-restarting {
+.game-container.player-restarting {
     animation: canvas-restart 1.2s ease-in forwards;
 }
 
