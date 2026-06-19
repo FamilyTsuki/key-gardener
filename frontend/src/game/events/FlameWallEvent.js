@@ -130,6 +130,14 @@ export class FlameWallEvent extends WorldEvent {
     update(worldPhase, deltaTime) {
         if (!this.canUpdate(worldPhase)) return;
 
+        if (worldPhase.player && !worldPhase.player.state.isAlive()) {
+            if (this.fireSound) {
+                this.fireSound.stop();
+                this.fireSound = null;
+            }
+            return;
+        }
+
         this.wallGroup.translateZ(-this.speed * deltaTime);
         this.updateParticles(deltaTime);
         this.checkCollisionWithPlayer(worldPhase);
@@ -194,6 +202,11 @@ export class FlameWallEvent extends WorldEvent {
         this.isGameOver = true;
         if (worldPhase.player) {
             worldPhase.player.damage(worldPhase.player.hp, LanguageManager.t("game.flameWallDeath"));
+        }
+        
+        if (this.fireSound) {
+            this.fireSound.stop();
+            this.fireSound = null;
         }
     }
 

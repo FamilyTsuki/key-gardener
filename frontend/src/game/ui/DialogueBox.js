@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import ModelLoader from "../../core/utils/ModelLoader.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 /**
  * Reusable component for displaying dialogues with an optional speaker portrait (2D or 3D).
@@ -16,6 +17,8 @@ export class DialogueBox {
         this.bubble = null;
         this.textElement = null;
         this.speakerContainer = null;
+
+        AudioManager.preloadSound("/asset/game_assets/sounds/tic.wav");
 
         this.dialogues = [];
         this.dialogueStep = 0;
@@ -167,8 +170,14 @@ export class DialogueBox {
             let charIndex = 0;
 
             this.typewriterInterval = setInterval(() => {
-                this.textElement.textContent += fullText[charIndex];
+                const char = fullText[charIndex];
+                this.textElement.textContent += char;
                 charIndex++;
+                
+                if (char.trim() !== "") {
+                    AudioManager.playSFX("/asset/game_assets/sounds/tic.wav", "ui", 0.5);
+                }
+                
                 if (charIndex >= fullText.length) {
                     clearInterval(this.typewriterInterval);
                     this.typewriterInterval = null;
