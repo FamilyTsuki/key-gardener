@@ -45,12 +45,13 @@ export class CaveScrollController {
             setTimeout(() => this.setupScrollTrigger(), 500);
         }
 
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const appElement = document.getElementById("app");
+        const maxScroll = appElement ? (appElement.scrollHeight - appElement.clientHeight) : (document.documentElement.scrollHeight - window.innerHeight);
         if (maxScroll <= 0) {
             return;
         }
 
-        const scrollTop = window.scrollY;
+        const scrollTop = appElement ? appElement.scrollTop : window.scrollY;
         const containerData = containers.map(container => {
             const rect = container.getBoundingClientRect();
             const topEdge = rect.top + scrollTop;
@@ -111,6 +112,7 @@ export class CaveScrollController {
         const timeline = gsap.timeline({
             scrollTrigger: {
                 trigger: ".content",
+                scroller: appElement ? "#app" : window,
                 start: 0,
                 end: "bottom bottom",
                 scrub: true

@@ -71,11 +71,13 @@ export class TunnelAnimation {
             document.body.appendChild(canvas);
         }
 
+        const appElement = document.getElementById("app");
         gsap.to(camera.position, {
             y: -500,
             ease: "none",
             scrollTrigger: {
                 trigger: ".content",
+                scroller: appElement ? "#app" : window,
                 start: "top top",
                 end: "bottom bottom",
                 scrub: 1,

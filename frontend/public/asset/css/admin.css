@@ -810,3 +810,26 @@ body[data-theme="light"] .level-item-btn {
     margin-top: 10px;
 }
 
+@media (min-width: 901px) {
+    html:has(.admin-dashboard),
+    body:has(.admin-dashboard) {
+        overflow: hidden !important;
+        height: 100vh;
+    }
+    body:has(.admin-dashboard) {
+        display: flex;
+        flex-direction: column;
+    }
+    body:has(.admin-dashboard) #app,
+    body:has(.admin-dashboard) .view-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .admin-dashboard {
+        flex: 1;
+        height: 100%;
+    }
+}
+
