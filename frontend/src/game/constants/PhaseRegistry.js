@@ -53,5 +53,22 @@ export const PHASE_REGISTRY = [
 ];
 
 export const getPhaseDefinition = (phaseType) => {
-    return PHASE_REGISTRY.find(p => p.type === phaseType);
+    return PHASE_REGISTRY.find(p => p.type === phaseType) || {
+        type: phaseType,
+        labelKey: `admin.${phaseType}Phase`,
+        fields: []
+    };
+};
+
+export const injectDynamicPhases = (dynamicPhases) => {
+    dynamicPhases.forEach(fileName => {
+        let type = fileName.replace('Phase', '').toLowerCase();
+        if (!PHASE_REGISTRY.find(p => p.type === type)) {
+            PHASE_REGISTRY.push({
+                type: type,
+                labelKey: `admin.${type}Phase`,
+                fields: []
+            });
+        }
+    });
 };

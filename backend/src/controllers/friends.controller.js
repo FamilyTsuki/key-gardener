@@ -3,9 +3,8 @@ const db = require('../config/database');
 exports.addFriend = async (req, res) => {
     try {
         const { targetUsername } = req.body;
-        const userId = req.user.id; // from authMiddleware
+        const userId = req.user.id;
 
-        // Find target user
         const targetRes = await db.query('SELECT id FROM users WHERE username = $1', [targetUsername]);
         if (targetRes.rows.length === 0) {
             return res.status(404).json({ success: false, message: 'Utilisateur introuvable.' });
@@ -16,7 +15,6 @@ exports.addFriend = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Vous ne pouvez pas vous ajouter vous-même.' });
         }
 
-        // Check if already friends or pending
         const checkRes = await db.query(
             'SELECT * FROM friends WHERE (user_id_1 = $1 AND user_id_2 = $2) OR (user_id_1 = $2 AND user_id_2 = $1)',
             [userId, targetId]

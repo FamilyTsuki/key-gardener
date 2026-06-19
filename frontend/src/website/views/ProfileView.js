@@ -74,7 +74,6 @@ export default class ProfileView extends AbstractView {
             
             content.appendChild(statusContainer);
 
-            // Stats
             const statsContainer = el("div", { className: "stats-container" });
             const rank = StatisticsService.getRankFromWpm(stats.highest_wpm || 0);
 

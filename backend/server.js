@@ -14,6 +14,7 @@ const savesRoutes = require("./src/routes/saves.routes");
 const levelsRoutes = require("./src/routes/levels.routes");
 const statisticsRoutes = require("./src/routes/statistics.routes");
 const friendsRoutes = require("./src/routes/friends.routes");
+const adminRoutes = require("./src/routes/admin.routes");
 const http = require("http");
 const { Server } = require("socket.io");
 
@@ -65,7 +66,7 @@ const frontendDir = isProd ? path.join(__dirname, "../dist/public") : path.join(
 const srcDir = isProd ? path.join(__dirname, "../dist/src") : path.join(__dirname, "../frontend/src");
 
 if (!isProd) {
-    // Cache is now active even in development mode
+    // Cache is active even in development mode
 }
 
 const staticCacheOptions = {
@@ -95,6 +96,7 @@ app.use("/api/saves", savesRoutes);
 app.use("/api/levels", levelsRoutes);
 app.use("/api/stats", statisticsRoutes);
 app.use("/api/friends", friendsRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "OK", message: "API is running securely" });
@@ -131,7 +133,7 @@ app.get("*", (req, res) => {
         htmlData = htmlData.replace(/<meta property="twitter:title" content="[^"]*"/, `<meta property="twitter:title" content="${title}"`);
         htmlData = htmlData.replace(/<meta property="twitter:description" content="[^"]*"/, `<meta property="twitter:description" content="${desc}"`);
         
-        const canonicalUrl = `https://keyboardsurvivor.com${req.path === '/' ? '' : req.path}`;
+        const canonicalUrl = `${process.env.FRONTEND_URL}${req.path === '/' ? '' : req.path}`;
         htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`);
         htmlData = htmlData.replace("GOOGLE_CLIENT_ID_PLACEHOLDER", process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com");
         htmlData = htmlData.replace("SUPPORT_EMAIL_PLACEHOLDER", process.env.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com");

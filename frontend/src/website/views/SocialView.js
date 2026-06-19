@@ -217,7 +217,6 @@ export class SocialView extends AbstractView {
         if (btnElement) {
             btnElement.disabled = true;
             btnElement.textContent = LanguageManager.t("social.waitingBtn");
-            // Re-enable after a timeout if no response
             setTimeout(() => {
                 if(btnElement) {
                     btnElement.disabled = false;

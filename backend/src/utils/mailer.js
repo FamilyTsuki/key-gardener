@@ -35,15 +35,18 @@ async function initMailer() {
 async function sendResetCodeEmail(toEmail, resetCode) {
     await initMailer();
 
-    // Generate the reset link based on the token (resetCode parameter acts as the token)
-    const resetLink = `http://localhost:5000/login?reset_token=${resetCode}&email=${encodeURIComponent(toEmail)}`;
+    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5000";
+    const resetLink = `${baseUrl}/login?reset_token=${resetCode}&email=${encodeURIComponent(toEmail)}`;
 
     const info = await transporter.sendMail({
         from: process.env.EMAIL_SENDER || '"Keyboard Survivor" <alban.elie590@gmail.com>',
         to: toEmail,
-        subject: "Keyboard Survivor - Réinitialisation de votre mot de passe",
-        text: `Vous avez demandé la réinitialisation de votre mot de passe.\n\nCliquez sur ce lien pour choisir un nouveau mot de passe :\n${resetLink}\n\nCe lien expire dans 10 minutes.`,
-        html: `<h2>Réinitialisation de mot de passe</h2><p>Vous avez demandé la réinitialisation de votre mot de passe.</p><p><a href="${resetLink}">Cliquez ici pour choisir un nouveau mot de passe</a></p><p>Ce lien expire dans 10 minutes.</p>`,
+        subject: "Keyboard Survivor - Password Reset / Réinitialisation de mot de passe",
+        text: `You have requested to reset your password.\nClick on this link to choose a new password:\n${resetLink}\nThis link will expire in 10 minutes.\n\n---\n\nVous avez demandé la réinitialisation de votre mot de passe.\nCliquez sur ce lien pour choisir un nouveau mot de passe :\n${resetLink}\nCe lien expire dans 10 minutes.`,
+        html: `<h2>Password Reset / Réinitialisation de mot de passe</h2>
+<p>You have requested to reset your password. / Vous avez demandé la réinitialisation de votre mot de passe.</p>
+<p><a href="${resetLink}">Click here to choose a new password / Cliquez ici pour choisir un nouveau mot de passe</a></p>
+<p>This link will expire in 10 minutes. / Ce lien expire dans 10 minutes.</p>`,
     });
 
     console.log("Message sent: %s", info.messageId);

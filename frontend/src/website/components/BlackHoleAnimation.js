@@ -31,7 +31,6 @@ export class BlackHoleAnimation {
     setupEnvironment() {
         this.scene.fog = new THREE.FogExp2(0x0a0a14, 0.0025);
         this.scene.add(this.camera);
-        // Position camera to view the black hole properly
         this.camera.position.set(0, 0, 0);
     }
 
@@ -107,9 +106,6 @@ export class BlackHoleAnimation {
                 
                 this.blackHoleObject.scale.set(1000, 1000, 1000);
                 
-                // Adjusted position relative to the camera at (0,0,0)
-                // In CaveAnimation: Camera is at Y=-950 (or so), BlackHole is at (0, -1000, -1000)
-                // So relative to camera, black hole is at (0, -50, -1000)
                 this.blackHoleObject.position.set(0, -50, -1000);
                 
                 this.blackHoleObject.rotation.x = Math.PI / 6;

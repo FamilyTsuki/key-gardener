@@ -123,7 +123,6 @@ class Post {
     }
 
     static async reportPost(postId, userId, reason) {
-        // Insert report. Ignore if already reported by this user.
         const insertResult = await db.query(
             "INSERT INTO post_reports (post_id, user_id, reason) VALUES ($1, $2, $3) ON CONFLICT (post_id, user_id) DO NOTHING RETURNING id",
             [postId, userId, reason]
@@ -133,7 +132,6 @@ class Post {
             return { alreadyReported: true };
         }
 
-        // Check report count
         const countResult = await db.query(
             "SELECT COUNT(*) as count FROM post_reports WHERE post_id = $1",
             [postId]
@@ -141,7 +139,6 @@ class Post {
         const reportCount = parseInt(countResult.rows[0].count);
 
         if (reportCount >= 3) {
-            // Dereference the post
             await db.query("UPDATE posts SET status = 'reported' WHERE id = $1", [postId]);
             return { hidden: true };
         }

@@ -82,7 +82,6 @@ export class AdminPreview3D {
                 this.renderer.setSize(w, h);
                 if (!this.hasRendered) {
                     this.hasRendered = true;
-                    // Initial render is handled externally by renderPreview
                 }
             }
         });

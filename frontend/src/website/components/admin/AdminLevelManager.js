@@ -1,7 +1,7 @@
 import { el, clear } from '../../../core/utils/DOMBuilder.js';
 import { LanguageManager } from '../../../core/utils/LanguageManager.js';
 import { FlashMessageManager } from '../../../core/utils/FlashMessageManager.js';
-import { PHASE_REGISTRY, getPhaseDefinition } from "../../../game/constants/PhaseRegistry.js";
+import { PHASE_REGISTRY, getPhaseDefinition, injectDynamicPhases } from "../../../game/constants/PhaseRegistry.js";
 import { getEventsForPhase, getEventDefinition } from "../../../game/constants/EventRegistry.js";
 import { AdminPhaseEditor } from "./AdminPhaseEditor.js";
 import { AdminEventEditor } from "./AdminEventEditor.js";
@@ -22,7 +22,23 @@ export class AdminLevelManager {
     }
 
     async init() {
+        await this.loadDynamicEntities();
         await this.loadLevels();
+    }
+
+    async loadDynamicEntities() {
+        try {
+            const token = localStorage.getItem("authToken");
+            const response = await fetch("/api/admin/entities", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (data.phases) {
+                injectDynamicPhases(data.phases);
+            }
+        } catch (e) {
+            console.warn("Could not load dynamic entities:", e);
+        }
     }
 
     async loadLevels() {
