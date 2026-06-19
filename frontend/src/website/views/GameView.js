@@ -225,6 +225,10 @@ export default class GameView extends AbstractView {
 
         document.body.classList.remove("in-game");
 
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(err => console.warn(err));
+        }
+
         if (this.engine) {
             this.engine.destroy();
         }
@@ -240,6 +244,10 @@ export default class GameView extends AbstractView {
         document.body.classList.remove("in-game");
         window.removeEventListener("keydown", this.handleEscapeKey);
         
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(err => console.warn(err));
+        }
+
         if (this.settingsModal) {
             this.settingsModal.close();
             this.settingsModal = null;

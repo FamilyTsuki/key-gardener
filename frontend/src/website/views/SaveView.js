@@ -143,7 +143,11 @@ export default class SaveView extends AbstractView {
 
             const launchGame = () => {
                 if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => console.warn(err));
+                    document.documentElement.requestFullscreen().then(() => {
+                        if (navigator.keyboard && navigator.keyboard.lock) {
+                            navigator.keyboard.lock(["Escape"]).catch(e => console.warn(e));
+                        }
+                    }).catch(err => console.warn(err));
                 }
                 this.startGame(slot, save.game_state);
             };
@@ -213,7 +217,11 @@ export default class SaveView extends AbstractView {
 
             const newGame = () => {
                 if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => console.warn(err));
+                    document.documentElement.requestFullscreen().then(() => {
+                        if (navigator.keyboard && navigator.keyboard.lock) {
+                            navigator.keyboard.lock(["Escape"]).catch(e => console.warn(e));
+                        }
+                    }).catch(err => console.warn(err));
                 }
                 this.startGame(slot, {
                     name: `Hero Slot ${slot}`,

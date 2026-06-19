@@ -92,7 +92,11 @@ export class SettingsModal {
             style: "margin-bottom: 15px;",
             onclick: () => {
                 if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => console.warn(err));
+                    document.documentElement.requestFullscreen().then(() => {
+                        if (navigator.keyboard && navigator.keyboard.lock) {
+                            navigator.keyboard.lock(["Escape"]).catch(e => console.warn(e));
+                        }
+                    }).catch(err => console.warn(err));
                 } else if (document.exitFullscreen) {
                     document.exitFullscreen();
                 }
