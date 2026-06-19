@@ -191,7 +191,7 @@ export class AdminView {
         const surviveForm = this.buildSurviveForm(options, isSurvive);
         const worldForm = this.buildWorldForm(options, isWorld);
         const voidForm = this.buildVoidForm(isVoid);
-        const fallForm = this.buildFallForm(isFall);
+        const fallForm = this.buildFallForm(options, isFall);
         const storyEvents = this.buildStoryEvents(level.level_number);
 
         clear(container);
@@ -387,7 +387,12 @@ export class AdminView {
             } else if (phaseType === 'void') {
                 parsedOptions = {};
             } else if (phaseType === 'fall') {
-                parsedOptions = {};
+                const targetDepthInput = card.querySelector('.fall-target-depth');
+                const decorTypeSelect = card.querySelector('.fall-decor');
+                parsedOptions = {
+                    targetDepth: targetDepthInput ? Number(targetDepthInput.value) : 2000,
+                    decorType: decorTypeSelect ? decorTypeSelect.value : "default"
+                };
             } else {
                 const eventsList = [];
                 const filteredStoryEvents = [];
@@ -769,7 +774,7 @@ export class AdminView {
                 scene.background = new THREE.Color(0x0a0c10);
                 scene.fog = null;
                 
-                const fallCreature = new FallCreature(scene, { x: 0, y: -6, z: -30 });
+                const fallCreature = new VoidCreature(scene, { x: 0, y: -6, z: -30 });
                 fallCreature.init();
                 currentDecor = fallCreature.mesh;
                 
@@ -979,6 +984,12 @@ export class AdminView {
                 if (phaseType === 'world') renderDecor();
             });
         }
+        const fallDecorSelect = card.querySelector('.fall-decor');
+        if (fallDecorSelect) {
+            fallDecorSelect.addEventListener('change', () => {
+                if (phaseType === 'fall') renderDecor();
+            });
+        }
 
         let hasRendered = false;
         const resizeObserver = new ResizeObserver(() => {
@@ -1072,11 +1083,26 @@ export class AdminView {
         );
     }
 
-    buildFallForm(isFall) {
+    buildFallForm(options, isFall) {
         return el("div", { className: `fall-form story-event-block block-void ${isFall ? '' : 'none'}` },
             el("div", { className: "block-title" }, LanguageManager.t("admin.fallParams")),
             el("div", { className: "block-row" },
                 el("p", { className: "admin-fall-desc" }, LanguageManager.t("admin.fallDesc"))
+            ),
+            el("div", { className: "block-row" },
+                el("div", { className: "form-group compact-group" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.targetDepth")),
+                    el("input", { type: "number", className: "fall-target-depth block-input", value: options.targetDepth !== undefined ? options.targetDepth : 2000 })
+                ),
+                el("div", { className: "form-group" },
+                    el("label", { className: "admin-label" }, LanguageManager.t("admin.decor")),
+                    createCustomSelect([
+                        { value: "default", label: LanguageManager.t("admin.default") },
+                        { value: "mine", label: LanguageManager.t("admin.mine") },
+                        { value: "styx", label: LanguageManager.t("admin.styx") },
+                        { value: "dungeon", label: LanguageManager.t("admin.dungeon") }
+                    ], options.decorType || "default", null, "fall-decor admin-compact-select")
+                )
             )
         );
     }

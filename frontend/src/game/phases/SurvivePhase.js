@@ -82,12 +82,14 @@ export class SurvivePhase extends GamePhase {
 
         const [enemyGltf, riggedGltf, fireballGltf] = await Promise.all([
             ModelLoader.loadAsync("/asset/game_assets/models/bug.glb"),
-            ModelLoader.loadAsync("/asset/game_assets/models/bug_2.glb"),
+            ModelLoader.loadAsync("/asset/game_assets/models/worms.glb"),
             ModelLoader.loadAsync("/asset/game_assets/models/fireball.glb"),
         ]);
 
         const riggedModels = new Map();
         riggedModels.set("rigged", riggedGltf);
+        riggedModels.set("blocker_worm", riggedGltf);
+        riggedModels.set("hazard_worm", riggedGltf);
 
         this.enemies = new Enemies(
             this.keyboard.keyboardLayout,

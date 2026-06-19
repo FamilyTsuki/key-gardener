@@ -255,7 +255,7 @@ body.in-game {
 }
 
 .none {
-    display: none;
+    display: none !important;
 }
 
 /* =============== BOSS UI STYLING =============== */
@@ -1010,37 +1010,58 @@ body.in-game {
 .column-world {
     position: absolute;
     top: 15%;
-    
     display: flex;
     justify-content: space-around;
-    width: 100dvw;
+    width: 100vw;
+    z-index: 10000;
 }
 
 .column-text{
+    flex: 1;
+    text-align: center;
     color: white;
-    font-size: 34px;
+    font-size: clamp(20px, 4vw, 34px);
     font-weight: 700;
 }
+
 .column-warn-icon-container{
     position: absolute;
     top: 40%;
-    
     display: flex;
     justify-content: space-around;
-    width: 100dvw;
+    width: 100vw;
+    z-index: 10000;
 }
+
 .column-warn-img{
-    width: 20dvw;
-    height: 20dvw;
+    flex: 1;
+    object-fit: contain;
+    max-width: 20vw;
+    max-height: 20vh;
 }
 
 .deep-container{
     position: absolute;
     top: 3%;
     left: 3%;
-    
     display: flex;
-    justify-content: left;
-    flex-direction: row;
-    width: 100dvw;
+    align-items: center;
+    gap: 10px;
+    z-index: 10000;
+}
+
+.deep-text {
+    font-family: monospace;
+    display: inline-block;
+    width: 8ch;
+}
+
+.deep-number {
+    font-family: monospace;
+}
+
+.deep-text, .deep-number {
+    color: white;
+    font-size: clamp(24px, 5vw, 42px);
+    font-weight: 700;
 }

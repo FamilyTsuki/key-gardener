@@ -119,11 +119,7 @@ export default class Enemy extends Actor {
         const resolveModel = (gltfOrScene, animations) => {
             this.model = gltfOrScene.scene ? gltfOrScene.scene : gltfOrScene;
 
-            if (this.type === "blocker_worm" || this.type === "hazard_worm") {
-                this.model.scale.set(1.0 * this.baseScale, 1.3 * this.baseScale, 2.5 * this.baseScale);
-            } else {
-                this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
-            }
+            this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
 
             this.model.rotation.y = Math.PI / 2;
             this.model.traverse((child) => {
@@ -160,9 +156,15 @@ export default class Enemy extends Actor {
         if (model) {
             resolveModel(model, model.animations || []);
         } else {
-            ModelLoader.load("/asset/game_assets/models/bug.glb", (gltf) => {
-                resolveModel(gltf, gltf.animations || []);
-            });
+            if (this.type === "blocker_worm" || this.type === "hazard_worm") {
+                ModelLoader.load("/asset/game_assets/models/worms.glb", (gltf) => {
+                    resolveModel(gltf, gltf.animations || []);
+                });
+            } else {
+                ModelLoader.load("/asset/game_assets/models/bug.glb", (gltf) => {
+                    resolveModel(gltf, gltf.animations || []);
+                });
+            }
         }
         const canvas = document.createElement("canvas");
         canvas.width = 256;
@@ -329,11 +331,7 @@ export default class Enemy extends Actor {
                     const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === this.actualKey) : null;
                     this.model.position.y = this.getTileSurfaceHeight(currentKey);
                     this.model.rotation.x = 0;
-                    this.model.scale.set(
-                        this.type === "blocker_worm" || this.type === "hazard_worm" ? 1.0 * this.baseScale : 1.3 * this.baseScale,
-                        this.type === "blocker_worm" || this.type === "hazard_worm" ? 1.3 * this.baseScale : 1.3 * this.baseScale,
-                        this.type === "blocker_worm" || this.type === "hazard_worm" ? 2.5 * this.baseScale : 1.3 * this.baseScale
-                    );
+                    this.model.scale.set(1.3 * this.baseScale, 1.3 * this.baseScale, 1.3 * this.baseScale);
                     this.model.visible = true;
                 }
                 if (this.spawnZoneMesh) {

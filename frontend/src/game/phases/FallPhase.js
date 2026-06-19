@@ -2,22 +2,29 @@ import { GamePhase } from "./GamePhase.js";
 import * as THREE from "three";
 import Player from "../models/actors/Player.js";
 import { SurviveDecorBuilder } from "../utilities/SurviveDecorBuilder.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 export class FallPhase extends GamePhase {
     constructor(gameEngine, options = {}) {
         super(gameEngine);
 
         this.decorType = typeof options === "string" ? options : (options.decorType || "default");
+        this.targetDepth = typeof options === "string" ? 2000 : (options.targetDepth || 2000);
         this.decor = null;
         this.player = null;
         this.worldGroupPivot = null;
         this.worldGroup = null;
         this.isReady = false;
+        this.isPhaseEnded = false;
+        this.isTransitioningToNextLevel = false;
         this.scrollingWalls = [];
         this.particles = [];
         this.disposables = [];
         this.wallContainer = null;
         this.particleContainer = null;
-        this.laneWords = ["left", "right", "center"];
+        const leftWord = (LanguageManager.t("game.fallLeft") || "left").toLowerCase();
+        const rightWord = (LanguageManager.t("game.fallRight") || "right").toLowerCase();
+        const centerWord = (LanguageManager.t("game.fallCenter") || "center").toLowerCase();
+        this.laneWords = [leftWord, rightWord, centerWord];
         this.currentTypedWord = "";
         this.obstacles = [];
         this.pendingObstacles = [];
@@ -33,20 +40,38 @@ export class FallPhase extends GamePhase {
         this.disposables.push(this.obstacleGeometry, this.obstacleMaterial);
         
         this.deep = 0;
-        this.textScrambleInstances = []
+        this.textScrambleInstances = [];
+        this.scramblers = new Map();
+        this.textScramblersStopped = false;
     }
 
     async init() {
         const scene = this.gameEngine.scene;
+        
+        const leftColumn = document.getElementById("left-column");
+        const centerColumn = document.getElementById("center-column");
+        const rightColumn = document.getElementById("right-column");
+        if (leftColumn) leftColumn.innerText = LanguageManager.t("game.fallLeft") || "left";
+        if (centerColumn) centerColumn.innerText = LanguageManager.t("game.fallCenter") || "center";
+        if (rightColumn) rightColumn.innerText = LanguageManager.t("game.fallRight") || "right";
+
+        const deepContainer = document.getElementById("deep-container");
+        if (deepContainer && deepContainer.children[0]) {
+            deepContainer.children[0].innerText = LanguageManager.t("game.fallDeep") || "deep : ";
+        }
+
         const textElements = document.querySelectorAll(".glitch-text");
 
         textElements.forEach(el => {
-        const instance = new TextScramble(el);
-        instance.revealSpeed = 2; 
-        instance.setText(el.innerText); 
-        
-        this.textScrambleInstances.push(instance);
-    });
+            const instance = new TextScramble(el);
+            instance.revealSpeed = 2; 
+            instance.setText(el.innerText); 
+            
+            this.textScrambleInstances.push(instance);
+            if (el.id) {
+                this.scramblers.set(el.id, instance);
+            }
+        });
 
         this.worldGroupPivot = new THREE.Group();
         this.worldGroupPivot.position.set(16, 0, 3.2);
@@ -77,11 +102,19 @@ export class FallPhase extends GamePhase {
         this.buildMineWalls(scene);
         this.buildMineParticles(scene);
         this.updateColumnsText();
+        this.updateDeep(0);
+
+        const colWorld = document.getElementById("column-world");
+        const warnContainer = document.getElementById("column-warn-icon-container");
+        if (colWorld) colWorld.classList.remove("none");
+        if (warnContainer) warnContainer.classList.remove("none");
+        if (deepContainer) deepContainer.classList.remove("none");
 
         this.gameEngine.camera.position.set(0, -10, 70);
         this.gameEngine.camera.lookAt(0, -10, 0);
 
         this.resetWarnIcons();
+        this.updateLanePositions();
 
         if (this.player.loadPromise) {
             await this.player.loadPromise;
@@ -118,7 +151,7 @@ export class FallPhase extends GamePhase {
         });
 
         const baseWallBack = this.createChaoticWall(200, 200, wallMaterial, wallEdgesMaterial);
-        baseWallBack.position.set(16, 0, 15);
+        baseWallBack.position.set(0, 0, 15);
         
         const baseWallLeft = this.createChaoticWall(200, 200, wallMaterial, wallEdgesMaterial);
         baseWallLeft.rotation.y = Math.PI / 2;
@@ -212,7 +245,7 @@ export class FallPhase extends GamePhase {
             const line = new THREE.Mesh(lineGeometry, lineMaterial);
 
             line.position.set(
-                Math.random() * 160 - 60,
+                Math.random() * 160 - 80,
                 Math.random() * 300 - 200,
                 Math.random() * 160 - 100
             );
@@ -222,26 +255,21 @@ export class FallPhase extends GamePhase {
     }
 
     updateColumnsText() {
-        const leftColumn = document.getElementById("left-column");
-        const centerColumn = document.getElementById("center-column");
-        const rightColumn = document.getElementById("right-column");
-
-        const updateElement = (el, targetWord) => {
-            if (!el) return;
+        const updateElement = (id, targetWord) => {
+            const instance = this.scramblers.get(id);
+            if (!instance) return;
             const typed = this.currentTypedWord.toLowerCase();
             
             if (typed.length > 0 && targetWord.startsWith(typed)) {
-                const matchedPart = targetWord.substring(0, typed.length).toUpperCase();
-                const remainingPart = targetWord.substring(typed.length).toUpperCase();
-                el.innerHTML = `<span style="color: #abff44ff;">${matchedPart}</span>${remainingPart}`;
+                instance.matchedCount = typed.length;
             } else {
-                el.innerHTML = targetWord.toUpperCase();
+                instance.matchedCount = 0;
             }
         };
 
-        updateElement(leftColumn, "left");
-        updateElement(centerColumn, "center");
-        updateElement(rightColumn, "right");
+        updateElement("left-column", this.laneWords[0]);
+        updateElement("center-column", this.laneWords[2]);
+        updateElement("right-column", this.laneWords[1]);
     }
 
     getWarnElement(laneX) {
@@ -295,6 +323,39 @@ export class FallPhase extends GamePhase {
         this.currentTypedWord = "";
         this.updateColumnsText();
     }
+
+    resize() {
+        const camera = this.gameEngine.camera;
+        if (camera) {
+            camera.position.set(0, -10, 70);
+            camera.lookAt(0, -10, 0);
+        }
+        this.updateLanePositions();
+    }
+
+    updateLanePositions() {
+        const camera = this.gameEngine.camera;
+        if (!camera) return;
+
+        const playerZ = (this.player ? this.player.targetPosition.y : 15) * (this.player ? this.player.spacingZ : 3.2);
+        const distance = Math.abs(camera.position.z - playerZ);
+        const visibleHeight = 2 * distance * Math.tan((camera.fov * Math.PI) / 360);
+        const visibleWidth = visibleHeight * camera.aspect;
+        const laneXWidth = visibleWidth / 3;
+
+        if (this.player) {
+            this.player.spacingX = laneXWidth / 6;
+            this.player.updatePosition();
+        }
+
+        const currentSpacingX = this.player ? this.player.spacingX : (laneXWidth / 6);
+        this.obstacles.forEach(obstacle => {
+            if (obstacle && obstacle.userData) {
+                const lane = obstacle.userData.lane;
+                obstacle.position.x = lane * currentSpacingX;
+            }
+        });
+    }
     
     waitForLoader() {
         return new Promise(resolve => {
@@ -321,7 +382,22 @@ export class FallPhase extends GamePhase {
     update(deltaTime) {
         if (!this.isReady) return;
         
-        if (!this.player.isAlive()) return;
+        if (!this.player.isAlive() || this.isPhaseEnded) {
+            if (this.player && !this.player.isAlive() && !this.textScramblersStopped) {
+                this.textScramblersStopped = true;
+                this.textScrambleInstances.forEach(instance => {
+                    if (typeof instance.destroy === "function") {
+                        instance.destroy();
+                    }
+                });
+            }
+            return;
+        }
+
+        const difficultyRatio = Math.min(this.deep / this.targetDepth, 1.0);
+        this.terminalVelocity = 100 + difficultyRatio * 200;
+        this.gravity = 15 + difficultyRatio * 20;
+        this.obstacleSpawnInterval = 4.8 - difficultyRatio * 3.6;
 
         this.currentVelocity = Math.min(this.currentVelocity + (this.gravity * deltaTime), this.terminalVelocity);
         const movementDelta = this.currentVelocity * deltaTime;
@@ -340,147 +416,172 @@ export class FallPhase extends GamePhase {
             }
         });
 
-    this.particles.forEach(particle => {
-        particle.position.y += movementDelta * 1.5;
-        if (particle.position.y > 60) {
-            particle.position.y -= 100;
-        }
-    });
-
-    this.obstacleSpawnTimer += deltaTime;
-    if (this.obstacleSpawnTimer >= this.obstacleSpawnInterval) {
-        const lanes = [-6, 0, 6];
-        const targetLane = lanes[Math.floor(Math.random() * lanes.length)];
-        
-        this.pendingObstacles.push({
-            lane: targetLane,
-            timer: 0,
-            toggles: 0,
-            isVisible: false
+        this.particles.forEach(particle => {
+            particle.position.y += movementDelta * 1.5;
+            if (particle.position.y > 60) {
+                particle.position.y -= 100;
+            }
         });
-        this.obstacleSpawnTimer = 0;
-    }
 
-    for (let i = this.pendingObstacles.length - 1; i >= 0; i--) {
-        const pending = this.pendingObstacles[i];
-        pending.timer += deltaTime;
-
-        if (pending.timer >= 0.40) {
-            pending.timer = 0;
-            pending.toggles++;
-            pending.isVisible = !pending.isVisible;
-
-            const warnEl = this.getWarnElement(pending.lane);
-            if (warnEl) {
-                warnEl.style.visibility = pending.isVisible ? "visible" : "hidden";
+        if (!this.isTransitioningToNextLevel) {
+            this.obstacleSpawnTimer += deltaTime;
+            if (this.obstacleSpawnTimer >= this.obstacleSpawnInterval) {
+                const lanes = [-6, 0, 6];
+                const targetLane = lanes[Math.floor(Math.random() * lanes.length)];
+                
+                this.pendingObstacles.push({
+                    lane: targetLane,
+                    timer: 0,
+                    toggles: 0,
+                    isVisible: false
+                });
+                this.obstacleSpawnTimer = 0;
             }
 
-            if (pending.toggles >= 6) {
-                if (warnEl) warnEl.style.visibility = "hidden";
-                this.spawnObstacle(pending.lane);
-                this.pendingObstacles.splice(i, 1);
+            for (let i = this.pendingObstacles.length - 1; i >= 0; i--) {
+                const pending = this.pendingObstacles[i];
+                pending.timer += deltaTime;
+
+                if (pending.timer >= 0.40) {
+                    pending.timer = 0;
+                    pending.toggles++;
+                    pending.isVisible = !pending.isVisible;
+
+                    const warnEl = this.getWarnElement(pending.lane);
+                    if (warnEl) {
+                        warnEl.style.visibility = pending.isVisible ? "visible" : "hidden";
+                    }
+
+                    if (pending.toggles >= 6) {
+                        if (warnEl) warnEl.style.visibility = "hidden";
+                        this.spawnObstacle(pending.lane);
+                        this.pendingObstacles.splice(i, 1);
+                    }
+                }
+            }
+        } else {
+            this.resetWarnIcons();
+        }
+
+        for (let i = this.obstacles.length - 1; i >= 0; i--) {
+            const obstacleMesh = this.obstacles[i];
+            obstacleMesh.position.y += movementDelta;
+
+            if (this.player && this.player.mesh && !this.isTransitioningToNextLevel) {
+                const distanceY = Math.abs(obstacleMesh.position.y - this.player.mesh.position.y);
+                const distanceX = Math.abs(obstacleMesh.position.x - this.player.mesh.position.x);
+                const collisionThresholdX = (6 * this.player.spacingX) * 0.4;
+
+                if (distanceY < 3.5 && distanceX < collisionThresholdX && !obstacleMesh.userData.isHit) {
+                    this.player.damage(20, "Percuté par un obstacle en chute libre");
+                    obstacleMesh.userData.isHit = true;
+                    obstacleMesh.visible = false;
+                }
+            }
+
+            if (obstacleMesh.position.y > 50) {
+                this.wallContainer.remove(obstacleMesh);
+                this.obstacles.splice(i, 1);
             }
         }
-    }
 
-    for (let i = this.obstacles.length - 1; i >= 0; i--) {
-        const obstacleMesh = this.obstacles[i];
-        obstacleMesh.position.y += movementDelta;
-
-        if (this.player && this.player.mesh) {
-            const distanceY = Math.abs(obstacleMesh.position.y - this.player.mesh.position.y);
-            const distanceX = Math.abs(obstacleMesh.position.x - this.player.mesh.position.x);
-
-            if (distanceY < 3.5 && distanceX < 8.0 && !obstacleMesh.userData.isHit) {
-                this.player.damage(20, "Percuté par un obstacle en chute libre");
-                obstacleMesh.userData.isHit = true;
-                obstacleMesh.visible = false;
-            }
-        }
-
-        if (obstacleMesh.position.y > 50) {
-            this.wallContainer.remove(obstacleMesh);
-            this.obstacles.splice(i, 1);
-        }
-    }
-
-    if (this.player) {
-        this.player.update(deltaTime, null);
-        
-        if (this.player.mesh) {
-            this.player.mesh.rotation.set(0, Math.PI, 0); 
-        }
-
-        if (this.player.playerModel) {
-            if (this.fallTime === undefined) this.fallTime = 0;
-            this.fallTime += deltaTime;
-
-            const positionShakeIntensity = 0.03;
-            const positionShakeX = (Math.random() - 0.5) * positionShakeIntensity;
-            const positionShakeZ = (Math.random() - 0.5) * positionShakeIntensity;
-
-            const verticalFloatAmplitude = 0.5;
-            const verticalFloatSpeedA = 1.2;
-            const verticalFloatSpeedB = 0.7;
-            const floatY = (Math.sin(this.fallTime * verticalFloatSpeedA) + Math.sin(this.fallTime * verticalFloatSpeedB)) * 0.5 * verticalFloatAmplitude;
-
-            const horizontalFloatAmplitude = 0.3;
-            const horizontalFloatSpeedA = 0.9;
-            const horizontalFloatSpeedB = 1.4;
-            const floatX = (Math.cos(this.fallTime * horizontalFloatSpeedA) + Math.sin(this.fallTime * horizontalFloatSpeedB)) * 0.5 * horizontalFloatAmplitude;
-
-            this.player.playerModel.position.set(floatX + positionShakeX, floatY, positionShakeZ);
-            this.player.playerModel.scale.set(1.95, 1.95, 1.95);
+        if (this.player) {
+            this.player.update(deltaTime, null);
             
-            const diveTiltX = -Math.PI; 
-            let targetRoll = 0;
-            
-            if (this.player.isMoving) {
-                const dx = this.player.targetPosition.x - this.player.startPosition.x;
-                targetRoll = dx > 0 ? -0.4 : 0.4;
+            if (this.player.mesh) {
+                this.player.mesh.rotation.set(0, Math.PI, 0); 
             }
-            
-            if (this.currentRoll === undefined) this.currentRoll = 0;
 
-            this.currentRoll = THREE.MathUtils.lerp(this.currentRoll, targetRoll, deltaTime * 6);
-            
-            const rotationShakeIntensity = 0.015;
-            const rotationShakeX = (Math.random() - 0.5) * rotationShakeIntensity;
-            const rotationShakeZ = (Math.random() - 0.5) * rotationShakeIntensity;
+            if (this.player.playerModel) {
+                if (this.fallTime === undefined) this.fallTime = 0;
+                this.fallTime += deltaTime;
 
-            this.player.playerModel.rotation.set(
-                diveTiltX + rotationShakeX, 
-                0, 
-                -this.currentRoll + rotationShakeZ
-            );
+                const positionShakeIntensity = 0.03;
+                const positionShakeX = (Math.random() - 0.5) * positionShakeIntensity;
+                const positionShakeZ = (Math.random() - 0.5) * positionShakeIntensity;
+
+                const verticalFloatAmplitude = 0.5;
+                const verticalFloatSpeedA = 1.2;
+                const verticalFloatSpeedB = 0.7;
+                const floatY = (Math.sin(this.fallTime * verticalFloatSpeedA) + Math.sin(this.fallTime * verticalFloatSpeedB)) * 0.5 * verticalFloatAmplitude;
+
+                const horizontalFloatAmplitude = 0.3;
+                const horizontalFloatSpeedA = 0.9;
+                const horizontalFloatSpeedB = 1.4;
+                const floatX = (Math.cos(this.fallTime * horizontalFloatSpeedA) + Math.sin(this.fallTime * horizontalFloatSpeedB)) * 0.5 * horizontalFloatAmplitude;
+
+                this.player.playerModel.position.set(floatX + positionShakeX, floatY, positionShakeZ);
+                this.player.playerModel.scale.set(1.95, 1.95, 1.95);
+                
+                const diveTiltX = -Math.PI; 
+                let targetRoll = 0;
+                
+                if (this.player.isMoving) {
+                    const dx = this.player.targetPosition.x - this.player.startPosition.x;
+                    targetRoll = dx > 0 ? -0.4 : 0.4;
+                }
+                
+                if (this.currentRoll === undefined) this.currentRoll = 0;
+
+                this.currentRoll = THREE.MathUtils.lerp(this.currentRoll, targetRoll, deltaTime * 6);
+                
+                const rotationShakeIntensity = 0.015;
+                const rotationShakeX = (Math.random() - 0.5) * rotationShakeIntensity;
+                const rotationShakeZ = (Math.random() - 0.5) * rotationShakeIntensity;
+
+                this.player.playerModel.rotation.set(
+                    diveTiltX + rotationShakeX, 
+                    0, 
+                    -this.currentRoll + rotationShakeZ
+                );
+            }
+        }
+
+        if (this.decor) {
+            const waveData = this.decor.update(deltaTime) || { y: 0, rotationX: 0, rotationZ: 0 };
+            if (this.worldGroupPivot) {
+                if (typeof waveData === "number") {
+                    this.worldGroupPivot.position.y = waveData;
+                } else {
+                    this.worldGroupPivot.position.y = waveData.y;
+                    this.worldGroupPivot.rotation.x = waveData.rotationX;
+                    this.worldGroupPivot.rotation.z = waveData.rotationZ;
+                }
+            }
+        }
+
+        if (this.deep >= this.targetDepth && !this.isTransitioningToNextLevel) {
+            this.triggerPhaseTransition();
         }
     }
-
-    if (this.decor) {
-        const waveData = this.decor.update(deltaTime) || { y: 0, rotationX: 0, rotationZ: 0 };
-        if (this.worldGroupPivot) {
-            if (typeof waveData === "number") {
-                this.worldGroupPivot.position.y = waveData;
-            } else {
-                this.worldGroupPivot.position.y = waveData.y;
-                this.worldGroupPivot.rotation.x = waveData.rotationX;
-                this.worldGroupPivot.rotation.z = waveData.rotationZ;
-            }
-        }
-    }
-
-    this.deep += movementDelta;
-    this.updateDeep(this.deep);
-
-    if (this.textScrambleInstance) {
-        this.textScrambleInstance.updateIntensity(this.deep);
-    }
-}
     draw() {
     }
     
+    triggerPhaseTransition() {
+        this.isTransitioningToNextLevel = true;
+
+        const overlay = document.createElement("div");
+        overlay.classList.add("phase-transition-overlay");
+        document.body.appendChild(overlay);
+
+        setTimeout(() => {
+            overlay.classList.add("active");
+            
+            setTimeout(async () => {
+                this.isPhaseEnded = true;
+                await this.gameEngine.nextLevel();
+                
+                overlay.classList.remove("active");
+                
+                setTimeout(() => {
+                    overlay.remove();
+                }, 1000);
+            }, 1000);
+        }, 2000);
+    }
+
     handleKeyDown(event) {
-        if (!this.isReady || !this.player || this.player.isMoving) return;
+        if (!this.isReady || !this.player || this.player.isMoving || this.isPhaseEnded || this.isTransitioningToNextLevel) return;
 
         if (event.key === "Backspace") {
             this.currentTypedWord = this.currentTypedWord.slice(0, -1);
@@ -489,18 +590,25 @@ export class FallPhase extends GamePhase {
         }
 
         if (event.key.length === 1 && event.key.match(/[a-z]/i)) {
-            this.currentTypedWord += event.key.toLowerCase();
+            const char = event.key.toLowerCase();
+            this.currentTypedWord += char;
             
-            const isValidPrefix = this.laneWords.some(word => word.startsWith(this.currentTypedWord));
+            let isValidPrefix = this.laneWords.some(word => word.startsWith(this.currentTypedWord));
 
             if (!isValidPrefix) {
-                this.currentTypedWord = "";
-            } else {
-                if (this.currentTypedWord === "left") {
+                this.currentTypedWord = char;
+                isValidPrefix = this.laneWords.some(word => word.startsWith(this.currentTypedWord));
+                if (!isValidPrefix) {
+                    this.currentTypedWord = "";
+                }
+            }
+
+            if (isValidPrefix) {
+                if (this.currentTypedWord === this.laneWords[0]) {
                     this.movePlayerToLane(-1);
-                } else if (this.currentTypedWord === "right") {
+                } else if (this.currentTypedWord === this.laneWords[1]) {
                     this.movePlayerToLane(1);
-                } else if (this.currentTypedWord === "center") {
+                } else if (this.currentTypedWord === this.laneWords[2]) {
                     this.movePlayerToLane(0);
                 }
             }
@@ -532,8 +640,22 @@ export class FallPhase extends GamePhase {
         if (leftColumn) leftColumn.innerHTML = "left";
         if (centerColumn) centerColumn.innerHTML = "center";
         if (rightColumn) rightColumn.innerHTML = "right";
+
+        const colWorld = document.getElementById("column-world");
+        const warnContainer = document.getElementById("column-warn-icon-container");
+        const deepContainer = document.getElementById("deep-container");
+        if (colWorld) colWorld.classList.add("none");
+        if (warnContainer) warnContainer.classList.add("none");
+        if (deepContainer) deepContainer.classList.add("none");
         
         this.resetWarnIcons();
+
+        this.textScrambleInstances.forEach(instance => {
+            if (typeof instance.destroy === "function") {
+                instance.destroy();
+            }
+        });
+        this.textScrambleInstances = [];
 
         this.disposables.forEach(resource => {
             if (resource.dispose) {
@@ -546,10 +668,16 @@ export class FallPhase extends GamePhase {
         this.obstacles = [];
         this.pendingObstacles = [];
         this.disposables = [];
+        this.scramblers.clear();
     }
 }
 class TextScramble {
     constructor(el) {
+        if (el.textScrambleInstance) {
+            el.textScrambleInstance.destroy();
+        }
+        el.textScrambleInstance = this;
+
         this.el = el;
         this.charSets = {
             tech1: '!<>-_\\/[]{}—=+*^?#_',
@@ -569,7 +697,7 @@ class TextScramble {
         
         this.chars = this.charSets.tech1;
         this.revealSpeed = 1;
-        this.baseChangeFrequency = 0.28;
+        this.baseChangeFrequency = 0;
         this.changeFrequency = this.baseChangeFrequency;
         this.highlightColor = '#00ff88';
         this.glowIntensity = 8;
@@ -578,6 +706,7 @@ class TextScramble {
         this.frame = 0;
         this.frameRequest = null;
         this.resolve = null;
+        this.matchedCount = 0;
 
         this.update = this.update.bind(this);
     }
@@ -634,37 +763,48 @@ class TextScramble {
 
     update() {
         let output = '';
+        const matched = this.matchedCount || 0;
 
         for (let i = 0, n = this.queue.length; i < n; i++) {
             let { from, to, start, end, char } = this.queue[i];
 
-            // SI le caractère est déjà révélé (frame >= end)
-            if (this.frame >= end) {
-                // On glitch encore un peu selon la fréquence actuelle
+            if (i < matched) {
+                output += `<span style="color: #abff44ff;">${to.toUpperCase()}</span>`;
+            } else if (this.frame >= end) {
                 if (Math.random() < this.changeFrequency) {
                     char = this.chars[Math.floor(Math.random() * this.chars.length)];
                     output += `<span class="scrambling" style="color: ${this.highlightColor}; text-shadow: 0 0 ${this.activeGlowIntensity}px currentColor;">${char}</span>`;
                 } else {
-                    // Sinon on affiche le caractère réel
-                    output += to;
+                    output += to.toUpperCase();
                 }
             } 
-            // SINON on est dans la phase d'animation de révélation
             else if (this.frame >= start) {
-                if (!char || Math.random() < this.changeFrequency) {
-                    char = this.chars[Math.floor(Math.random() * this.chars.length)];
-                    this.queue[i].char = char;
+                if (this.changeFrequency > 0) {
+                    if (!char || Math.random() < this.changeFrequency) {
+                        char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                        this.queue[i].char = char;
+                    }
+                    output += `<span class="scrambling" style="color: ${this.highlightColor}; text-shadow: 0 0 ${this.activeGlowIntensity}px currentColor;">${char}</span>`;
+                } else {
+                    output += to.toUpperCase();
                 }
-                output += `<span class="scrambling" style="color: ${this.highlightColor}; text-shadow: 0 0 ${this.activeGlowIntensity}px currentColor;">${char}</span>`;
             } else {
-                output += from;
+                output += from.toUpperCase();
             }
         }
 
         this.el.innerHTML = output;
 
-        // ON NE S'ARRÊTE JAMAIS : on demande la prochaine frame en continu
         this.frameRequest = requestAnimationFrame(this.update);
         this.frame++;
+    }
+
+    destroy() {
+        cancelAnimationFrame(this.frameRequest);
+        this.frameRequest = null;
+        if (this.el && this.el.textScrambleInstance === this) {
+            this.el.textScrambleInstance = null;
+        }
+        this.el.innerHTML = this.queue.map(item => item.to.toUpperCase()).join('');
     }
 }

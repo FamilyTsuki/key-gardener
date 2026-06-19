@@ -233,6 +233,11 @@ export class GameEngine {
             this.renderer.setSize(width, height);
         }
 
+        if (this.gamePhase && typeof this.gamePhase.resize === "function") {
+            this.gamePhase.resize();
+            return;
+        }
+
         const referenceWidth = 1200;
         const ratio = width / referenceWidth;
 

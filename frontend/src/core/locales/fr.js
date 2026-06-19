@@ -192,7 +192,11 @@ export const fr = {
         enterPortal: "Entrer dans le portail",
         jumpIntoHole: "Sauter dans le trou",
         flameWallDeath: "Brûlé par le mur de flammes.",
-        tempoTitle: "GARDEZ LE RYTHME !"
+        tempoTitle: "GARDEZ LE RYTHME !",
+        fallLeft: "gauche",
+        fallCenter: "milieu",
+        fallRight: "droite",
+        fallDeep: "profondeur : "
     },
     
     // AccountView
@@ -238,6 +242,7 @@ export const fr = {
         survivePhase: "Survie (Combat)",
         worldPhase: "Exploration (World)",
         voidPhase: "Vide Infini",
+        fallPhase: "Chute Libre (Fall)",
         new: "(Nouveau)",
         editConfig: "Éditez les configurations pour ce niveau.",
         deleteLevel: "Supprimer le niveau",
@@ -276,6 +281,9 @@ export const fr = {
         holeEvent: "🕳️ Trou (HoleEvent)",
         voidParams: "🌌 Paramètres du Vide Infini",
         voidDesc: "Cette phase spéciale génère un monde infini et un boss caché automatiquement. Aucun paramètre supplémentaire n'est requis.",
+        fallParams: "⚙️ Paramètres de Chute Libre",
+        fallDesc: "Cette phase met en scène une chute libre où le joueur doit éviter des obstacles en tapant des directions.",
+        targetDepth: "Profondeur cible (m) :",
         storyEvents: "🧩 Événements Narratifs (Bulles)",
         addEvent: "+ Ajouter un événement narratif",
         action: "Action :",

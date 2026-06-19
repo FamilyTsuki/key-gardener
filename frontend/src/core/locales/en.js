@@ -191,7 +191,11 @@ export const en = {
         enterPortal: "Enter the portal",
         jumpIntoHole: "Jump into the hole",
         flameWallDeath: "Burned by the flame wall.",
-        tempoTitle: "KEEP THE RHYTHM!"
+        tempoTitle: "KEEP THE RHYTHM!",
+        fallLeft: "left",
+        fallCenter: "center",
+        fallRight: "right",
+        fallDeep: "deep : "
     },
     
     // AccountView
@@ -237,6 +241,7 @@ export const en = {
         survivePhase: "Survival (Combat)",
         worldPhase: "Exploration (World)",
         voidPhase: "Infinite Void",
+        fallPhase: "Free Fall (Fall)",
         new: "(New)",
         editConfig: "Edit the configurations for this level.",
         deleteLevel: "Delete the level",
@@ -275,6 +280,9 @@ export const en = {
         holeEvent: "🕳️ Hole (HoleEvent)",
         voidParams: "🌌 Infinite Void Settings",
         voidDesc: "This special phase generates an infinite world and a hidden boss automatically. No additional parameters are required.",
+        fallParams: "⚙️ Free Fall Settings",
+        fallDesc: "This phase features a free fall where the player must avoid obstacles by typing directions.",
+        targetDepth: "Target Depth (m):",
         storyEvents: "🧩 Narrative Events (Bubbles)",
         addEvent: "+ Add a narrative event",
         action: "Action:",
