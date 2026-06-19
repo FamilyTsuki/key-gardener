@@ -92,6 +92,7 @@ export class DialogueBox {
         
         this.setupSpeaker(speakerPath);
         
+        document.body.classList.add("dialogue-active");
         this.container.classList.add("visible");
         this.showNextDialogue();
     }
@@ -142,7 +143,8 @@ export class DialogueBox {
         ModelLoader.load(modelPath, (gltf) => {
             this.model = gltf.scene;
             
-            this.model.position.set(0, 1.5, 0);
+            this.model.position.set(0, -2.5, 0);
+            this.model.rotation.y = Math.PI / 8;
             this.model.scale.set(4, 4, 4);
 
             this.scene.add(this.model);
@@ -239,6 +241,7 @@ export class DialogueBox {
      * Hides the dialogue box and fires the onComplete callback.
      */
     hide() {
+        document.body.classList.remove("dialogue-active");
         this.container.classList.remove("visible");
         this.clearTimeouts();
         this.cleanupSpeaker();

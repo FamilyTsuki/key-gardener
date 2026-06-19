@@ -34,8 +34,8 @@ export class PlayerState {
         if (reason && this.hp <= 0) {
             this.deathReason = reason;
         }
-
-        AudioManager.playSFX("/asset/game_assets/sounds/ouch.wav", "player", 0.5);
+        const audio = Math.floor(Math.random() * 3) + 1;
+        AudioManager.playSFX(`/asset/game_assets/sounds/damage_${audio}.wav`, "player", 0.8);
         this.emit("hp_changed", { hp: this.hp, hpMax: this.hpMax, damage: amount });
     }
 

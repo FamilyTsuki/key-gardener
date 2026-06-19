@@ -258,6 +258,12 @@ body.in-game {
     display: none !important;
 }
 
+body.dialogue-active .word-container,
+body.dialogue-active .spell-list-container,
+body.dialogue-active .player-hud {
+    display: none !important;
+}
+
 /* =============== BOSS UI STYLING =============== */
 .boss-ui {
     position: fixed;

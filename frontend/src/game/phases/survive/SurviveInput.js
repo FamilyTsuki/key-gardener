@@ -28,9 +28,7 @@ export class SurviveInput {
         spellListContainer.appendChild(ul);
         spellListContainer.classList.remove("none");
 
-        if (this.elCurrentWord) {
-            this.elCurrentWord.parentElement.classList.remove("none");
-        }
+        this.updateWordDisplay();
     }
 
     handleKeyDown(event) {
@@ -65,9 +63,8 @@ export class SurviveInput {
         let word = this.phase.player.handleKeyPress(key);
         if (word) {
             this.pendingSpell = word;
-        } else if (this.elCurrentWord && !this.pendingSpell) {
-            this.elCurrentWord.textContent = this.phase.player.currentWord;
         }
+        this.updateWordDisplay();
     }
 
     applyPendingSpell(projectiles) {
@@ -80,14 +77,25 @@ export class SurviveInput {
             projectiles.push(spellResult);
         }
         
-        if (this.elCurrentWord) {
-            this.elCurrentWord.textContent = this.pendingSpell;
-            setTimeout(() => {
-                if (this.elCurrentWord) this.elCurrentWord.textContent = this.phase.player.currentWord;
-            }, 100);
-        }
+        this.updateWordDisplay();
+        setTimeout(() => {
+            if (this.phase && this.phase.player) {
+                this.updateWordDisplay();
+            }
+        }, 100);
         
         this.pendingSpell = null;
+    }
+
+    updateWordDisplay() {
+        if (!this.elCurrentWord || !this.phase || !this.phase.player) return;
+        const text = this.pendingSpell || this.phase.player.currentWord;
+        this.elCurrentWord.textContent = text;
+        if (text && text.length > 0) {
+            this.elCurrentWord.parentElement.classList.remove("none");
+        } else {
+            this.elCurrentWord.parentElement.classList.add("none");
+        }
     }
 
     cleanup() {
@@ -95,6 +103,9 @@ export class SurviveInput {
         if (spellListContainer) {
             spellListContainer.classList.add("none");
             spellListContainer.innerHTML = "";
+        }
+        if (this.elCurrentWord) {
+            this.elCurrentWord.parentElement.classList.add("none");
         }
     }
 }
