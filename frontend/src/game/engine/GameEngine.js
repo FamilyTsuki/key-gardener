@@ -15,6 +15,8 @@ import { StatisticsService } from "../../core/services/statistics.service.js";
 import { SaveService } from "../../core/services/save.service.js";
 import { AuthService } from "../../core/services/auth.service.js";
 import { FloatingTextManager } from "../ui/FloatingTextManager.js";
+import ModelLoader from "../../core/utils/ModelLoader.js";
+import { PerformanceDetector } from "../../core/utils/PerformanceDetector.js";
 
 /**
  * Represents the main game engine that manages scenes, phases, and the render loop.
@@ -125,6 +127,7 @@ export class GameEngine {
             await this.loadLevel(this.currentLevel);
         } else {
             await this.setPhase(new IntroPhase(this));
+            this.prefetchLevel(this.currentLevel);
         }
     }
 
@@ -219,6 +222,69 @@ export class GameEngine {
         if (loader) loader.classList.add("hidden");
 
         this.lastTime = performance.now();
+
+        if (newPhase.constructor.name !== "IntroPhase" && newPhase.constructor.name !== "DuelPhase") {
+            this.prefetchLevel(this.currentLevel + 1);
+        }
+    }
+
+    async prefetchLevel(level) {
+        if (!PerformanceDetector.shouldPrefetch()) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/levels/${level}`);
+            if (!response.ok) return;
+
+            const data = await response.json();
+            if (!data.success || !data.config) return;
+
+            const phaseType = data.config.phase_type;
+            const options = data.config.options || {};
+            const assets = [];
+
+            if (phaseType === "survive") {
+                assets.push("/asset/game_assets/models/bug.glb");
+                assets.push("/asset/game_assets/models/worms.glb");
+                assets.push("/asset/game_assets/models/fireball.glb");
+                assets.push("/asset/game_assets/models/player.glb");
+            } else if (phaseType === "void") {
+                assets.push("/asset/game_assets/models/bug.glb");
+                assets.push("/asset/game_assets/models/worms.glb");
+                assets.push("/asset/game_assets/models/fireball.glb");
+                assets.push("/asset/game_assets/models/player.glb");
+            } else if (phaseType === "fall") {
+                assets.push("/asset/game_assets/models/player.glb");
+            } else if (phaseType === "world") {
+                assets.push("/asset/game_assets/models/bug.glb");
+                assets.push("/asset/game_assets/models/worms.glb");
+                assets.push("/asset/game_assets/models/player.glb");
+                assets.push("/asset/game_assets/models/fireball.glb");
+
+                const hasBossEvent = (options.events || []).some(evtConfig => {
+                    const evtName = typeof evtConfig === 'string' ? evtConfig : evtConfig.type;
+                    return evtName && evtName.toLowerCase().includes("boss");
+                });
+                if (hasBossEvent || level % 5 === 0) {
+                    assets.push("/asset/game_assets/models/yameter.glb");
+                }
+            }
+
+            for (const assetUrl of assets) {
+                if (window.requestIdleCallback) {
+                    window.requestIdleCallback(() => {
+                        ModelLoader.loadAsync(assetUrl).catch(() => {});
+                    });
+                } else {
+                    setTimeout(() => {
+                        ModelLoader.loadAsync(assetUrl).catch(() => {});
+                    }, 0);
+                }
+            }
+        } catch (e) {
+            console.warn("Prefetching level assets failed", e);
+        }
     }
 
     /**
