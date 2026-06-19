@@ -58,12 +58,18 @@ export default class Player extends Actor {
     set x(val) { this.movement.x = val; }
     set y(val) { this.movement.y = val; }
     
+    get targetPosition() { return this.movement.targetPosition; }
+    get startPosition() { return this.movement.startPosition; }
+    get rawPosition() { return { x: this.movement.x, y: this.movement.y }; }
+    
     get offsetY() { return this.movement.offsetY; }
     set offsetY(val) { this.movement.offsetY = val; }
     
     get mesh() { return this.renderer.mesh; }
+    get playerModel() { return this.renderer.playerModel; }
     set allowSpeedUp(val) { this.movement.allowSpeedUp = val; }
     get movementDuration() { return this.movement.movementDuration; }
+    set movementDuration(val) { this.movement.movementDuration = val; }
     get pendingWormRepel() { return this.movement.pendingWormRepel; }
 
     get spacingX() { return this.renderer.spacingX; }

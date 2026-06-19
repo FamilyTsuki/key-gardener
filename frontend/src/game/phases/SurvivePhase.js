@@ -89,8 +89,9 @@ export class SurvivePhase extends GamePhase {
         if (this.options.boss) await this.enemies.spawnBoss(this.renderer.worldGroup);
         if (this.options.bugBoss) await this.enemies.spawnBugBoss(this.renderer.worldGroup);
 
-        await this.waitForLoader();
-        this.state.isReady = true;
+        this.waitForLoader().then(() => {
+            this.state.isReady = true;
+        });
     }
 
     waitForLoader() {

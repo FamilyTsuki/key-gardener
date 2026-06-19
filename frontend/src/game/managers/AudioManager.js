@@ -14,6 +14,8 @@ export class AudioManager {
         if (this.isUnlocked) return;
 
         const unlock = () => {
+            if (this.isUnlocked) return;
+            
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
             this.audioContext = new AudioContextClass();
 
@@ -26,12 +28,12 @@ export class AudioManager {
             this.isUnlocked = true;
             this.processPendingBuffers();
 
-            document.removeEventListener("click", unlock);
-            document.removeEventListener("keydown", unlock);
+            document.removeEventListener("click", unlock, true);
+            document.removeEventListener("keydown", unlock, true);
         };
 
-        document.addEventListener("click", unlock);
-        document.addEventListener("keydown", unlock);
+        document.addEventListener("click", unlock, true);
+        document.addEventListener("keydown", unlock, true);
     }
 
     static setupCaveReverb() {
@@ -119,8 +121,11 @@ export class AudioManager {
                     this.audioBuffers.set(path, audioBuffer);
                 } catch (error) {
                     console.error(error);
+                } finally {
+                    this.loadingPromises.delete(path);
                 }
             })();
+            this.loadingPromises.set(path, decodeTask);
             promises.push(decodeTask);
         }
         

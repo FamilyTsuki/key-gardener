@@ -82,7 +82,7 @@ export class PlayerRenderer3D {
         
         const jumpDistance = Math.sqrt(dx * dx + dy * dy);
         const maxTilt = Math.min(jumpDistance * 0.1, 0.6);
-        this.playerModel.rotation.x = Math.sin(movementState.movementProgress * Math.PI) * maxTilt; 
+        this.playerModel.rotation.x = (this.baseRotationX || 0) + Math.sin(movementState.movementProgress * Math.PI) * maxTilt; 
 
         const speedFactor = 15 / movementState.movementDuration;
         const maxStretchZ = Math.max(1, speedFactor * 0.6);
@@ -94,7 +94,7 @@ export class PlayerRenderer3D {
 
     resetAnimation() {
         this.playerModel.position.y = 0;
-        this.playerModel.rotation.x = 0;
+        this.playerModel.rotation.x = this.baseRotationX || 0;
         this.playerModel.scale.set(1.95, 1.95, 1.95);
 
         this.playerModel.traverse((child) => {

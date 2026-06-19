@@ -61,6 +61,10 @@ export class GameEngine {
         this.stats = new StatisticsManager();
         this.floatingTextManager = new FloatingTextManager();
 
+        import("../managers/AudioManager.js").then(module => {
+            module.AudioManager.init();
+        });
+
         this.resize();
 
         this.onResize = () => this.resize();

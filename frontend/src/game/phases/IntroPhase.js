@@ -3,6 +3,7 @@ import { GamePhase } from "./GamePhase.js";
 import { WorldPhase } from "./WorldPhase.js";
 import { AmbientBackground, GlitchEffect } from "../utilities/IntroVisuals.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 /**
  * Represents the introductory cinematic phase of the game.
@@ -47,6 +48,13 @@ export class IntroPhase extends GamePhase {
      * @returns {Promise<void>}
      */
     async init() {
+        AudioManager.init();
+        AudioManager.preloadSound("/asset/game_assets/sounds/tic.wav");
+        AudioManager.preloadSound("/asset/game_assets/sounds/rift.wav");
+        AudioManager.preloadSound("/asset/game_assets/sounds/rift-clic.wav");
+        AudioManager.preloadSound("/asset/game_assets/sounds/pull.wav");
+        AudioManager.preloadSound("/asset/game_assets/sounds/glitch.wav");
+
         this.createCinematicDOM();
         this.ambientBackground = new AmbientBackground(this.container);
         this.ambientBackground.start();
@@ -187,8 +195,24 @@ export class IntroPhase extends GamePhase {
      * Triggers the glitch effects on the video and container.
      */
     triggerGlitches() {
+        this.glitchSoundNode = AudioManager.playSFX("/asset/game_assets/sounds/glitch.wav", "environment", 1.0);
         if (this.video) {
             this.video.classList.add("glitching");
+            
+            if (this.audioInterval) {
+                clearInterval(this.audioInterval);
+                this.audioInterval = null;
+            }
+            
+            this.audioGlitchInterval = setInterval(() => {
+                if (this.video && !this.video.paused) {
+                    this.video.volume = 0.6 + Math.random() * 0.4;
+                    this.video.playbackRate = 0.8 + Math.random() * 0.4;
+                    if (Math.random() > 0.85) {
+                        this.video.currentTime = Math.max(0, this.video.currentTime - Math.random() * 0.05);
+                    }
+                }
+            }, 120);
         }
         this.glitchEffect = new GlitchEffect(this.container);
         this.glitchEffect.start();
@@ -198,11 +222,18 @@ export class IntroPhase extends GamePhase {
      * Triggers the appearance of the rift and pauses the video.
      */
     triggerRiftOpening() {
+        if (this.audioGlitchInterval) {
+            clearInterval(this.audioGlitchInterval);
+            this.audioGlitchInterval = null;
+        }
         if (this.rift) {
             this.rift.classList.add("visible");
+            AudioManager.playSFX("/asset/game_assets/sounds/rift.wav", "environment", 1.0);
         }
         if (this.video) {
             this.video.pause();
+            this.video.playbackRate = 1.0;
+            this.video.volume = 1.0;
             this.video.classList.add("glitch-paused");
         }
         if (this.container) {
@@ -253,7 +284,11 @@ export class IntroPhase extends GamePhase {
             let charIndex = 0;
 
             this.typewriterInterval = setInterval(() => {
-                this.dialogueText.textContent += fullText[charIndex];
+                const char = fullText[charIndex];
+                this.dialogueText.textContent += char;
+                if (char !== ' ') {
+                    AudioManager.playSFX("/asset/game_assets/sounds/tic.wav", "ui", 0.4);
+                }
                 charIndex++;
                 if (charIndex >= fullText.length) {
                     clearInterval(this.typewriterInterval);
@@ -319,7 +354,11 @@ export class IntroPhase extends GamePhase {
         let charIndex = 0;
 
         this.typewriterInterval = setInterval(() => {
-            this.dialogueText.textContent += fullText[charIndex];
+            const char = fullText[charIndex];
+            this.dialogueText.textContent += char;
+            if (char !== ' ') {
+                AudioManager.playSFX("/asset/game_assets/sounds/tic.wav", "ui", 0.4);
+            }
             charIndex++;
             if (charIndex >= fullText.length) {
                 clearInterval(this.typewriterInterval);
@@ -355,6 +394,13 @@ export class IntroPhase extends GamePhase {
         this.rift.removeEventListener("click", this.onRiftClick);
         this.rift.classList.remove("clickable");
         this.container.classList.add("transitioning");
+        
+        AudioManager.playSFX("/asset/game_assets/sounds/rift-clic.wav", "environment", 1.0);
+        
+        setTimeout(() => {
+            AudioManager.playSFX("/asset/game_assets/sounds/pull.wav", "environment", 1.0);
+        }, 300);
+
         setTimeout(() => {
             this.gameEngine.loadLevel(this.gameEngine.currentLevel || 1);
         }, IntroPhase.RIFT_TRANSITION_DELAY_MS);
@@ -400,6 +446,10 @@ export class IntroPhase extends GamePhase {
      * Cleans up all DOM elements and timeouts.
      */
     cleanup() {
+        if (this.glitchSoundNode) {
+            try { this.glitchSoundNode.stop(); } catch (e) {}
+            this.glitchSoundNode = null;
+        }
         if (this.glitchEffect) {
             this.glitchEffect.destroy();
             this.glitchEffect = null;
@@ -421,6 +471,10 @@ export class IntroPhase extends GamePhase {
         if (this.audioInterval) {
             clearInterval(this.audioInterval);
             this.audioInterval = null;
+        }
+        if (this.audioGlitchInterval) {
+            clearInterval(this.audioGlitchInterval);
+            this.audioGlitchInterval = null;
         }
         if (this.typewriterInterval) {
             clearInterval(this.typewriterInterval);

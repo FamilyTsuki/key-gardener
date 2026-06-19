@@ -42,14 +42,16 @@ export class FallPhase extends GamePhase {
         if (this.player.loadPromise) {
             await this.player.loadPromise;
             if (this.player.mesh) this.player.mesh.rotation.set(0, Math.PI, 0);
-            if (this.player.playerModel) {
-                this.player.playerModel.rotation.set(-Math.PI, 0, 0);
-                this.player.playerModel.position.y = 0;
+            if (this.player.renderer && this.player.renderer.playerModel) {
+                this.player.renderer.baseRotationX = -Math.PI;
+                this.player.renderer.playerModel.rotation.set(-Math.PI, 0, 0);
+                this.player.renderer.playerModel.position.y = 0;
             }
         }
         
-        await this.waitForLoader();
-        this.state.isReady = true;
+        this.waitForLoader().then(() => {
+            this.state.isReady = true;
+        });
     }
 
     waitForLoader() {
