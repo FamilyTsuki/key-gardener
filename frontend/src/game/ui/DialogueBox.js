@@ -2,6 +2,7 @@ import * as THREE from "three";
 import ModelLoader from "../../core/utils/ModelLoader.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { AudioManager } from "../managers/AudioManager.js";
+import { el } from "../../core/utils/DOMBuilder.js";
 
 /**
  * Reusable component for displaying dialogues with an optional speaker portrait (2D or 3D).
@@ -40,26 +41,23 @@ export class DialogueBox {
      * Creates the basic DOM structure for the dialogue box.
      */
     createDOM() {
-        this.container = document.createElement("div");
-        this.container.className = "dialogue-box-container";
+        this.textElement = el("span", { className: "dialogue-box-text" });
+        this.skipIndicator = el("div", 
+            { className: "dialogue-skip-indicator" }, 
+            LanguageManager.t("common.skipIndicator") 
+        );
 
-        this.bubble = document.createElement("div");
-        this.bubble.className = "dialogue-box-bubble";
+        this.bubble = el("div", { className: "dialogue-box-bubble" }, 
+            this.textElement, 
+            this.skipIndicator
+        );
 
-        this.textElement = document.createElement("span");
-        this.textElement.className = "dialogue-box-text";
-        this.bubble.appendChild(this.textElement);
+        this.speakerContainer = el("div", { className: "dialogue-box-speaker" });
 
-        this.skipIndicator = document.createElement("div");
-        this.skipIndicator.className = "dialogue-skip-indicator";
-        this.skipIndicator.innerHTML = LanguageManager.t("common.skipIndicator");
-        this.bubble.appendChild(this.skipIndicator);
-
-        this.speakerContainer = document.createElement("div");
-        this.speakerContainer.className = "dialogue-box-speaker";
-
-        this.container.appendChild(this.bubble);
-        this.container.appendChild(this.speakerContainer);
+        this.container = el("div", { className: "dialogue-box-container" }, 
+            this.bubble, 
+            this.speakerContainer
+        );
 
         this.parentElement.appendChild(this.container);
 
@@ -112,9 +110,7 @@ export class DialogueBox {
         const is3D = path.endsWith(".glb") || path.endsWith(".gltf");
 
         if (!is3D) {
-            const img = document.createElement("img");
-            img.src = path;
-            img.alt = "Speaker Portrait";
+            const img = el("img", { src: path, alt: "Speaker Portrait", className: "dialogue-speaker-image" });
             this.speakerContainer.appendChild(img);
         } else {
             this.init3DScene(path);
