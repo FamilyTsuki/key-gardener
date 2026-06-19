@@ -727,6 +727,10 @@ export default class Player extends Actor {
     getTileSurfaceHeight(keyObj) {
         if (!keyObj || !keyObj.mesh) return 0.225;
 
+        if (keyObj.isGround === undefined) {
+            return 2.0 + (keyObj.baseY || 0);
+        }
+
         const keyGroup = keyObj.mesh;
         const targetMesh = keyObj.isGround ? keyGroup.children[0] : keyGroup.children[1];
         let height = keyGroup.position.y;
