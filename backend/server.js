@@ -48,7 +48,13 @@ const corsOptions = {
         if (!origin || origin.includes("localhost") || origin.includes("127.0.0.1")) {
             return callback(null, true);
         }
-        if (origin === "https://tsuki-dev.fr" || origin.endsWith(".tsuki-dev.fr")) {
+        if (origin.includes("tsuki-dev.fr")) {
+            return callback(null, true);
+        }
+
+        // Allow IP-based access if needed, or specific frontend URL from env
+        const frontendUrl = process.env.FRONTEND_URL || "";
+        if (frontendUrl && origin.startsWith(frontendUrl)) {
             return callback(null, true);
         }
 
@@ -104,6 +110,34 @@ app.get("/api/health", (req, res) => {
 
 const fs = require('fs');
 
+app.get("/robots.txt", (req, res) => {
+    const baseUrl = process.env.FRONTEND_URL || "https://tsuki-dev.fr";
+    res.type("text/plain");
+    res.send(`User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml`);
+});
+
+app.get("/sitemap.xml", (req, res) => {
+    const baseUrl = process.env.FRONTEND_URL || "https://tsuki-dev.fr";
+    const routes = [
+        { path: "/", freq: "weekly", priority: "1.0" },
+        { path: "/hub", freq: "daily", priority: "0.8" },
+        { path: "/login", freq: "monthly", priority: "0.5" },
+        { path: "/register", freq: "monthly", priority: "0.5" },
+        { path: "/faq", freq: "monthly", priority: "0.6" },
+        { path: "/donate", freq: "monthly", priority: "0.4" },
+        { path: "/legal", freq: "monthly", priority: "0.3" }
+    ];
+    
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    routes.forEach(r => {
+        xml += `  <url>\n    <loc>${baseUrl}${r.path}</loc>\n    <changefreq>${r.freq}</changefreq>\n    <priority>${r.priority}</priority>\n  </url>\n`;
+    });
+    xml += `</urlset>`;
+    
+    res.type("application/xml");
+    res.send(xml);
+});
+
 app.get("*", (req, res) => {
     const indexPath = path.join(frontendDir, "index.html");
     fs.readFile(indexPath, 'utf8', (err, htmlData) => {
@@ -113,28 +147,74 @@ app.get("*", (req, res) => {
         }
         
         const gameName = process.env.GAME_NAME || "Keyboard Survivor";
+        const baseUrl = process.env.FRONTEND_URL || "https://tsuki-dev.fr";
+        const canonicalUrl = `${baseUrl}${req.path === '/' ? '' : req.path}`;
+        
         let title = gameName;
-        let desc = `Your keyboard is your only weapon. Plunge into the abyss, type fast to cast spells, and survive hordes of relentless monsters in this adrenaline-fueled typing RPG.`;
+        let desc = `Plongez dans un monde où votre clavier est votre seule arme. Tapez vite pour lancer des sorts et survivre aux monstres dans ce RPG dactylographique immersif.`;
+        let ogImage = "/asset/img/home_battle.webp";
+        let schemaType = "VideoGame";
         
         if (req.path === "/hub") {
-            title = `Community Hub - ${gameName}`;
-            desc = `Share your progress, discuss strategies, and interact with other ${gameName} players.`;
+            title = `Hub Communautaire - ${gameName}`;
+            desc = `Partagez votre progression, discutez de stratégies et interagissez avec les autres joueurs de ${gameName}.`;
         } else if (req.path === "/login") {
-            title = `Login - ${gameName}`;
-            desc = `Log in to your ${gameName} account to save your progress and access the community hub.`;
+            title = `Connexion - ${gameName}`;
+            desc = `Connectez-vous à votre compte ${gameName} pour sauvegarder votre progression et accéder au hub.`;
         } else if (req.path === "/register") {
-            title = `Register - ${gameName}`;
-            desc = `Create a new ${gameName} account to start your typing adventure.`;
+            title = `Inscription - ${gameName}`;
+            desc = `Créez un nouveau compte ${gameName} pour commencer votre aventure dactylographique.`;
+        } else if (req.path === "/faq") {
+            title = `FAQ & Astuces - ${gameName}`;
+            desc = `Apprenez à améliorer votre vitesse de frappe et maîtrisez ${gameName} grâce à nos astuces.`;
+            schemaType = "FAQPage";
+        } else if (req.path === "/donate") {
+            title = `Soutenir le Projet - ${gameName}`;
+            desc = `Soutenez le développement de ${gameName} pour nous aider à améliorer l'infrastructure multijoueur.`;
+        } else if (req.path === "/legal") {
+            title = `Informations Légales - ${gameName}`;
+            desc = `Consultez les informations légales, la politique de confidentialité et les conditions d'utilisation de ${gameName}.`;
         }
-        htmlData = htmlData.replace(/<title>.*<\/title>/, `<title>${title}</title>`);
-        htmlData = htmlData.replace(/<meta name="description" content="[^"]*"/, `<meta name="description" content="${desc}"`);
-        htmlData = htmlData.replace(/<meta property="og:title" content="[^"]*"/, `<meta property="og:title" content="${title}"`);
-        htmlData = htmlData.replace(/<meta property="og:description" content="[^"]*"/, `<meta property="og:description" content="${desc}"`);
-        htmlData = htmlData.replace(/<meta property="twitter:title" content="[^"]*"/, `<meta property="twitter:title" content="${title}"`);
-        htmlData = htmlData.replace(/<meta property="twitter:description" content="[^"]*"/, `<meta property="twitter:description" content="${desc}"`);
+
+        const seoTags = `
+        <!-- Primary Meta Tags -->
+        <meta name="description" content="${desc}">
+        <meta name="keywords" content="jeu de frappe, dactylographie, ${gameName}, roguelite, RPG, apprendre à taper, clavier, action">
+        <meta name="author" content="Alban Elie">
+        <meta name="theme-color" content="#0d1117">
         
-        const canonicalUrl = `${process.env.FRONTEND_URL}${req.path === '/' ? '' : req.path}`;
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="${canonicalUrl}">
+        <meta property="og:title" content="${title}">
+        <meta property="og:description" content="${desc}">
+        <meta property="og:image" content="${baseUrl}${ogImage}">
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="${canonicalUrl}">
+        <meta property="twitter:title" content="${title}">
+        <meta property="twitter:description" content="${desc}">
+        <meta property="twitter:image" content="${baseUrl}${ogImage}">
+
+        <!-- Schema.org JSON-LD -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "${schemaType}",
+          "name": "${title}",
+          "description": "${desc}",
+          "url": "${canonicalUrl}",
+          "image": "${baseUrl}${ogImage}"
+        }
+        </script>
+        `;
+
+        htmlData = htmlData.replace(/<html lang="en">/, `<html lang="fr">`);
+        htmlData = htmlData.replace(/<title>.*<\/title>/, `<title>${title}</title>`);
+        htmlData = htmlData.replace('<!-- SSR Tags Placeholder -->', seoTags);
         htmlData = htmlData.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`);
+        
         htmlData = htmlData.replace("GOOGLE_CLIENT_ID_PLACEHOLDER", process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com");
         htmlData = htmlData.replace("SUPPORT_EMAIL_PLACEHOLDER", process.env.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com");
         htmlData = htmlData.replaceAll("GAME_NAME_PLACEHOLDER", gameName);

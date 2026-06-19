@@ -21,6 +21,7 @@ export class DoorEvent extends WorldEvent {
         this.enterPromptOverlay = null;
         this.uiOverlay = null;
         this.errorTimeout = null;
+        this.errorTimeout = null;
         this.leftDoorPivot = null;
         this.rightDoorPivot = null;
         this.doorTileId = null;
@@ -67,36 +68,58 @@ export class DoorEvent extends WorldEvent {
 
         const pillarMat = new THREE.MeshStandardMaterial({
             map: stoneTexture,
-            color: 0x888888,
+            color: 0x666677,
             roughness: 0.9,
-            metalness: 0.1,
+            metalness: 0.2,
+            bumpMap: stoneTexture,
+            bumpScale: 0.1
         });
 
-        const pillarGeo = new THREE.BoxGeometry(1.5, 12, 1.5);
-        const leftPillar = new THREE.Mesh(pillarGeo, pillarMat);
-        leftPillar.position.set(-3, 6, 0);
+        // 1. Enhanced Architecture (Pillars & Bases)
+        const pillarGeo = new THREE.CylinderGeometry(0.8, 0.8, 12, 16);
+        const baseGeo = new THREE.CylinderGeometry(1.2, 1.2, 1.5, 16);
+        
+        const createPillar = (xPos) => {
+            const group = new THREE.Group();
+            const shaft = new THREE.Mesh(pillarGeo, pillarMat);
+            shaft.position.y = 6;
+            const base = new THREE.Mesh(baseGeo, pillarMat);
+            base.position.y = 0.75;
+            const capital = new THREE.Mesh(baseGeo, pillarMat);
+            capital.position.y = 11.25;
+            
+            group.add(shaft, base, capital);
+            group.position.set(xPos, 0, 0);
+            return group;
+        };
 
-        const rightPillar = new THREE.Mesh(pillarGeo, pillarMat);
-        rightPillar.position.set(3, 6, 0);
+        const leftPillar = createPillar(-3.5);
+        const rightPillar = createPillar(3.5);
 
-        const archGeo = new THREE.BoxGeometry(7.5, 2, 1.5);
+        // Heavy Stone Lintel (Arch)
+        const archGeo = new THREE.BoxGeometry(9.5, 2.5, 2.5);
         const arch = new THREE.Mesh(archGeo, pillarMat);
-        arch.position.set(0, 13, 0);
+        arch.position.set(0, 13.25, 0);
 
+        // 2. The Door Panels with Metallic Frames
         const textureLoader = new THREE.TextureLoader();
         let leftDoorTexture;
         const doorTexture = textureLoader.load('/asset/game_assets/textures/door.webp', () => {
             if (leftDoorTexture) leftDoorTexture.needsUpdate = true;
         });
-        
 
         const doorMat = new THREE.MeshStandardMaterial({
             map: doorTexture,
-            color: 0xffffff,
-            roughness: 0.8,
-            metalness: 0.3,
+            color: 0xaaaaaa,
+            roughness: 0.7,
+            metalness: 0.4,
         });
-        const doorGeo = new THREE.BoxGeometry(2.25, 12, 0.5);
+        
+        const metalMat = new THREE.MeshStandardMaterial({
+            color: 0x111111,
+            roughness: 0.4,
+            metalness: 0.9
+        });
 
         leftDoorTexture = doorTexture.clone();
         leftDoorTexture.wrapS = THREE.RepeatWrapping;
@@ -105,29 +128,44 @@ export class DoorEvent extends WorldEvent {
         const leftDoorMat = doorMat.clone();
         leftDoorMat.map = leftDoorTexture;
 
-        const doorMaterialsLeft = [
-            doorMat, doorMat, doorMat, doorMat,
-            leftDoorMat,
-            doorMat
-        ];
+        const doorMaterialsLeft = [doorMat, doorMat, doorMat, doorMat, leftDoorMat, doorMat];
+        const doorMaterialsRight = [doorMat, doorMat, doorMat, doorMat, doorMat, leftDoorMat];
 
-        const doorMaterialsRight = [
-            doorMat, doorMat, doorMat, doorMat,
-            doorMat,
-            leftDoorMat
-        ];
+        const doorGeo = new THREE.BoxGeometry(2.7, 12, 0.4);
+        
+        const createDoorFrame = () => {
+            const frameGroup = new THREE.Group();
+            const vFrameGeo = new THREE.BoxGeometry(0.3, 12.2, 0.6);
+            const hFrameGeo = new THREE.BoxGeometry(2.7, 0.3, 0.6);
+            
+            const leftF = new THREE.Mesh(vFrameGeo, metalMat);
+            leftF.position.set(-1.2, 0, 0);
+            const rightF = new THREE.Mesh(vFrameGeo, metalMat);
+            rightF.position.set(1.2, 0, 0);
+            const topF = new THREE.Mesh(hFrameGeo, metalMat);
+            topF.position.set(0, 5.95, 0);
+            const botF = new THREE.Mesh(hFrameGeo, metalMat);
+            botF.position.set(0, -5.95, 0);
+            
+            frameGroup.add(leftF, rightF, topF, botF);
+            return frameGroup;
+        };
 
         const leftDoorPivot = new THREE.Group();
-        leftDoorPivot.position.set(-2.25, 6, 0);
+        leftDoorPivot.position.set(-2.7, 6, 0);
         const leftDoorMesh = new THREE.Mesh(doorGeo, doorMaterialsLeft);
-        leftDoorMesh.position.set(1.125, 0, 0);
-        leftDoorPivot.add(leftDoorMesh);
+        leftDoorMesh.position.set(1.35, 0, 0);
+        const leftFrame = createDoorFrame();
+        leftFrame.position.set(1.35, 0, 0);
+        leftDoorPivot.add(leftDoorMesh, leftFrame);
 
         const rightDoorPivot = new THREE.Group();
-        rightDoorPivot.position.set(2.25, 6, 0);
+        rightDoorPivot.position.set(2.7, 6, 0);
         const rightDoorMesh = new THREE.Mesh(doorGeo, doorMaterialsRight);
-        rightDoorMesh.position.set(-1.125, 0, 0);
-        rightDoorPivot.add(rightDoorMesh);
+        rightDoorMesh.position.set(-1.35, 0, 0);
+        const rightFrame = createDoorFrame();
+        rightFrame.position.set(-1.35, 0, 0);
+        rightDoorPivot.add(rightDoorMesh, rightFrame);
 
         this.leftDoorPivot = leftDoorPivot;
         this.rightDoorPivot = rightDoorPivot;
@@ -248,7 +286,7 @@ export class DoorEvent extends WorldEvent {
         doorGroup.add(tunnelMesh);
 
         const backdropGeo = new THREE.PlaneGeometry(10, 20);
-        const backdropMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
+        const backdropMat = new THREE.MeshBasicMaterial({ color: 0x020205 });
         const backdrop = new THREE.Mesh(backdropGeo, backdropMat);
         backdrop.position.set(0, 6.5, -19.5);
         doorGroup.add(backdrop);
@@ -288,6 +326,9 @@ export class DoorEvent extends WorldEvent {
                 if (progress < 1) {
                     requestAnimationFrame(animateFade);
                 } else {
+                    if (typeof window.startShake === "function") {
+                        window.startShake(0.3); // Add impact shake when fully open
+                    }
                     resolve();
                 }
             };
@@ -300,6 +341,7 @@ export class DoorEvent extends WorldEvent {
      * @param {WorldPhase} worldPhase - The world phase instance.
      * @param {number} deltaTime - Time elapsed since last frame.
      */
+
     update(worldPhase, deltaTime) {
         if (!worldPhase.player || !worldPhase.worldMap || !this.doorTileId) return;
 
@@ -316,7 +358,7 @@ export class DoorEvent extends WorldEvent {
                     this.startDoorSequence(worldPhase);
                 }
             } else if (this.isDoorOpen) {
-                if (dist < 1.5 && !worldPhase.isTransitioning) {
+                if (dist < 2.5 && !worldPhase.isTransitioning) {
                     this.showEnterPrompt(worldPhase);
                 } else {
                     this.hideEnterPrompt(worldPhase);
@@ -373,7 +415,7 @@ export class DoorEvent extends WorldEvent {
                 const dx = doorTile.rawPosition.x - worldPhase.player.x;
                 const dy = doorTile.rawPosition.y - worldPhase.player.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 1.5) {
+                if (dist < 2.5) {
                     worldPhase.isTransitioning = true;
                     
                     if (this.enterPromptOverlay) {
