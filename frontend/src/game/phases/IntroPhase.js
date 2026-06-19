@@ -1,3 +1,4 @@
+import { el } from "../../core/utils/DOMBuilder.js";
 import { GamePhase } from "./GamePhase.js";
 import { WorldPhase } from "./WorldPhase.js";
 import { AmbientBackground, GlitchEffect } from "../utilities/IntroVisuals.js";
@@ -49,68 +50,107 @@ export class IntroPhase extends GamePhase {
         this.createCinematicDOM();
         this.ambientBackground = new AmbientBackground(this.container);
         this.ambientBackground.start();
-        this.startCinematicTimeline();
+        this.fadeInAudio();
+        this.showPrologue().then(() => {
+            this.startCinematicTimeline();
+        });
+    }
+
+    /**
+     * Fades in the video audio smoothly.
+     */
+    fadeInAudio() {
+        if (!this.video) return;
+
+        this.video.volume = 0;
+        this.video.muted = false;
+
+
+        if (this.audioInterval) clearInterval(this.audioInterval);
+        this.audioInterval = setInterval(() => {
+            if (!this.video) {
+                clearInterval(this.audioInterval);
+                return;
+            }
+            if (this.video.volume < 0.95) {
+                this.video.volume += 0.05;
+            } else {
+                this.video.volume = 1;
+                clearInterval(this.audioInterval);
+            }
+        }, 250);
+    }
+
+    /**
+     * Shows the prologue text on a black screen before the cinematic.
+     * @returns {Promise<void>}
+     */
+    async showPrologue() {
+        return new Promise((resolve) => {
+            const prologueText = el("div", { className: "intro-prologue-text" }, LanguageManager.t("engine.introPrologue"));
+            const prologueContainer = el("div", { className: "intro-prologue-container" }, prologueText);
+
+            this.container.appendChild(prologueContainer);
+
+            this.timeouts.push(setTimeout(() => {
+                prologueText.classList.add("visible");
+            }, 1000));
+
+            this.timeouts.push(setTimeout(() => {
+                prologueText.classList.remove("visible");
+            }, 8000));
+
+            this.timeouts.push(setTimeout(() => {
+                prologueContainer.classList.add("hidden");
+            }, 9500));
+
+            this.timeouts.push(setTimeout(() => {
+                if (this.container && prologueContainer.parentElement) {
+                    this.container.removeChild(prologueContainer);
+                }
+                resolve();
+            }, 11000));
+        });
     }
 
     /**
      * Creates the main DOM elements for the cinematic video and rift.
      */
     createCinematicDOM() {
-        this.container = document.createElement("div");
-        this.container.className = "intro-cinematic-container";
+        this.video = el("video", {
+            className: "intro-video",
+            src: "/asset/game_assets/videos/bg.mp4",
+            autoplay: true,
+            loop: true,
+            muted: true,
+            playsInline: true,
+            disablePictureInPicture: true,
+            controls: false,
+            oncontextmenu: (e) => e.preventDefault()
+        });
 
-        const video = document.createElement("video");
-        video.className = "intro-video";
-        video.src = "/asset/game_assets/videos/bg.mp4";
-        video.autoplay = true;
-        video.loop = true;
-        video.muted = true;
-        video.playsInline = true;
-        video.disablePictureInPicture = true;
-        video.controls = false;
-        video.oncontextmenu = (e) => e.preventDefault();
+        this.rift = el("img", {
+            className: "cinematic-rift ",
+            src: "/asset/game_assets/textures/shift.webp",
+            alt: "rift",
+            draggable: "false"
+        });
 
-        const rift = document.createElement("img");
-        rift.className = "cinematic-rift ";
-        rift.src = "/asset/game_assets/textures/shift.webp";
-        rift.alt = "rift";
-        rift.setAttribute("draggable", "false");
-
-        this.container.appendChild(video);
-        this.container.appendChild(rift);
+        this.container = el("div", { className: "intro-cinematic-container" }, this.video, this.rift);
         this.createDialogueDOM();
         document.body.appendChild(this.container);
-
-        this.video = video;
-        this.rift = rift;
     }
 
     /**
      * Creates the DOM elements for the dialogue UI.
      */
     createDialogueDOM() {
-        this.dialogueContainer = document.createElement("div");
-        this.dialogueContainer.className = "intro-dialogue-container";
+        this.dialogueText = el("span", { className: "intro-dialogue-text" });
+        const skipIndicator = el("div", { className: "dialogue-skip-indicator" }, "↵ Enter / Space");
+        const bubble = el("div", { className: "intro-dialogue-bubble" }, this.dialogueText, skipIndicator);
+        const tail = el("div", { className: "intro-dialogue-tail" });
 
-        const bubble = document.createElement("div");
-        bubble.className = "intro-dialogue-bubble";
-
-        this.dialogueText = document.createElement("span");
-        this.dialogueText.className = "intro-dialogue-text";
-
-        const tail = document.createElement("div");
-        tail.className = "intro-dialogue-tail";
-
-        bubble.appendChild(this.dialogueText);
-
-        const skipIndicator = document.createElement("div");
-        skipIndicator.className = "dialogue-skip-indicator";
-        skipIndicator.innerHTML = "↵ Enter / Space";
-        bubble.appendChild(skipIndicator);
-
-        this.dialogueContainer.appendChild(tail);
-        this.dialogueContainer.appendChild(bubble);
-
+        this.dialogueContainer = el("div", { className: "intro-dialogue-container" }, tail, bubble);
         this.container.appendChild(this.dialogueContainer);
     }
 
@@ -377,6 +417,10 @@ export class IntroPhase extends GamePhase {
         if (this.idleTimeout) {
             clearTimeout(this.idleTimeout);
             this.idleTimeout = null;
+        }
+        if (this.audioInterval) {
+            clearInterval(this.audioInterval);
+            this.audioInterval = null;
         }
         if (this.typewriterInterval) {
             clearInterval(this.typewriterInterval);

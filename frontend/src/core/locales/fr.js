@@ -225,6 +225,7 @@ export const fr = {
     
     // Game Engine (IntroPhase etc.)
     engine: {
+        introPrologue: "Ça a commencé comme une après-midi habituelle, à jouer à un super jeu vidéo...",
         introDialogue1: "...",
         introDialogue2: "Il y a quelqu'un ?",
         introDialogueIdle: "Bah alors, tu viens pas ? Vas-y, clique sur la faille ou appuie sur Entrée une fois que j'aurai fini de parler pour commencer."

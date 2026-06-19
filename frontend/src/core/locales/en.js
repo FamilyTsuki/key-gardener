@@ -224,6 +224,7 @@ export const en = {
     
     // Game Engine (IntroPhase etc.)
     engine: {
+        introPrologue: "It started like any other afternoon, playing a great video game...",
         introDialogue1: "...",
         introDialogue2: "Is anyone there?",
         introDialogueIdle: "Well, aren't you coming? Go ahead, click on the rift or press Enter once I'm done speaking to start."

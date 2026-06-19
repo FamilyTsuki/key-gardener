@@ -301,3 +301,36 @@
     background-position: center bottom;
     z-index: 1;
 }
+
+.intro-prologue-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 2s ease-in-out;
+}
+
+.intro-prologue-container.hidden {
+    opacity: 0;
+}
+
+.intro-prologue-text {
+    color: white;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 2rem;
+    text-align: center;
+    max-width: 80%;
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+}
+
+.intro-prologue-text.visible {
+    opacity: 1;
+}
