@@ -435,26 +435,134 @@ body.dialogue-active .player-hud {
 }
 
 /* =============== RESPONSIVE =============== */
-@media (max-width: 768px) {
-    body.in-game::before {
-        content: "Veuillez jouer sur un ordinateur. Ce jeu nécessite un clavier pour une expérience optimale.";
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: var(--bg-color);
-        color: var(--primary-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 40px;
-        font-size: 1.5rem;
-        z-index: 100000;
-        box-sizing: border-box;
-        line-height: 1.5;
+@media (max-width: 1024px) {
+    .boss-ui {
+        width: 80%;
+    }
+    
+    .player-hud {
+        transform: scale(0.9);
+        transform-origin: bottom left;
     }
 
-    body.in-game > *:not(script) {
-        display: none !important;
+    .word-container {
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+}
+
+@media (max-width: 768px) {
+    .boss-ui {
+        width: 95%;
+        top: 10px;
+        padding: 8px 12px;
+        transform: translateX(-50%) scale(0.9);
+        transform-origin: top center;
+    }
+
+    .boss-name {
+        font-size: 1rem;
+    }
+
+    .boss-hp-text {
+        font-size: 0.9rem;
+    }
+
+    .player-hud {
+        transform: scale(0.75);
+        transform-origin: bottom left;
+        left: 10px;
+        bottom: 10px;
+    }
+
+    .word-container {
+        transform: translate(-50%, -50%) scale(0.75);
+    }
+
+    .spell-list-container {
+        transform: translateY(-50%) scale(0.8);
+        transform-origin: center right;
+        right: 10px;
+    }
+
+    .settings-btn-container {
+        top: 10px;
+        right: 10px;
+        transform: scale(0.8);
+        transform-origin: top right;
+    }
+
+    .typing-minigame-word {
+        font-size: 1.8rem;
+    }
+
+    .typing-minigame-char {
+        width: 20px;
+    }
+
+    .duel-hp-ui {
+        padding: 10px;
+    }
+
+    .duel-hud-panel {
+        min-width: 120px;
+    }
+
+    .duel-hud-name {
+        font-size: 14px;
+    }
+
+    .duel-spells-ui {
+        bottom: 10px;
+        right: 10px;
+        min-width: 180px;
+        transform: scale(0.8);
+        transform-origin: bottom right;
+    }
+
+    .duel-defenses-ui {
+        top: 80px;
+        right: 10px;
+        min-width: 180px;
+        transform: scale(0.8);
+        transform-origin: top right;
+    }
+
+    .duel-countdown-text {
+        font-size: clamp(40px, 10vw, 100px);
+    }
+    
+    .status-title {
+        font-size: 20px;
+    }
+    
+    .status-icon {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .player-hud {
+        transform: scale(0.6);
+    }
+
+    .boss-ui {
+        transform: translateX(-50%) scale(0.8);
+    }
+
+    .word-container {
+        transform: translate(-50%, -50%) scale(0.6);
+    }
+
+    .spell-list-container {
+        transform: translateY(-50%) scale(0.6);
+    }
+
+    .typing-minigame-word {
+        font-size: 1.2rem;
+    }
+
+    .duel-spells-ui {
+        transform: scale(0.7);
     }
 }
 
