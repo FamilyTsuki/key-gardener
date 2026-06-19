@@ -4,7 +4,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: var(--black);
+    background: var(--site-color-5);
     overflow: hidden;
     z-index: 1000;
     transition: all 1s ease-in-out;
@@ -61,7 +61,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--white);
+    background: var(--site-color-15);
     opacity: 0;
     z-index: 2;
     mix-blend-mode: difference;
@@ -74,10 +74,10 @@
     font-family: "Courier New", Courier, monospace;
     font-size: 11px;
     font-weight: bold;
-    color: var(--primary-color);
-    text-shadow: 0 0 8px var(--matrix-glow);
-    background: var(--dark-overlay);
-    border: 1px solid var(--matrix-border);
+    color: var(--site-color-2);
+    text-shadow: 0 0 8px var(--site-color-47);
+    background: var(--site-color-48);
+    border: 1px solid var(--site-color-49);
     padding: 3px 8px;
     border-radius: 2px;
     z-index: 20;
@@ -87,15 +87,15 @@
 }
 
 .virus-element.danger {
-    color: var(--danger-color);
-    text-shadow: 0 0 8px var(--danger-translucent-toast);
-    border-color: var(--danger-hover);
+    color: var(--site-color-8);
+    text-shadow: 0 0 8px var(--site-color-31);
+    border-color: var(--site-color-9);
 }
 
 .virus-element.warn {
-    color: var(--warning-color);
-    text-shadow: 0 0 8px var(--warning-translucent);
-    border-color: var(--warning-border);
+    color: var(--site-color-50);
+    text-shadow: 0 0 8px var(--site-color-32);
+    border-color: var(--site-color-33);
 }
 
 .intro-video.static-broken {
@@ -111,9 +111,9 @@
     top: 65%;
     transform: translate(-50%, -50%) rotate(-12deg) scale(0.9);
     animation: none;
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    box-shadow: 0 0 25px var(--matrix-glow);
+    border-color: var(--site-color-2);
+    color: var(--site-color-2);
+    box-shadow: 0 0 25px var(--site-color-47);
 }
 
 .fake-start-button.retracted {

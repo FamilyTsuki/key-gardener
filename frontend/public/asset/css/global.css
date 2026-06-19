@@ -37,6 +37,61 @@
     --secondary-translucent: var(--secondary-color);
     --pink-threat: var(--danger-color);
     --primary-glow-heavy: none;
+
+    /* Auto-generated site colors */
+    --site-color-1: var(--text-color);
+    --site-color-2: var(--primary-color);
+    --site-color-3: var(--card-bg);
+    --site-color-4: var(--card-border);
+    --site-color-5: var(--black);
+    --site-color-6: var(--light-overlay);
+    --site-color-7: var(--primary-translucent);
+    --site-color-8: var(--danger-color);
+    --site-color-9: var(--danger-hover);
+    --site-color-10: var(--danger-translucent-hover);
+    --site-color-11: var(--text-muted);
+    --site-color-12: var(--bg-color);
+    --site-color-13: var(--font-main);
+    --site-color-14: var(--secondary-color);
+    --site-color-15: var(--white);
+    --site-color-16: var(--bg-grad-1);
+    --site-color-17: var(--bg-grad-2);
+    --site-color-18: var(--text-primary);
+    --site-color-19: var(--particle-color);
+    --site-color-20: var(--blob-1);
+    --site-color-21: var(--blob-2);
+    --site-color-22: var(--blob-3);
+    --site-color-23: var(--blob-4);
+    --site-color-24: var(--blob-5);
+    --site-color-25: var(--card-shadow);
+    --site-color-26: var(--text-secondary);
+    --site-color-27: var(--primary-color, #f39c12);
+    --site-color-28: var(--shadow-glow);
+    --site-color-29: var(--success-translucent);
+    --site-color-30: var(--success-border);
+    --site-color-31: var(--danger-translucent-toast);
+    --site-color-32: var(--warning-translucent);
+    --site-color-33: var(--warning-border);
+    --site-color-34: var(--secondary-hover);
+    --site-color-35: var(--font-main, "poppins", sans-serif);
+    --site-color-36: var(--primary-hover);
+    --site-color-37: var(--hologram-filter, none);
+    --site-color-38: var(--img-url);
+    --site-color-39: var(--mouse-x, 0.5);
+    --site-color-40: var(--mouse-y, 0.5);
+    --site-color-41: var(--hover-intensity, 0);
+    --site-color-42: var(--hologram-mouse-filter, none);
+    --site-color-43: var(--primary-translucent-hover);
+    --site-color-44: var(--dark-overlay-dense);
+    --site-color-45: var(--danger-translucent);
+    --site-color-46: var(--secondary-translucent);
+    --site-color-47: var(--matrix-glow);
+    --site-color-48: var(--dark-overlay);
+    --site-color-49: var(--matrix-border);
+    --site-color-50: var(--warning-color);
+    --site-color-51: var(--font-main, sans-serif);
+    --site-color-52: var(--light-overlay-hover);
+    --site-color-53: var(--success-color);
 }
 
 html {

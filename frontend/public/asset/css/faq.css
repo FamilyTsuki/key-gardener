@@ -14,7 +14,7 @@
 
 .faq-main-title {
     font-size: clamp(30px, 5vw, 48px);
-    color: var(--primary-color, #f39c12);
+    color: var(--site-color-27);
     margin-bottom: 15px;
 }
 
@@ -33,7 +33,7 @@
 .faq-item {
     padding: 25px;
     border-radius: 10px;
-    border-left: 4px solid var(--primary-color, #f39c12);
+    border-left: 4px solid var(--site-color-27);
     background: rgba(20, 20, 20, 0.7);
     transition: transform 0.2s ease;
 }

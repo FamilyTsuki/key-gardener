@@ -17,7 +17,7 @@
 }
 
 .flame-wall-title {
-    font-family: var(--font-main), 'Impact', Arial, sans-serif;
+    font-family: var(--site-color-13), 'Impact', Arial, sans-serif;
     font-size: clamp(40px, 7vw, 90px);
     font-weight: 900;
     color: #fff8e1;
@@ -31,7 +31,7 @@
 }
 
 .flame-wall-subtitle {
-    font-family: var(--font-main), Arial, sans-serif;
+    font-family: var(--site-color-13), Arial, sans-serif;
     font-size: clamp(14px, 2vw, 22px);
     color: rgba(255, 230, 180, 0.85);
     letter-spacing: 4px;

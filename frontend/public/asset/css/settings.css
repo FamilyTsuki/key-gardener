@@ -9,8 +9,8 @@
 }
 
 .settings-btn-text {
-    color: var(--text-color);
-    font-family: var(--font-main);
+    color: var(--site-color-1);
+    font-family: var(--site-color-13);
     font-weight: bold;
     font-size: 16px;
     text-shadow: 1px 1px 2px black;
@@ -18,9 +18,9 @@
 }
 
 .settings-btn {
-    background: var(--dark-overlay-dense);
-    border: 1px solid var(--card-border);
-    color: var(--text-color);
+    background: var(--site-color-44);
+    border: 1px solid var(--site-color-4);
+    color: var(--site-color-1);
     padding: 12px;
     font-size: 20px;
     border-radius: 8px;
@@ -34,7 +34,7 @@
 }
 
 .settings-btn:hover {
-    background: var(--light-overlay-hover);
+    background: var(--site-color-52);
     transform: scale(1.05);
 }
 
@@ -63,16 +63,16 @@
 }
 
 .settings-modal-content {
-    background: var(--bg-color);
-    border: 1px solid var(--card-border);
+    background: var(--site-color-12);
+    border: 1px solid var(--site-color-4);
     padding: 30px;
     border-radius: 12px;
     width: 90%;
     max-width: 500px;
     max-height: 85vh;
     overflow-y: auto;
-    color: var(--text-color);
-    font-family: var(--font-main);
+    color: var(--site-color-1);
+    font-family: var(--site-color-13);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -80,22 +80,22 @@
     width: 12px;
 }
 .settings-modal-content::-webkit-scrollbar-track {
-    background: var(--dark-overlay-dense);
+    background: var(--site-color-44);
     border-radius: 6px;
     margin: 4px 0;
 }
 .settings-modal-content::-webkit-scrollbar-thumb {
-    background: var(--card-border);
+    background: var(--site-color-4);
     border-radius: 6px;
 }
 .settings-modal-content::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
+    background: var(--site-color-2);
 }
 
 .settings-modal-content h2 {
     margin-top: 0;
     margin-bottom: 20px;
-    color: var(--primary-color);
+    color: var(--site-color-2);
     text-align: center;
 }
 
@@ -104,7 +104,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 15px;
-    background: var(--dark-overlay-dense);
+    background: var(--site-color-44);
     padding: 10px 15px;
     border-radius: 8px;
 }
@@ -132,8 +132,8 @@
     margin-top: 20px;
     width: 100%;
     padding: 12px;
-    background: var(--primary-color);
-    color: var(--bg-color);
+    background: var(--site-color-2);
+    color: var(--site-color-12);
     border: none;
     border-radius: 8px;
     font-weight: bold;
@@ -142,7 +142,7 @@
 }
 
 .settings-close-btn:hover {
-    background: var(--primary-hover);
+    background: var(--site-color-36);
 }
 
 .settings-save-quit-btn {
@@ -150,8 +150,8 @@
     width: 100%;
     padding: 12px;
     background: transparent;
-    color: var(--danger-color);
-    border: 2px solid var(--danger-color);
+    color: var(--site-color-8);
+    border: 2px solid var(--site-color-8);
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
@@ -159,8 +159,8 @@
 }
 
 .settings-save-quit-btn:hover {
-    background: var(--danger-color);
-    color: var(--bg-color);
+    background: var(--site-color-8);
+    color: var(--site-color-12);
 }
 
 body[data-theme="light"] .settings-btn-text {

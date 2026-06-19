@@ -1,8 +1,47 @@
+
+:root {
+    --duel-vic-color: #00ff66;
+    --duel-vic-grad2: #00ffcc;
+    --duel-vic-btn2: #00b344;
+    --duel-def-color: #ff0055;
+    --duel-def-grad2: #ff5500;
+    --duel-def-btn2: #b3003b;
+    --duel-local-primary: #00ffff;
+    --duel-local-secondary: #0088ff;
+    --duel-remote-primary: #ff00ff;
+    --duel-remote-secondary: #aa00aa;
+    --game-typed-char: #f39c12;
+    --status-jail-color: #ff8800;
+    --status-stun-color: #00e5ff;
+    --float-dmg-taken: #ff4444;
+    --float-heal: #44ff44;
+    --float-crit: #ffdd44;
+    --player-high-hp: #27ae60;
+    --game-boss-bg: rgba(10, 12, 16, 0.85);
+    --game-hp-bg: rgba(var(--white-rgb), 0.05);
+    --game-hp-border: rgba(var(--white-rgb), 0.1);
+    --duel-end-bg: rgba(5, 7, 15, 0.85);
+
+    --duel-vic-rgb: 0, 255, 102;
+    --duel-def-rgb: 255, 0, 85;
+    --status-jail-rgb: 255, 136, 0;
+    --status-stun-rgb: 0, 229, 255;
+    --primary-rgb: 0, 255, 102;
+    --danger-rgb: 239, 68, 68;
+    --white-rgb: 255, 255, 255;
+    --black-rgb: 0, 0, 0;
+
+    --game-tech-ring-dark: #333;
+    --game-tech-ring-mid: #888;
+    --game-tech-ring-light: #ccc;
+    --duel-hud-bar-bg: #222;
+    --duel-hud-bar-border: #444;
+}
 body.in-game {
     --text-color: #e2e8f0 !important;
     --text-muted: #64748b !important;
     --dark-overlay-dense: rgba(10, 12, 16, 0.95) !important;
-    --dark-overlay: rgba(10, 12, 16, 0.85) !important;
+    --dark-overlay: var(--game-boss-bg) !important;
     --light-overlay: #14171f !important;
     --light-overlay-hover: #1c202b !important;
     --card-border: #272c38 !important;
@@ -232,7 +271,7 @@ body.in-game {
     padding: 20px;
     color: var(--text-color);
     font-family: var(--font-main);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), -1px -1px 2px rgba(0, 0, 0, 0.8);
+    text-shadow: 2px 2px 4px rgba(var(--black-rgb), 0.8), -1px -1px 2px rgba(var(--black-rgb), 0.8);
 }
 
 .spell-list-container h3 {
@@ -272,10 +311,10 @@ body.dialogue-active .player-hud {
     transform: translateX(-50%);
     width: 60%;
     max-width: 600px;
-    background: rgba(10, 12, 16, 0.85);
+    background: var(--game-boss-bg);
     backdrop-filter: blur(10px);
     border: 1px solid var(--danger-color);
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 20px rgba(var(--danger-rgb), 0.2);
     border-radius: 12px;
     padding: 12px 20px;
     z-index: 9999;
@@ -298,7 +337,7 @@ body.dialogue-active .player-hud {
 .boss-name {
     font-size: 1.2rem;
     color: var(--danger-color);
-    text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    text-shadow: 0 0 10px rgba(var(--danger-rgb), 0.5);
 }
 
 .boss-hp-text {
@@ -309,10 +348,10 @@ body.dialogue-active .player-hud {
 .boss-hp-bar {
     width: 100%;
     height: 12px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--game-hp-bg);
     border-radius: 6px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--game-hp-border);
 }
 
 .boss-hp-fill {
@@ -341,14 +380,14 @@ body.dialogue-active .player-hud {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    border: 3px solid #333;
-    border-top: 3px solid #888;
-    border-left: 3px solid #ccc;
+    border: 3px solid var(--game-tech-ring-dark);
+    border-top: 3px solid var(--game-tech-ring-mid);
+    border-left: 3px solid var(--game-tech-ring-light);
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 15px rgba(0,0,0,0.8);
-    background: #0a0c10;
+    box-shadow: 0 0 15px rgba(var(--black-rgb), 0.8);
+    background: var(--bg-color);
     z-index: 10;
 }
 
@@ -362,11 +401,11 @@ body.dialogue-active .player-hud {
 .hud-bar-wrapper {
     position: relative;
     width: 300px;
-    background: #0a0c10;
-    border: 2px solid #888;
+    background: var(--bg-color);
+    border: 2px solid var(--game-tech-ring-mid);
     border-radius: 4px;
     padding: 4px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    box-shadow: 0 0 10px rgba(var(--black-rgb), 0.8);
     margin-left: -20px;
     z-index: 5;
 }
@@ -375,7 +414,7 @@ body.dialogue-active .player-hud {
     position: relative;
     width: 100%;
     height: 24px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--game-hp-bg);
     border-radius: 2px;
     overflow: hidden;
 }
@@ -384,13 +423,13 @@ body.dialogue-active .player-hud {
     width: 100%;
     height: 100%;
     background: var(--success-color);
-    box-shadow: inset 0 0 10px rgba(255,255,255,0.3);
+    box-shadow: inset 0 0 10px rgba(var(--white-rgb), 0.3);
     border-radius: 2px;
     transition: width 0.3s ease-out;
 }
 
 .player-hp-fill.high-hp {
-    background: linear-gradient(90deg, #27ae60, var(--success-color)) !important;
+    background: linear-gradient(90deg, var(--player-high-hp), var(--success-color)) !important;
     box-shadow: 0 0 10px var(--success-color) !important;
 }
 
@@ -431,7 +470,7 @@ body.dialogue-active .player-hud {
 }
 
 .typing-minigame-char.typed {
-    color: #f39c12;
+    color: var(--game-typed-char);
 }
 
 /* =============== RESPONSIVE =============== */
@@ -626,20 +665,20 @@ body.dialogue-active .player-hud {
 }
 
 .duel-hud-name-local {
-    color: #00ffff;
+    color: var(--duel-local-primary);
 }
 
 .duel-hud-name-remote {
-    color: #ff00ff;
+    color: var(--duel-remote-primary);
 }
 
 .duel-hud-bar {
     width: 100%;
     height: 10px;
-    background: #222;
+    background: var(--duel-hud-bar-bg);
     border-radius: 5px;
     overflow: hidden;
-    border: 1px solid #444;
+    border: 1px solid var(--duel-hud-bar-border);
 }
 
 .duel-hud-fill {
@@ -649,16 +688,16 @@ body.dialogue-active .player-hud {
 }
 
 .duel-hud-fill-local {
-    background: linear-gradient(90deg, #00ffff, #0088ff);
+    background: linear-gradient(90deg, var(--duel-local-primary), var(--duel-local-secondary));
 }
 
 .duel-hud-fill-remote {
-    background: linear-gradient(90deg, #ff00ff, #aa00aa);
+    background: linear-gradient(90deg, var(--duel-remote-primary), var(--duel-remote-secondary));
 }
 
 .duel-hud-hp {
     font-size: 14px;
-    color: #ccc;
+    color: var(--game-tech-ring-light);
 }
 
 .duel-spells-ui {
@@ -743,7 +782,7 @@ body.dialogue-active .player-hud {
 
 .jail-subtitle {
     font-size: 18px;
-    color: #ccc;
+    color: var(--game-tech-ring-light);
 }
 
 .jail-word {
@@ -756,7 +795,7 @@ body.dialogue-active .player-hud {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(var(--black-rgb), 0.7);
     backdrop-filter: blur(3px);
     display: flex;
     align-items: center;
@@ -769,7 +808,7 @@ body.dialogue-active .player-hud {
     font-size: clamp(60px, 15vw, 180px);
     font-weight: 900;
     color: var(--primary-color);
-    text-shadow: 0 0 30px rgba(0, 255, 102, 0.4), 0 0 60px rgba(0, 255, 102, 0.2);
+    text-shadow: 0 0 30px rgba(var(--duel-vic-rgb), 0.4), 0 0 60px rgba(var(--duel-vic-rgb), 0.2);
     font-family: var(--font-main), monospace;
     text-align: center;
     user-select: none;
@@ -781,8 +820,8 @@ body.dialogue-active .player-hud {
     left: 0;
     width: 100vw;
     height: 100vh;
-    box-shadow: inset 0 0 120px rgba(255, 136, 0, 0.65);
-    background-color: rgba(255, 136, 0, 0.05);
+    box-shadow: inset 0 0 120px rgba(var(--status-jail-rgb), 0.65);
+    background-color: rgba(var(--status-jail-rgb), 0.05);
     pointer-events: none;
     z-index: 9999;
     animation: status-pulse-jail 1.5s infinite alternate ease-in-out;
@@ -794,8 +833,8 @@ body.dialogue-active .player-hud {
     left: 0;
     width: 100vw;
     height: 100vh;
-    box-shadow: inset 0 0 120px rgba(0, 229, 255, 0.65);
-    background-color: rgba(0, 229, 255, 0.05);
+    box-shadow: inset 0 0 120px rgba(var(--status-stun-rgb), 0.65);
+    background-color: rgba(var(--status-stun-rgb), 0.05);
     pointer-events: none;
     z-index: 9999;
     animation: status-pulse-stun 0.6s infinite alternate ease-in-out;
@@ -803,23 +842,23 @@ body.dialogue-active .player-hud {
 
 @keyframes status-pulse-jail {
     from {
-        box-shadow: inset 0 0 80px rgba(255, 136, 0, 0.4);
-        background-color: rgba(255, 136, 0, 0.02);
+        box-shadow: inset 0 0 80px rgba(var(--status-jail-rgb), 0.4);
+        background-color: rgba(var(--status-jail-rgb), 0.02);
     }
     to {
-        box-shadow: inset 0 0 160px rgba(255, 136, 0, 0.8);
-        background-color: rgba(255, 136, 0, 0.08);
+        box-shadow: inset 0 0 160px rgba(var(--status-jail-rgb), 0.8);
+        background-color: rgba(var(--status-jail-rgb), 0.08);
     }
 }
 
 @keyframes status-pulse-stun {
     from {
-        box-shadow: inset 0 0 80px rgba(0, 229, 255, 0.4);
-        background-color: rgba(0, 229, 255, 0.02);
+        box-shadow: inset 0 0 80px rgba(var(--status-stun-rgb), 0.4);
+        background-color: rgba(var(--status-stun-rgb), 0.02);
     }
     to {
-        box-shadow: inset 0 0 160px rgba(0, 229, 255, 0.8);
-        background-color: rgba(0, 229, 255, 0.08);
+        box-shadow: inset 0 0 160px rgba(var(--status-stun-rgb), 0.8);
+        background-color: rgba(var(--status-stun-rgb), 0.08);
     }
 }
 
@@ -844,18 +883,18 @@ body.dialogue-active .player-hud {
     padding: 25px;
     color: var(--text-color);
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(var(--black-rgb), 0.5);
     justify-content: center;
 }
 
 .jail-message {
-    border: 2px solid #ff8800;
-    box-shadow: 0 0 20px rgba(255, 136, 0, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--status-jail-color);
+    box-shadow: 0 0 20px rgba(var(--status-jail-rgb), 0.2), 0 10px 30px rgba(var(--black-rgb), 0.5);
 }
 
 .stun-message {
-    border: 2px solid #00e5ff;
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--status-stun-color);
+    box-shadow: 0 0 20px rgba(var(--status-stun-rgb), 0.2), 0 10px 30px rgba(var(--black-rgb), 0.5);
     animation: stun-shake 0.4s infinite ease-in-out;
 }
 
@@ -881,8 +920,8 @@ body.dialogue-active .player-hud {
 .status-title {
     font-size: 28px;
     font-weight: 900;
-    color: #ff8800;
-    text-shadow: 0 0 10px rgba(255, 136, 0, 0.3);
+    color: var(--status-jail-color);
+    text-shadow: 0 0 10px rgba(var(--status-jail-rgb), 0.3);
 }
 
 .jail-subtitle {
@@ -913,7 +952,7 @@ body.dialogue-active .player-hud {
     font-family: 'Inter', var(--font-main), sans-serif;
     font-weight: 900;
     font-size: 28px;
-    text-shadow: 0 0 5px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5);
+    text-shadow: 0 0 5px rgba(var(--black-rgb), 0.8), 0 0 10px rgba(var(--black-rgb), 0.5);
     transform-origin: center;
     pointer-events: none;
     will-change: transform, opacity;
@@ -924,17 +963,17 @@ body.dialogue-active .player-hud {
 }
 
 .floating-text.damage-taken {
-    color: #ff4444;
+    color: var(--float-dmg-taken);
 }
 
 .floating-text.heal {
-    color: #44ff44;
+    color: var(--float-heal);
 }
 
 .floating-text.critical {
-    color: #ffdd44;
+    color: var(--float-crit);
     font-size: 36px;
-    text-shadow: 0 0 8px rgba(255,221,68,0.5), 0 0 15px rgba(0,0,0,0.8);
+    text-shadow: 0 0 8px rgba(255,221,68,0.5), 0 0 15px rgba(var(--black-rgb), 0.8);
 }
 
 
@@ -949,40 +988,40 @@ body.dialogue-active .player-hud {
     justify-content: center;
     z-index: 20000;
     backdrop-filter: blur(10px);
-    background-color: rgba(5, 7, 15, 0.85);
+    background-color: var(--duel-end-bg);
     animation: fadeInEnd 0.6s ease-out forwards;
 }
 
 .duel-end-overlay.duel-end-victory {
-    box-shadow: inset 0 0 100px rgba(0, 255, 102, 0.25);
+    box-shadow: inset 0 0 100px rgba(var(--duel-vic-rgb), 0.25);
 }
 
 .duel-end-overlay.duel-end-defeat {
-    box-shadow: inset 0 0 100px rgba(255, 0, 85, 0.25);
+    box-shadow: inset 0 0 100px rgba(var(--duel-def-rgb), 0.25);
 }
 
 .duel-end-box {
     background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--game-hp-border);
     border-radius: 20px;
     padding: 40px;
     text-align: center;
     max-width: 480px;
     width: 90%;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 20px 50px rgba(var(--black-rgb), 0.8);
     transform: scale(0.7);
     opacity: 0;
     animation: scaleInBox 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
 }
 
 .duel-end-victory .duel-end-box {
-    border-color: rgba(0, 255, 102, 0.4);
-    box-shadow: 0 20px 50px rgba(0, 255, 102, 0.15), 0 0 30px rgba(0, 255, 102, 0.05);
+    border-color: rgba(var(--duel-vic-rgb), 0.4);
+    box-shadow: 0 20px 50px rgba(var(--duel-vic-rgb), 0.15), 0 0 30px rgba(var(--duel-vic-rgb), 0.05);
 }
 
 .duel-end-defeat .duel-end-box {
-    border-color: rgba(255, 0, 85, 0.4);
-    box-shadow: 0 20px 50px rgba(255, 0, 85, 0.15), 0 0 30px rgba(255, 0, 85, 0.05);
+    border-color: rgba(var(--duel-def-rgb), 0.4);
+    box-shadow: 0 20px 50px rgba(var(--duel-def-rgb), 0.15), 0 0 30px rgba(var(--duel-def-rgb), 0.05);
 }
 
 .duel-end-badge {
@@ -994,11 +1033,11 @@ body.dialogue-active .player-hud {
 }
 
 .duel-end-victory .duel-end-badge {
-    color: #00ff66;
+    color: var(--duel-vic-color);
 }
 
 .duel-end-defeat .duel-end-badge {
-    color: #ff0055;
+    color: var(--duel-def-color);
 }
 
 .duel-end-title {
@@ -1010,19 +1049,19 @@ body.dialogue-active .player-hud {
 }
 
 .duel-end-victory .duel-end-title {
-    background: linear-gradient(135deg, #00ff66, #00ffcc);
+    background: linear-gradient(135deg, var(--duel-vic-color), var(--duel-vic-grad2));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .duel-end-defeat .duel-end-title {
-    background: linear-gradient(135deg, #ff0055, #ff5500);
+    background: linear-gradient(135deg, var(--duel-def-color), var(--duel-def-grad2));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .duel-end-subtitle {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 16px;
     margin: 0 0 30px 0;
 }
@@ -1035,7 +1074,7 @@ body.dialogue-active .player-hud {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--game-hp-bg);
 }
 
 .duel-end-stat-item {
@@ -1046,7 +1085,7 @@ body.dialogue-active .player-hud {
 }
 
 .duel-end-stat-label {
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 .duel-end-stat-val {
@@ -1057,11 +1096,11 @@ body.dialogue-active .player-hud {
 }
 
 .duel-end-victory .duel-end-stat-val {
-    color: #00ff66;
+    color: var(--duel-vic-color);
 }
 
 .duel-end-defeat .duel-end-stat-val {
-    color: #ff0055;
+    color: var(--duel-def-color);
 }
 
 .duel-end-btn {
@@ -1077,24 +1116,24 @@ body.dialogue-active .player-hud {
 }
 
 .duel-end-victory .duel-end-btn {
-    background: linear-gradient(135deg, #00ff66, #00b344);
+    background: linear-gradient(135deg, var(--duel-vic-color), var(--duel-vic-btn2));
     color: #05070f;
-    box-shadow: 0 4px 15px rgba(0, 255, 102, 0.3);
+    box-shadow: 0 4px 15px rgba(var(--duel-vic-rgb), 0.3);
 }
 
 .duel-end-victory .duel-end-btn:hover {
-    box-shadow: 0 6px 20px rgba(0, 255, 102, 0.5);
+    box-shadow: 0 6px 20px rgba(var(--duel-vic-rgb), 0.5);
     transform: translateY(-2px);
 }
 
 .duel-end-defeat .duel-end-btn {
-    background: linear-gradient(135deg, #ff0055, #b3003b);
+    background: linear-gradient(135deg, var(--duel-def-color), var(--duel-def-btn2));
     color: #f8fafc;
-    box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+    box-shadow: 0 4px 15px rgba(var(--duel-def-rgb), 0.3);
 }
 
 .duel-end-defeat .duel-end-btn:hover {
-    box-shadow: 0 6px 20px rgba(255, 0, 85, 0.5);
+    box-shadow: 0 6px 20px rgba(var(--duel-def-rgb), 0.5);
     transform: translateY(-2px);
 }
 

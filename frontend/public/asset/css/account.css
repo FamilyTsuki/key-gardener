@@ -5,7 +5,7 @@
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    color: var(--text-color);
+    color: var(--site-color-1);
 }
 
 .account-title {
@@ -13,12 +13,12 @@
     font-weight: 800;
     text-align: left;
     margin-bottom: 30px;
-    color: var(--primary-color);
+    color: var(--site-color-2);
 }
 
 .account-content {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
+    background: var(--site-color-3);
+    border: 1px solid var(--site-color-4);
     padding: 25px;
     border-radius: 16px;
     display: flex;
@@ -35,14 +35,14 @@
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--primary-color);
-    background-color: var(--black);
+    border: 2px solid var(--site-color-2);
+    background-color: var(--site-color-5);
 }
 
 .account-info {
     font-size: 1.1rem;
     margin: 0;
-    color: var(--text-color);
+    color: var(--site-color-1);
 }
 
 .clickable-avatar {
@@ -75,9 +75,9 @@
     grid-column: 3;
     justify-self: start;
     margin-left: 15px;
-    background-color: var(--light-overlay);
-    border: 1px solid var(--card-border);
-    color: var(--text-color);
+    background-color: var(--site-color-6);
+    border: 1px solid var(--site-color-4);
+    color: var(--site-color-1);
     border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
@@ -86,9 +86,9 @@
 }
 
 .edit:hover {
-    background-color: var(--primary-translucent);
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: var(--site-color-7);
+    color: var(--site-color-2);
+    border-color: var(--site-color-2);
 }
 
 
@@ -96,7 +96,7 @@
 .name {
     font-size: 1.4rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--site-color-2);
 }
 
 .password-container {
@@ -106,7 +106,7 @@
     max-width: 500px;
     align-items: center;
     margin-top: 20px;
-    border-top: 1px solid var(--card-border);
+    border-top: 1px solid var(--site-color-4);
     padding-top: 20px;
     gap: 12px;
 }
@@ -115,7 +115,7 @@
     margin: 0 0 10px 0;
     font-size: 1.3rem;
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--site-color-2);
 }
 
 .password-input {
@@ -134,7 +134,7 @@
 .nav-logout {
     display: inline-block;
     margin-top: 20px;
-    color: var(--danger-color);
+    color: var(--site-color-8);
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;
@@ -146,9 +146,9 @@
 }
 
 .nav-logout:hover {
-    color: var(--danger-hover);
-    background: var(--danger-translucent-hover);
-    border-color: var(--danger-color);
+    color: var(--site-color-9);
+    background: var(--site-color-10);
+    border-color: var(--site-color-8);
 }
 
 /* Statistics styles */
@@ -159,7 +159,7 @@
     max-width: 500px;
     align-items: center;
     margin-top: 20px;
-    border-top: 1px solid var(--card-border);
+    border-top: 1px solid var(--site-color-4);
     padding-top: 20px;
     gap: 15px;
 }
@@ -172,8 +172,8 @@
 }
 
 .stat-item {
-    background: var(--black);
-    border: 1px solid var(--card-border);
+    background: var(--site-color-5);
+    border: 1px solid var(--site-color-4);
     border-radius: 8px;
     padding: 12px;
     display: flex;
@@ -185,7 +185,7 @@
 
 .stat-label {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--site-color-11);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 5px;
@@ -194,7 +194,7 @@
 .stat-value {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--site-color-2);
 }
 
 /* Rank Colors */
@@ -271,7 +271,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--card-border);
+    background-color: var(--site-color-4);
     transition: .4s;
     border-radius: 36px;
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
@@ -284,7 +284,7 @@
     width: 28px;
     left: 4px;
     bottom: 4px;
-    background-color: var(--card-bg);
+    background-color: var(--site-color-3);
     transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
     border-radius: 50%;
     display: flex;
@@ -295,7 +295,7 @@
 }
 
 .theme-switch-checkbox:checked + .theme-switch-slider {
-    background-color: var(--primary-color);
+    background-color: var(--site-color-2);
 }
 
 .theme-switch-checkbox:checked + .theme-switch-slider:before {
@@ -304,7 +304,7 @@
 }
 
 .theme-switch-checkbox:focus + .theme-switch-slider {
-    box-shadow: 0 0 1px var(--primary-color);
+    box-shadow: 0 0 1px var(--site-color-2);
 }
 
 /* =============== PROFILE VIEW CLASSES =============== */
@@ -317,7 +317,7 @@
 
 .profile-username {
     margin: 0 0 15px 0;
-    color: var(--primary-color);
+    color: var(--site-color-2);
     font-size: 2rem;
 }
 
