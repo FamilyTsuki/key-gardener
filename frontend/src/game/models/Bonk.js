@@ -19,8 +19,8 @@ export default class Bonk extends DamageObject {
 
         this.timer = 0;
         this.isAttacking = false;
-        this.duration = 1000;
-        this.attackWindow = 200;
+        this.duration = 500;
+        this.attackWindow = 250;
         this.spacing = spacing;
         const geoWidth = size.width * spacing * 0.9;
         const geoHeight = size.height * spacing * 0.9;
@@ -51,25 +51,29 @@ export default class Bonk extends DamageObject {
 
         if (this.timer < this.duration) {
             this.isAttacking = false;
-            this.material.opacity = 0.3;
+            const remaining = this.duration - this.timer;
+            let blinkInterval = 200;
+            if (remaining < 300) {
+                blinkInterval = 70;
+            } else if (remaining < 600) {
+                blinkInterval = 120;
+            }
+            const isBlinkOn = Math.floor(this.timer / blinkInterval) % 2 === 0;
+            this.material.opacity = isBlinkOn ? 0.4 : 0.1;
             this.material.color.set(0xff0000);
         } else if (this.timer < this.duration + this.attackWindow) {
             if (!this.isAttacking) {
                 this.isAttacking = true;
-                this.material.opacity = 0.8;
-                this.material.color.set(0xffffff);
                 AudioManager.playSFX("/asset/game_assets/sounds/bonk.wav", "enemy", 0.5);
                 if (typeof window.startShake === "function") {
-                    window.startShake(1.5);
-                } else {
-                    console.warn(
-                        "window.startShake n'est pas encore définie !"
-                    );
+                    window.startShake(4.5);
                 }
                 if (this.checkCollision(player)) {
                     player.damage(this.damage, "Touché par une attaque de zone.");
                 }
             }
+            this.material.opacity = 0.8;
+            this.material.color.set(0xffffff);
         } else {
             this.isDead = true;
             if (this.mesh) {
@@ -87,7 +91,15 @@ export default class Bonk extends DamageObject {
     draw(ctx) {
         ctx.save();
         if (!this.isAttacking) {
-            ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+            const remaining = this.duration - this.timer;
+            let blinkInterval = 200;
+            if (remaining < 300) {
+                blinkInterval = 70;
+            } else if (remaining < 600) {
+                blinkInterval = 120;
+            }
+            const isBlinkOn = Math.floor(this.timer / blinkInterval) % 2 === 0;
+            ctx.fillStyle = isBlinkOn ? "rgba(255, 0, 0, 0.4)" : "rgba(255, 0, 0, 0.1)";
             ctx.strokeStyle = "red";
             ctx.lineWidth = 2;
             ctx.fillRect(

@@ -9,8 +9,9 @@ const EMERGE_Y_OFFSET = -10;
 const CLAW_ABOVE_HEIGHT = 3.5;
 
 export default class BugBoss extends Actor {
-    constructor(name, hp, rawPosition, position, size, scene, fireballModel) {
+    constructor(name, hp, rawPosition, position, size, scene, fireballModel, level = 1) {
         super(name, hp, hp, rawPosition, position, size);
+        this.level = level;
         this.stateTimer = 0;
         this.attackInterval = 1800;
         this.clawCooldown = 2500;
@@ -439,27 +440,40 @@ export default class BugBoss extends Actor {
     }
 
     calculateClawTargetAndStretch(elapsed, initialTipWorldPos, targetWorldPos, targetWorldPosAbove, targetStretch) {
-        if (elapsed < 0.4) {
-            const progress = elapsed / 0.4;
-            const targetIK = new THREE.Vector3().lerpVectors(initialTipWorldPos, targetWorldPosAbove, progress);
+        const warning = this.currentWarningDuration || 0.5;
+        const impactTime = Math.max(0.2, warning - 0.05);
+        
+        const raiseDuration = Math.min(0.3, impactTime * 0.75);
+        const slamDuration = Math.min(0.1, impactTime * 0.25);
+        const stillDuration = impactTime - raiseDuration - slamDuration;
+        
+        if (elapsed < stillDuration) {
+            return { targetIK: initialTipWorldPos.clone(), stretch: 1.0, isFinished: false };
+        }
+        if (elapsed < stillDuration + raiseDuration) {
+            const progress = (elapsed - stillDuration) / raiseDuration;
+            const easeOutProgress = 1 - Math.pow(1 - progress, 3);
+            const targetIK = new THREE.Vector3().lerpVectors(initialTipWorldPos, targetWorldPosAbove, easeOutProgress);
             return { targetIK, stretch: 1.0, isFinished: false };
         }
-        if (elapsed < 0.55) {
-            const progress = (elapsed - 0.4) / 0.15;
-            const targetIK = new THREE.Vector3().lerpVectors(targetWorldPosAbove, targetWorldPos, progress);
-            const stretch = THREE.MathUtils.lerp(1.0, targetStretch, progress);
+        if (elapsed < impactTime) {
+            const progress = (elapsed - stillDuration - raiseDuration) / slamDuration;
+            const easeInProgress = progress * progress * progress;
+            const targetIK = new THREE.Vector3().lerpVectors(targetWorldPosAbove, targetWorldPos, easeInProgress);
+            const stretch = THREE.MathUtils.lerp(1.0, targetStretch, easeInProgress);
             return { targetIK, stretch, isFinished: false };
         }
-        if (elapsed < 0.7) {
-            if (window.startShake && elapsed >= 0.55 && elapsed < 0.58) {
-                window.startShake(2.0);
+        if (elapsed < warning + 0.25) {
+            if (window.startShake && elapsed >= impactTime && elapsed < impactTime + 0.04) {
+                window.startShake(4.5);
             }
             return { targetIK: targetWorldPos.clone(), stretch: targetStretch, isFinished: false };
         }
-        if (elapsed < 1.2) {
-            const progress = (elapsed - 0.7) / 0.5;
-            const targetIK = new THREE.Vector3().lerpVectors(targetWorldPos, initialTipWorldPos, progress);
-            const stretch = THREE.MathUtils.lerp(targetStretch, 1.0, progress);
+        if (elapsed < warning + 0.75) {
+            const progress = (elapsed - (warning + 0.25)) / 0.5;
+            const easeInOutProgress = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+            const targetIK = new THREE.Vector3().lerpVectors(targetWorldPos, initialTipWorldPos, easeInOutProgress);
+            const stretch = THREE.MathUtils.lerp(targetStretch, 1.0, easeInOutProgress);
             return { targetIK, stretch, isFinished: false };
         }
         return { targetIK: null, stretch: 1.0, isFinished: true };
@@ -470,8 +484,8 @@ export default class BugBoss extends Actor {
         this.clawTimer += deltaTime;
 
         const isEnraged = this.hp < this.hpMax / 2;
-        const currentAttackInterval = isEnraged ? this.attackInterval * 0.7 : this.attackInterval;
-        const currentClawCooldown = isEnraged ? this.clawCooldown * 0.7 : this.clawCooldown;
+        const currentAttackInterval = isEnraged ? this.attackInterval * 0.85 : this.attackInterval;
+        const currentClawCooldown = isEnraged ? this.clawCooldown * 0.85 : this.clawCooldown;
 
         if (isEnraged && this.bugModel) {
             this.bugModel.traverse((child) => {
@@ -496,7 +510,7 @@ export default class BugBoss extends Actor {
 
     attackFireball(playerPos, projectiles) {
         const isEnraged = this.hp < this.hpMax / 2;
-        const fireballCount = isEnraged ? 7 : 4;
+        const fireballCount = isEnraged ? 5 : 4;
         const dx = playerPos.x - this.rawPosition.x;
         const dy = playerPos.y - this.rawPosition.y;
         const angleToPlayer = Math.atan2(dx, dy);
@@ -507,7 +521,7 @@ export default class BugBoss extends Actor {
 
         for (let i = 0; i < fireballCount; i++) {
             const finalAngle = startAngle + step * i;
-            const speed = isEnraged ? 0.12 : 0.09;
+            const speed = isEnraged ? 0.10 : 0.09;
             const velocity = {
                 x: Math.sin(finalAngle) * speed,
                 y: Math.cos(finalAngle) * speed,
@@ -539,6 +553,12 @@ export default class BugBoss extends Actor {
 
     attackClaw(playerPos, bonks) {
         console.log("Claw target coordinates:", playerPos.x, playerPos.y);
+        
+        const isEnraged = this.hp < this.hpMax / 2;
+        const baseWarning = Math.max(0.4, 0.9 - (this.level - 1) * 0.05);
+        const warningDuration = isEnraged ? baseWarning * 0.9 : baseWarning;
+        
+        this.currentWarningDuration = warningDuration;
         this.attackStartTime = this.totalTime;
         this.isAttacking = true;
 
@@ -554,7 +574,8 @@ export default class BugBoss extends Actor {
                 { width: 3, height: 3 },
                 30,
                 this.scene,
-                KEYBOARD_SPACING
+                KEYBOARD_SPACING,
+                warningDuration * 1000
             )
         );
     }

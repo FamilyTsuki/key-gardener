@@ -88,7 +88,7 @@ export class SurvivePhase extends GamePhase {
         window.addEventListener("settings_updated", this.settingsListener);
 
         if (this.options.boss) await this.enemies.spawnBoss(this.renderer.worldGroup);
-        if (this.options.bugBoss) await this.enemies.spawnBugBoss(this.renderer.worldGroup);
+        if (this.options.bugBoss) await this.enemies.spawnBugBoss(this.renderer.worldGroup, this.gameEngine.currentLevel);
 
         if (localStorage.getItem('unlockedFingersColors') === 'true') {
             this.applyKeyboardFingerColors();

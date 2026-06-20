@@ -347,7 +347,7 @@ export default class Enemies {
         this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
     }
 
-    async spawnBugBoss(scene) {
+    async spawnBugBoss(scene, level = 1) {
         const bossRawPosition = { x: 5, y: -4.2 };
 
         this.#boss = new BugBoss(
@@ -361,7 +361,8 @@ export default class Enemies {
             },
             { width: 1, height: 1 },
             scene,
-            this.#fireBallModel
+            this.#fireBallModel,
+            level
         );
         this.#container.push(this.#boss);
         this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
