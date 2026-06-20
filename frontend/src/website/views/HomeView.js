@@ -125,7 +125,7 @@ export default class HomeView extends AbstractView {
                 el(
                     "div",
                     { className: "home-section-row home-contaner-2" },
-                    this.renderHologram("/asset/img/home_battle.webp", "Game Image"),
+                    this.renderHologram("https://media.tenor.com/f2PE7zHEx3gAAAAC/boykisser.gif", "Game Image"),
                     el(
                         "div",
                         { className: "home-info-container" },
