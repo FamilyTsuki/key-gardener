@@ -105,7 +105,7 @@ export default class HomeView extends AbstractView {
                                 {
                                     href: "/game?mode=training",
                                     dataset: { link: true },
-                                    className: "training-link hidden",
+                                    className: "training-link",
                                     id: "training-btn",
                                     onclick: (e) => {
                                         if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
