@@ -7,6 +7,7 @@ import { SurviveRenderer } from "./survive/SurviveRenderer.js";
 import { DialogueBox } from "../ui/DialogueBox.js";
 import { TrainingUI } from "./training/TrainingUI.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 export class TrainingPhase extends GamePhase {
     constructor(gameEngine) {
@@ -18,8 +19,10 @@ export class TrainingPhase extends GamePhase {
         this.ui = null;
         this.isReady = false;
         this.currentLevel = 1;
-        this.trainingState = "IDLE"; // IDLE, PROMPT, WAITING_ANSWER, EXERCISE, RESULT
+        this.trainingState = "IDLE"; 
         this.currentTyped = "";
+        this.correctTyped = "";
+        this.errorTimeout = null;
         this.exerciseWords = [];
         this.exerciseIndex = 0;
         this.exerciseStartTime = 0;
@@ -27,6 +30,7 @@ export class TrainingPhase extends GamePhase {
     }
 
     async init() {
+        AudioManager.init();
         const scene = this.gameEngine.scene;
         this.renderer.init(scene, this.gameEngine.camera, "training");
 
@@ -117,6 +121,11 @@ export class TrainingPhase extends GamePhase {
                 this.gameEngine.isPaused = false;
                 this.trainingState = "WAITING_ANSWER";
                 this.currentTyped = "";
+                this.correctTyped = "";
+                if (this.errorTimeout) {
+                    clearTimeout(this.errorTimeout);
+                    this.errorTimeout = null;
+                }
                 this.ui.showPrompt(LanguageManager.t(promptKey), ["SIMON", "ALPHABET", "SYLLABES", "PHRASES", "REFUSER"], this.currentTyped);
             }
         );
@@ -126,6 +135,11 @@ export class TrainingPhase extends GamePhase {
         this.trainingState = "EXERCISE";
         this.currentExerciseType = type;
         this.currentTyped = "";
+        this.correctTyped = "";
+        if (this.errorTimeout) {
+            clearTimeout(this.errorTimeout);
+            this.errorTimeout = null;
+        }
         this.exerciseIndex = 0;
         this.totalKeystrokes = 0;
         this.exerciseStartTime = Date.now();
@@ -156,7 +170,6 @@ export class TrainingPhase extends GamePhase {
             return;
         }
 
-        // SYLLABES or default
         const syllabes = ["CH", "OU", "TR", "ION", "ENT", "TION", "MENT", "QUE", "QU", "EAU", "BL", "PR", "BR", "GR", "FR", "VR"];
         let wordCount = 20;
         let availableWords = syllabes;
@@ -170,17 +183,14 @@ export class TrainingPhase extends GamePhase {
     }
 
     startSimonRound() {
-        // Pick a random letter A-Z
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         this.simonTargetKey = letters[Math.floor(Math.random() * letters.length)];
         this.simonRoundStartTime = Date.now();
         
-        // Highlight key on 3D keyboard
         const targetObj = this.keyboard?.find(this.simonTargetKey);
         if (targetObj && targetObj.mesh && targetObj.mesh.children[1]) {
-            // Save current color
             targetObj.tempSimonColor = targetObj.mesh.children[1].material.color.getHex();
-            targetObj.mesh.children[1].material.color.setHex(0xff0000); // Red
+            targetObj.mesh.children[1].material.color.setHex(0xff0000); 
         }
 
         this.ui.showExercise(this.simonTargetKey, "", `Réflexes ${this.exerciseIndex + 1} / ${this.simonTotalRounds}`);
@@ -204,7 +214,6 @@ export class TrainingPhase extends GamePhase {
             resultMsg = resultMsg.replace("{sec}", durationSec.toString());
         } else {
             const durationMin = (Date.now() - this.exerciseStartTime) / 60000;
-            // WPM calculation: standard is 5 characters per word
             const wpm = Math.round((this.totalKeystrokes / 5) / durationMin);
             resultMsg = LanguageManager.t("engine.trainingResult") || "Bravo ! Ta vitesse est de {wpm} MPM.";
             resultMsg = resultMsg.replace("{wpm}", wpm.toString());
@@ -324,35 +333,63 @@ export class TrainingPhase extends GamePhase {
 
     handleWaitingAnswerKey(key) {
         if (key === "Backspace") {
-            this.currentTyped = this.currentTyped.slice(0, -1);
-        } else if (key.length === 1 && key.match(/[a-z]/i)) {
-            this.currentTyped += key.toUpperCase();
-        }
-
-        const options = ["SIMON", "ALPHABET", "SYLLABES", "PHRASES", "REFUSER"];
-
-        if (options.includes(this.currentTyped)) {
-            if (this.currentTyped === "REFUSER") {
-                this.cancelExercise();
+            if (this.errorTimeout) {
+                clearTimeout(this.errorTimeout);
+                this.errorTimeout = null;
+                this.currentTyped = this.correctTyped || "";
             } else {
-                this.startExercise(this.currentTyped);
+                this.currentTyped = this.currentTyped.slice(0, -1);
+                this.correctTyped = this.currentTyped;
             }
-            return;
-        }
+        } else if (key.length === 1 && key.match(/[a-z]/i)) {
+            if (this.errorTimeout) {
+                clearTimeout(this.errorTimeout);
+                this.errorTimeout = null;
+                this.currentTyped = this.correctTyped || "";
+            } else {
+                this.correctTyped = this.currentTyped;
+            }
 
-        let isPrefix = false;
-        for (const opt of options) {
-            if (opt.startsWith(this.currentTyped)) {
-                isPrefix = true;
-                break;
+            const char = key.toUpperCase();
+            const tempTyped = this.currentTyped + char;
+            
+            const options = ["SIMON", "ALPHABET", "SYLLABES", "PHRASES", "REFUSER"];
+            
+            let isPrefix = false;
+            for (const opt of options) {
+                if (opt.startsWith(tempTyped)) {
+                    isPrefix = true;
+                    break;
+                }
+            }
+
+            if (isPrefix) {
+                this.currentTyped = tempTyped;
+                this.correctTyped = this.currentTyped;
+                
+                if (options.includes(this.currentTyped)) {
+                    if (this.currentTyped === "REFUSER") {
+                        this.cancelExercise();
+                    } else {
+                        this.startExercise(this.currentTyped);
+                    }
+                    return;
+                }
+            } else {
+                this.currentTyped = tempTyped;
+                this.errorTimeout = setTimeout(() => {
+                    this.currentTyped = this.correctTyped;
+                    this.errorTimeout = null;
+                    let promptKey = "engine.trainingPrompt";
+                    if (this.exercisesDone >= 3) promptKey = "engine.trainingEncourage";
+                    this.ui.showPrompt(LanguageManager.t(promptKey), options, this.currentTyped);
+                }, 300);
             }
         }
 
-        if (!isPrefix) {
-            this.currentTyped = "";
-        }
-
-        this.ui.showPrompt("Quel exercice voulez-vous faire ?", options, this.currentTyped);
+        let promptKey = "engine.trainingPrompt";
+        if (this.exercisesDone >= 3) promptKey = "engine.trainingEncourage";
+        this.ui.showPrompt(LanguageManager.t(promptKey), ["SIMON", "ALPHABET", "SYLLABES", "PHRASES", "REFUSER"], this.currentTyped);
     }
 
     handleExerciseKey(key) {
@@ -360,10 +397,8 @@ export class TrainingPhase extends GamePhase {
             if (key.length === 1 && key.match(/[a-z]/i)) {
                 const char = key.toUpperCase();
                 if (char === this.simonTargetKey) {
-                    // Correct key
                     this.simonRoundTimes.push(Date.now() - this.simonRoundStartTime);
                     
-                    // Restore color
                     const targetObj = this.keyboard?.find(this.simonTargetKey);
                     if (targetObj && targetObj.mesh && targetObj.mesh.children[1] && targetObj.tempSimonColor !== undefined) {
                         targetObj.mesh.children[1].material.color.setHex(targetObj.tempSimonColor);
@@ -380,21 +415,41 @@ export class TrainingPhase extends GamePhase {
             return;
         }
 
-        // Space mapping
         if (key === " ") key = "SPACE";
 
         if ((key.length === 1 && key.match(/[a-z]/i)) || key === "SPACE") {
+            if (this.errorTimeout) {
+                clearTimeout(this.errorTimeout);
+                this.errorTimeout = null;
+                this.currentTyped = this.correctTyped || "";
+            } else {
+                this.correctTyped = this.currentTyped;
+            }
+
             const char = key === "SPACE" ? " " : key.toUpperCase();
             const currentWord = this.exerciseWords[this.exerciseIndex];
             
             if (char === currentWord[this.currentTyped.length]) {
                 this.currentTyped += char;
+                this.correctTyped = this.currentTyped;
                 if (char !== " ") this.totalKeystrokes++;
+            } else {
+                this.currentTyped = this.correctTyped + char;
+                this.errorTimeout = setTimeout(() => {
+                    this.currentTyped = this.correctTyped;
+                    this.errorTimeout = null;
+                    
+                    let label = "Syllabe";
+                    if (this.currentExerciseType === "ALPHABET") label = "Sprint";
+                    if (this.currentExerciseType === "PHRASES") label = "Phrase";
+                    this.ui.showExercise(this.exerciseWords[this.exerciseIndex], this.currentTyped, `${label} ${this.exerciseIndex + 1} / ${this.exerciseWords.length}`);
+                }, 300);
             }
 
-            if (this.currentTyped === currentWord) {
+            if (this.currentTyped === currentWord && !this.errorTimeout) {
                 this.exerciseIndex++;
                 this.currentTyped = "";
+                this.correctTyped = "";
                 
                 if (this.exerciseIndex >= this.exerciseWords.length) {
                     this.finishExercise();
