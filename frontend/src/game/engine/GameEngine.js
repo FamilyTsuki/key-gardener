@@ -5,6 +5,7 @@ import { SurvivePhase } from "../phases/SurvivePhase.js";
 import { InfiniteVoidPhase } from "../phases/InfiniteVoidPhase.js";
 import { DuelPhase } from "../phases/DuelPhase.js";
 import { FallPhase } from "../phases/FallPhase.js";
+import { TrainingPhase } from "../phases/TrainingPhase.js";
 import { DoorEvent } from "../events/DoorEvent.js";
 import { HoleEvent } from "../events/HoleEvent.js";
 import { FlameWallEvent } from "../events/FlameWallEvent.js";
@@ -103,6 +104,10 @@ export class GameEngine {
             await this.setPhase(new DuelPhase(this, this.startData));
             return;
         }
+        if (this.startMode === "training") {
+            await this.setPhase(new TrainingPhase(this));
+            return;
+        }
 
         let initialPhaseName = "intro";
         try {
@@ -124,7 +129,8 @@ export class GameEngine {
             initialPhaseName === "world" ||
             initialPhaseName === "survive" ||
             initialPhaseName === "void" ||
-            initialPhaseName === "fall"
+            initialPhaseName === "fall" ||
+            initialPhaseName === "training"
         ) {
             await this.loadLevel(this.currentLevel);
         } else {
@@ -158,6 +164,9 @@ export class GameEngine {
                         return;
                     } else if (phaseType === "fall") {
                         await this.setPhase(new FallPhase(this, options));
+                        return;
+                    } else if (phaseType === "training") {
+                        await this.setPhase(new TrainingPhase(this, options));
                         return;
                     } else if (phaseType === "world") {
                         const eventMap = {
@@ -260,6 +269,9 @@ export class GameEngine {
                 assets.push("/asset/game_assets/models/player.glb");
             } else if (phaseType === "fall") {
                 assets.push("/asset/game_assets/models/player.glb");
+            } else if (phaseType === "training") {
+                assets.push("/asset/game_assets/models/player.glb");
+                assets.push("/asset/game_assets/models/sempai.glb");
             } else if (phaseType === "world") {
                 assets.push("/asset/game_assets/models/bug.glb");
                 assets.push("/asset/game_assets/models/worms.glb");
@@ -288,7 +300,7 @@ export class GameEngine {
                 sounds.push("/asset/game_assets/sounds/long-fall.wav");
                 sounds.push("/asset/game_assets/sounds/fire_wall.wav");
                 sounds.push("/asset/game_assets/sounds/big-jump.wav");
-            } else if (phaseType === "survive" || phaseType === "void") {
+            } else if (phaseType === "survive" || phaseType === "void" || phaseType === "training") {
                 sounds.push("/asset/game_assets/sounds/cave.wav");
                 sounds.push("/asset/game_assets/sounds/jump.wav");
                 sounds.push("/asset/game_assets/sounds/impact.wav");
@@ -426,6 +438,8 @@ export class GameEngine {
                 phase = "void";
             } else if (phaseName === "FallPhase") {
                 phase = "fall";
+            } else if (phaseName === "TrainingPhase") {
+                phase = "training";
             }
         }
 

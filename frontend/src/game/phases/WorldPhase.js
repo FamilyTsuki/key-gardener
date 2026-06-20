@@ -253,7 +253,7 @@ export class WorldPhase extends GamePhase {
             }
         }
 
-        const layout = this.isPlayingIntro ? null : (this.worldMap ? this.worldMap.mapLayout : null);
+        const layout = (this.isPlayingIntro || this.isTransitioning) ? null : (this.worldMap ? this.worldMap.mapLayout : null);
         this.player.update(deltaTime, layout);
         if (this.player && this.player.mesh) {
             if (this.isStunnedAfterFall) {

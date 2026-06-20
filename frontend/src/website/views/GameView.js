@@ -154,6 +154,8 @@ export default class GameView extends AbstractView {
                 window.dispatchEvent(new Event('popstate'));
                 return;
             }
+        } else if (window.location.search.includes("mode=training")) {
+            startMode = "training";
         }
 
         this.engine = new GameEngine(startMode, startData);

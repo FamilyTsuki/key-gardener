@@ -41,6 +41,7 @@ export default class Keyboard {
     loadAndCreateKeys(scene) {
         const isStyx = this.theme === "styx";
         const isDungeon = this.theme === "dungeon";
+        const isTraining = this.theme === "training";
 
         let stoneTexture = null;
         const dungeonFloorMats = [];
@@ -70,28 +71,36 @@ export default class Keyboard {
             ? new THREE.CylinderGeometry(1.3, 1.5, 0.4, 6)
             : isDungeon
             ? new THREE.CylinderGeometry(1.3, 1.4, 0.35, 8)
-            : new THREE.CylinderGeometry(1.4, 1.4, 0.3, 32);
+            : isTraining
+            ? new THREE.BoxGeometry(2.6, 0.3, 2.6)
+            : new THREE.CylinderGeometry(1.3 * Math.SQRT2, 1.4 * Math.SQRT2, 0.3, 4);
             
         const ringMat = isStyx
             ? new THREE.MeshStandardMaterial({ color: 0x7f8c8d, roughness: 0.8 })
             : isDungeon
             ? new THREE.MeshStandardMaterial({ map: stoneTexture, color: 0x555555, roughness: 1.0 })
+            : isTraining
+            ? new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.6 })
             : new THREE.MeshStandardMaterial({ color: 0xc5a059, roughness: 0.3, metalness: 0.8 });
 
         const capGeo = isStyx
             ? new THREE.CylinderGeometry(1.2, 1.4, 0.45, 6)
             : isDungeon
             ? new THREE.CylinderGeometry(1.1, 1.1, 0.45, 8)
-            : new THREE.CylinderGeometry(1.2, 1.2, 0.35, 32);
+            : isTraining
+            ? new THREE.BoxGeometry(2.4, 0.4, 2.4)
+            : new THREE.CylinderGeometry(1.0 * Math.SQRT2, 1.2 * Math.SQRT2, 0.35, 4);
             
         const capMat = isStyx
             ? new THREE.MeshStandardMaterial({ color: 0x1d2432, roughness: 0.8 })
             : isDungeon
             ? new THREE.MeshStandardMaterial({ map: stoneTexture, color: 0xaaaaaa, roughness: 0.9 })
+            : isTraining
+            ? new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 })
             : new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.1 });
 
         const planeGeometry = new THREE.PlaneGeometry(1.8, 1.8);
-        const textColor = isStyx ? "#00ffff" : isDungeon ? "#ff3300" : "#c5a059";
+        const textColor = isStyx ? "#00ffff" : isDungeon ? "#ff3300" : isTraining ? "#ffffff" : "#c5a059";
 
         this.#keyboardLayout.forEach((keyObj) => {
             const keyGroup = new THREE.Group();
@@ -129,6 +138,10 @@ export default class Keyboard {
             } else {
                 const ringMesh = new THREE.Mesh(ringGeo, ringMat);
                 const capMesh = new THREE.Mesh(capGeo, capMat.clone());
+                if (!isStyx && !isDungeon && !isTraining) {
+                    ringMesh.rotation.y = Math.PI / 4;
+                    capMesh.rotation.y = Math.PI / 4;
+                }
                 keyGroup.add(ringMesh);
                 keyGroup.add(capMesh);
 
@@ -153,7 +166,7 @@ export default class Keyboard {
                 });
                 
                 const letterPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-                const letterY = isStyx ? 0.24 : isDungeon ? 0.235 : 0.18;
+                const letterY = isStyx ? 0.24 : isDungeon ? 0.235 : isTraining ? 0.21 : 0.18;
                 letterPlane.position.set(0, letterY, 0);
                 letterPlane.rotation.x = -Math.PI / 2;
 
@@ -217,10 +230,11 @@ export default class Keyboard {
     update(enemiesManager = null) {
         const isStyx = this.theme === "styx";
         const isDungeon = this.theme === "dungeon";
+        const isTraining = this.theme === "training";
         
-        const pressedColor = isStyx ? 0x00ffff : isDungeon ? 0xff3300 : 0xc5a059;
-        const unpressedColor = isStyx ? 0x1d2432 : isDungeon ? 0xaaaaaa : 0x111111;
-        const pressedY = isStyx ? 0.0 : isDungeon ? -0.1 : 0.05;
+        const pressedColor = isStyx ? 0x00ffff : isDungeon ? 0xff3300 : isTraining ? 0x999999 : 0xc5a059;
+        const unpressedColor = isStyx ? 0x1d2432 : isDungeon ? 0xaaaaaa : isTraining ? 0x222222 : 0x111111;
+        const pressedY = isStyx ? 0.0 : isDungeon ? -0.1 : isTraining ? 0.0 : 0.05;
 
 
         this.#keyboardLayout.forEach((keyObj) => {
@@ -233,7 +247,11 @@ export default class Keyboard {
                     capMaterial.color.setHex(pressedColor);
                 } else {
                     keyObj.mesh.position.y = 0.15;
-                    capMaterial.color.setHex(unpressedColor);
+                    if (keyObj.defaultTrainingColor !== undefined) {
+                        capMaterial.color.setHex(keyObj.defaultTrainingColor);
+                    } else {
+                        capMaterial.color.setHex(unpressedColor);
+                    }
                 }
             }
         });

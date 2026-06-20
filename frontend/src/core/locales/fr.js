@@ -37,6 +37,7 @@ export const fr = {
         title: "{gameName}",
         description: "longez dans un monde où votre clavier est votre seule arme. Apprenez à taper naturellement en vous immergeant dans un univers à la fois numérique et fantastique — lancez des sorts, survivez aux hordes et traquez le Virus qui corrompt le système.",
         startGame: "Commencer le jeu",
+        trainingMode: "Mode Entraînement",
         whyTitle: "La Dactylographie Réinventée",
         whyDesc: "Oubliez les cours de frappe ennuyeux. {gameName} fusionne progression rogue-lite, exploration de donjons et combats de mots intenses dans une épreuve impitoyable de vitesse et de précision.",
         feature1Title: "Tapez Vite ou Mourez",
@@ -228,7 +229,10 @@ export const fr = {
         introPrologue: "Ça a commencé comme une après-midi habituelle, à jouer à un super jeu vidéo...",
         introDialogue1: "...",
         introDialogue2: "Il y a quelqu'un ?",
-        introDialogueIdle: "Bah alors, tu viens pas ? Vas-y, clique sur la faille ou appuie sur Entrée une fois que j'aurai fini de parler pour commencer."
+        introDialogueIdle: "Bah alors, tu viens pas ? Vas-y, clique sur la faille ou appuie sur Entrée une fois que j'aurai fini de parler pour commencer.",
+        trainingWelcome1: "Bonjour, jeune survivant ! Je suis Senpai, ton entraîneur personnel de dactylographie.",
+        trainingWelcome2: "Regarde le clavier devant toi : les couleurs indiquent quel doigt utiliser pour chaque touche.",
+        trainingWelcome3: "Prépare-toi, nous allons commencer par quelques exercices simples pour délier tes doigts !"
     },
     admin: {
         title: "Niveaux",
@@ -244,6 +248,7 @@ export const fr = {
         worldPhase: "Exploration (World)",
         voidPhase: "Vide Infini",
         fallPhase: "Chute Libre (Fall)",
+        trainingPhase: "Entraînement (Senpai)",
         new: "(Nouveau)",
         editConfig: "Éditez les configurations pour ce niveau.",
         deleteLevel: "Supprimer le niveau",

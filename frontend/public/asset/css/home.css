@@ -23,6 +23,21 @@
     background-color: var(--site-color-36);
 }
 
+.training-btn {
+    background-color: var(--site-color-14);
+}
+
+.training-btn:hover {
+    background-color: var(--site-color-34);
+}
+
+.home-btns-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 /* ===============GLOBAL =============== */
 
 .hologram-wrapper {

@@ -29,7 +29,7 @@ export const EVENT_REGISTRY = [
     {
         type: "dialogue",
         labelKey: "admin.actionDialogue",
-        availableIn: ["survive", "world", "fall", "void"],
+        availableIn: ["survive", "world", "fall", "void", "training"],
         fields: [
             { id: "dialogueModel", type: "text", labelKey: "admin.model3D", defaultValue: "/asset/game_assets/models/player.glb" },
             { id: "dialogue", type: "textarea", labelKey: "admin.dialogues", placeholderKey: "admin.dialoguePlaceholder", defaultValue: "" }
@@ -38,7 +38,7 @@ export const EVENT_REGISTRY = [
     {
         type: "heal",
         labelKey: "admin.actionHeal",
-        availableIn: ["survive", "world", "fall", "void"],
+        availableIn: ["survive", "world", "fall", "void", "training"],
         fields: [
             { id: "healAmount", type: "number", labelKey: "admin.hp", defaultValue: 50 }
         ]

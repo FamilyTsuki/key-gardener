@@ -80,7 +80,7 @@ export default class HomeView extends AbstractView {
                         ),
                         el(
                             "p",
-                            {},
+                            { className: "home-btns-container" },
                             el(
                                 "a",
                                 {
@@ -99,6 +99,25 @@ export default class HomeView extends AbstractView {
                                     }
                                 },
                                 LanguageManager.t("home.startGame")
+                            ),
+                            el(
+                                "a",
+                                {
+                                    href: "/game?mode=training",
+                                    dataset: { link: true },
+                                    className: "start-btn hidden training-btn",
+                                    id: "training-btn",
+                                    onclick: (e) => {
+                                        if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
+                                            document.documentElement.requestFullscreen().then(() => {
+                                                if (navigator.keyboard && navigator.keyboard.lock) {
+                                                    navigator.keyboard.lock(["Escape"]).catch(e => console.warn(e));
+                                                }
+                                            }).catch(err => console.warn(err));
+                                        }
+                                    }
+                                },
+                                LanguageManager.t("home.trainingMode")
                             )
                         )
                     )
@@ -196,7 +215,7 @@ export default class HomeView extends AbstractView {
             const caveAnimation = new CaveAnimation(this.tunnelContainer);
             caveAnimation.init();
         }
-        const deviceDetector = new DeviceCapabilitiesDetector("start-btn", () => AuthService.isAuthenticated());
+        const deviceDetector = new DeviceCapabilitiesDetector(".start-btn", () => AuthService.isAuthenticated());
         deviceDetector.initialize();
         this.setupHologramListeners();
         this.startGlitchLoop();

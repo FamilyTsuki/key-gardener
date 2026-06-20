@@ -71,14 +71,10 @@ const isProd = process.env.NODE_ENV === "production";
 const frontendDir = isProd ? path.join(__dirname, "../dist/public") : path.join(__dirname, "../frontend/public");
 const srcDir = isProd ? path.join(__dirname, "../dist/src") : path.join(__dirname, "../frontend/src");
 
-if (!isProd) {
-    // Cache is active even in development mode
-}
-
 const staticCacheOptions = {
-    maxAge: "1d",
+    maxAge: isProd ? "1d" : 0,
     setHeaders: (res, filePath) => {
-        if (filePath.endsWith(".html")) {
+        if (filePath.endsWith(".html") || !isProd) {
             res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         } else {
             res.setHeader("Cache-Control", "public, max-age=86400");

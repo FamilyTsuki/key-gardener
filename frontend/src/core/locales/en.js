@@ -37,6 +37,7 @@ export const en = {
         title: "{gameName}",
         description: "Dive into a world where your keyboard is your only weapon. Learn to type naturally by immersing yourself in a universe blending digital and fantasy — cast spells, survive the hordes, and hunt the Virus corrupting the system.",
         startGame: "Start Game",
+        trainingMode: "Training Mode",
         whyTitle: "Typing Reimagined",
         whyDesc: "Forget boring typing tutors. {gameName} fuses rogue-lite progression, intense dungeon crawling, and fast-paced word combat into an unforgiving trial of speed and accuracy.",
         feature1Title: "Type Fast or Die Trying",
@@ -227,7 +228,10 @@ export const en = {
         introPrologue: "It started like any other afternoon, playing a great video game...",
         introDialogue1: "...",
         introDialogue2: "Is anyone there?",
-        introDialogueIdle: "Well, aren't you coming? Go ahead, click on the rift or press Enter once I'm done speaking to start."
+        introDialogueIdle: "Well, aren't you coming? Go ahead, click on the rift or press Enter once I'm done speaking to start.",
+        trainingWelcome1: "Hello, young survivor! I am Senpai, your personal typing coach.",
+        trainingWelcome2: "Look at the keyboard in front of you: the colors show which finger to use for each key.",
+        trainingWelcome3: "Prepare yourself, we will start with some simple exercises to warm up your fingers!"
     },
     admin: {
         title: "Levels",
@@ -243,6 +247,7 @@ export const en = {
         worldPhase: "Exploration (World)",
         voidPhase: "Infinite Void",
         fallPhase: "Free Fall (Fall)",
+        trainingPhase: "Training (Senpai)",
         new: "(New)",
         editConfig: "Edit the configurations for this level.",
         deleteLevel: "Delete the level",

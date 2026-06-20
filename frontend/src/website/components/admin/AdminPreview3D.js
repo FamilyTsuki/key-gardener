@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { SurviveDecorBuilder } from "../../../game/utilities/SurviveDecorBuilder.js";
 import ModelLoader from "../../../core/utils/ModelLoader.js";
 import Keyboard from "../../../game/managers/Keyboard.js";
-import { getExtendedMapLayout } from "../../../game/utilities/KEYBOARD.js";
+import { getExtendedMapLayout, getKeyboardLayout } from "../../../game/utilities/KEYBOARD.js";
 import WorldMap from "../../../game/managers/WorldMap.js";
 import { createWordlLayout } from "../../../game/utilities/WORLD_LAYOUT.js";
 import { applyTriplanarMapping } from '../../../game/utilities/TextureUtils.js';
@@ -103,8 +103,8 @@ export class AdminPreview3D {
     renderPreview(phaseType, options, events) {
         this.clearScene();
 
-        if (phaseType === "survive") {
-            this.renderSurvivePreview(options);
+        if (phaseType === "survive" || phaseType === "training") {
+            this.renderSurvivePreview(options, phaseType);
         } else if (phaseType === "void" || phaseType === "fall") {
             this.renderVoidOrFallPreview();
         } else {
@@ -114,7 +114,7 @@ export class AdminPreview3D {
         this.renderEventsPreviews(phaseType, events);
     }
 
-    renderSurvivePreview(options) {
+    renderSurvivePreview(options, phaseType) {
         this.camera.position.set(15, 18, 7);
         this.camera.lookAt(15, 0, 3);
         this.scene.background = new THREE.Color(0x0a0c10);
@@ -126,11 +126,20 @@ export class AdminPreview3D {
         this.decorUpdateFn = decorObj.update;
         this.currentDecor.position.set(0, 0, 0);
 
-        const padSides = options.paddingSides !== undefined ? Number(options.paddingSides) : 3;
-        const padTB = options.paddingTopBottom !== undefined ? Number(options.paddingTopBottom) : 5;
-
         this.keyboardGroup = new THREE.Group();
-        Keyboard.init(this.keyboardGroup, getExtendedMapLayout(padSides, padTB), decorType);
+        let layout;
+        let theme = decorType;
+        
+        if (phaseType === "training") {
+            layout = getKeyboardLayout();
+            theme = "training";
+        } else {
+            const padSides = options.paddingSides !== undefined ? Number(options.paddingSides) : 3;
+            const padTB = options.paddingTopBottom !== undefined ? Number(options.paddingTopBottom) : 5;
+            layout = getExtendedMapLayout(padSides, padTB);
+        }
+
+        Keyboard.init(this.keyboardGroup, layout, theme);
         this.keyboardGroup.position.set(0, 0, 0);
         this.scene.add(this.keyboardGroup);
 
@@ -275,7 +284,7 @@ export class AdminPreview3D {
 
             const tileDistance = evt.tileDistance || 0;
 
-            if (phaseType === 'survive') {
+            if (phaseType === 'survive' || phaseType === 'training') {
                 mesh.position.set(0, size / 2, tileDistance * 3.2);
                 this.scene.add(mesh);
                 this.eventMeshes.push(mesh);

@@ -142,12 +142,39 @@ export class DialogueBox {
         ModelLoader.load(modelPath, (gltf) => {
             this.model = gltf.scene;
             
-            this.model.position.set(0, -2.5, 0);
+            const box = new THREE.Box3().setFromObject(this.model);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            
+            this.model.position.x = -center.x;
+            this.model.position.y = -center.y;
+            this.model.position.z = -center.z;
+            
             this.model.rotation.y = Math.PI / 8;
-            this.model.scale.set(4, 4, 4);
+            
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const targetSize = 5.0;
+            const scale = targetSize / (maxDim || 1);
+            this.model.scale.setScalar(scale);
+            
+            this.model.position.y -= 0.5;
 
+            if (!this.scene) return;
             this.scene.add(this.model);
-            this.renderer.render(this.scene, this.camera);
+            
+            this.camera.lookAt(0, -0.5, 0);
+
+            const animate = () => {
+                if (!this.renderer || !this.scene || !this.camera) return;
+                this.animationId = requestAnimationFrame(animate);
+                
+                if (this.model) {
+                    this.model.rotation.y = Math.PI / 8 + Math.sin(performance.now() * 0.001) * 0.1;
+                }
+                
+                this.renderer.render(this.scene, this.camera);
+            };
+            animate();
         }, undefined, (error) => {
             console.error("Failed to load speaker model:", error);
         });
