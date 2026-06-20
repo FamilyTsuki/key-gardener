@@ -231,7 +231,13 @@ export const en = {
         introDialogueIdle: "Well, aren't you coming? Go ahead, click on the rift or press Enter once I'm done speaking to start.",
         trainingWelcome1: "Hello, young survivor! I am Senpai, your personal typing coach.",
         trainingWelcome2: "Look at the keyboard in front of you: the colors show which finger to use for each key.",
-        trainingWelcome3: "Prepare yourself, we will start with some simple exercises to warm up your fingers!"
+        trainingWelcome3: "Prepare yourself, we will start with some simple exercises to warm up your fingers!",
+        trainingPrompt: "What kind of training do you want to do today?",
+        trainingRefused: "Alright, let me know when you're ready.",
+        trainingResult: "Good job! Your typing speed is {wpm} WPM.",
+        trainingResultSimon: "Impressive! Your average reaction time is {ms} milliseconds.",
+        trainingResultAlphabet: "Not bad! You typed the alphabet in {sec} seconds.",
+        nextLevel: "Next Level"
     },
     admin: {
         title: "Levels",

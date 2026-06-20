@@ -232,7 +232,13 @@ export const fr = {
         introDialogueIdle: "Bah alors, tu viens pas ? Vas-y, clique sur la faille ou appuie sur Entrée une fois que j'aurai fini de parler pour commencer.",
         trainingWelcome1: "Bonjour, jeune survivant ! Je suis Senpai, ton entraîneur personnel de dactylographie.",
         trainingWelcome2: "Regarde le clavier devant toi : les couleurs indiquent quel doigt utiliser pour chaque touche.",
-        trainingWelcome3: "Prépare-toi, nous allons commencer par quelques exercices simples pour délier tes doigts !"
+        trainingWelcome3: "Prépare-toi, nous allons commencer par quelques exercices simples pour délier tes doigts !",
+        trainingPrompt: "Quel type d'entraînement veux-tu faire aujourd'hui ?",
+        trainingRefused: "Très bien, préviens-moi quand tu seras prêt.",
+        trainingResult: "Bravo ! Ta vitesse est de {wpm} MPM.",
+        trainingResultSimon: "Impressionnant ! Ton temps de réaction moyen est de {ms} millisecondes.",
+        trainingResultAlphabet: "Pas mal ! Tu as tapé l'alphabet en {sec} secondes.",
+        nextLevel: "Niveau Suivant",
     },
     admin: {
         title: "Niveaux",
