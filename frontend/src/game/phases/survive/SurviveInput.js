@@ -54,7 +54,13 @@ export class SurviveInput {
         }
 
         if (allowed) {
-            target.isPressed = true;
+            const isAlreadyOnKey = this.phase.player.targetPosition && 
+                                   this.phase.player.targetPosition.x === target.rawPosition.x && 
+                                   this.phase.player.targetPosition.y === target.rawPosition.y;
+                                   
+            if (!isAlreadyOnKey) {
+                target.isPressed = true;
+            }
             this.processSpell(originalKey);
         }
     }

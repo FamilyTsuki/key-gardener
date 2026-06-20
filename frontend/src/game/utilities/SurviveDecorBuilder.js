@@ -3,6 +3,7 @@ import { StyxDecor } from "./decors/StyxDecor.js";
 import { MineDecor } from "./decors/MineDecor.js";
 import { DungeonDecor } from "./decors/DungeonDecor.js";
 import { DefaultDecor } from "./decors/DefaultDecor.js";
+import { TrainingDecor } from "./decors/TrainingDecor.js";
 
 /**
  * Utility class acting as a Director for building various decorative environments using the Strategy pattern.
@@ -25,7 +26,8 @@ export class SurviveDecorBuilder {
         const strategies = {
             "styx": StyxDecor,
             "mine": MineDecor,
-            "dungeon": DungeonDecor
+            "dungeon": DungeonDecor,
+            "training": TrainingDecor
         };
 
         const BuilderStrategy = strategies[type] || DefaultDecor;

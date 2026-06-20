@@ -86,6 +86,10 @@ export class PlayerMovement {
     startMovement(newPosition, keyboardLayout) {
         if (this.pendingWormRepel) return { blocked: true, hitWorm: this.pendingWormRepel.worm, wormKey: this.pendingWormRepel.wormKey };
 
+        if (this.targetPosition && this.targetPosition.x === newPosition.x && this.targetPosition.y === newPosition.y) {
+            return { blocked: false };
+        }
+
         this.updateMovementDuration();
         this.startPosition = { x: this.x, y: this.y };
         

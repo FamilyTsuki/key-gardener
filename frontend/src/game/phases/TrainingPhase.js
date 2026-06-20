@@ -19,7 +19,7 @@ export class TrainingPhase extends GamePhase {
 
     async init() {
         const scene = this.gameEngine.scene;
-        this.renderer.init(scene, this.gameEngine.camera, "default");
+        this.renderer.init(scene, this.gameEngine.camera, "training");
 
         this.keyboard = Keyboard.init(
             this.renderer.worldGroup,
@@ -27,7 +27,15 @@ export class TrainingPhase extends GamePhase {
             "training"
         );
 
-        const fireballGltf = await ModelLoader.loadAsync("/asset/game_assets/models/fireball.glb");
+        const [fireballGltf, sempaiGltf] = await Promise.all([
+            ModelLoader.loadAsync("/asset/game_assets/models/fireball.glb"),
+            ModelLoader.loadAsync("/asset/game_assets/models/sempai.glb")
+        ]);
+
+        this.sempaiModel = sempaiGltf.scene;
+        this.sempaiModel.position.set(14.4, 4.2, -8); 
+        this.sempaiModel.scale.set(3.5, 3.5, 3.5); 
+        this.renderer.worldGroup.add(this.sempaiModel);
 
         this.player = new Player(
             "Héros",
@@ -135,6 +143,12 @@ export class TrainingPhase extends GamePhase {
         const target = this.keyboard?.find(keyName);
         if (!target) return;
 
+        if (this.player.targetPosition && 
+            this.player.targetPosition.x === target.rawPosition.x && 
+            this.player.targetPosition.y === target.rawPosition.y) {
+            return;
+        }
+
         target.isPressed = true;
         this.player.move({ x: target.rawPosition.x, y: target.rawPosition.y }, this.keyboard?.keyboardLayout);
 
@@ -162,6 +176,10 @@ export class TrainingPhase extends GamePhase {
         if (this.dBox) {
             this.dBox.destroy();
             this.dBox = null;
+        }
+        if (this.sempaiModel && this.renderer.worldGroup) {
+            this.renderer.worldGroup.remove(this.sempaiModel);
+            this.sempaiModel = null;
         }
         if (this.settingsListener) {
             window.removeEventListener("settings_updated", this.settingsListener);
