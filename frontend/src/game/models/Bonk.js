@@ -14,12 +14,12 @@ export default class Bonk extends DamageObject {
      * @param {THREE.Scene} scene - The THREE.js scene.
      * @param {number} spacing - The spacing multiplier for the position.
      */
-    constructor(position, size, damage, scene, spacing) {
+    constructor(position, size, damage, scene, spacing, duration = 500) {
         super(position, size, damage);
 
         this.timer = 0;
         this.isAttacking = false;
-        this.duration = 500;
+        this.duration = duration;
         this.attackWindow = 250;
         this.spacing = spacing;
         const geoWidth = size.width * spacing * 0.9;

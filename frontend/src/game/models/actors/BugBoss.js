@@ -86,7 +86,7 @@ export default class BugBoss extends Actor {
         const scaleFactor = this.size.width * 5 * 280;
         this.bugModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
         this.bugModel.rotation.y = 0;
-        this.bugModel.position.y = -0.5;
+        this.bugModel.position.y = -0.2;
         this.mesh.add(this.bugModel);
     }
 
@@ -123,49 +123,118 @@ export default class BugBoss extends Actor {
 
     updateDeathAnimation(deltaTime) {
         this.deathProgress += deltaTime / 1500;
+        const t = Math.min(1, this.deathProgress);
+
+        this.mesh.rotation.z = 0;
+        this.mesh.position.y = -t * 1.5;
+
+        if (this.bones) {
+            this.splayLegs(t);
+        }
+
         if (this.deathProgress >= 1) {
             this.deathProgress = 1;
             this.hp = -1;
             this.isDying = false;
             this.die();
-        } else {
-            const t = this.deathProgress;
-            this.mesh.position.y = EMERGE_Y_OFFSET * t;
-            this.mesh.rotation.y += deltaTime * 0.005;
-            const scaleFactor = 1 - t;
-            const baseScale = this.size.width * 5;
-            this.mesh.scale.set(
-                baseScale * scaleFactor,
-                baseScale * scaleFactor,
-                baseScale * scaleFactor
-            );
         }
+
         if (this.mesh) {
             this.mesh.updateMatrixWorld(true);
         }
     }
 
+    splayLegs(t) {
+        const legs = [
+            { side: "left", type: "front" },
+            { side: "right", type: "front" },
+            { side: "left", type: "back" },
+            { side: "right", type: "back" }
+        ];
+
+        for (const leg of legs) {
+            this.splayLeg(leg.side, leg.type, t);
+        }
+    }
+
+    splayLeg(side, type, t) {
+        const prefix = side === "left" ? "" : "R_";
+        const name = type === "front" ? "frontleg" : "backleg";
+        const root = this.bones[`${prefix}${name}`];
+        if (!root) {
+            return;
+        }
+
+        const initialQuat = this.initialBoneQuaternions[`${prefix}${name}`];
+        if (initialQuat) {
+            const initialDir = new THREE.Vector3(0, 1, 0).applyQuaternion(initialQuat).normalize();
+            const targetDir = this.getLegTargetDirection(side, type);
+            const deltaQuat = new THREE.Quaternion().setFromUnitVectors(initialDir, targetDir);
+            const targetQuat = deltaQuat.multiply(initialQuat);
+            root.quaternion.slerpQuaternions(initialQuat, targetQuat, t);
+        }
+
+        const joints = [
+            this.bones[`${prefix}${name}0`],
+            this.bones[`${prefix}${name}1`],
+            this.bones[`${prefix}${name}2`]
+        ];
+
+        for (let i = 0; i < joints.length; i++) {
+            const joint = joints[i];
+            if (!joint) {
+                continue;
+            }
+            const jointName = `${prefix}${name}${i}`;
+            const initialJointQuat = this.initialBoneQuaternions[jointName];
+            if (initialJointQuat) {
+                joint.quaternion.slerpQuaternions(initialJointQuat, new THREE.Quaternion(), t);
+            }
+            const initialJointPos = this.initialBonePositions[jointName];
+            if (initialJointPos) {
+                joint.position.copy(initialJointPos);
+            }
+        }
+    }
+
+    getLegTargetDirection(side, type) {
+        const xSign = side === "left" ? 1 : -1;
+        const zSign = type === "front" ? 0.2 : -0.4;
+        return new THREE.Vector3(xSign, 0.1, zSign).normalize();
+    }
+
     updateEmergeAnimation(deltaTime) {
-        this.emergeProgress += deltaTime * 0.0005;
+        this.emergeProgress += deltaTime * 0.0018;
 
         if (this.emergeProgress < 1) {
             const t = this.emergeProgress;
-            const smoothProgress = t * t * (3 - 2 * t);
-            this.mesh.position.y = EMERGE_Y_OFFSET * (1 - smoothProgress);
-
+            
             const baseScale = this.size.width * 5;
-            const s = baseScale * smoothProgress;
-            this.mesh.scale.set(s, s, s);
-
-            if (window.startShake) window.startShake(0.3);
+            this.mesh.scale.set(baseScale, baseScale, baseScale);
+            
+            const spacing = KEYBOARD_SPACING;
+            this.mesh.position.x = this.position.x * spacing;
+            this.mesh.position.y = Math.sin(t * Math.PI) * 8 + (1 - t) * 15;
+            this.mesh.position.z = (this.position.y * spacing) - (1 - t) * 15;
+            
+            this.mesh.rotation.x = (1 - t) * 0.3;
+            
             this.mesh.updateMatrixWorld(true);
             return true;
         }
 
         this.isEmerging = false;
+        const spacing = KEYBOARD_SPACING;
+        this.mesh.position.x = this.position.x * spacing;
         this.mesh.position.y = 0;
+        this.mesh.position.z = this.position.y * spacing;
+        this.mesh.rotation.x = 0;
         const baseScale = this.size.width * 5;
         this.mesh.scale.set(baseScale, baseScale, baseScale);
+        
+        if (window.startShake) {
+            window.startShake(3.0);
+        }
         return false;
     }
 
@@ -592,11 +661,6 @@ export default class BugBoss extends Actor {
     die() {
         const bossUI = document.getElementById("boss-ui");
         if (bossUI) bossUI.classList.add("hidden");
-
-        if (this.mesh && this.mesh.parent) {
-            this.mesh.parent.remove(this.mesh);
-            this.mesh.visible = false;
-        }
     }
 
     takeDamage(nb) {
