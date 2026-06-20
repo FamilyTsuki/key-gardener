@@ -4,7 +4,7 @@ import ProjectilePool from "../models/ProjectilePool.js";
 import Enemies from "../managers/Enemies.js";
 import Keyboard from "../managers/Keyboard.js";
 import Player from "../models/actors/Player.js";
-import { getExtendedMapLayout } from "../utilities/KEYBOARD.js";
+import { getExtendedMapLayout, getKeyboardLayout } from "../utilities/KEYBOARD.js";
 
 import { SurviveSpawner } from "./survive/SurviveSpawner.js";
 import { SurviveInput } from "./survive/SurviveInput.js";
@@ -90,8 +90,52 @@ export class SurvivePhase extends GamePhase {
         if (this.options.boss) await this.enemies.spawnBoss(this.renderer.worldGroup);
         if (this.options.bugBoss) await this.enemies.spawnBugBoss(this.renderer.worldGroup);
 
+        if (localStorage.getItem('unlockedFingersColors') === 'true') {
+            this.applyKeyboardFingerColors();
+        }
+
         this.waitForLoader().then(() => {
             this.state.isReady = true;
+        });
+    }
+
+    applyKeyboardFingerColors() {
+        if (!this.keyboard) return;
+        const layout = getKeyboardLayout();
+        if (!layout || layout.length === 0) return;
+
+        const isQwerty = layout[0].key === "Q";
+        
+        const pinkyLeft = isQwerty ? ["Q", "A", "Z"] : ["A", "Q", "W"];
+        const ringLeft = isQwerty ? ["W", "S", "X"] : ["Z", "S", "X"];
+        const middleLeft = isQwerty ? ["E", "D", "C"] : ["E", "D", "C"];
+        const indexLeft = isQwerty ? ["R", "F", "V", "T", "G", "B"] : ["R", "F", "V", "T", "G", "B"];
+        
+        const indexRight = isQwerty ? ["Y", "H", "N", "U", "J", "M"] : ["Y", "H", "N", "U", "J"];
+        const middleRight = isQwerty ? ["I", "K"] : ["I", "K"];
+        const ringRight = isQwerty ? ["O", "L"] : ["O", "L"];
+        const rightPinky = isQwerty ? ["P"] : ["P", "M"];
+
+        this.keyboard.keyboardLayout.forEach((keyObj) => {
+            if (keyObj.isGround || !keyObj.mesh) return;
+
+            const keyChar = keyObj.key.toUpperCase();
+            let color = 0x111111;
+
+            if (pinkyLeft.includes(keyChar)) color = 0x56c2e6;
+            else if (ringLeft.includes(keyChar)) color = 0x8ae656;
+            else if (middleLeft.includes(keyChar)) color = 0xffdf4f;
+            else if (indexLeft.includes(keyChar)) color = 0xff9f4f;
+            else if (indexRight.includes(keyChar)) color = 0xaf7fdf;
+            else if (middleRight.includes(keyChar)) color = 0xffdf4f;
+            else if (ringRight.includes(keyChar)) color = 0x8ae656;
+            else if (rightPinky.includes(keyChar)) color = 0x56c2e6;
+
+            if (keyObj.mesh.children[1] && keyObj.mesh.children[1].material) {
+                keyObj.mesh.children[1].material.color.setHex(color);
+                // Also update the original color attribute so it resets to the colored version after pressing
+                keyObj.originalColor = color;
+            }
         });
     }
 
@@ -133,6 +177,10 @@ export class SurvivePhase extends GamePhase {
             }
             this.enemies.keyboardLayout = this.keyboard.keyboardLayout;
             this.enemies.rebuildGrid(this.keyboard.keyboardLayout);
+        }
+
+        if (localStorage.getItem('unlockedFingersColors') === 'true') {
+            this.applyKeyboardFingerColors();
         }
     }
 

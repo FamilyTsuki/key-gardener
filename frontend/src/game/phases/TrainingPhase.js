@@ -75,11 +75,18 @@ export class TrainingPhase extends GamePhase {
             [
                 "engine.trainingWelcome1",
                 "engine.trainingWelcome2",
-                "engine.trainingWelcome3"
+                "engine.trainingWelcome3",
+                "engine.trainingWelcome4"
             ],
             "/asset/game_assets/models/sempai.glb",
             () => {
-                this.promptExercise();
+                if (this.dBox) {
+                    this.dBox.destroy();
+                    this.dBox = null;
+                }
+                this.exercisesDone = 0;
+                this.gameEngine.isPaused = false;
+                this.startExercise("PHRASES");
             }
         );
         this.settingsListener = () => {
@@ -93,8 +100,14 @@ export class TrainingPhase extends GamePhase {
 
     promptExercise() {
         if (!this.dBox) this.dBox = new DialogueBox();
+        
+        let promptKey = "engine.trainingPrompt";
+        if (this.exercisesDone >= 3) {
+            promptKey = "engine.trainingEncourage";
+        }
+        
         this.dBox.show(
-            ["engine.trainingPrompt"],
+            [promptKey],
             "/asset/game_assets/models/sempai.glb",
             () => {
                 if (this.dBox) {
@@ -104,7 +117,7 @@ export class TrainingPhase extends GamePhase {
                 this.gameEngine.isPaused = false;
                 this.trainingState = "WAITING_ANSWER";
                 this.currentTyped = "";
-                this.ui.showPrompt("Quel exercice voulez-vous faire ?", ["SIMON", "ALPHABET", "SYLLABES", "PHRASES", "REFUSER"], this.currentTyped);
+                this.ui.showPrompt(LanguageManager.t(promptKey), ["SIMON", "ALPHABET", "SYLLABES", "PHRASES", "REFUSER"], this.currentTyped);
             }
         );
     }
@@ -201,6 +214,7 @@ export class TrainingPhase extends GamePhase {
             [resultMsg],
             "/asset/game_assets/models/sempai.glb",
             () => {
+                this.exercisesDone = (this.exercisesDone || 0) + 1;
                 this.promptExercise(); 
             }
         );
@@ -212,10 +226,14 @@ export class TrainingPhase extends GamePhase {
         this.gameEngine.isPaused = true;
         this.dBox = new DialogueBox();
         
-        const refuseMsg = LanguageManager.t("engine.trainingRefused") || "Très bien, préviens-moi quand tu seras prêt.";
+        localStorage.setItem('unlockedFingersColors', 'true');
 
         this.dBox.show(
-            [refuseMsg],
+            [
+                "engine.trainingRefused",
+                "engine.trainingRefused2",
+                "engine.trainingRefused3"
+            ],
             "/asset/game_assets/models/sempai.glb",
             () => {
                 if (this.dBox) {
@@ -223,12 +241,7 @@ export class TrainingPhase extends GamePhase {
                     this.dBox = null;
                 }
                 this.gameEngine.isPaused = false;
-                
-                setTimeout(() => {
-                    if (this.trainingState === "IDLE") {
-                        this.promptExercise();
-                    }
-                }, 10000);
+                this.gameEngine.returnFromTraining();
             }
         );
     }

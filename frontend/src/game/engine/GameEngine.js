@@ -411,6 +411,37 @@ export class GameEngine {
         }
     }
 
+    handleKeyDown(event) {
+        if (!this.secretBuffer) this.secretBuffer = "";
+        if (event.key.length === 1 && event.key.match(/[a-z]/i)) {
+            this.secretBuffer += event.key.toUpperCase();
+            if (this.secretBuffer.length > 12) this.secretBuffer = this.secretBuffer.substring(this.secretBuffer.length - 12);
+            if (this.secretBuffer === "ENTRAINEMENT" && (!this.gamePhase || this.gamePhase.constructor.name !== "TrainingPhase")) {
+                this.teleportToTraining();
+                this.secretBuffer = "";
+                return;
+            }
+        } else {
+            this.secretBuffer = "";
+        }
+
+        if (this.gamePhase && this.gamePhase.handleKeyDown) {
+            this.gamePhase.handleKeyDown(event);
+        }
+    }
+
+    async teleportToTraining() {
+        await this.setPhase(new TrainingPhase(this));
+    }
+
+    async returnFromTraining() {
+        if (this.currentLevel) {
+            await this.loadLevel(this.currentLevel);
+        } else {
+            await this.setPhase(new IntroPhase(this));
+        }
+    }
+
     async saveStats() {
         try {
             const data = this.stats.getStatsData();

@@ -72,14 +72,14 @@ export class TrainingUI {
                 border-color: transparent !important;
             }
             .training-target-word {
-                font-size: 36px;
+                font-size: 24px;
                 font-family: monospace;
-                letter-spacing: 4px;
+                letter-spacing: 2px;
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
                 justify-content: center;
-                gap: 40px; /* Space between words */
+                gap: 20px; /* Space between words */
             }
             .training-stats {
                 font-size: 20px;
