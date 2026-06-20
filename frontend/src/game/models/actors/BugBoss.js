@@ -3,6 +3,7 @@ import ProjectilePool from "../ProjectilePool.js";
 import Bonk from "../Bonk.js";
 import * as THREE from "three";
 import ModelLoader from "../../../core/utils/ModelLoader.js";
+import { AudioManager } from "../../managers/AudioManager.js";
 
 const KEYBOARD_SPACING = 3.2;
 const EMERGE_Y_OFFSET = -10;
@@ -36,6 +37,7 @@ export default class BugBoss extends Actor {
         this.mesh.scale.set(0, 0, 0);
 
         this.loadModel();
+        AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "enemy", 0.8);
 
         const bossUI = document.getElementById("boss-ui");
         const bossName = document.getElementById("boss-name-display");
@@ -235,6 +237,7 @@ export default class BugBoss extends Actor {
         if (window.startShake) {
             window.startShake(3.0);
         }
+        AudioManager.playSFX("/asset/game_assets/sounds/quak.wav", "enemy", 1.0);
         return false;
     }
 
@@ -685,6 +688,9 @@ export default class BugBoss extends Actor {
             this.deathProgress = 0;
             const bossUI = document.getElementById("boss-ui");
             if (bossUI) bossUI.classList.add("hidden");
+        } else {
+            const index = Math.floor(Math.random() * 3) + 1;
+            AudioManager.playSFX(`/asset/game_assets/sounds/damage_${index}.wav`, "enemy", 0.6);
         }
         this.updateHpBar();
     }

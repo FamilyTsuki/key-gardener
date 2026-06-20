@@ -46,7 +46,7 @@ export class PlayerMovement {
         this.offsetY = this.targetOffsetY;
         
         this.pendingWormRepel = null;
-        AudioManager.playSFX("/asset/game_assets/sounds/fall.wav", "player", 0.4);
+        AudioManager.playSFX("/asset/game_assets/sounds/fall.wav", "player", 1.0);
     }
 
     interpolatePosition() {
@@ -102,7 +102,7 @@ export class PlayerMovement {
         this.isMoving = true;
         this.currentMovementTime = 0;
 
-        AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.5);
+        AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.9);
         return { blocked: false };
     }
 
