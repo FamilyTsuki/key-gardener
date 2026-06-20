@@ -1,0 +1,468 @@
+import Actor from "../Actor.js";
+import * as THREE from "three";
+import { AudioManager } from "../../managers/AudioManager.js";
+
+export default class EarthBoss extends Actor {
+    constructor(name, hp, rawPosition, position, size, scene, fireballModel, bossModel) {
+        super(name, hp, hp, rawPosition, position, size);
+        
+        this.scene = scene;
+        this.fireballModel = fireballModel;
+        this.totalTime = 0;
+        this.stateTimer = 0;
+        this.attackPhase = "idle";
+        this.targetX = 0;
+
+        this.isEmerging = true;
+        this.emergeProgress = 0;
+        this.isDying = false;
+        this.deathProgress = 0;
+
+        this.mesh = new THREE.Group();
+        this.scene.add(this.mesh);
+
+        this.disposables = [];
+        this.hasTaughtLaser = false;
+
+        this._buildBody(bossModel);
+        this.updateHpBar();
+    }
+
+    _buildBody(bossModel) {
+        if (bossModel) {
+            this.bossMesh = bossModel.scene.clone();
+            this.bossMesh.traverse((child) => {
+                if (child.isMesh) {
+                    child.visible = true;
+                    if (child.isSkinnedMesh) {
+                        child.frustumCulled = false;
+                    }
+                }
+            });
+            this.mesh.add(this.bossMesh);
+
+            this.bossMesh.updateMatrixWorld(true);
+            const box = new THREE.Box3();
+            let hasMesh = false;
+            this.bossMesh.traverse((child) => {
+                if (child.isMesh && child.visible) {
+                    if (!hasMesh) {
+                        box.setFromObject(child);
+                        hasMesh = true;
+                    } else {
+                        const childBox = new THREE.Box3().setFromObject(child);
+                        box.union(childBox);
+                    }
+                }
+            });
+            if (!hasMesh) {
+                box.setFromObject(this.bossMesh);
+            }
+
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const targetScale = 18.0 / (maxDim || 1);
+            this.bossMesh.scale.set(targetScale, targetScale, targetScale);
+
+            const center = box.getCenter(new THREE.Vector3());
+            this.bossMesh.position.set(-center.x * targetScale, -center.y * targetScale + 4.0, -center.z * targetScale);
+        }
+
+        this.mesh.position.set(this.position.x * 3.2, -15, this.position.y * 3.2);
+
+        const bossUI = document.getElementById("boss-ui");
+        const bossName = document.getElementById("boss-name-display");
+        if (bossName) bossName.innerText = "EARTH CORE";
+        if (bossUI) {
+            setTimeout(() => {
+                bossUI.classList.remove("hidden");
+            }, 1000);
+        }
+    }
+
+    get isDead() {
+        return this.hp < 0;
+    }
+
+    updateHpBar() {
+        const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
+        const fill = document.getElementById("boss-hp-fill");
+        const currentTxt = document.getElementById("boss-hp-current");
+        const maxTxt = document.getElementById("boss-hp-max");
+
+        if (fill) fill.style.width = ratio + "%";
+        if (currentTxt) currentTxt.innerText = Math.ceil(this.hp);
+        if (maxTxt) maxTxt.innerText = this.hpMax;
+    }
+
+    update(deltaTimeMs, playerPos, projectiles, bonks, player) {
+        if (this.hp < 0) return;
+
+        const dt = deltaTimeMs / 1000;
+        this.totalTime += dt;
+
+        if (this.isDying) {
+            this._updateDeathAnimation(dt);
+            return;
+        }
+
+        if (this.isEmerging) {
+            this._updateEmergeAnimation(dt);
+            return;
+        }
+
+        this._animateBody(dt);
+        this._updateAttackPhases(dt, player);
+    }
+
+    _updateEmergeAnimation(dt) {
+        this.emergeProgress += dt * 0.5;
+        if (this.emergeProgress >= 1) {
+            this.emergeProgress = 1;
+            this.isEmerging = false;
+            this.mesh.position.y = 1.0;
+            if (window.startShake) window.startShake(2.0);
+            AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "enemy", 1.0);
+        } else {
+            this.mesh.position.y = -15 + this.emergeProgress * 16.0;
+        }
+        this.mesh.updateMatrixWorld(true);
+    }
+
+    _updateDeathAnimation(dt) {
+        this.deathProgress += dt;
+        if (this.deathProgress >= 1.5) {
+            this.hp = -1;
+            this.isDying = false;
+            this.die();
+        } else {
+            const factor = 1.0 - (this.deathProgress / 1.5);
+            this.mesh.scale.set(factor, factor, factor);
+            this.mesh.rotation.y += dt * 5.0;
+            this.mesh.position.y -= dt * 4.0;
+        }
+        this.mesh.updateMatrixWorld(true);
+    }
+
+    _animateBody(dt) {
+        this.mesh.updateMatrixWorld(true);
+    }
+
+    _updateAttackPhases(dt, player) {
+        this.stateTimer += dt;
+
+        if (this.attackPhase === "idle") {
+            if (this.stateTimer >= 3.0) {
+                if (!this.hasTaughtLaser) {
+                    this.hasTaughtLaser = true;
+                    window.dispatchEvent(new CustomEvent("pause_game_for_dialogue"));
+                    import("../../ui/DialogueBox.js").then((module) => {
+                        const dBox = new module.DialogueBox();
+                        dBox.show(
+                            [
+                                "boss.earth.sempai_warn_1",
+                                "boss.earth.sempai_warn_2",
+                                "boss.earth.sempai_warn_3",
+                                "boss.earth.sempai_warn_4"
+                            ],
+                            "/asset/game_assets/models/sempai.glb",
+                            () => {
+                                dBox.destroy();
+                                window.dispatchEvent(new CustomEvent("resume_game_after_dialogue"));
+                                
+                                this.attackPhase = "charging";
+                                this.stateTimer = 0;
+                                this.targetX = 5;
+                                this._createGuideMesh();
+                                this._createChargeSphere();
+                                this._showWarningText("CHARGE TELLURIQUE", "");
+                                AudioManager.playSFX("/asset/game_assets/sounds/warn.wav", "enemy", 0.8);
+                            }
+                        );
+                    });
+                } else {
+                    this.attackPhase = "charging";
+                    this.stateTimer = 0;
+                    this.targetX = 5;
+                    this._createGuideMesh();
+                    this._createChargeSphere();
+                    this._showWarningText("CHARGE TELLURIQUE", "");
+                    AudioManager.playSFX("/asset/game_assets/sounds/warn.wav", "enemy", 0.8);
+                }
+            }
+        } else if (this.attackPhase === "charging") {
+            if (this.guideMesh) {
+                this.guideMesh.position.x = 16.0;
+            }
+            
+            if (this.chargeGroup) {
+                const progress = Math.min(1.0, this.stateTimer / 4.0);
+                const scale = progress * 4.5;
+                this.chargeGroup.scale.set(scale, scale, scale);
+                if (this.chargeSphereOut) {
+                    this.chargeSphereOut.rotation.y += dt * 5.0;
+                    this.chargeSphereOut.rotation.x += dt * 2.0;
+                }
+            }
+            
+            if (this.stateTimer >= 4.0) {
+                this.attackPhase = "firing";
+                this.stateTimer = 0;
+                this._removeGuideMesh();
+                this._createLaserMesh();
+                this._showWarningText("IMPACT LASER", "");
+                AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", "enemy", 1.0);
+            }
+        } else if (this.attackPhase === "firing") {
+            if (window.startShake) {
+                window.startShake(2.5);
+            }
+            
+            if (this.laserMesh && this.coreMesh) {
+                const pulse = 1.0 + Math.sin(this.totalTime * 30.0) * 0.1;
+                this.laserMesh.scale.set(pulse, 1, pulse);
+                this.coreMesh.scale.set(pulse, 1, pulse);
+                
+                this.laserMesh.position.x = 16.0;
+                this.coreMesh.position.x = 16.0;
+            }
+
+            if (this.chargeGroup) {
+                const progress = 1.0 - (this.stateTimer / 4.5);
+                const scale = Math.max(1.0, progress * 4.5);
+                this.chargeGroup.scale.set(scale, scale, scale);
+                if (this.chargeSphereOut) {
+                    this.chargeSphereOut.rotation.y += dt * 10.0;
+                }
+            }
+
+            this._applyLaserDamage(dt, player);
+
+            if (this.stateTimer >= 4.5) {
+                this.attackPhase = "recovery";
+                this.stateTimer = 0;
+                this._removeLaserMesh();
+                this._removeChargeSphere();
+                this._hideWarningText();
+            }
+        } else if (this.attackPhase === "recovery") {
+            if (this.stateTimer >= 2.5) {
+                this.attackPhase = "idle";
+                this.stateTimer = 0;
+            }
+        }
+    }
+
+    _createGuideMesh() {
+        const geo = new THREE.CylinderGeometry(1.5, 1.5, 120, 8);
+        geo.rotateX(Math.PI / 2);
+        
+        const mat = new THREE.MeshBasicMaterial({
+            color: 0x00ff88,
+            transparent: true,
+            opacity: 0.5
+        });
+        
+        this.guideMesh = new THREE.Mesh(geo, mat);
+        this.guideMesh.position.set(16.0, 0.5, 0);
+        this.scene.add(this.guideMesh);
+        
+        this.disposables.push(geo, mat);
+    }
+
+    _removeGuideMesh() {
+        if (this.guideMesh) {
+            this.scene.remove(this.guideMesh);
+            if (this.guideMesh.geometry) this.guideMesh.geometry.dispose();
+            if (this.guideMesh.material) this.guideMesh.material.dispose();
+            this.guideMesh = null;
+        }
+    }
+
+    _createLaserMesh() {
+        const geoLaser = new THREE.CylinderGeometry(24.0, 24.0, 120, 32);
+        geoLaser.rotateX(Math.PI / 2);
+        
+        const matLaser = new THREE.MeshBasicMaterial({
+            color: 0x00ffbb,
+            transparent: true,
+            opacity: 0.65,
+            depthWrite: false
+        });
+
+        this.laserMesh = new THREE.Mesh(geoLaser, matLaser);
+        this.laserMesh.position.set(16.0, 0.5, 0);
+        this.scene.add(this.laserMesh);
+
+        const geoCore = new THREE.CylinderGeometry(8.0, 8.0, 120, 32);
+        geoCore.rotateX(Math.PI / 2);
+
+        const matCore = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.9,
+            depthWrite: false
+        });
+
+        this.coreMesh = new THREE.Mesh(geoCore, matCore);
+        this.coreMesh.position.set(16.0, 0.5, 0);
+        this.scene.add(this.coreMesh);
+
+        this.disposables.push(geoLaser, matLaser, geoCore, matCore);
+    }
+
+    _removeLaserMesh() {
+        if (this.laserMesh) {
+            this.scene.remove(this.laserMesh);
+            if (this.laserMesh.geometry) this.laserMesh.geometry.dispose();
+            if (this.laserMesh.material) this.laserMesh.material.dispose();
+            this.laserMesh = null;
+        }
+        if (this.coreMesh) {
+            this.scene.remove(this.coreMesh);
+            if (this.coreMesh.geometry) this.coreMesh.geometry.dispose();
+            if (this.coreMesh.material) this.coreMesh.material.dispose();
+            this.coreMesh = null;
+        }
+    }
+
+    _applyLaserDamage(dt, player) {
+        if (!player || !player.isAlive()) return;
+
+        if (player.shieldEnergy > 0) {
+            player.shieldEnergy -= dt * 50.0;
+            if (Math.random() < 0.2) {
+                AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.4);
+            }
+        } else {
+            player.damage(dt * 60.0, "Désintégré par le rayon tellurique");
+        }
+    }
+
+    takeDamage(nb) {
+        if (this.isDying || this.hp < 0) return;
+        this.hp -= nb;
+
+        if (this.mesh && this.mesh.position) {
+            window.dispatchEvent(
+                new CustomEvent("spawn_floating_text", {
+                    detail: {
+                        position: this.mesh.position.clone().add(new THREE.Vector3(0, 3, 0)),
+                        text: `-${Math.round(nb)}`,
+                        type: "damage",
+                    },
+                })
+            );
+        }
+
+        if (this.hp <= 0) {
+            this.hp = 0;
+            this.isDying = true;
+            this.deathProgress = 0;
+            this._removeGuideMesh();
+            this._removeLaserMesh();
+            const bossUI = document.getElementById("boss-ui");
+            if (bossUI) bossUI.classList.add("hidden");
+        } else {
+            const index = Math.floor(Math.random() * 3) + 1;
+            AudioManager.playSFX(`/asset/game_assets/sounds/damage_${index}.wav`, "enemy", 0.6);
+        }
+        this.updateHpBar();
+    }
+
+    die() {
+        const bossUI = document.getElementById("boss-ui");
+        if (bossUI) bossUI.classList.add("hidden");
+        
+        this._hideWarningText();
+        this._removeChargeSphere();
+        
+        if (this.mesh) {
+            this.scene.remove(this.mesh);
+        }
+
+        this.disposables.forEach(d => {
+            if (d && typeof d.dispose === "function") d.dispose();
+        });
+        this.disposables = [];
+    }
+
+    _showWarningText(text, subtext = "") {
+        let container = document.getElementById("boss-laser-warning");
+        if (!container) {
+            container = document.createElement("div");
+            container.id = "boss-laser-warning";
+            container.style.position = "absolute";
+            container.style.top = "180px";
+            container.style.left = "50%";
+            container.style.transform = "translateX(-50%)";
+            container.style.textAlign = "center";
+            container.style.zIndex = "9999";
+            container.style.pointerEvents = "none";
+            
+            document.body.appendChild(container);
+        }
+        
+        const subtextHtml = subtext 
+            ? `<div style="font-family: 'Inter', sans-serif; font-size: 16px; color: #dddddd; margin-top: 8px; letter-spacing: 0.5px; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95); opacity: 0.95;">${subtext}</div>`
+            : '';
+            
+        container.innerHTML = `
+            <div style="font-family: 'Outfit', 'Inter', sans-serif; font-size: 32px; font-weight: 900; color: #ffffff; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);">
+                ${text}
+            </div>
+            ${subtextHtml}
+        `;
+    }
+
+    _hideWarningText() {
+        const container = document.getElementById("boss-laser-warning");
+        if (container) {
+            container.remove();
+        }
+    }
+
+    _createChargeSphere() {
+        this.chargeGroup = new THREE.Group();
+        this.chargeGroup.position.set(0, 2.0, 3.0);
+        this.mesh.add(this.chargeGroup);
+
+        const geoOut = new THREE.SphereGeometry(1.0, 16, 16);
+        const matOut = new THREE.MeshBasicMaterial({
+            color: 0x00ff88,
+            transparent: true,
+            opacity: 0.6,
+            wireframe: true
+        });
+        this.chargeSphereOut = new THREE.Mesh(geoOut, matOut);
+        this.chargeGroup.add(this.chargeSphereOut);
+
+        const geoIn = new THREE.SphereGeometry(0.5, 16, 16);
+        const matIn = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.9
+        });
+        this.chargeSphereIn = new THREE.Mesh(geoIn, matIn);
+        this.chargeGroup.add(this.chargeSphereIn);
+
+        this.disposables.push(geoOut, matOut, geoIn, matIn);
+    }
+
+    _removeChargeSphere() {
+        if (this.chargeGroup) {
+            this.mesh.remove(this.chargeGroup);
+            if (this.chargeSphereOut) {
+                this.chargeSphereOut.geometry.dispose();
+                this.chargeSphereOut.material.dispose();
+            }
+            if (this.chargeSphereIn) {
+                this.chargeSphereIn.geometry.dispose();
+                this.chargeSphereIn.material.dispose();
+            }
+            this.chargeGroup = null;
+            this.chargeSphereOut = null;
+            this.chargeSphereIn = null;
+        }
+    }
+}

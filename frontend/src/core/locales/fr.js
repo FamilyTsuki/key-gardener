@@ -272,6 +272,9 @@ export const fr = {
         mine: "Mine",
         styx: "Styx",
         dungeon: "Donjon",
+        grotte: "Grotte",
+        bossType: "Type de Boss :",
+        none: "Aucun",
         paddingTopBottom: "Marge Haut/Bas :",
         paddingSides: "Marge Côtés :",
         spawnDistance: "Distance d'apparition :",
@@ -498,5 +501,13 @@ export const fr = {
         "Save not found": "Sauvegarde introuvable",
         "Save slot is already empty": "L'emplacement de sauvegarde est déjà vide",
         "Save deleted successfully": "Sauvegarde supprimée avec succès"
+    },
+    boss: {
+        earth: {
+            sempai_warn_1: "Alerte, mon élève ! La structure même du système est en train de se surcharger...",
+            sempai_warn_2: "Ce noyau concentre une quantité colossale d'énergie brute. Son rayon de décharge va balayer tout le secteur !",
+            sempai_warn_3: "Il n'y a nulle part où fuir. Tu dois canaliser le protocole de 'protection' sur ton clavier pour dresser une barrière d'absorption.",
+            sempai_warn_4: "Spamme-le le plus vite possible pour étendre le bouclier et contenir l'impact, ou tu seras instantanément désintégré !"
+        }
     }
 };

@@ -271,6 +271,9 @@ export const en = {
         mine: "Mine",
         styx: "Styx",
         dungeon: "Dungeon",
+        grotte: "Cave",
+        bossType: "Boss Type:",
+        none: "None",
         paddingTopBottom: "Top/Bottom Padding:",
         paddingSides: "Sides Padding:",
         spawnDistance: "Spawn Distance:",
@@ -468,6 +471,14 @@ export const en = {
 
         termsTitle: "Terms of Service",
         termsContent: "<h3>Acceptance of Terms</h3><p>By using {gameName}, you agree to these terms of service.</p><h3>Account Rules</h3><p>You are responsible for keeping your account secure. Any form of cheating, exploiting bugs, or inappropriate behavior in the Community Hub is strictly prohibited and may result in an immediate account ban.</p><h3>Liability</h3><p>The game is provided 'as is' without any warranty. We are not responsible for any data loss or damage caused by the use of this service.</p>"
+    },
+    boss: {
+        earth: {
+            sempai_warn_1: "Alert, my student! The very fabric of the system is overloading...",
+            sempai_warn_2: "This core is concentrating a colossal amount of raw energy. Its discharge beam will sweep the entire sector!",
+            sempai_warn_3: "There is nowhere to run. You must channel the 'protection' protocol on your keyboard to raise an absorption barrier.",
+            sempai_warn_4: "Spam it as fast as possible to expand the shield and contain the impact, or you will be instantly vaporized!"
+        }
     }
 };
 

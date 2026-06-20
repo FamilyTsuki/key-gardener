@@ -2,6 +2,7 @@ import Undefined from "../../spells/Undefined.js";
 import ProjectileLuncher from "../../spells/ProjectileLuncher.js";
 import HealSpell from "../../spells/HealSpells.js";
 import FireCircle from "../../spells/FireCircle.js";
+import ShieldSpell from "../../spells/ShieldSpell.js";
 
 export class PlayerSpells {
     constructor(statsManager = null) {
@@ -16,7 +17,8 @@ export class PlayerSpells {
             new FireCircle("fire", 1, 2.3, 9000, scene, playerInstance, enemiesManager),
             new ProjectileLuncher("wasa", 100, 10000, fireballModel),
             new ProjectileLuncher("pok", 35, 10000, fireballModel),
-            new HealSpell("heal", 30)
+            new HealSpell("heal", 30),
+            new ShieldSpell("protection", 0, Infinity)
         ];
     }
 

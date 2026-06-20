@@ -87,8 +87,18 @@ export class SurvivePhase extends GamePhase {
         };
         window.addEventListener("settings_updated", this.settingsListener);
 
+        this.pauseGameListener = () => {
+            this.gameEngine.isPaused = true;
+        };
+        this.resumeGameListener = () => {
+            this.gameEngine.isPaused = false;
+        };
+        window.addEventListener("pause_game_for_dialogue", this.pauseGameListener);
+        window.addEventListener("resume_game_after_dialogue", this.resumeGameListener);
+
         if (this.options.boss) await this.enemies.spawnBoss(this.renderer.worldGroup);
         if (this.options.bugBoss) await this.enemies.spawnBugBoss(this.renderer.worldGroup, this.gameEngine.currentLevel);
+        if (this.options.earthBoss) await this.enemies.spawnEarthBoss(this.renderer.worldGroup);
 
         if (localStorage.getItem('unlockedFingersColors') === 'true') {
             this.applyKeyboardFingerColors();
@@ -229,6 +239,12 @@ export class SurvivePhase extends GamePhase {
     updateProjectilesAndBonks(deltaTime) {
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
             const p = this.projectiles[i];
+            if (!p || typeof p.update !== "function") {
+                console.warn("Invalid projectile found in array:", p);
+                this.projectiles.splice(i, 1);
+                continue;
+            }
+            
             p.update(null, deltaTime * 1000);
             
             if (p.team === "player" && this.enemies) {
@@ -280,9 +296,20 @@ export class SurvivePhase extends GamePhase {
         
         const bossUI = document.getElementById("boss-ui");
         if (bossUI) bossUI.classList.add("hidden");
+
+        const warning = document.getElementById("boss-laser-warning");
+        if (warning) {
+            warning.remove();
+        }
         
         if (this.settingsListener) {
             window.removeEventListener("settings_updated", this.settingsListener);
+        }
+        if (this.pauseGameListener) {
+            window.removeEventListener("pause_game_for_dialogue", this.pauseGameListener);
+        }
+        if (this.resumeGameListener) {
+            window.removeEventListener("resume_game_after_dialogue", this.resumeGameListener);
         }
     }
 }

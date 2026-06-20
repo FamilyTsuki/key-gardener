@@ -69,6 +69,26 @@ const seedLevels = async () => {
             },
             {
                 level_number: 6,
+                phase_type: "survive",
+                options: {
+                    decorType: "grotte",
+                    duration: null,
+                    spawnInterval: null,
+                    maxEnemies: 0,
+                    storyEvents: [
+                        {
+                            triggerType: "time",
+                            triggerValue: 0.1,
+                            actionType: "spawnBoss",
+                            bossType: "earth_boss",
+                            dialogue: ["Le noyau terrestre tremble...", "Le protecteur tellurique s'éveille !"],
+                            dialogueModel: "/asset/game_assets/models/earth-boss.glb"
+                        }
+                    ]
+                }
+            },
+            {
+                level_number: 7,
                 phase_type: "void",
                 options: {}
             }

@@ -79,7 +79,7 @@ export class SurviveInput {
         const closestEnemy = this.phase.enemies.findClosestEnemy(this.phase.player.position);
         const spellResult = this.phase.player.attack(this.pendingSpell, closestEnemy);
 
-        if (spellResult) {
+        if (spellResult && typeof spellResult === "object" && typeof spellResult.update === "function") {
             projectiles.push(spellResult);
         }
         

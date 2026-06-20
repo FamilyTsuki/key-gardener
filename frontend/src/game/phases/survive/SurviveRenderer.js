@@ -24,10 +24,24 @@ export class SurviveRenderer {
 
     updateCamera(camera, enemies) {
         const hasBugBoss = enemies && enemies.boss && enemies.boss.name === "GiantBug" && !enemies.boss.isDead;
+        const hasEarthBoss = enemies && enemies.boss && enemies.boss.name === "EarthCore" && !enemies.boss.isDead;
         
-        const targetCamY = hasBugBoss ? 20 : 18;
-        const targetCamZ = hasBugBoss ? 14 : 7;
-        const targetLookY = hasBugBoss ? 3 : 0;
+        let targetCamY = 18;
+        let targetCamZ = 7;
+        let targetLookY = 0;
+        let targetLookZ = 3;
+
+        if (hasBugBoss) {
+            targetCamY = 20;
+            targetCamZ = 14;
+            targetLookY = 3;
+            targetLookZ = 3;
+        } else if (hasEarthBoss) {
+            targetCamY = 11;
+            targetCamZ = 15.5;
+            targetLookY = 3.5;
+            targetLookZ = 2.0;
+        }
 
         const currentCamPos = camera.position;
         currentCamPos.set(
@@ -36,7 +50,7 @@ export class SurviveRenderer {
             THREE.MathUtils.lerp(currentCamPos.z, targetCamZ, 0.03)
         );
         
-        camera.lookAt(15, targetLookY, 3);
+        camera.lookAt(15, targetLookY, targetLookZ);
     }
 
     updateDecor(deltaTime) {

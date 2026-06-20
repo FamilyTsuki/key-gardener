@@ -89,6 +89,7 @@ export class SurviveState {
             } 
         } else if (eventToTrigger.actionType === "spawnBoss" && this.phase.enemies) {
             if (eventToTrigger.bossType === "giant_bug") this.phase.enemies.spawnBugBoss(this.phase.renderer.worldGroup);
+            else if (eventToTrigger.bossType === "earth_boss") this.phase.enemies.spawnEarthBoss(this.phase.renderer.worldGroup);
             else this.phase.enemies.spawnBoss(this.phase.renderer.worldGroup);
         } else if (eventToTrigger.actionType === "spawnerConfig") {
             this.applySpawnerConfig(eventToTrigger);

@@ -3,6 +3,7 @@ import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
 import NodeAStar from "../utilities/NodeAStar.js";
 import Boss from "../models/actors/Boss.js";
 import BugBoss from "../models/actors/BugBoss.js";
+import EarthBoss from "../models/actors/EarthBoss.js";
 import Enemy from "../models/actors/Enemy.js";
 import findBestPath from "../utilities/aStar.js";
 import { ENEMY_TYPES } from "../constants/EnemyTypes.js";
@@ -169,7 +170,7 @@ export default class Enemies {
         }
         
         if (this.#boss) {
-            this.#boss.update(deltaTime * 1000, playerPos, projectiles, bonks);
+            this.#boss.update(deltaTime * 1000, playerPos, projectiles, bonks, player);
         }
     }
 
@@ -366,6 +367,27 @@ export default class Enemies {
         );
         this.#container.push(this.#boss);
         this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
+    }
+
+    async spawnEarthBoss(scene) {
+        const bossRawPosition = { x: 5, y: -4.0 };
+        const bossModel = await ModelLoader.loadAsync("/asset/game_assets/models/earth-boss.glb");
+
+        this.#boss = new EarthBoss(
+            "EarthCore",
+            600,
+            bossRawPosition,
+            {
+                x: bossRawPosition.x,
+                y: bossRawPosition.y,
+                z: bossRawPosition.z,
+            },
+            { width: 1.5, height: 1.5 },
+            scene,
+            this.#fireBallModel,
+            bossModel
+        );
+        this.#container.push(this.#boss);
     }
 }
 

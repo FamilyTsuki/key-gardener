@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import Actor from "../Actor.js";
 import { PlayerState } from "./player/PlayerState.js";
 import { PlayerMovement } from "./player/PlayerMovement.js";
@@ -66,6 +67,9 @@ export default class Player extends Actor {
         this.ui = new PlayerUI();
         this.ui.updateHpBar(this.state.hp, this.state.hpMax);
         this.lastHp = this.state.hp;
+
+        this.shieldEnergy = 0;
+        this.shieldMesh = null;
     }
 
     get hp() { return this.state.hp; }
@@ -117,6 +121,19 @@ export default class Player extends Actor {
     }
 
     destroy() {
+        if (this.shieldGroup) {
+            if (this.shieldParent) {
+                this.shieldParent.remove(this.shieldGroup);
+            }
+            this.shieldMeshWire.geometry.dispose();
+            this.shieldMeshWire.material.dispose();
+            this.shieldMeshSolid.geometry.dispose();
+            this.shieldMeshSolid.material.dispose();
+            this.shieldGroup = null;
+            this.shieldMeshWire = null;
+            this.shieldMeshSolid = null;
+            this.shieldParent = null;
+        }
         this.ui.hideHud();
         this.renderer.destroy();
         const gameOverScreen = document.getElementById("game-over-screen");
@@ -148,6 +165,7 @@ export default class Player extends Actor {
 
         this.movement.update(deltaTime);
         this.applyWormDamageDuringMovement();
+        this.updateShield(deltaTime);
 
         if (this.renderer.mesh) {
             this.handleIdleTileHeight(keyboardLayout);
@@ -224,5 +242,78 @@ export default class Player extends Actor {
 
     handleKeyPress(key, findClosestEnemy) {
         return this.spells.handleKeyPress(key);
+    }
+
+    activateShield(amount) {
+        this.shieldEnergy = Math.min(300, this.shieldEnergy + amount);
+        if (!this.shieldGroup) {
+            const rawModel = this.playerModel && this.playerModel.children[0] ? this.playerModel.children[0] : null;
+            const parentGroup = rawModel || this.playerModel || this.mesh;
+            if (parentGroup) {
+                this.shieldParent = parentGroup;
+                this.shieldGroup = new THREE.Group();
+                parentGroup.add(this.shieldGroup);
+
+                let localY = 0.5;
+                if (parentGroup === this.mesh) {
+                    localY = 1.0;
+                }
+
+                const geoWire = new THREE.SphereGeometry(1.6, 24, 24);
+                const matWire = new THREE.MeshBasicMaterial({
+                    color: 0x00ffff,
+                    transparent: true,
+                    opacity: 0.4,
+                    wireframe: true,
+                    depthWrite: false
+                });
+                this.shieldMeshWire = new THREE.Mesh(geoWire, matWire);
+                this.shieldMeshWire.position.set(0, localY, 0);
+                this.shieldGroup.add(this.shieldMeshWire);
+
+                const geoSolid = new THREE.SphereGeometry(1.5, 24, 24);
+                const matSolid = new THREE.MeshBasicMaterial({
+                    color: 0x00aaff,
+                    transparent: true,
+                    opacity: 0.1,
+                    depthWrite: false
+                });
+                this.shieldMeshSolid = new THREE.Mesh(geoSolid, matSolid);
+                this.shieldMeshSolid.position.set(0, localY, 0);
+                this.shieldGroup.add(this.shieldMeshSolid);
+            }
+        }
+        AudioManager.playSFX("/asset/game_assets/sounds/heal.wav", "player", 0.3);
+    }
+
+    updateShield(deltaTime) {
+        if (this.shieldEnergy <= 0) {
+            this.shieldEnergy = 0;
+            if (this.shieldGroup) {
+                if (this.shieldParent) {
+                    this.shieldParent.remove(this.shieldGroup);
+                }
+                this.shieldMeshWire.geometry.dispose();
+                this.shieldMeshWire.material.dispose();
+                this.shieldMeshSolid.geometry.dispose();
+                this.shieldMeshSolid.material.dispose();
+                this.shieldGroup = null;
+                this.shieldMeshWire = null;
+                this.shieldMeshSolid = null;
+                this.shieldParent = null;
+            }
+        } else if (this.shieldGroup) {
+            const isScaledParent = this.shieldParent === this.playerModel || (this.playerModel && this.shieldParent === this.playerModel.children[0]);
+            const scale = (1.0 + (this.shieldEnergy / 100) * 1.5) / (isScaledParent ? 1.95 : 1.0);
+            this.shieldGroup.scale.set(scale, scale, scale);
+
+            if (this.shieldMeshWire && this.shieldMeshSolid) {
+                this.shieldMeshWire.material.opacity = Math.min(0.85, (this.shieldEnergy / 200) * 0.6 + 0.25);
+                this.shieldMeshSolid.material.opacity = Math.min(0.6, (this.shieldEnergy / 200) * 0.45 + 0.1);
+                this.shieldMeshWire.rotation.y += deltaTime * 1.5;
+                this.shieldMeshWire.rotation.x += deltaTime * 0.8;
+                this.shieldMeshSolid.rotation.y -= deltaTime * 0.5;
+            }
+        }
     }
 }

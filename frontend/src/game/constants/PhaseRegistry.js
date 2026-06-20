@@ -4,7 +4,8 @@ const DECOR_OPTIONS = [
     { value: "default", labelKey: "admin.default" },
     { value: "mine", labelKey: "admin.mine" },
     { value: "styx", labelKey: "admin.styx" },
-    { value: "dungeon", labelKey: "admin.dungeon" }
+    { value: "dungeon", labelKey: "admin.dungeon" },
+    { value: "grotte", labelKey: "admin.grotte" }
 ];
 
 export const PHASE_REGISTRY = [

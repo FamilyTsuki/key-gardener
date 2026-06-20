@@ -22,7 +22,8 @@ const SPAWNER_END_CONDITIONS = [
 
 const BOSS_TYPES = [
     { value: "octopus", label: "Octopus (Tentacle)" },
-    { value: "giant_bug", label: "Giant Bug" }
+    { value: "giant_bug", label: "Giant Bug" },
+    { value: "earth_boss", label: "Earth Boss (Laser)" }
 ];
 
 export const EVENT_REGISTRY = [
