@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     warning_count INTEGER DEFAULT 0,
     reset_code VARCHAR(6),
     reset_code_expires_at TIMESTAMP,
+    settings JSONB DEFAULT '{}',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

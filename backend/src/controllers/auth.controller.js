@@ -64,6 +64,7 @@ exports.register = async (req, res, next) => {
                 email: user.email,
                 personalPicture: "default.webp",
                 is_admin: false,
+                settings: user.settings || {}
             },
         });
     } catch (err) {
@@ -105,7 +106,7 @@ exports.login = async (req, res, next) => {
         res.json({
             success: true,
             token,
-            user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture, is_admin: user.is_admin },
+            user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture, is_admin: user.is_admin, settings: user.settings || {} },
         });
     } catch (err) {
         next(err);
@@ -181,7 +182,8 @@ exports.loginWithGoogle = async (req, res, next) => {
                 username: user.username,
                 email: user.email,
                 personalPicture: user.personal_picture || "default.webp",
-                is_admin: user.is_admin || false
+                is_admin: user.is_admin || false,
+                settings: user.settings || {}
             }
         });
     } catch (err) {
@@ -194,7 +196,7 @@ exports.me = async (req, res, next) => {
         const user = req.user;
         res.json({
             success: true,
-            user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture, is_admin: user.is_admin },
+            user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture, is_admin: user.is_admin, settings: user.settings || {} },
         });
     } catch (err) {
         next(err);
@@ -355,4 +357,21 @@ exports.changePassword = async (req, res, next) => {
         next(err);
     }
 };
-
+exports.updateSettings = async (req, res, next) => {
+    try {
+        const user = req.user;
+        const newSettings = req.body;
+        
+        const dbUser = await User.findById(user.id);
+        const currentSettings = dbUser.settings || {};
+        
+        // Merge the new settings with the existing ones
+        const mergedSettings = { ...currentSettings, ...newSettings };
+        
+        const updated = await User.updateSettings(user.id, mergedSettings);
+        
+        res.json({ success: true, settings: updated.settings, message: "Settings updated successfully" });
+    } catch (err) {
+        next(err);
+    }
+};

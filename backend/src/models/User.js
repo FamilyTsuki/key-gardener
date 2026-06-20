@@ -48,6 +48,14 @@ class User {
         return result.rows[0];
     }
 
+    static async updateSettings(id, settings) {
+        const result = await db.query(
+            "UPDATE users SET settings = $1 WHERE id = $2 RETURNING settings",
+            [settings, id]
+        );
+        return result.rows[0];
+    }
+
     static async delete(id) {
         const result = await db.query(
             "DELETE FROM users WHERE id = $1 RETURNING id",
