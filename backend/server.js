@@ -37,7 +37,7 @@ app.use(
                 "worker-src": ["'self'", "blob:"],
                 "child-src": ["'self'", "blob:", "https://accounts.google.com"],
                 "frame-src": ["'self'", "https://accounts.google.com"],
-                "img-src": ["'self'", "data:", "blob:", "https://lh3.googleusercontent.com"],
+                "img-src": ["'self'", "data:", "blob:", "https://lh3.googleusercontent.com", "https://media.tenor.com"],
                 "media-src": ["'self'", "blob:"],
             },
         },
@@ -52,7 +52,6 @@ const corsOptions = {
             return callback(null, true);
         }
 
-        // Allow IP-based access if needed, or specific frontend URL from env
         const frontendUrl = process.env.FRONTEND_URL || "";
         if (frontendUrl && origin.startsWith(frontendUrl)) {
             return callback(null, true);

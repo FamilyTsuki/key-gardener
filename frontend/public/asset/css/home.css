@@ -23,18 +23,23 @@
     background-color: var(--site-color-36);
 }
 
-.training-btn {
-    background-color: var(--site-color-14);
+.training-link {
+    color: var(--site-color-12);
+    text-decoration: underline;
+    font-size: clamp(14px, 1.5vw, 18px);
+    opacity: 0.8;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
 }
 
-.training-btn:hover {
-    background-color: var(--site-color-34);
+.training-link:hover {
+    opacity: 1;
 }
 
 .home-btns-container {
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
     align-items: center;
 }
 
