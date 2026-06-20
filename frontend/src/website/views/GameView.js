@@ -72,7 +72,7 @@ export default class GameView extends AbstractView {
                 el(
                     "div",
                     { className: "boss-info" },
-                    el("span", { className: "boss-name" }, "OCTOPUS"),
+                    el("span", { className: "boss-name", id: "boss-name-display" }, "OCTOPUS"),
                     el(
                         "div",
                         { className: "boss-hp-text" },

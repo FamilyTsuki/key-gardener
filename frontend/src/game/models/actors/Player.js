@@ -34,6 +34,29 @@ export default class Player extends Actor {
 
         this.movement = new PlayerMovement(position);
         
+        Object.defineProperty(this, "position", {
+            get: () => {
+                return {
+                    x: this.movement.x,
+                    y: this.movement.y,
+                    z: this.movement.targetPosition ? this.movement.targetPosition.z : 0
+                };
+            },
+            configurable: true,
+            enumerable: true
+        });
+
+        Object.defineProperty(this, "rawPosition", {
+            get: () => {
+                return {
+                    x: this.movement.x,
+                    y: this.movement.y
+                };
+            },
+            configurable: true,
+            enumerable: true
+        });
+        
         this.renderer = new PlayerRenderer3D(scene, 3.2, 3.2);
         this.renderer.updateRotation(this.movement.facingDirection);
         this.renderer.updatePosition(this.movement);
@@ -57,6 +80,14 @@ export default class Player extends Actor {
     get y() { return this.movement.y; }
     set x(val) { this.movement.x = val; }
     set y(val) { this.movement.y = val; }
+    
+    get position() {
+        return {
+            x: this.movement.x,
+            y: this.movement.y,
+            z: this.movement.targetPosition ? this.movement.targetPosition.z : 0
+        };
+    }
     
     get targetPosition() { return this.movement.targetPosition; }
     get startPosition() { return this.movement.startPosition; }

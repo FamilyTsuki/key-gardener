@@ -36,7 +36,7 @@ export class PlayerRenderer3D {
             });
 
             this.playerModel.scale.set(1.95, 1.95, 1.95);
-            this.playerModel.position.y = 0;
+            this.playerModel.position.y = 0.25;
             this.mesh.add(this.playerModel);
         } catch (e) {
             console.error("Failed to load player model", e);
@@ -69,7 +69,7 @@ export class PlayerRenderer3D {
 
     applyJumpAnimation(movementState, startPos, targetPos, pendingWormRepel) {
         const jumpAmplitude = 2.0;
-        this.playerModel.position.y = Math.sin(movementState.movementProgress * Math.PI) * jumpAmplitude;
+        this.playerModel.position.y = 0.25 + Math.sin(movementState.movementProgress * Math.PI) * jumpAmplitude;
 
         let dx, dy;
         if (pendingWormRepel) {
@@ -93,7 +93,7 @@ export class PlayerRenderer3D {
     }
 
     resetAnimation() {
-        this.playerModel.position.y = 0;
+        this.playerModel.position.y = 0.25;
         this.playerModel.rotation.x = this.baseRotationX || 0;
         this.playerModel.scale.set(1.95, 1.95, 1.95);
 

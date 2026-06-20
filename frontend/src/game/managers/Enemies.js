@@ -348,7 +348,7 @@ export default class Enemies {
     }
 
     async spawnBugBoss(scene) {
-        const bossRawPosition = { x: 5, y: -2 };
+        const bossRawPosition = { x: 5, y: -4.2 };
 
         this.#boss = new BugBoss(
             "GiantBug",
