@@ -48,11 +48,23 @@ export class SurvivePhase extends GamePhase {
         const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 5;
         this.keyboard = Keyboard.init(this.renderer.worldGroup, getExtendedMapLayout(padSides, padTB), this.decorType);
 
-        const [enemyGltf, riggedGltf, fireballGltf] = await Promise.all([
+        const hasEarthBoss = this.options.earthBoss || 
+            (this.options.storyEvents && this.options.storyEvents.some(evt => evt.actionType === "spawnBoss" && evt.bossType === "earth_boss"));
+
+        const sempaiPromise = hasEarthBoss 
+            ? ModelLoader.loadAsync("/asset/game_assets/models/sempai.glb")
+            : Promise.resolve(null);
+
+        const [enemyGltf, riggedGltf, fireballGltf, sempaiGltf] = await Promise.all([
             ModelLoader.loadAsync("/asset/game_assets/models/bug.glb"),
             ModelLoader.loadAsync("/asset/game_assets/models/worms.glb"),
             ModelLoader.loadAsync("/asset/game_assets/models/fireball.glb"),
+            sempaiPromise
         ]);
+
+        if (sempaiGltf) {
+            this.sempaiModel = sempaiGltf.scene;
+        }
 
         const riggedModels = new Map();
         riggedModels.set("rigged", riggedGltf);
@@ -95,6 +107,13 @@ export class SurvivePhase extends GamePhase {
         };
         window.addEventListener("pause_game_for_dialogue", this.pauseGameListener);
         window.addEventListener("resume_game_after_dialogue", this.resumeGameListener);
+
+        this.sempaiRescueListener = () => {
+            if (this.state && typeof this.state.triggerSempaiRescueCinematic === "function") {
+                this.state.triggerSempaiRescueCinematic();
+            }
+        };
+        window.addEventListener("earth_boss_sempai_rescue", this.sempaiRescueListener);
 
         if (this.options.boss) await this.enemies.spawnBoss(this.renderer.worldGroup);
         if (this.options.bugBoss) await this.enemies.spawnBugBoss(this.renderer.worldGroup, this.gameEngine.currentLevel);
@@ -294,6 +313,12 @@ export class SurvivePhase extends GamePhase {
         
         if (this.input) this.input.cleanup();
         
+        if (this.sempaiCinematicMesh && this.sempaiCinematicMesh.parent) {
+            this.sempaiCinematicMesh.parent.remove(this.sempaiCinematicMesh);
+        }
+        this.sempaiCinematicMesh = null;
+        this.sempaiModel = null;
+
         const bossUI = document.getElementById("boss-ui");
         if (bossUI) bossUI.classList.add("hidden");
 
@@ -310,6 +335,9 @@ export class SurvivePhase extends GamePhase {
         }
         if (this.resumeGameListener) {
             window.removeEventListener("resume_game_after_dialogue", this.resumeGameListener);
+        }
+        if (this.sempaiRescueListener) {
+            window.removeEventListener("earth_boss_sempai_rescue", this.sempaiRescueListener);
         }
     }
 }

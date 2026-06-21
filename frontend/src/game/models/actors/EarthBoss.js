@@ -175,7 +175,6 @@ export default class EarthBoss extends Actor {
                                 this.targetX = 5;
                                 this._createGuideMesh();
                                 this._createChargeSphere();
-                                this._showWarningText("CHARGE TELLURIQUE", "");
                                 AudioManager.playSFX("/asset/game_assets/sounds/warn.wav", "enemy", 0.8);
                             }
                         );
@@ -186,7 +185,6 @@ export default class EarthBoss extends Actor {
                     this.targetX = 5;
                     this._createGuideMesh();
                     this._createChargeSphere();
-                    this._showWarningText("CHARGE TELLURIQUE", "");
                     AudioManager.playSFX("/asset/game_assets/sounds/warn.wav", "enemy", 0.8);
                 }
             }
@@ -210,7 +208,6 @@ export default class EarthBoss extends Actor {
                 this.stateTimer = 0;
                 this._removeGuideMesh();
                 this._createLaserMesh();
-                this._showWarningText("IMPACT LASER", "");
                 AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", "enemy", 1.0);
             }
         } else if (this.attackPhase === "firing") {
@@ -243,7 +240,6 @@ export default class EarthBoss extends Actor {
                 this.stateTimer = 0;
                 this._removeLaserMesh();
                 this._removeChargeSphere();
-                this._hideWarningText();
             }
         } else if (this.attackPhase === "recovery") {
             if (this.stateTimer >= 2.5) {
@@ -374,7 +370,6 @@ export default class EarthBoss extends Actor {
         const bossUI = document.getElementById("boss-ui");
         if (bossUI) bossUI.classList.add("hidden");
         
-        this._hideWarningText();
         this._removeChargeSphere();
         
         if (this.mesh) {
@@ -385,41 +380,6 @@ export default class EarthBoss extends Actor {
             if (d && typeof d.dispose === "function") d.dispose();
         });
         this.disposables = [];
-    }
-
-    _showWarningText(text, subtext = "") {
-        let container = document.getElementById("boss-laser-warning");
-        if (!container) {
-            container = document.createElement("div");
-            container.id = "boss-laser-warning";
-            container.style.position = "absolute";
-            container.style.top = "180px";
-            container.style.left = "50%";
-            container.style.transform = "translateX(-50%)";
-            container.style.textAlign = "center";
-            container.style.zIndex = "9999";
-            container.style.pointerEvents = "none";
-            
-            document.body.appendChild(container);
-        }
-        
-        const subtextHtml = subtext 
-            ? `<div style="font-family: 'Inter', sans-serif; font-size: 16px; color: #dddddd; margin-top: 8px; letter-spacing: 0.5px; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95); opacity: 0.95;">${subtext}</div>`
-            : '';
-            
-        container.innerHTML = `
-            <div style="font-family: 'Outfit', 'Inter', sans-serif; font-size: 32px; font-weight: 900; color: #ffffff; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);">
-                ${text}
-            </div>
-            ${subtextHtml}
-        `;
-    }
-
-    _hideWarningText() {
-        const container = document.getElementById("boss-laser-warning");
-        if (container) {
-            container.remove();
-        }
     }
 
     _createChargeSphere() {

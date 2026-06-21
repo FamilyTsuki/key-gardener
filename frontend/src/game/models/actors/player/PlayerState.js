@@ -9,6 +9,7 @@ export class PlayerState {
         
         this.deathReason = null;
         this.deathAnimationPlayed = false;
+        this.isInvulnerable = false;
         
         this.listeners = {};
     }
@@ -29,6 +30,7 @@ export class PlayerState {
     }
 
     damage(amount, reason = null) {
+        if (this.isInvulnerable) return;
         this.hp -= amount;
 
         if (reason && this.hp <= 0) {

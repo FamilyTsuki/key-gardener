@@ -507,7 +507,10 @@ export const fr = {
             sempai_warn_1: "Alerte, mon élève ! La structure même du système est en train de se surcharger...",
             sempai_warn_2: "Ce noyau concentre une quantité colossale d'énergie brute. Son rayon de décharge va balayer tout le secteur !",
             sempai_warn_3: "Il n'y a nulle part où fuir. Tu dois canaliser le protocole de 'protection' sur ton clavier pour dresser une barrière d'absorption.",
-            sempai_warn_4: "Spamme-le le plus vite possible pour étendre le bouclier et contenir l'impact, ou tu seras instantanément désintégré !"
+            sempai_warn_4: "Spamme-le le plus vite possible pour étendre le bouclier et contenir l'impact, ou tu seras instantanément désintégré !",
+            sempai_victory_1: "Impressionnant, mon élève ! Tu as réussi à surcharger le noyau tellurique et à maîtriser ton bouclier.",
+            sempai_victory_2: "Ta vitesse de frappe et ta réactivité sont remarquables. Mais ce n'était qu'un début.",
+            sempai_victory_3: "Viens, rejoins-moi dans mon dojo pour parfaire ton entraînement !"
         }
     }
 };

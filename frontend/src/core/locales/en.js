@@ -477,7 +477,10 @@ export const en = {
             sempai_warn_1: "Alert, my student! The very fabric of the system is overloading...",
             sempai_warn_2: "This core is concentrating a colossal amount of raw energy. Its discharge beam will sweep the entire sector!",
             sempai_warn_3: "There is nowhere to run. You must channel the 'protection' protocol on your keyboard to raise an absorption barrier.",
-            sempai_warn_4: "Spam it as fast as possible to expand the shield and contain the impact, or you will be instantly vaporized!"
+            sempai_warn_4: "Spam it as fast as possible to expand the shield and contain the impact, or you will be instantly vaporized!",
+            sempai_victory_1: "Impressive, my student! You successfully overloaded the telluric core and mastered your shield.",
+            sempai_victory_2: "Your typing speed and responsiveness are remarkable. But this was only the beginning.",
+            sempai_victory_3: "Come, join me in my dojo to perfect your training!"
         }
     }
 };

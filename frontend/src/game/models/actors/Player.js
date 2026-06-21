@@ -233,6 +233,19 @@ export default class Player extends Actor {
     }
 
     damage(amount, reason = null) {
+        if (this.state.isInvulnerable) return;
+
+        const hasEarthBoss = this.enemiesManager && this.enemiesManager.boss && this.enemiesManager.boss.name === "EarthCore";
+        if (hasEarthBoss && this.state.hp - amount <= 0) {
+            if (!this.savingCinematicTriggered) {
+                this.savingCinematicTriggered = true;
+                this.state.hp = 1;
+                this.state.isInvulnerable = true;
+                window.dispatchEvent(new CustomEvent("earth_boss_sempai_rescue"));
+                return;
+            }
+        }
+
         this.state.damage(amount, reason);
     }
 
