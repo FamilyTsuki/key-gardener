@@ -86,14 +86,16 @@ export class DialogueBox {
      * @param {string} speakerPath - Path to the image (.webp/.webp) or 3D model (.glb/.gltf).
      * @param {Function} [onComplete] - Callback function executed when dialogue ends.
      */
-    show(dialogues, speakerPath, onComplete = null) {
+    show(dialogues, speakerPath, onComplete = null, blackenModel = false) {
         this.dialogues = dialogues.map(d => LanguageManager.t(d));
         this.dialogueStep = 0;
         this.onComplete = onComplete;
+        this.blackenModel = blackenModel;
         
         this.setupSpeaker(speakerPath);
         
         document.body.classList.add("dialogue-active");
+        this.container.offsetWidth;
         this.container.classList.add("visible");
         this.showNextDialogue();
     }
@@ -159,6 +161,14 @@ export class DialogueBox {
             
             this.model.position.y -= 0.5;
 
+            if (this.blackenModel) {
+                this.model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                    }
+                });
+            }
+
             if (!this.scene) return;
             this.scene.add(this.model);
             
@@ -167,10 +177,6 @@ export class DialogueBox {
             const animate = () => {
                 if (!this.renderer || !this.scene || !this.camera) return;
                 this.animationId = requestAnimationFrame(animate);
-                
-                if (this.model) {
-                    this.model.rotation.y = Math.PI / 8 + Math.sin(performance.now() * 0.001) * 0.1;
-                }
                 
                 this.renderer.render(this.scene, this.camera);
             };

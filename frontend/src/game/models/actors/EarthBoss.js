@@ -176,7 +176,8 @@ export default class EarthBoss extends Actor {
                                 this._createGuideMesh();
                                 this._createChargeSphere();
                                 AudioManager.playSFX("/asset/game_assets/sounds/warn.wav", "enemy", 0.8);
-                            }
+                            },
+                            true
                         );
                     });
                 } else {
