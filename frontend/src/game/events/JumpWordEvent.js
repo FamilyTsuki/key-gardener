@@ -92,13 +92,13 @@ export class JumpWordEvent extends WorldEvent {
             return;
         }
 
-        if (this.isActive) {
-            if (this.animation.isWaitingToJump) {
-                this.isActive = false;
-                this.animation.updatePreJumpWait(worldPhase, deltaTime);
-                return;
-            }
+        if (this.animation.isWaitingToJump) {
+            this.isActive = false;
+            this.animation.updatePreJumpWait(worldPhase, deltaTime);
+            return;
+        }
 
+        if (this.isActive) {
             this.animation.applyIdleCameraShake(worldPhase, this.state.percentage);
             this.state.update(deltaTime);
             return;
