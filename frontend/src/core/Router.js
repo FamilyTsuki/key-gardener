@@ -70,7 +70,7 @@ export default class Router {
             const overlay = document.getElementById("page-transition");
             if (!overlay) return resolve();
             overlay.classList.add("fade-in");
-            setTimeout(resolve, 4000);
+            setTimeout(resolve, 800);
         });
     }
     /**
@@ -82,7 +82,7 @@ export default class Router {
             const overlay = document.getElementById("page-transition");
             if (!overlay) return resolve();
             overlay.classList.remove("fade-in");
-            setTimeout(resolve, 4000);
+            setTimeout(resolve, 800);
         });
     }
     /**

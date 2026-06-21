@@ -63,12 +63,15 @@ export class FallPhase extends GamePhase {
     waitForLoader() {
         return new Promise(resolve => {
             const loader = document.getElementById("global-loader");
-            if (!loader) return resolve();
-            
+            const overlay = document.getElementById("page-transition");
             const checkHidden = setInterval(() => {
-                if (loader.classList.contains("hidden")) {
+                const isLoaderHidden = !loader || loader.classList.contains("hidden");
+                const isOverlayHidden = !overlay || 
+                    (!overlay.classList.contains("fade-in") && parseFloat(window.getComputedStyle(overlay).opacity) <= 0.05);
+
+                if (isLoaderHidden && isOverlayHidden) {
                     clearInterval(checkHidden);
-                    setTimeout(resolve, 600);
+                    setTimeout(resolve, 100);
                 }
             }, 50);
         });

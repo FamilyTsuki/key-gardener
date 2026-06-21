@@ -199,7 +199,7 @@ html:has(body.in-game), body.in-game {
     opacity: 0;
     pointer-events: none;
     z-index: 9999;
-    transition: opacity 4s ease;
+    transition: opacity 0.8s ease;
 }
 
 #page-transition.fade-in {

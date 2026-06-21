@@ -67,6 +67,10 @@ export class TrainingPhase extends GamePhase {
         this.player.offsetY = this.player.movement.getTileSurfaceHeight(spawnTile);
         this.player.renderer.updatePosition(this.player.movement);
 
+        if (this.player.loadPromise) {
+            await this.player.loadPromise;
+        }
+
         this.applyKeyboardFingerColors();
 
         this.isReady = true;

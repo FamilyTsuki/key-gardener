@@ -98,6 +98,10 @@ export class SurvivePhase extends GamePhase {
         this.player.offsetY = this.player.movement.getTileSurfaceHeight(spawnTile);
         this.player.renderer.updatePosition(this.player.movement);
 
+        if (this.player.loadPromise) {
+            await this.player.loadPromise;
+        }
+
         this.input = new SurviveInput(this);
 
         this.settingsListener = () => {
@@ -179,12 +183,15 @@ export class SurvivePhase extends GamePhase {
     waitForLoader() {
         return new Promise(resolve => {
             const loader = document.getElementById("global-loader");
-            if (!loader) return resolve();
-            
+            const overlay = document.getElementById("page-transition");
             const checkHidden = setInterval(() => {
-                if (loader.classList.contains("hidden")) {
+                const isLoaderHidden = !loader || loader.classList.contains("hidden");
+                const isOverlayHidden = !overlay || 
+                    (!overlay.classList.contains("fade-in") && parseFloat(window.getComputedStyle(overlay).opacity) <= 0.05);
+
+                if (isLoaderHidden && isOverlayHidden) {
                     clearInterval(checkHidden);
-                    setTimeout(resolve, 600);
+                    setTimeout(resolve, 100);
                 }
             }, 50);
         });
