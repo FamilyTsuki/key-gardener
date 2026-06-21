@@ -63,7 +63,7 @@ export class SurviveSpawner {
 
         if (validKeys.length > 0) {
             const randomKey = validKeys[Math.floor(Math.random() * validKeys.length)];
-            this.phase.enemies.spawnAt(randomKey, this.phase.worldGroup, enemyType, options);
+            this.phase.enemies.spawnAt(randomKey, this.phase.renderer.worldGroup, enemyType, options);
             if (this.active) this.enemiesSpawned++;
             if (this.phase.lastPlayerKey) this.phase.enemies.updatePath(this.phase.lastPlayerKey, this.phase.keyboard);
         }

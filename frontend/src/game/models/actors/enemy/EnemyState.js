@@ -42,7 +42,6 @@ export class EnemyState {
         if (this.isDead) return;
         this.hp -= amount;
         if (this.hp <= 0) {
-            this.isDead = true;
             this.hp = 0;
             this.emit("death");
         }
