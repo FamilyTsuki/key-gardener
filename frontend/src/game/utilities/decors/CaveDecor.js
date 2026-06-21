@@ -6,7 +6,6 @@ export class CaveDecor {
         scene.fog = new THREE.FogExp2(0x090a12, 0.015);
 
         this._buildLighting(decorGroup);
-        const crystals = this._buildCrystals(decorGroup, disposables);
         const particles = this._buildDustParticles(decorGroup, disposables);
         this._buildWalls(decorGroup, disposables);
         this._buildCaveFloor(decorGroup, disposables);
@@ -14,14 +13,6 @@ export class CaveDecor {
         let time = 0;
         return (deltaTime) => {
             time += deltaTime;
-            
-            crystals.forEach((crystal, index) => {
-                const pulse = 1.0 + Math.sin(time * 2 + index) * 0.25;
-                crystal.scale.set(pulse, pulse, pulse);
-                if (crystal.material && crystal.material.emissiveIntensity !== undefined) {
-                    crystal.material.emissiveIntensity = 1.0 + Math.sin(time * 2 + index) * 0.5;
-                }
-            });
 
             particles.forEach(p => {
                 p.position.y += Math.sin(time + p.userData.seed) * 0.01;
@@ -46,51 +37,6 @@ export class CaveDecor {
         const topLight = new THREE.DirectionalLight(0xddffff, 1.0);
         topLight.position.set(16, 30, 20);
         decorGroup.add(topLight);
-    }
-
-    static _buildCrystals(decorGroup, disposables) {
-        const crystals = [];
-        const crystalMat = new THREE.MeshStandardMaterial({
-            color: 0x00ff88,
-            emissive: 0x00ff66,
-            emissiveIntensity: 2.0,
-            roughness: 0.1,
-            metalness: 0.9
-        });
-        disposables.push(crystalMat);
-
-        const coneGeo = new THREE.ConeGeometry(0.8, 3.0, 6);
-        disposables.push(coneGeo);
-
-        const positions = [
-            [-12, -2, -18], [-10, 5, -15], [38, -1, -16], [40, 6, -14],
-            [16, -3, -22], [-8, 2, 8], [39, 1, 10], [15, 15, -10]
-        ];
-
-        positions.forEach((pos, index) => {
-            const cluster = new THREE.Group();
-            
-            const count = 2 + Math.floor(Math.random() * 3);
-            for (let i = 0; i < count; i++) {
-                const subMesh = new THREE.Mesh(coneGeo, crystalMat);
-                subMesh.rotation.x = (Math.random() - 0.5) * 0.8;
-                subMesh.rotation.z = (Math.random() - 0.5) * 0.8;
-                subMesh.rotation.y = Math.random() * Math.PI;
-                subMesh.scale.set(0.6 + Math.random() * 0.6, 0.6 + Math.random() * 0.6, 0.6 + Math.random() * 0.6);
-                subMesh.position.set((Math.random() - 0.5) * 1.5, (Math.random() - 0.5) * 1.5, (Math.random() - 0.5) * 1.5);
-                cluster.add(subMesh);
-                crystals.push(subMesh);
-            }
-
-            cluster.position.set(pos[0], pos[1], pos[2]);
-            decorGroup.add(cluster);
-
-            const light = new THREE.PointLight(0x00ffaa, 6, 40);
-            light.position.set(pos[0], pos[1] + 1, pos[2]);
-            decorGroup.add(light);
-        });
-
-        return crystals;
     }
 
     static _buildDustParticles(decorGroup, disposables) {

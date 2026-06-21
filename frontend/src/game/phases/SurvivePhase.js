@@ -46,7 +46,12 @@ export class SurvivePhase extends GamePhase {
 
         const padSides = this.options.paddingSides !== undefined ? this.options.paddingSides : 3;
         const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 5;
-        this.keyboard = Keyboard.init(this.renderer.worldGroup, getExtendedMapLayout(padSides, padTB), this.decorType);
+        this.keyboard = Keyboard.init(
+            this.renderer.worldGroup,
+            getExtendedMapLayout(padSides, padTB),
+            this.decorType,
+            { paddingSides: padSides, paddingTopBottom: padTB }
+        );
 
         const hasSempai = this.options.earthBoss || 
             (this.options.storyEvents && this.options.storyEvents.some(evt => 
@@ -187,7 +192,7 @@ export class SurvivePhase extends GamePhase {
 
     updateLayout(padSides, padTB) {
         if (!this.keyboard || !this.keyboard.rebuild) return;
-        this.keyboard.rebuild(getExtendedMapLayout(padSides, padTB));
+        this.keyboard.rebuild(getExtendedMapLayout(padSides, padTB), { paddingSides: padSides, paddingTopBottom: padTB });
         
         if (this.player) {
             const pPos = this.player.targetPosition || this.player.rawPosition;

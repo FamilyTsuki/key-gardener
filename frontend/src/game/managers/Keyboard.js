@@ -16,10 +16,11 @@ export default class Keyboard {
      * @param {THREE.Scene} scene - The main three.js scene.
      * @param {string} theme - The theme of the keyboard ('mine' or 'styx').
      */
-    constructor(keyboardLayout, tileSize, scene, theme = "mine") {
+    constructor(keyboardLayout, tileSize, scene, theme = "mine", options = {}) {
         this.#keyboardLayout = keyboardLayout;
         this.tileSize = tileSize;
         this.theme = theme;
+        this.options = options;
         this.group = new THREE.Group();
         scene.add(this.group);
 
@@ -40,8 +41,13 @@ export default class Keyboard {
      */
     loadAndCreateKeys(scene) {
         const isStyx = this.theme === "styx";
-        const isDungeon = this.theme === "dungeon";
+        const isGrotte = this.theme === "grotte";
+        const isDungeon = this.theme === "dungeon" || isGrotte;
         const isTraining = this.theme === "training";
+
+        const padSides = this.options && this.options.paddingSides !== undefined ? this.options.paddingSides : 3;
+        const padTB = this.options && this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 5;
+        const hasPadding = (padSides > 0 || padTB > 0);
 
         let stoneTexture = null;
         const dungeonFloorMats = [];
@@ -57,7 +63,9 @@ export default class Keyboard {
             bronzeMat = new THREE.MeshStandardMaterial({ color: 0x8c6d3b, roughness: 0.4, metalness: 0.8 });
             bronzeGeo = new THREE.CylinderGeometry(1.32, 1.32, 0.06, 8);
 
-            const colors = [0x888888, 0x6e7d69, 0x918370, 0x4d4c4f];
+            const colors = isGrotte 
+                ? [0x3a332d, 0x4a413a, 0x2e2924, 0x5a5046]
+                : [0x888888, 0x6e7d69, 0x918370, 0x4d4c4f];
             colors.forEach(col => {
                 dungeonFloorMats.push(new THREE.MeshStandardMaterial({
                     map: stoneTexture,
@@ -77,6 +85,8 @@ export default class Keyboard {
             
         const ringMat = isStyx
             ? new THREE.MeshStandardMaterial({ color: 0x7f8c8d, roughness: 0.8 })
+            : isGrotte
+            ? new THREE.MeshStandardMaterial({ map: stoneTexture, color: 0x3a332d, roughness: 1.0 })
             : isDungeon
             ? new THREE.MeshStandardMaterial({ map: stoneTexture, color: 0x555555, roughness: 1.0 })
             : isTraining
@@ -93,6 +103,8 @@ export default class Keyboard {
             
         const capMat = isStyx
             ? new THREE.MeshStandardMaterial({ color: 0x1d2432, roughness: 0.8 })
+            : isGrotte
+            ? new THREE.MeshStandardMaterial({ map: stoneTexture, color: 0x5c5043, roughness: 0.9 })
             : isDungeon
             ? new THREE.MeshStandardMaterial({ map: stoneTexture, color: 0xaaaaaa, roughness: 0.9 })
             : isTraining
@@ -100,12 +112,13 @@ export default class Keyboard {
             : new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.1 });
 
         const planeGeometry = new THREE.PlaneGeometry(1.8, 1.8);
-        const textColor = isStyx ? "#00ffff" : isDungeon ? "#ff3300" : isTraining ? "#ffffff" : "#c5a059";
+        const textColor = isStyx ? "#00ffff" : isGrotte ? "#00ffaa" : isDungeon ? "#ff3300" : isTraining ? "#ffffff" : "#c5a059";
 
         this.#keyboardLayout.forEach((keyObj) => {
             const keyGroup = new THREE.Group();
 
             if (keyObj.isGround) {
+                if (!hasPadding) return;
                 if (isDungeon) {
                     const groundGeo = new THREE.BoxGeometry(2.9, 0.4, 2.9);
                     const randMat = dungeonFloorMats[Math.floor(Math.random() * dungeonFloorMats.length)];
@@ -145,7 +158,7 @@ export default class Keyboard {
                 keyGroup.add(ringMesh);
                 keyGroup.add(capMesh);
 
-                if (isDungeon) {
+                if (isDungeon && !isGrotte) {
                     const bronzeMesh = new THREE.Mesh(bronzeGeo, bronzeMat);
                     bronzeMesh.position.y = 0.15;
                     keyGroup.add(bronzeMesh);
@@ -156,7 +169,7 @@ export default class Keyboard {
                     textColor,
                     "rgba(0,0,0,0)",
                     180,
-                    isDungeon
+                    this.theme
                 );
 
                 const planeMaterial = new THREE.MeshBasicMaterial({
@@ -188,7 +201,7 @@ export default class Keyboard {
             this.group.add(keyGroup);
         });
 
-        if (isDungeon) {
+        if (isDungeon && !isGrotte && hasPadding) {
             for (let y = -15; y <= 15; y++) {
                 const offset = (Math.abs(y % 2) === 1) ? 0.5 : 0;
                 for (let i = -15; i <= 25; i++) {
@@ -229,11 +242,12 @@ export default class Keyboard {
      */
     update(enemiesManager = null) {
         const isStyx = this.theme === "styx";
-        const isDungeon = this.theme === "dungeon";
+        const isGrotte = this.theme === "grotte";
+        const isDungeon = this.theme === "dungeon" || isGrotte;
         const isTraining = this.theme === "training";
         
-        const pressedColor = isStyx ? 0x00ffff : isDungeon ? 0xff3300 : isTraining ? 0x999999 : 0xc5a059;
-        const unpressedColor = isStyx ? 0x1d2432 : isDungeon ? 0xaaaaaa : isTraining ? 0x222222 : 0x111111;
+        const pressedColor = isStyx ? 0x00ffff : isGrotte ? 0x00ffaa : isDungeon ? 0xff3300 : isTraining ? 0x999999 : 0xc5a059;
+        const unpressedColor = isStyx ? 0x1d2432 : isGrotte ? 0x5c5043 : isDungeon ? 0xaaaaaa : isTraining ? 0x222222 : 0x111111;
         const pressedY = isStyx ? 0.0 : isDungeon ? -0.1 : isTraining ? 0.0 : 0.05;
 
 
@@ -270,7 +284,10 @@ export default class Keyboard {
      * Rebuilds the keyboard layout dynamically (e.g. AZERTY to QWERTY).
      * @param {Array<Object>} newLayoutRaw - The new raw layout array.
      */
-    rebuild(newLayoutRaw) {
+    rebuild(newLayoutRaw, newOptions = null) {
+        if (newOptions) {
+            this.options = { ...this.options, ...newOptions };
+        }
         while (this.group.children.length > 0) {
             const child = this.group.children[0];
             this.group.remove(child);
@@ -298,7 +315,7 @@ export default class Keyboard {
      * @param {string} theme - The theme of the keyboard ('mine' or 'styx').
      * @returns {Keyboard} A new Keyboard instance.
      */
-    static init(scene, keyboardLayout, theme = "mine") {
+    static init(scene, keyboardLayout, theme = "mine", options = {}) {
         const initialSize = 1;
         const keys = keyboardLayout.map(
             (keyRaw) =>
@@ -311,7 +328,7 @@ export default class Keyboard {
                     keyRaw.isGround
                 )
         );
-        return new Keyboard(keys, initialSize, scene, theme);
+        return new Keyboard(keys, initialSize, scene, theme, options);
     }
 }
 
@@ -328,7 +345,7 @@ function createTextTexture(
     color = "black",
     bgColor = "rgba(0,0,0,0)",
     fontSize = 90,
-    isDungeon = false
+    theme = "mine"
 ) {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
@@ -338,8 +355,18 @@ function createTextTexture(
     context.fillStyle = bgColor;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (isDungeon) {
+    if (theme === "dungeon") {
         context.shadowColor = "#ff2200";
+        context.shadowBlur = 18;
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+    } else if (theme === "grotte") {
+        context.shadowColor = "#00ffaa";
+        context.shadowBlur = 18;
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+    } else if (theme === "styx") {
+        context.shadowColor = "#00ffff";
         context.shadowBlur = 18;
         context.shadowOffsetX = 0;
         context.shadowOffsetY = 0;

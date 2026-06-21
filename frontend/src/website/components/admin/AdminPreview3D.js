@@ -129,17 +129,19 @@ export class AdminPreview3D {
         this.keyboardGroup = new THREE.Group();
         let layout;
         let theme = decorType;
+        let padSides = 3;
+        let padTB = 5;
         
         if (phaseType === "training") {
             layout = getKeyboardLayout();
             theme = "training";
         } else {
-            const padSides = options.paddingSides !== undefined ? Number(options.paddingSides) : 3;
-            const padTB = options.paddingTopBottom !== undefined ? Number(options.paddingTopBottom) : 5;
+            padSides = options.paddingSides !== undefined ? Number(options.paddingSides) : 3;
+            padTB = options.paddingTopBottom !== undefined ? Number(options.paddingTopBottom) : 5;
             layout = getExtendedMapLayout(padSides, padTB);
         }
 
-        Keyboard.init(this.keyboardGroup, layout, theme);
+        Keyboard.init(this.keyboardGroup, layout, theme, { paddingSides: padSides, paddingTopBottom: padTB });
         this.keyboardGroup.position.set(0, 0, 0);
         this.scene.add(this.keyboardGroup);
 
