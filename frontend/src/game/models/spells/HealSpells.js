@@ -7,18 +7,8 @@ import { AudioManager } from "../../managers/AudioManager.js";
  * Inherits from Spell.
  */
 export default class HealSpell extends Spell {
-    /** @type {number} */
-    #healAmount;
-
-    /**
-     * Constructs a HealSpell.
-     * @param {string} word - The trigger word for the spell.
-     * @param {number} healAmount - The amount of health to restore.
-     * @param {number} [range=Infinity] - The range of the spell.
-     */
     constructor(word, healAmount, range = Infinity) {
         super(word, healAmount, range);
-        this.#healAmount = healAmount;
     }
 
     /**
@@ -31,7 +21,7 @@ export default class HealSpell extends Spell {
     effect(closestEnemy, player, scene) {
         if (player) {
             if (player.hp < player.hpMax) {
-                player.heal(this.#healAmount);
+                player.heal(this.damage);
             }
             
             AudioManager.playSFX("/asset/game_assets/sounds/heal.wav", "player", 0.5);
