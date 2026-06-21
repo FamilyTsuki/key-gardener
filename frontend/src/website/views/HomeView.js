@@ -102,25 +102,7 @@ export default class HomeView extends AbstractView {
                                 },
                                 LanguageManager.t("home.startGame")
                             ),
-                            el(
-                                "a",
-                                {
-                                    href: "/game?mode=training",
-                                    dataset: { link: true },
-                                    className: "training-link",
-                                    id: "training-btn",
-                                    onclick: (e) => {
-                                        if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
-                                            document.documentElement.requestFullscreen().then(() => {
-                                                if (navigator.keyboard && navigator.keyboard.lock) {
-                                                    navigator.keyboard.lock(["Escape"]).catch(e => console.warn(e));
-                                                }
-                                            }).catch(err => console.warn(err));
-                                        }
-                                    }
-                                },
-                                LanguageManager.t("home.trainingMode")
-                            )
+
                         )
                     )
                 ),

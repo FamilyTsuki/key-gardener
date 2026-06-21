@@ -21,7 +21,7 @@ export default class Enemies {
     #enemyModel;
     #fireBallModel;
     #riggedModels;
-    bosnus = 0;
+    bonus = 0;
 
     /**
      * Creates an instance of Enemies manager.
@@ -55,7 +55,6 @@ export default class Enemies {
             for (let i = 0; i < key.neighbours.length; i++) {
                 key.neighbours[i] = this.#aStarGrid.get(key.neighbours[i]);
             }
-            this.boss;
         }
     }
 
@@ -111,9 +110,7 @@ export default class Enemies {
      * @param {Object} position - The position to spawn the enemy.
      */
     add(position) {
-        console.error("here");
         this.#container.push(new Enemy(position, 50, 50, this.#enemyModel));
-        enemy_alive += 1;
     }
     /**
      * Removes dead enemies from the container and grants bonuses.
