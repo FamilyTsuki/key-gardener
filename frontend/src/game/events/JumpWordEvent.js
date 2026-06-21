@@ -14,6 +14,7 @@ export class JumpWordEvent extends WorldEvent {
 
         this.isActive = false;
         this.isCompleted = false;
+        this.hasTriggered = false;
 
         this.triggerX = 0;
         this.triggerY = 0;
@@ -115,7 +116,8 @@ export class JumpWordEvent extends WorldEvent {
         );
 
         if (currentTile && this.triggerTileIds.has(currentTile.id)) {
-            if (!this.isActive && !this.animation.transitioningToEvent) {
+            if (!this.hasTriggered && !this.isActive && !this.animation.transitioningToEvent) {
+                this.hasTriggered = true;
                 this.triggerX = currentTile.rawPosition.x;
                 this.triggerY = currentTile.rawPosition.y;
                 worldPhase.player.mesh.rotation.y = Math.PI - Math.PI / 6;
