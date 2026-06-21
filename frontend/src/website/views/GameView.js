@@ -32,6 +32,18 @@ export default class GameView extends AbstractView {
             }
         };
         window.addEventListener("keydown", this.handleEscapeKey);
+
+        this.handleBeforeUnload = (e) => {
+            e.preventDefault();
+            e.returnValue = "";
+        };
+
+        this.handleBlockSystemShortcuts = (e) => {
+            if (e.ctrlKey || e.metaKey || e.key === "Tab") {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        };
     }
 
     /**
@@ -138,7 +150,11 @@ export default class GameView extends AbstractView {
      * @returns {Promise<void>}
      */
     async init() {
+        this.savedTheme = document.body.getAttribute("data-theme");
+        document.body.removeAttribute("data-theme");
         document.body.classList.add("in-game");
+        window.addEventListener("beforeunload", this.handleBeforeUnload);
+        window.addEventListener("keydown", this.handleBlockSystemShortcuts, true);
         
         let startMode = "normal";
         let startData = null;
@@ -226,6 +242,11 @@ export default class GameView extends AbstractView {
         );
 
         document.body.classList.remove("in-game");
+        if (this.savedTheme) {
+            document.body.setAttribute("data-theme", this.savedTheme);
+        }
+        window.removeEventListener("beforeunload", this.handleBeforeUnload);
+        window.removeEventListener("keydown", this.handleBlockSystemShortcuts, true);
 
         if (document.fullscreenElement) {
             document.exitFullscreen().catch(err => console.warn(err));
@@ -244,6 +265,11 @@ export default class GameView extends AbstractView {
      */
     destroy() {
         document.body.classList.remove("in-game");
+        if (this.savedTheme) {
+            document.body.setAttribute("data-theme", this.savedTheme);
+        }
+        window.removeEventListener("beforeunload", this.handleBeforeUnload);
+        window.removeEventListener("keydown", this.handleBlockSystemShortcuts, true);
         window.removeEventListener("keydown", this.handleEscapeKey);
         
         if (document.fullscreenElement) {
