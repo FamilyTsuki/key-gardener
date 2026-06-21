@@ -312,6 +312,7 @@ export const fr = {
         actionSpawnBoss: "🐙 Faire apparaître le Boss",
         actionConfigSpawner: "⚙️ Configurer le Générateur d'Ennemis",
         actionExpandMap: "🗺️ Agrandir la Carte",
+        actionSempaiRescue: "🦸‍♂️ Apparition de Sempai (Sauvetage)",
         expandSides: "Colonnes (Côtés) :",
         expandTB: "Lignes (Haut/Bas) :",
         actionBridge: "⏳ Placer un Pont de Mots (Bridge)",

@@ -217,9 +217,41 @@ export default class EarthBoss extends Actor {
             
             if (this.laserMesh && this.coreMesh) {
                 const pulse = 1.0 + Math.sin(this.totalTime * 30.0) * 0.1;
-                this.laserMesh.scale.set(pulse, 1, pulse);
-                this.coreMesh.scale.set(pulse, 1, pulse);
-                
+                let zEnd = 60.0;
+
+                const rescueShield = this.scene.getObjectByName("rescueShield");
+                if (rescueShield) {
+                    const shieldZ = rescueShield.position.z;
+                    const shieldRadius = 3.2 * rescueShield.scale.x;
+                    zEnd = Math.min(zEnd, shieldZ - shieldRadius);
+                }
+
+                if (player && player.shieldGroup && player.shieldEnergy > 0 && player.mesh) {
+                    const shieldZ = player.mesh.position.z;
+                    const scale = 1.0 + (player.shieldEnergy / 100.0) * 1.5;
+                    const shieldRadius = 1.6 * scale;
+                    zEnd = Math.min(zEnd, shieldZ - shieldRadius);
+                }
+
+                const zStart = this.mesh.position.z;
+                const L = zEnd - zStart;
+                if (L > 0) {
+                    this.laserMesh.visible = true;
+                    this.coreMesh.visible = true;
+
+                    const scaleZ = L / 120.0;
+                    const zCenter = zStart + L / 2.0;
+
+                    this.laserMesh.scale.set(pulse, pulse, scaleZ);
+                    this.coreMesh.scale.set(pulse, pulse, scaleZ);
+
+                    this.laserMesh.position.z = zCenter;
+                    this.coreMesh.position.z = zCenter;
+                } else {
+                    this.laserMesh.visible = false;
+                    this.coreMesh.visible = false;
+                }
+
                 this.laserMesh.position.x = 16.0;
                 this.coreMesh.position.x = 16.0;
             }

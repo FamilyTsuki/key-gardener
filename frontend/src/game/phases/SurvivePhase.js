@@ -48,10 +48,13 @@ export class SurvivePhase extends GamePhase {
         const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 5;
         this.keyboard = Keyboard.init(this.renderer.worldGroup, getExtendedMapLayout(padSides, padTB), this.decorType);
 
-        const hasEarthBoss = this.options.earthBoss || 
-            (this.options.storyEvents && this.options.storyEvents.some(evt => evt.actionType === "spawnBoss" && evt.bossType === "earth_boss"));
+        const hasSempai = this.options.earthBoss || 
+            (this.options.storyEvents && this.options.storyEvents.some(evt => 
+                (evt.actionType === "spawnBoss" && evt.bossType === "earth_boss") || 
+                evt.actionType === "sempaiRescue"
+            ));
 
-        const sempaiPromise = hasEarthBoss 
+        const sempaiPromise = hasSempai 
             ? ModelLoader.loadAsync("/asset/game_assets/models/sempai.glb")
             : Promise.resolve(null);
 

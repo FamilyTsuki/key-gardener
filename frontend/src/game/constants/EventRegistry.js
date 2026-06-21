@@ -89,6 +89,12 @@ export const EVENT_REGISTRY = [
         ]
     },
     {
+        type: "sempaiRescue",
+        labelKey: "admin.actionSempaiRescue",
+        availableIn: ["survive"],
+        fields: []
+    },
+    {
         type: "bridge",
         labelKey: "admin.actionBridge",
         availableIn: ["world"],

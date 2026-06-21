@@ -311,6 +311,7 @@ export const en = {
         actionSpawnBoss: "🐙 Spawn Boss",
         actionConfigSpawner: "⚙️ Configure Enemy Spawner",
         actionExpandMap: "🗺️ Expand Map",
+        actionSempaiRescue: "🦸‍♂️ Sempai Rescue Appearance",
         expandSides: "Columns (Sides):",
         expandTB: "Rows (Top/Bottom):",
         actionBridge: "⏳ Place a Word Bridge",

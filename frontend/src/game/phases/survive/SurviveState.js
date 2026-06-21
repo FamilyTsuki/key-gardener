@@ -103,6 +103,8 @@ export class SurviveState {
             this.phase.options.paddingSides = eventToTrigger.padSides !== undefined ? eventToTrigger.padSides : 3;
             this.phase.options.paddingTopBottom = eventToTrigger.padTB !== undefined ? eventToTrigger.padTB : 5;
             this.phase.updateLayout(this.phase.options.paddingSides, this.phase.options.paddingTopBottom);
+        } else if (eventToTrigger.actionType === "sempaiRescue") {
+            this.triggerSempaiRescueCinematic();
         }
     }
 
@@ -205,9 +207,17 @@ export class SurviveState {
             this.phase.player.state.isInvulnerable = true;
         }
 
+        const boss = this.phase.enemies ? this.phase.enemies.boss : null;
+        if (boss && boss.name === "EarthCore") {
+            boss.attackPhase = "firing";
+            if (!boss.laserMesh) {
+                boss._createLaserMesh();
+            }
+        }
+
         if (this.phase.enemies) {
             for (const enemy of this.phase.enemies.container) {
-                if (enemy !== this.phase.enemies.boss) {
+                if (enemy !== boss) {
                     enemy.hp = -1;
                     enemy.die();
                 }
@@ -238,7 +248,7 @@ export class SurviveState {
             this.phase.sempaiCinematicMesh = sempai;
         }
 
-        const jumpDuration = 500;
+        const jumpDuration = 1200;
         const jumpStartTime = performance.now();
         const startX = pPos.x;
         const startY = pPos.y + 10.0;
@@ -295,6 +305,41 @@ export class SurviveState {
         rescueShield.position.copy(position);
         rescueShield.position.y += 1.25;
         this.phase.renderer.worldGroup.add(rescueShield);
+
+        const updateLaserBlocking = () => {
+            if (!rescueShield.parent) return;
+
+            const boss = this.phase.enemies ? this.phase.enemies.boss : null;
+            if (boss && boss.name === "EarthCore" && boss.laserMesh && boss.coreMesh) {
+                const pulse = 1.0 + Math.sin(performance.now() / 33.0) * 0.1;
+                const zStart = boss.mesh.position.z;
+                const shieldZ = rescueShield.position.z;
+                const shieldRadius = 3.2 * rescueShield.scale.x;
+                const zEnd = shieldZ - shieldRadius;
+
+                const L = zEnd - zStart;
+                if (L > 0) {
+                    boss.laserMesh.visible = true;
+                    boss.coreMesh.visible = true;
+
+                    const scaleZ = L / 120.0;
+                    const zCenter = zStart + L / 2.0;
+
+                    boss.laserMesh.scale.set(pulse, pulse, scaleZ);
+                    boss.coreMesh.scale.set(pulse, pulse, scaleZ);
+
+                    boss.laserMesh.position.z = zCenter;
+                    boss.coreMesh.position.z = zCenter;
+                } else {
+                    boss.laserMesh.visible = false;
+                    boss.coreMesh.visible = false;
+                }
+            }
+
+            requestAnimationFrame(updateLaserBlocking);
+        };
+
+        updateLaserBlocking();
 
         setTimeout(() => {
             const startTime = performance.now();
