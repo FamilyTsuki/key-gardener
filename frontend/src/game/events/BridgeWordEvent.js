@@ -18,7 +18,7 @@ export class BridgeWordEvent extends WorldEvent {
 
         this.triggerX = 0;
         this.triggerY = 0;
-        this.triggerTileId = null;
+        this.triggerTileIds = new Set();
 
         this.setupListeners();
     }
@@ -53,7 +53,7 @@ export class BridgeWordEvent extends WorldEvent {
                 tile.letter = null;
             }
             if (tile.y === -(d - 1)) {
-                this.triggerTileId = tile.id;
+                this.triggerTileIds.add(tile.id);
             }
         });
     }
@@ -96,17 +96,34 @@ export class BridgeWordEvent extends WorldEvent {
     }
 
     checkBridgeTrigger(worldPhase) {
-        if (!this.triggerTileId) return;
+        if (!this.triggerTileIds || this.triggerTileIds.size === 0) return;
 
         const currentTile = worldPhase.worldMap.mapLayout.find(t => 
             Math.abs(t.rawPosition.x - worldPhase.player.x) < 0.1 && 
             Math.abs(t.rawPosition.y - worldPhase.player.y) < 0.1
         );
 
-        if (currentTile && currentTile.id === this.triggerTileId) {
+        if (currentTile && this.triggerTileIds.has(currentTile.id)) {
             if (!this.isActive && !this.animation.transitioningToEvent) {
                 this.triggerX = currentTile.rawPosition.x;
                 this.triggerY = currentTile.rawPosition.y;
+                
+                const triggerRow = worldPhase.worldMap.mapLayout.filter(t => t.rawPosition.y === this.triggerY);
+                let triggerCenter = 0;
+                if (triggerRow.length > 0) {
+                    triggerCenter = triggerRow.reduce((sum, t) => sum + t.rawPosition.x, 0) / triggerRow.length;
+                }
+                const centerTile = triggerRow.find(t => Math.abs(t.rawPosition.x - triggerCenter) < 1.0) || currentTile;
+                
+                worldPhase.player.x = centerTile.rawPosition.x;
+                worldPhase.player.y = centerTile.rawPosition.y;
+                worldPhase.player.offsetY = 2.0 + (centerTile.baseY || 0);
+                worldPhase.player.mesh.position.set(
+                    centerTile.rawPosition.x * worldPhase.player.spacingX + worldPhase.player.offsetX,
+                    worldPhase.player.offsetY,
+                    centerTile.rawPosition.y * worldPhase.player.spacingZ + worldPhase.player.offsetZ
+                );
+                
                 this.animation.startEventTransition(worldPhase, this.triggerY);
             }
         }

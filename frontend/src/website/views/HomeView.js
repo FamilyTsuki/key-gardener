@@ -15,6 +15,8 @@ export default class HomeView extends AbstractView {
         this.isCurrentView = false;
         this.hologramListeners = [];
         this.glitchFrameId = null;
+        this.boundScrollListener = null;
+        this.caveAnimation = null;
     }
     renderHologram(imgSrc, altText) {
         const img = el("img", {
@@ -212,8 +214,8 @@ export default class HomeView extends AbstractView {
     }
     async init() {
         if (this.tunnelContainer) {
-            const caveAnimation = new CaveAnimation(this.tunnelContainer);
-            caveAnimation.init();
+            this.caveAnimation = new CaveAnimation(this.tunnelContainer);
+            this.caveAnimation.init();
         }
         const deviceDetector = new DeviceCapabilitiesDetector(".start-btn", () => AuthService.isAuthenticated());
         deviceDetector.initialize();
@@ -254,17 +256,18 @@ export default class HomeView extends AbstractView {
         let lastMouseScale = "0";
         let isScrolling = false;
         let scrollTimeout = null;
-        const onScroll = () => {
+        const appElement = document.getElementById("app");
+        const scrollTarget = appElement || window;
+        this.boundScrollListener = () => {
             isScrolling = true;
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
             }, 150);
         };
-        window.addEventListener('scroll', onScroll, { passive: true });
+        scrollTarget.addEventListener("scroll", this.boundScrollListener, { passive: true });
         const animate = () => {
             if (!this.isCurrentView) {
-                window.removeEventListener('scroll', onScroll);
                 return;
             }
             if (isScrolling) {
@@ -347,6 +350,16 @@ export default class HomeView extends AbstractView {
         if (this.glitchFrameId) {
             cancelAnimationFrame(this.glitchFrameId);
             this.glitchFrameId = null;
+        }
+        if (this.boundScrollListener) {
+            const appElement = document.getElementById("app");
+            const scrollTarget = appElement || window;
+            scrollTarget.removeEventListener("scroll", this.boundScrollListener);
+            this.boundScrollListener = null;
+        }
+        if (this.caveAnimation) {
+            this.caveAnimation.destroy();
+            this.caveAnimation = null;
         }
         this.cleanupHologramListeners();
     }

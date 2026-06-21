@@ -132,4 +132,11 @@ export class CaveScrollController {
 
         this.scrollTween = timeline;
     }
+
+    cleanup() {
+        if (this.scrollTween) {
+            this.scrollTween.kill();
+            this.scrollTween = null;
+        }
+    }
 }

@@ -1,5 +1,5 @@
 import ModelLoader from "../../core/utils/ModelLoader.js";
-import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
+import * as SkeletonUtils from '/node_modules/three/examples/jsm/utils/SkeletonUtils.js';
 import NodeAStar from "../utilities/NodeAStar.js";
 import Boss from "../models/actors/Boss.js";
 import BugBoss from "../models/actors/BugBoss.js";
@@ -7,6 +7,7 @@ import EarthBoss from "../models/actors/EarthBoss.js";
 import Enemy from "../models/actors/Enemy.js";
 import findBestPath from "../utilities/aStar.js";
 import { ENEMY_TYPES } from "../constants/EnemyTypes.js";
+import { generateUUID } from "../utilities/UUID.js";
 
 
 
@@ -310,7 +311,7 @@ export default class Enemies {
             hp,
             modelToUse,
             { width: 1, height: 1 },
-            crypto.randomUUID(),
+            generateUUID(),
             options.scale || 1,
             this.#fireBallModel
         );

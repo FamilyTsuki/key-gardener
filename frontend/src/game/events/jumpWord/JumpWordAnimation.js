@@ -142,8 +142,8 @@ export class JumpWordAnimation {
         let islandCenter = 0;
         if (islandRow.length > 0) islandCenter = islandRow.reduce((sum, t) => sum + t.rawPosition.x, 0) / islandRow.length;
 
-        const triggerTile = worldMap.mapLayout.find(t => Math.abs(t.rawPosition.x - triggerCenter) < 1.0 && t.rawPosition.y === triggerY) || triggerRow[0];
-        const targetTile = worldMap.mapLayout.find(t => Math.abs(t.rawPosition.x - islandCenter) < 1.0 && t.rawPosition.y === triggerY - 6) || islandRow[0];
+        const triggerTile = worldMap.mapLayout.find(t => Math.abs(t.rawPosition.x - player.x) < 0.1 && t.rawPosition.y === triggerY) || triggerRow[0];
+        const targetTile = worldMap.mapLayout.filter(t => t.rawPosition.y === triggerY - 6).sort((a, b) => Math.abs(a.rawPosition.x - player.x) - Math.abs(b.rawPosition.x - player.x))[0] || islandRow[0];
 
         const spacingX = player.spacingX;
         const spacingZ = player.spacingZ;

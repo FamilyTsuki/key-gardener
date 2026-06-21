@@ -12,6 +12,7 @@ export class EnemyState {
         const defaultHp = this.config.baseHp;
         this.hp = hp !== 100 ? hp : defaultHp;
         this.hpMax = hpMax !== 100 ? hpMax : defaultHp;
+        this.listeners = {};
     }
 
     get isDead() {

@@ -17,6 +17,7 @@ export class CaveAnimation {
         this.geometryBuilder = new CaveGeometryBuilder(this.scene, this.config);
         this.modelLoader = new CaveModelLoader(this.scene, this.config);
         this.scrollController = new CaveScrollController(this.camera);
+        this.boundHandleResize = this.handleResize.bind(this);
 
         window.exportCave = () => this.exportToGLTF();
     }
@@ -102,7 +103,7 @@ export class CaveAnimation {
     }
 
     attachEvents() {
-        window.addEventListener("resize", this.handleResize.bind(this));
+        window.addEventListener("resize", this.boundHandleResize);
     }
 
     handleResize() {
@@ -149,5 +150,46 @@ export class CaveAnimation {
         }, (error) => {
             console.error('An error happened during GLTF export:', error);
         });
+    }
+
+    destroy() {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
+        window.removeEventListener("resize", this.boundHandleResize);
+
+        if (this.scrollController) {
+            this.scrollController.cleanup();
+        }
+
+        const canvas = this.renderer.domElement;
+        if (canvas && canvas.parentNode) {
+            canvas.parentNode.removeChild(canvas);
+        }
+
+        this.scene.traverse((object) => {
+            if (object.isMesh) {
+                if (object.geometry) {
+                    object.geometry.dispose();
+                }
+                if (object.material) {
+                    if (Array.isArray(object.material)) {
+                        object.material.forEach((material) => material.dispose());
+                    } else {
+                        object.material.dispose();
+                    }
+                }
+            }
+        });
+
+        if (this.renderer) {
+            this.renderer.dispose();
+        }
+
+        if (window.exportCave) {
+            delete window.exportCave;
+        }
     }
 }

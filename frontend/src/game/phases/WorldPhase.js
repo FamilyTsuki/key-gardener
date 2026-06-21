@@ -266,7 +266,7 @@ export class WorldPhase extends GamePhase {
 
             const playerPos = this.player.mesh.position;
 
-            if (!this.isPlayingIntro) {
+            if (!this.isPlayingIntro && !this.isTransitioning) {
                 let shakeX = 0;
                 let shakeY = 0;
                 let shakeZ = 0;

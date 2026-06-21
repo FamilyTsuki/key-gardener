@@ -4,6 +4,7 @@ import { EnemyMovement } from "./enemy/EnemyMovement.js";
 import { EnemyRenderer3D } from "./enemy/EnemyRenderer3D.js";
 import { EnemyUI } from "./enemy/EnemyUI.js";
 import { EnemyAI } from "./enemy/EnemyAI.js";
+import { generateUUID } from "../../utilities/UUID.js";
 
 export default class Enemy extends Actor {
     constructor(
@@ -15,7 +16,7 @@ export default class Enemy extends Actor {
         hpMax = 100,
         model = undefined,
         size = { width: 1, height: 1 },
-        id = crypto.randomUUID(),
+        id = generateUUID(),
         scale = 1,
         projectileModel = null
     ) {

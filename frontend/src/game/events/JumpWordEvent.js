@@ -85,8 +85,8 @@ export class JumpWordEvent extends WorldEvent {
 
         if (this.animation.isLanding) {
             this.animation.updateLanding(worldPhase, deltaTime, () => {
-                this.animation.transitioningToWorld = true;
-                worldPhase.isTransitioning = true;
+                this.isCompleted = true;
+                worldPhase.isTransitioning = false;
             });
             return;
         }
