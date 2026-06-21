@@ -71,12 +71,12 @@ const frontendDir = isProd ? path.join(__dirname, "../dist/public") : path.join(
 const srcDir = isProd ? path.join(__dirname, "../dist/src") : path.join(__dirname, "../frontend/src");
 
 const staticCacheOptions = {
-    maxAge: isProd ? "1d" : 0,
+    maxAge: isProd ? "365d" : 0,
     setHeaders: (res, filePath) => {
         if (filePath.endsWith(".html") || !isProd) {
             res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         } else {
-            res.setHeader("Cache-Control", "public, max-age=86400");
+            res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
         }
     }
 };
@@ -134,6 +134,7 @@ app.get("/sitemap.xml", (req, res) => {
 });
 
 app.get("*", (req, res) => {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     const indexPath = path.join(frontendDir, "index.html");
     fs.readFile(indexPath, 'utf8', (err, htmlData) => {
         if (err) {
