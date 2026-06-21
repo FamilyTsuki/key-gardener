@@ -34,7 +34,8 @@ export class FallPhase extends GamePhase {
             "Hero", 100, 100, { x: 0, y: 15, z: 5 }, { width: 0.4, height: 0.4 },
             this.renderer.worldGroup, null, null,
             () => this.gameEngine.loadLevel(this.gameEngine.currentLevel),
-            this.gameEngine.stats
+            this.gameEngine.stats,
+            this.gameEngine.unlockedSpells
         );
 
         this.player.allowSpeedUp = false;

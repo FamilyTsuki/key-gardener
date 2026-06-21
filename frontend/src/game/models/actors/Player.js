@@ -18,7 +18,8 @@ export default class Player extends Actor {
         fireballModel,
         enemiesManager,
         onDeath = null,
-        statsManager = null
+        statsManager = null,
+        unlockedSpells = []
     ) {
         const position = { x: rawPosition.x, y: rawPosition.y, z: rawPosition.z };
         super(playerName, hp, hpMax, rawPosition, position, size);
@@ -31,7 +32,7 @@ export default class Player extends Actor {
         this.state.on("hp_changed", (data) => this.handleHpChanged(data));
 
         this.spells = new PlayerSpells(statsManager);
-        this.spells.initialize(scene, this, enemiesManager, fireballModel);
+        this.spells.initialize(scene, this, enemiesManager, fireballModel, unlockedSpells);
 
         this.movement = new PlayerMovement(position);
         

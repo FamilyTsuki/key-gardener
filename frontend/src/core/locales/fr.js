@@ -35,9 +35,8 @@ export const fr = {
     // HomeView
     home: {
         title: "{gameName}",
-        description: "longez dans un monde où votre clavier est votre seule arme. Apprenez à taper naturellement en vous immergeant dans un univers à la fois numérique et fantastique — lancez des sorts, survivez aux hordes et traquez le Virus qui corrompt le système.",
+        description: "Plongez dans un monde où votre clavier est votre seule arme. Apprenez à taper naturellement en vous immergeant dans un univers à la fois numérique et fantastique — lancez des sorts, survivez aux hordes et traquez le Virus qui corrompt le système.",
         startGame: "Commencer le jeu",
-        trainingMode: "Mode Entraînement",
         whyTitle: "La Dactylographie Réinventée",
         whyDesc: "Oubliez les cours de frappe ennuyeux. {gameName} fusionne progression rogue-lite, exploration de donjons et combats de mots intenses dans une épreuve impitoyable de vitesse et de précision.",
         feature1Title: "Tapez Vite ou Mourez",
@@ -59,6 +58,28 @@ export const fr = {
         specialThank: "Remerciements spéciaux",
         thankSupporters: "à tous nos supporters et joueurs qui rendent {gameName} possible !",
         rights: "\u00A9 2026 {gameName}. Tous droits réservés."
+    },
+    spells: {
+        spark: {
+            name: "Étincelle",
+            desc: "Un projectile électrique rapide mais faible."
+        },
+        fireball: {
+            name: "Boule de feu",
+            desc: "Une boule de feu lente mais très puissante."
+        },
+        firecircle: {
+            name: "Cercle de feu",
+            desc: "Crée un anneau défensif de feu autour de vous."
+        },
+        heal: {
+            name: "Soin",
+            desc: "Restaure vos points de vie."
+        },
+        shield: {
+            name: "Bouclier",
+            desc: "Bloque la prochaine attaque entrante."
+        }
     },
     
     // HubView
@@ -165,6 +186,8 @@ export const fr = {
     
     // GameView
     game: {
+        spellUnlocked: "Nouveau sort débloqué !",
+        spellHowTo: "Tapez ce mot pour le lancer :",
         saveQuitBtn: "Sauvegarder & Quitter",
         saveSuccess: "Partie sauvegardée avec succès !",
         saveFailed: "Échec de la sauvegarde sur le serveur.",
@@ -513,5 +536,28 @@ export const fr = {
             sempai_victory_2: "Ta vitesse de frappe et ta réactivité sont remarquables. Mais ce n'était qu'un début.",
             sempai_victory_3: "Viens, rejoins-moi dans mon dojo pour parfaire ton entraînement !"
         }
+    },
+    // Spells
+    spells: {
+        spark: "Étincelle",
+        fireball: "Boule de feu lourde",
+        firecircle: "Cercle de feu",
+        heal: "Soin",
+        shield: "Bouclier"
+    },
+    
+    // Skill Tree
+    skilltree: {
+        title: "Arbre de Compétences",
+        pointsAvailable: "Points de compétence :",
+        unlocked: "Débloqué",
+        pts: "pts",
+        back: "Retour au menu"
+    },
+
+    story: {
+        firstCombat1: "C'est dangereux ici ! Tu n'as pas d'arme !",
+        firstCombat2: "Laisse-moi t'apprendre ton premier sort. Tape le mot 'spark' !",
+        firstCombat3: "Tu peux maintenant lancer une Étincelle. Bonne chance !"
     }
 };

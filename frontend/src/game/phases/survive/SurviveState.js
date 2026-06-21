@@ -1,4 +1,6 @@
 import { DialogueBox } from "../../ui/DialogueBox.js";
+import { LanguageManager } from "../../../core/utils/LanguageManager.js";
+import { SpellUnlockedPopup } from "../../ui/SpellUnlockedPopup.js";
 import * as THREE from "three";
 
 export class SurviveState {
@@ -15,9 +17,23 @@ export class SurviveState {
         this.isTransitioningToNextLevel = false;
         this.isReady = false;
         this.bossDeathRecorded = false;
+        this.firstSpellCinematicTriggered = false;
     }
 
     update(deltaTime, gameEngine) {
+        if (!this.firstSpellCinematicTriggered && gameEngine.unlockedSpells && gameEngine.unlockedSpells.length === 0) {
+            const hasActiveAttacks = (this.phase.projectiles && this.phase.projectiles.length > 0) || 
+                                     (this.phase.bonks && this.phase.bonks.length > 0);
+            
+            if (hasActiveAttacks) {
+                this.firstEnemyAttackFired = true;
+            } else if (this.firstEnemyAttackFired) {
+                this.firstSpellCinematicTriggered = true;
+                this.triggerFirstSpellCinematic(gameEngine);
+                return false;
+            }
+        }
+
         if (this.isPhaseEnded || !this.isReady) return false;
 
         if (this.checkBossDeath(gameEngine)) return false;
@@ -41,6 +57,32 @@ export class SurviveState {
 
         this.processStoryEvents(gameEngine);
         return true;
+    }
+
+    triggerFirstSpellCinematic(gameEngine) {
+        gameEngine.isPaused = true;
+        
+        const dBox = new DialogueBox();
+        const dialogues = [
+            LanguageManager.t("story.firstCombat1") || "C'est dangereux ici ! Tu n'as pas d'arme !",
+            LanguageManager.t("story.firstCombat2") || "Laisse-moi t'apprendre ton premier sort. Tape le mot 'spark' !",
+            LanguageManager.t("story.firstCombat3") || "Tu peux maintenant lancer une Étincelle. Bonne chance !"
+        ];
+        dBox.show(dialogues, "/asset/game_assets/models/sempai.glb", () => {
+            dBox.destroy();
+            
+            SpellUnlockedPopup.show("spark", () => {
+                gameEngine.unlockedSpells.push("spark");
+                if (this.phase.player && this.phase.player.spells) {
+                    this.phase.player.spells.unlockSpell("spark");
+                }
+                if (this.phase.input && typeof this.phase.input.setupSpellListUI === "function") {
+                    this.phase.input.setupSpellListUI();
+                }
+                gameEngine.autoSave();
+                gameEngine.isPaused = false;
+            });
+        });
     }
 
     checkBossDeath(gameEngine) {

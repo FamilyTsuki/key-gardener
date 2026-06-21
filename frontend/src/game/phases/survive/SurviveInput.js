@@ -1,3 +1,5 @@
+import { LanguageManager } from "../../../core/utils/LanguageManager.js";
+
 export class SurviveInput {
     constructor(phase) {
         this.phase = phase;
@@ -12,16 +14,23 @@ export class SurviveInput {
         if (!spellListContainer || !this.phase.player) return;
 
         spellListContainer.innerHTML = "";
-        const spells = this.phase.player.wordSpells.filter(w => w && w !== "");
+        const spells = this.phase.player.wordSpells.filter(w => w && w !== "" && w !== "undefined");
         
+        if (spells.length === 0) {
+            spellListContainer.classList.add("none");
+            return;
+        }
+
         const title = document.createElement("h3");
-        title.textContent = "Sorts disponibles :";
+        title.textContent = LanguageManager.t("skilltree.title") ? "Sorts disponibles :" : "Sorts disponibles :";
+        // Actually better to just use "Sorts disponibles :" or translate it properly
         spellListContainer.appendChild(title);
         
         const ul = document.createElement("ul");
         spells.forEach(spell => {
             const li = document.createElement("li");
-            li.textContent = spell;
+            const translatedName = LanguageManager.t("spells." + spell) || spell;
+            li.textContent = `${translatedName} (${spell})`;
             ul.appendChild(li);
         });
         

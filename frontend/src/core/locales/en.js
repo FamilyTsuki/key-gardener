@@ -165,6 +165,8 @@ export const en = {
     
     // GameView
     game: {
+        spellUnlocked: "New Spell Unlocked!",
+        spellHowTo: "Type this word to cast:",
         saveQuitBtn: "Save & Quit",
         saveSuccess: "Game saved successfully!",
         saveFailed: "Failed to save game to server.",
@@ -483,6 +485,43 @@ export const en = {
             sempai_victory_2: "Your typing speed and responsiveness are remarkable. But this was only the beginning.",
             sempai_victory_3: "Come, join me in my dojo to perfect your training!"
         }
+    },
+    spells: {
+        spark: {
+            name: "Spark",
+            desc: "A quick, weak electric projectile."
+        },
+        fireball: {
+            name: "Heavy Fireball",
+            desc: "A slow, powerful ball of fire."
+        },
+        firecircle: {
+            name: "Fire Circle",
+            desc: "Creates a defensive ring of fire around you."
+        },
+        heal: {
+            name: "Heal",
+            desc: "Restores your health points."
+        },
+        shield: {
+            name: "Shield",
+            desc: "Blocks the next incoming attack."
+        }
+    },
+    
+    // Skill Tree
+    skilltree: {
+        title: "Skill Tree",
+        pointsAvailable: "Skill Points:",
+        unlocked: "Unlocked",
+        pts: "pts",
+        back: "Back to Menu"
+    },
+
+    story: {
+        firstCombat1: "It's dangerous here! You have no weapon!",
+        firstCombat2: "Let me teach you your first spell. Type the word 'spark'!",
+        firstCombat3: "You can now cast a Spark. Good luck!"
     }
 };
 

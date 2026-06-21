@@ -63,6 +63,9 @@ export class GameEngine {
         this.shakeIntensity = 0;
         this.shakeDecay = 0.9;
         
+        this.skillPoints = 0;
+        this.unlockedSpells = [];
+        
         this.stats = new StatisticsManager();
         this.floatingTextManager = new FloatingTextManager();
 
@@ -119,6 +122,12 @@ export class GameEngine {
                 }
                 if (parsed.level) {
                     this.currentLevel = parsed.level;
+                }
+                if (parsed.skillPoints !== undefined) {
+                    this.skillPoints = parsed.skillPoints;
+                }
+                if (parsed.unlockedSpells !== undefined) {
+                    this.unlockedSpells = parsed.unlockedSpells;
                 }
             }
         } catch (e) {
@@ -201,6 +210,7 @@ export class GameEngine {
      */
     async nextLevel() {
         this.currentLevel++;
+        this.skillPoints++;
         await this.autoSave();
         await this.loadLevel(this.currentLevel);
     }
@@ -478,6 +488,8 @@ export class GameEngine {
             phase: phase,
             level: this.currentLevel,
             score: 0,
+            skillPoints: this.skillPoints,
+            unlockedSpells: this.unlockedSpells,
         };
 
         if (token) {

@@ -60,7 +60,8 @@ export class TrainingPhase extends GamePhase {
             fireballGltf.scene,
             null,
             () => {},
-            this.gameEngine.stats
+            this.gameEngine.stats,
+            this.gameEngine.unlockedSpells
         );
 
         const spawnTile = this.keyboard.find("A") || this.keyboard.keyboardLayout[0];

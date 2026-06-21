@@ -258,15 +258,21 @@ export class BridgeWordAnimation {
 
         this.ensureSharedMaterials(worldPhase);
 
-        let centerTile = null;
+        const avgX = tilesData.reduce((sum, d) => sum + d.tile.rawPosition.x, 0) / tilesData.length;
+        let centerTile = tilesData[0].tile;
+        let minDiff = Math.abs(centerTile.rawPosition.x - avgX);
+
+        for (const data of tilesData) {
+            const diff = Math.abs(data.tile.rawPosition.x - avgX);
+            if (diff < minDiff) {
+                minDiff = diff;
+                centerTile = data.tile;
+            }
+        }
 
         for (const data of tilesData) {
             const group = this.createBridgeTileGroup(data, worldPhase);
             const tile = data.tile;
-            
-            if (Math.abs(tile.rawPosition.x - (worldPhase.player.x + 0.5)) < 0.1) {
-                centerTile = tile;
-            }
 
             this.animatingTiles.push({
                 mesh: group,

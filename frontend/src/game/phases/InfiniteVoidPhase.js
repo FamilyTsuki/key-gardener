@@ -52,7 +52,8 @@ export class InfiniteVoidPhase extends GamePhase {
             { width: 0.4, height: 0.4 },
             scene, undefined, undefined,
             () => this.gameEngine.loadLevel(this.gameEngine.currentLevel),
-            this.gameEngine.stats
+            this.gameEngine.stats,
+            this.gameEngine.unlockedSpells
         );
         this.player.allowSpeedUp = false;
         this.player.spacingX = Math.sqrt(3) * 1.5;

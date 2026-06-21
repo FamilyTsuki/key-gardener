@@ -114,7 +114,8 @@ export class WorldPhase extends GamePhase {
             undefined,
             undefined,
             () => this.gameEngine.loadLevel(this.gameEngine.currentLevel),
-            this.gameEngine.stats
+            this.gameEngine.stats,
+            this.gameEngine.unlockedSpells
         );
         this.player.allowSpeedUp = false;
         this.player.spacingX = Math.sqrt(3) * 1.5;
@@ -266,7 +267,7 @@ export class WorldPhase extends GamePhase {
 
             const playerPos = this.player.mesh.position;
 
-            if (!this.isPlayingIntro && !this.isTransitioning) {
+            if (!this.isPlayingIntro && (!this.isTransitioning || this.isStunnedAfterFall)) {
                 let shakeX = 0;
                 let shakeY = 0;
                 let shakeZ = 0;

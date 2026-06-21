@@ -91,7 +91,8 @@ export class SurvivePhase extends GamePhase {
             fireballGltf.scene,
             this.enemies,
             () => this.gameEngine.loadLevel(this.gameEngine.currentLevel),
-            this.gameEngine.stats
+            this.gameEngine.stats,
+            this.gameEngine.unlockedSpells
         );
 
         const spawnTile = this.keyboard.find(this.lastPlayerKey) || this.keyboard.keyboardLayout[0];

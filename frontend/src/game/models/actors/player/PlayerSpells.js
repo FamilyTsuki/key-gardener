@@ -11,15 +11,28 @@ export class PlayerSpells {
         this.currentWord = "";
     }
 
-    initialize(scene, playerInstance, enemiesManager, fireballModel) {
-        this.wordSpells = [
+    initialize(scene, playerInstance, enemiesManager, fireballModel, unlockedSpells = []) {
+        this.allSpells = [
             new Undefined(),
-            new FireCircle("fire", 1, 2.3, 9000, scene, playerInstance, enemiesManager),
-            new ProjectileLuncher("wasa", 100, 10000, fireballModel),
-            new ProjectileLuncher("pok", 35, 10000, fireballModel),
+            new FireCircle("firecircle", 1, 2.3, 9000, scene, playerInstance, enemiesManager),
+            new ProjectileLuncher("fireball", 100, 10000, fireballModel),
+            new ProjectileLuncher("spark", 35, 10000, fireballModel),
             new HealSpell("heal", 30),
-            new ShieldSpell("protection", 0, Infinity)
+            new ShieldSpell("shield", 0, Infinity)
         ];
+
+        this.wordSpells = this.allSpells.filter(spell => 
+            spell.word === "undefined" || unlockedSpells.includes(spell.word)
+        );
+    }
+
+    unlockSpell(spellWord) {
+        if (!this.wordSpells.some(s => s.word === spellWord)) {
+            const spell = this.allSpells.find(s => s.word === spellWord);
+            if (spell) {
+                this.wordSpells.push(spell);
+            }
+        }
     }
 
     getWordSpells() {

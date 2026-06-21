@@ -194,17 +194,15 @@ export class JumpWordAnimation {
             worldPhase.player.applyCrouch(1.0);
             
             if (window.startShake) window.startShake(1.5);
-            worldPhase.cameraShakeTime = 0.4;
 
             this.isLanding = true;
             this.landingProgress = 0;
         } else {
             const t = this.jumpProgress;
-            const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-            const currentX = this.jumpStartX + (this.jumpTargetX - this.jumpStartX) * ease;
-            const currentZ = this.jumpStartCenterZ + (this.jumpTargetCenterZ - this.jumpStartCenterZ) * ease;
-            const currentY = this.jumpStartY + (this.jumpTargetY - this.jumpStartY) * ease + Math.sin(ease * Math.PI) * 12.0;
+            const currentX = this.jumpStartX + (this.jumpTargetX - this.jumpStartX) * t;
+            const currentZ = this.jumpStartCenterZ + (this.jumpTargetCenterZ - this.jumpStartCenterZ) * t;
+            const currentY = this.jumpStartY + (this.jumpTargetY - this.jumpStartY) * t + Math.sin(t * Math.PI) * 12.0;
 
             player.offsetY = currentY;
             player.mesh.position.set(currentX, currentY, currentZ);
@@ -216,8 +214,8 @@ export class JumpWordAnimation {
             const finalCameraPos = new THREE.Vector3(this.jumpTargetX + 5, this.jumpTargetY + 21, this.jumpTargetCenterZ + 14);
             const finalCameraLookAt = new THREE.Vector3(this.jumpTargetX, this.jumpTargetY, this.jumpTargetCenterZ);
 
-            worldPhase.camera.position.lerpVectors(this.eventCameraPos, finalCameraPos, ease);
-            const currentLook = new THREE.Vector3().lerpVectors(this.eventCameraLookAt, finalCameraLookAt, ease);
+            worldPhase.camera.position.lerpVectors(this.eventCameraPos, finalCameraPos, t);
+            const currentLook = new THREE.Vector3().lerpVectors(this.eventCameraLookAt, finalCameraLookAt, t);
             worldPhase.camera.lookAt(currentLook);
         }
     }
