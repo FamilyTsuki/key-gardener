@@ -13,10 +13,9 @@ export class TrainingDecor {
         dirLight.castShadow = true;
         decorGroup.add(dirLight);
 
-        // Tatami Floor Base
         const floorGeo = new THREE.PlaneGeometry(200, 200);
         const floorMat = new THREE.MeshStandardMaterial({ 
-            color: 0x8a9a5b, // Greenish tatami color
+            color: 0x8a9a5b,
             roughness: 1.0,
             metalness: 0.0
         });
@@ -25,15 +24,12 @@ export class TrainingDecor {
         floor.position.y = -0.5; 
         decorGroup.add(floor);
 
-        // Tatami grid lines (to simulate mats)
         const gridHelper = new THREE.GridHelper(200, 100, 0x4a5d23, 0x5c7a29);
         gridHelper.position.y = -0.48;
         decorGroup.add(gridHelper);
-
-        // Shoji Wall (Back)
         const wallGeo = new THREE.PlaneGeometry(100, 40);
         const wallMat = new THREE.MeshStandardMaterial({
-            color: 0xfffcf2, // Rice paper color
+            color: 0xfffcf2,
             roughness: 1.0,
             emissive: 0xfffcf2,
             emissiveIntensity: 0.1
@@ -42,7 +38,6 @@ export class TrainingDecor {
         wall.position.set(15, 19.5, -18);
         decorGroup.add(wall);
 
-        // Shoji wooden grid
         const shojiMat = new THREE.MeshStandardMaterial({ color: 0x4a3219, roughness: 0.9 });
         for (let i = -3; i <= 3; i++) {
             const vBeamGeo = new THREE.BoxGeometry(0.5, 40, 0.5);
@@ -56,8 +51,6 @@ export class TrainingDecor {
             hBeam.position.set(15, i * 8, -17.8);
             decorGroup.add(hBeam);
         }
-
-        // Main wooden trims
         const bottomTrimGeo = new THREE.BoxGeometry(100, 1, 1);
         const bottomTrim = new THREE.Mesh(bottomTrimGeo, shojiMat);
         bottomTrim.position.set(15, 0, -17.5);

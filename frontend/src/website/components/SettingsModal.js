@@ -2,7 +2,6 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import { SettingsManager } from "../../core/utils/SettingsManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { createCustomSelect } from "./CustomSelect.js";
-import { SkillTreeModal } from "./SkillTreeModal.js";
 
 export class SettingsModal {
     /**
@@ -104,16 +103,6 @@ export class SettingsModal {
             }
         }, LanguageManager.t("settings.toggleFullscreen") || "Basculer en Plein Écran");
 
-        const skillTreeBtn = el("button", {
-            className: "btn-primary mb-10",
-            style: "margin-bottom: 15px; background-color: #a855f7;",
-            onclick: () => {
-                this.close();
-                const skillTreeModal = new SkillTreeModal(this.engine);
-                skillTreeModal.open();
-            }
-        }, LanguageManager.t("skilltree.title") || "Arbre de Compétences");
-
         const closeBtn = el("button", {
             className: "settings-close-btn",
             onclick: () => this.close()
@@ -140,11 +129,18 @@ export class SettingsModal {
                 layoutRow,
                 fullscreenRow,
                 toggleFullscreenBtn,
-                skillTreeBtn,
                 closeBtn,
                 saveAndQuitBtn
             )
         );
+
+        this.escapeHandler = (e) => {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                this.close();
+            }
+        };
+        window.addEventListener("keydown", this.escapeHandler);
 
         this.modalEl.addEventListener("keydown", (e) => {
             if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -172,7 +168,6 @@ export class SettingsModal {
         }
         document.body.appendChild(this.render());
         
-        // Auto-focus the first focusable element when opened
         const firstFocusable = this.modalEl.querySelector('input[type="range"], .custom-select-container, button');
         if (firstFocusable) {
             firstFocusable.focus();
@@ -180,8 +175,19 @@ export class SettingsModal {
     }
 
     close() {
-        if (this.modalEl && this.modalEl.parentNode) {
-            this.modalEl.parentNode.removeChild(this.modalEl);
+        if (this.escapeHandler) {
+            window.removeEventListener("keydown", this.escapeHandler);
+            this.escapeHandler = null;
+        }
+        if (this.modalEl) {
+            this.modalEl.querySelectorAll(".custom-select-container").forEach(el => {
+                if (typeof el.destroy === "function") {
+                    el.destroy();
+                }
+            });
+            if (this.modalEl.parentNode) {
+                this.modalEl.parentNode.removeChild(this.modalEl);
+            }
         }
         if (this.engine) {
             this.engine.isPaused = false;

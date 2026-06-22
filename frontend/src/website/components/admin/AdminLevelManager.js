@@ -66,6 +66,11 @@ export class AdminLevelManager {
     }
 
     renderSidebar() {
+        this.sidebarContainer.querySelectorAll(".custom-select-container").forEach(el => {
+            if (typeof el.destroy === "function") {
+                el.destroy();
+            }
+        });
         clear(this.sidebarContainer);
 
         const listContainer = el("div", { id: "levels-list", className: "levels-list" });
@@ -125,6 +130,11 @@ export class AdminLevelManager {
     }
 
     renderMainContent() {
+        this.mainContainer.querySelectorAll(".custom-select-container").forEach(el => {
+            if (typeof el.destroy === "function") {
+                el.destroy();
+            }
+        });
         clear(this.mainContainer);
 
         const allLevels = [...this.levels, this.createNewLevelObject(this.levels.reduce((max, l) => Math.max(max, l.level_number), 0) + 1)];
@@ -218,6 +228,11 @@ export class AdminLevelManager {
     }
 
     renderPhaseEditor() {
+        this.phaseContainer.querySelectorAll(".custom-select-container").forEach(el => {
+            if (typeof el.destroy === "function") {
+                el.destroy();
+            }
+        });
         clear(this.phaseContainer);
         const phaseDef = getPhaseDefinition(this.currentLevel.phase_type || "survive");
         this.currentPhaseEditor = new AdminPhaseEditor(phaseDef, this.currentLevel.options);
@@ -230,6 +245,11 @@ export class AdminLevelManager {
     }
 
     renderEventEditors() {
+        this.eventsContainer.querySelectorAll(".custom-select-container").forEach(el => {
+            if (typeof el.destroy === "function") {
+                el.destroy();
+            }
+        });
         clear(this.eventsContainer);
         this.eventsContainer.appendChild(el("div", { className: "events-section-title" }, LanguageManager.t("admin.storyEvents")));
         
@@ -493,5 +513,22 @@ export class AdminLevelManager {
             console.error(err);
             FlashMessageManager.show(LanguageManager.t("admin.errorReadJson"), "error");
         }
+    }
+
+    destroy() {
+        if (this.preview3D) {
+            this.preview3D.destroy();
+            this.preview3D = null;
+        }
+        this.sidebarContainer.querySelectorAll(".custom-select-container").forEach(el => {
+            if (typeof el.destroy === "function") {
+                el.destroy();
+            }
+        });
+        this.mainContainer.querySelectorAll(".custom-select-container").forEach(el => {
+            if (typeof el.destroy === "function") {
+                el.destroy();
+            }
+        });
     }
 }

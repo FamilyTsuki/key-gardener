@@ -50,25 +50,37 @@ export function createCustomSelect(options, selectedValue, onChange, className =
         optionsContainer.appendChild(optEl);
     });
 
+    const controller = new AbortController();
+    const { signal } = controller;
+
     trigger.onclick = () => {
-        container.classList.toggle("open");
+        const isOpen = container.classList.toggle("open");
+        if (isOpen) {
+            container.focus();
+        }
     };
 
     document.addEventListener("click", (e) => {
         if (!container.contains(e.target)) {
             container.classList.remove("open");
         }
-    });
+    }, { signal });
+
+    container.destroy = () => {
+        controller.abort();
+    };
 
     container.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
+            e.stopPropagation();
             container.classList.toggle("open");
-        } else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowUp" || e.key === "ArrowDown") {
             e.preventDefault();
+            e.stopPropagation();
             const currentIndex = options.findIndex(o => o.value === selectedOption.value);
             let nextIndex;
-            if (e.key === "ArrowRight") {
+            if (e.key === "ArrowRight" || e.key === "ArrowDown") {
                 nextIndex = (currentIndex + 1) % options.length;
             } else {
                 nextIndex = (currentIndex - 1 + options.length) % options.length;

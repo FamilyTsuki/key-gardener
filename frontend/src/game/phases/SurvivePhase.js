@@ -175,7 +175,6 @@ export class SurvivePhase extends GamePhase {
 
             if (keyObj.mesh.children[1] && keyObj.mesh.children[1].material) {
                 keyObj.mesh.children[1].material.color.setHex(color);
-                // Also update the original color attribute so it resets to the colored version after pressing
                 keyObj.originalColor = color;
             }
         });

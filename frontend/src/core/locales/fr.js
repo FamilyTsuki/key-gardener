@@ -537,22 +537,21 @@ export const fr = {
             sempai_victory_3: "Viens, rejoins-moi dans mon dojo pour parfaire ton entraînement !"
         }
     },
-    // Spells
-    spells: {
-        spark: "Étincelle",
-        fireball: "Boule de feu lourde",
-        firecircle: "Cercle de feu",
-        heal: "Soin",
-        shield: "Bouclier"
-    },
+    // Spells (already defined with name/desc format at top)
     
     // Skill Tree
     skilltree: {
         title: "Arbre de Compétences",
         pointsAvailable: "Points de compétence :",
-        unlocked: "Débloqué",
+        unlocked: "Débloqué ✓",
+        unlock: "Débloquer",
+        locked: "🔒 Verrouillé",
+        storyOnly: "🎭 Obtenu via l’histoire",
         pts: "pts",
-        back: "Retour au menu"
+        back: "← Retour",
+        branchAttack: "ATTAQUE",
+        branchDefense: "DÉFENSE",
+        branchUtility: "UTILITAIRE"
     },
 
     story: {

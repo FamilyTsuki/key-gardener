@@ -11,6 +11,7 @@ export class LanguageManager {
     static setLanguage(lang) {
         if (this.locales[lang]) {
             localStorage.setItem("app_lang", lang);
+            window.allowPageUnload = true;
             window.location.reload();
         }
     }

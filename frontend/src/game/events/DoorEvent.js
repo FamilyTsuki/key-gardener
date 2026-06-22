@@ -75,7 +75,6 @@ export class DoorEvent extends WorldEvent {
             bumpScale: 0.1
         });
 
-        // 1. Enhanced Architecture (Pillars & Bases)
         const pillarGeo = new THREE.CylinderGeometry(0.8, 0.8, 12, 16);
         const baseGeo = new THREE.CylinderGeometry(1.2, 1.2, 1.5, 16);
         
@@ -96,12 +95,9 @@ export class DoorEvent extends WorldEvent {
         const leftPillar = createPillar(-3.5);
         const rightPillar = createPillar(3.5);
 
-        // Heavy Stone Lintel (Arch)
         const archGeo = new THREE.BoxGeometry(9.5, 2.5, 2.5);
         const arch = new THREE.Mesh(archGeo, pillarMat);
         arch.position.set(0, 13.25, 0);
-
-        // 2. The Door Panels with Metallic Frames
         const textureLoader = new THREE.TextureLoader();
         let leftDoorTexture;
         const doorTexture = textureLoader.load('/asset/game_assets/textures/door.webp', () => {
@@ -327,7 +323,7 @@ export class DoorEvent extends WorldEvent {
                     requestAnimationFrame(animateFade);
                 } else {
                     if (typeof window.startShake === "function") {
-                        window.startShake(0.3); // Add impact shake when fully open
+                        window.startShake(0.3); 
                     }
                     resolve();
                 }

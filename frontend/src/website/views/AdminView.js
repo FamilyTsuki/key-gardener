@@ -62,4 +62,18 @@ export class AdminView {
     async render() {
         return this.container;
     }
+
+    destroy() {
+        if (this.levelManager && typeof this.levelManager.destroy === "function") {
+            this.levelManager.destroy();
+        }
+        if (this.reportManager && typeof this.reportManager.destroy === "function") {
+            this.reportManager.destroy();
+        }
+        this.container.querySelectorAll(".custom-select-container").forEach(el => {
+            if (typeof el.destroy === "function") {
+                el.destroy();
+            }
+        });
+    }
 }

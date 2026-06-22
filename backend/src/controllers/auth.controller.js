@@ -365,7 +365,6 @@ exports.updateSettings = async (req, res, next) => {
         const dbUser = await User.findById(user.id);
         const currentSettings = dbUser.settings || {};
         
-        // Merge the new settings with the existing ones
         const mergedSettings = { ...currentSettings, ...newSettings };
         
         const updated = await User.updateSettings(user.id, mergedSettings);

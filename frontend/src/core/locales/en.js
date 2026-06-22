@@ -513,9 +513,15 @@ export const en = {
     skilltree: {
         title: "Skill Tree",
         pointsAvailable: "Skill Points:",
-        unlocked: "Unlocked",
+        unlocked: "Unlocked ✓",
+        unlock: "Unlock",
+        locked: "🔒 Locked",
+        storyOnly: "🎭 Obtained via story",
         pts: "pts",
-        back: "Back to Menu"
+        back: "← Back",
+        branchAttack: "ATTACK",
+        branchDefense: "DEFENSE",
+        branchUtility: "UTILITY"
     },
 
     story: {

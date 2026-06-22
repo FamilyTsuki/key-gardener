@@ -7,6 +7,8 @@ import { SaveService } from "../../core/services/save.service.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { SettingsModal } from "../components/SettingsModal.js";
 import { SettingsManager } from "../../core/utils/SettingsManager.js";
+import { SkillTreeModal } from "../components/SkillTreeModal.js";
+
 
 /**
  * View for the main game interface.
@@ -24,9 +26,7 @@ export default class GameView extends AbstractView {
         
         this.handleEscapeKey = (e) => {
             if (e.key === "Escape") {
-                if (this.settingsModal) {
-                    this.settingsModal.close();
-                } else {
+                if (!this.settingsModal && !this.skillTreeModal) {
                     this.openSettings();
                 }
             }
@@ -34,6 +34,9 @@ export default class GameView extends AbstractView {
         window.addEventListener("keydown", this.handleEscapeKey);
 
         this.handleBeforeUnload = (e) => {
+            if (window.allowPageUnload) {
+                return;
+            }
             e.preventDefault();
             e.returnValue = "";
         };
@@ -56,13 +59,30 @@ export default class GameView extends AbstractView {
             id: "game-canvas",
             className: "game-canvas",
         });
-        const settingsBtn = el("button", { className: "game-settings-btn", onclick: () => this.openSettings() },
+        const settingsBtn = el("button", {
+            className: "game-settings-btn",
+            title: LanguageManager.t("settings.title") || "Settings",
+            onclick: () => this.openSettings()
+        },
             el("img", { src: "/asset/game_assets/textures/parametre.webp", alt: "Paramètres", className: "settings-icon" })
+        );
+
+        const skillTreeBtn = el("button", {
+            className: "game-settings-btn",
+            title: LanguageManager.t("skilltree.title") || "Arbre de Compétences",
+            onclick: () => this.openSkillTree()
+        },
+            el("span", {
+                className: "settings-icon",
+                style: "display: flex; align-items: center; justify-content: center; font-size: 28px;"
+            }, "🌳")
         );
 
         this.settingsBtnContainer = el(
             "div",
             { className: "settings-btn-container" },
+            el("span", { className: "settings-btn-text" }, LanguageManager.t("skilltree.title") || "Skill Tree"),
+            skillTreeBtn,
             el("span", { className: "settings-btn-text" }, LanguageManager.t("settings.title") || "Settings"),
             settingsBtn
         );
@@ -185,10 +205,23 @@ export default class GameView extends AbstractView {
      */
     openSettings() {
         if (!this.settingsModal) {
-            this.settingsModal = new SettingsModal(this.engine, () => {
-                this.settingsModal = null;
-            }, () => this.saveAndQuit());
+            this.settingsModal = new SettingsModal(
+                this.engine,
+                () => {
+                    this.settingsModal = null;
+                },
+                () => this.saveAndQuit()
+            );
             this.settingsModal.open();
+        }
+    }
+
+    openSkillTree() {
+        if (!this.skillTreeModal) {
+            this.skillTreeModal = new SkillTreeModal(this.engine, () => {
+                this.skillTreeModal = null;
+            });
+            this.skillTreeModal.open();
         }
     }
 
@@ -279,6 +312,10 @@ export default class GameView extends AbstractView {
         if (this.settingsModal) {
             this.settingsModal.close();
             this.settingsModal = null;
+        }
+        if (this.skillTreeModal) {
+            this.skillTreeModal.close();
+            this.skillTreeModal = null;
         }
         if (this.engine) {
             this.engine.destroy();

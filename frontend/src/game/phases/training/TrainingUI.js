@@ -120,7 +120,6 @@ export class TrainingUI {
         
         this.targetWordDisplay.innerHTML = "";
         
-        // Handle multiple words (like ACCEPTER / REFUSER)
         wordsToType.forEach(word => {
             const wordEl = document.createElement("div");
             wordEl.className = "training-word-item";
@@ -155,7 +154,6 @@ export class TrainingUI {
         const wordEl = document.createElement("div");
         wordEl.className = "training-word-item";
         
-        // Highlight errors or correct
         let hasError = false;
         for (let i = 0; i < currentTyped.length; i++) {
             if (currentTyped[i] !== targetWord[i]) {

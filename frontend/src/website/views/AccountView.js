@@ -94,7 +94,7 @@ export default class AccountView extends AbstractView {
             }, LanguageManager.t("account.updatePasswordBtn"))
         );
         const currentLang = LanguageManager.getLanguage();
-        const langSelect = createCustomSelect([
+        this.langSelect = createCustomSelect([
             { value: "en", label: LanguageManager.t("account.english") },
             { value: "fr", label: LanguageManager.t("account.french") }
         ], currentLang, (newValue) => {
@@ -103,7 +103,7 @@ export default class AccountView extends AbstractView {
 
         const langContainer = el("div", { className: "password-container" },
             el("h3", { className: "password-title" }, LanguageManager.t("account.languageTitle")),
-            langSelect
+            this.langSelect
         );
 
         const savedTheme = localStorage.getItem("theme");
@@ -354,6 +354,15 @@ export default class AccountView extends AbstractView {
      */
     getCss() {
         return ["/asset/css/account.css"];
+    }
+
+    /**
+     * Cleans up custom components when the view is destroyed.
+     */
+    destroy() {
+        if (this.langSelect && typeof this.langSelect.destroy === "function") {
+            this.langSelect.destroy();
+        }
     }
 }
 

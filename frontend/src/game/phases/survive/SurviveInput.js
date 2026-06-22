@@ -23,14 +23,13 @@ export class SurviveInput {
 
         const title = document.createElement("h3");
         title.textContent = LanguageManager.t("skilltree.title") ? "Sorts disponibles :" : "Sorts disponibles :";
-        // Actually better to just use "Sorts disponibles :" or translate it properly
         spellListContainer.appendChild(title);
         
         const ul = document.createElement("ul");
         spells.forEach(spell => {
             const li = document.createElement("li");
-            const translatedName = LanguageManager.t("spells." + spell) || spell;
-            li.textContent = `${translatedName} (${spell})`;
+            const translatedName = LanguageManager.t("spells." + spell + ".name") || spell;
+            li.textContent = `${translatedName} (${spell.toUpperCase()})`;
             ul.appendChild(li);
         });
         
