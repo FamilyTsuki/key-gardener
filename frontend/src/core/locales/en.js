@@ -475,6 +475,20 @@ export const en = {
         termsTitle: "Terms of Service",
         termsContent: "<h3>Acceptance of Terms</h3><p>By using {gameName}, you agree to these terms of service.</p><h3>Account Rules</h3><p>You are responsible for keeping your account secure. Any form of cheating, exploiting bugs, or inappropriate behavior in the Community Hub is strictly prohibited and may result in an immediate account ban.</p><h3>Liability</h3><p>The game is provided 'as is' without any warranty. We are not responsible for any data loss or damage caused by the use of this service.</p>"
     },
+    moderation: {
+        alertTitle: "Security Alert",
+        alertText1: "Your post was detected as non-compliant with our moderation rules.",
+        alertText2: "Your account has received a warning ({count}/4). Repeat violations will result in a permanent suspension from the hub.",
+        anomalyLabel: "Anomaly Detected",
+        typeImage: "Non-compliant / inappropriate image",
+        typeLanguage: "Inappropriate / offensive language",
+        understood: "I Understand",
+        contest: "Contest the Decision",
+        contesting: "Sending...",
+        contestSuccess: "Your contest has been successfully submitted.",
+        contestError: "Unable to submit the contest.",
+        mediaPlaceholder: "[Media Content]"
+    },
     boss: {
         earth: {
             sempai_warn_1: "Alert, my student! The very fabric of the system is overloading...",

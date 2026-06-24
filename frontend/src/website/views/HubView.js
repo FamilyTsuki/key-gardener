@@ -121,6 +121,6 @@ export default class HubView extends AbstractView {
     }
 
     getCss() {
-        return ["/asset/css/hub.css", "/asset/css/social.css"];
+        return ["/asset/css/hub.css", "/asset/css/social.css", "/asset/css/moderation.css"];
     }
 }

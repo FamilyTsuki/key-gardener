@@ -497,6 +497,20 @@ export const fr = {
         termsTitle: "Conditions d'Utilisation",
         termsContent: "<h3>Acceptation des Conditions</h3><p>En utilisant {gameName}, vous acceptez ces conditions d'utilisation.</p><h3>Règles de Compte</h3><p>Vous êtes responsable de la sécurité de votre compte. Toute forme de triche, d'exploitation de bugs, ou de comportement inapproprié dans le Hub Communautaire est strictement interdite et peut entraîner un bannissement immédiat du compte.</p><h3>Responsabilité</h3><p>Le jeu est fourni 'tel quel' sans aucune garantie. Nous ne sommes pas responsables de la perte de données ou des dommages causés par l'utilisation de ce service.</p>"
     },
+    moderation: {
+        alertTitle: "Alerte de Sécurité",
+        alertText1: "Votre publication a été détectée comme non conforme à nos règles de modération.",
+        alertText2: "Votre compte a reçu un avertissement ({count}/4). La réitération entraînera une suspension définitive de l'accès au hub.",
+        anomalyLabel: "Anomalie détectée",
+        typeImage: "Image non conforme / inappropriée",
+        typeLanguage: "Langage inapproprié / offensant",
+        understood: "J'ai compris",
+        contest: "Contester la décision",
+        contesting: "Envoi...",
+        contestSuccess: "Votre contestation a bien été enregistrée.",
+        contestError: "Impossible d'envoyer la contestation.",
+        mediaPlaceholder: "[Contenu Média]"
+    },
     backendErrors: {
         "All fields are required": "Tous les champs sont requis",
         "Password must be at least 8 characters long, contain at least one number and one special character": "Le mot de passe doit comporter au moins 8 caractères, dont un chiffre et un caractère spécial",
