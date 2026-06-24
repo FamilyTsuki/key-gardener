@@ -24,7 +24,10 @@ export class PlayerMovement {
     }
 
     update(deltaTime) {
-        if (!this.isMoving) return;
+        if (!this.isMoving) {
+            this.clearStaleWormRepel();
+            return;
+        }
 
         this.currentMovementTime += deltaTime;
         this.movementProgress = this.currentMovementTime / (this.movementDuration * 0.0166);
@@ -35,6 +38,14 @@ export class PlayerMovement {
         }
 
         this.interpolatePosition();
+    }
+
+    clearStaleWormRepel() {
+        if (!this.pendingWormRepel) return;
+        const worm = this.pendingWormRepel.worm;
+        if (worm && worm.isDead) {
+            this.pendingWormRepel = null;
+        }
     }
 
     finishMovement() {
@@ -84,7 +95,19 @@ export class PlayerMovement {
     }
 
     startMovement(newPosition, keyboardLayout) {
-        if (this.pendingWormRepel) return { blocked: true, hitWorm: this.pendingWormRepel.worm, wormKey: this.pendingWormRepel.wormKey };
+        if (this.pendingWormRepel) {
+            const worm = this.pendingWormRepel.worm;
+            const wormKey = this.pendingWormRepel.wormKey;
+
+            if (worm && worm.isDead) {
+                this.pendingWormRepel = null;
+            } else if (this.isMoving) {
+                return { blocked: true, hitWorm: worm, wormKey };
+            } else {
+                this.beginRepelMovement(newPosition, keyboardLayout);
+                return { blocked: true, hitWorm: worm, wormKey };
+            }
+        }
 
         if (this.targetPosition && this.targetPosition.x === newPosition.x && this.targetPosition.y === newPosition.y) {
             return { blocked: false };
@@ -104,6 +127,27 @@ export class PlayerMovement {
 
         AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.9);
         return { blocked: false };
+    }
+
+    beginRepelMovement(newPosition, keyboardLayout) {
+        this.startPosition = { x: this.x, y: this.y };
+        this.targetPosition = { ...newPosition };
+        this.startOffsetY = this.offsetY;
+        this.targetOffsetY = this.calculateTargetOffsetY(newPosition, keyboardLayout);
+
+        const wormPos = this.pendingWormRepel.wormKey.rawPosition;
+        const dx = wormPos.x - this.x;
+        const dy = wormPos.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 0) {
+            this.facingDirection = { x: dx / dist, y: dy / dist };
+        }
+
+        this.movementDuration = 15;
+        this.isMoving = true;
+        this.currentMovementTime = 0;
+
+        AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.9);
     }
 
     updateMovementDuration() {

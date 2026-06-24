@@ -17,7 +17,7 @@ export class HubCreatePostComponent {
         const fileInput = el("input", {
             type: "file",
             id: "post-media",
-            accept: "image/*,video/*",
+            accept: "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/ogg,video/quicktime",
             className: "hidden",
             onchange: (e) => this.handleMediaSelection(e)
         });

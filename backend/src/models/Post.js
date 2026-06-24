@@ -15,29 +15,57 @@ class Post {
     }
 
     static async getAllPosts(currentUserId = null, sort = "hot") {
-        let orderBy = "hot_score DESC, p.created_at DESC";
+        let orderBy = "hot_score DESC, created_at DESC";
         if (sort === "recent") {
-            orderBy = "p.created_at DESC";
+            orderBy = "created_at DESC";
         } else if (sort === "upvotes") {
-            orderBy = "p.upvotes DESC, p.created_at DESC";
+            orderBy = "upvotes DESC, created_at DESC";
         } else if (sort === "comments") {
-            orderBy = "comment_count DESC, p.created_at DESC";
+            orderBy = "comment_count DESC, created_at DESC";
         }
 
         const result = await db.query(
-            `SELECT p.id, p.content, p.image_url, p.upvotes, p.downvotes, p.created_at, u.username, u.id as user_id,
-                    COALESCE((SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $1), 0) AS user_vote,
+            `WITH post_base AS (
+                SELECT
+                    p.id, p.content, p.image_url, p.upvotes, p.downvotes,
+                    p.created_at, p.status,
+                    u.username, u.id AS user_id,
+                    COALESCE(
+                        (SELECT vote_type FROM votes WHERE post_id = p.id AND user_id = $1), 0
+                    ) AS user_vote,
                     (SELECT COUNT(*) > 0 FROM post_reports WHERE post_id = p.id AND user_id = $1) AS has_reported,
-                    COALESCE((SELECT COUNT(*) FROM comments WHERE post_id = p.id), 0)::integer AS comment_count,
-                    (
-                        (p.upvotes * 1.0) - (p.downvotes * 0.75) 
-                        + 
-                        (10.0 * EXP(- EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - p.created_at)) / 86400.0))
-                    ) AS hot_score
-             FROM posts p
-             JOIN users u ON p.user_id = u.id
-             WHERE p.status = 'active'
-             ORDER BY ${orderBy}`,
+                    COALESCE(
+                        (SELECT COUNT(*) FROM comments WHERE post_id = p.id), 0
+                    )::integer AS comment_count,
+                    (p.upvotes + p.downvotes) AS total_votes,
+                    CASE
+                        WHEN (p.upvotes + p.downvotes) = 0 THEN 0.0
+                        ELSE p.upvotes::float / (p.upvotes + p.downvotes)
+                    END AS vote_ratio
+                FROM posts p
+                JOIN users u ON p.user_id = u.id
+                WHERE p.status = 'active'
+            )
+            SELECT *,
+                (
+                    CASE
+                        WHEN total_votes = 0 THEN 0.0
+                        ELSE (
+                            (
+                                vote_ratio
+                                + 1.9208 / total_votes
+                                - 1.96 * SQRT(
+                                    (vote_ratio * (1.0 - vote_ratio) + 0.9604 / total_votes)
+                                    / total_votes
+                                )
+                            ) / (1.0 + 3.8416 / total_votes)
+                        ) * 10.0
+                    END
+                    + LEAST(comment_count * 0.5, 5.0)
+                    + (10.0 * EXP(- EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - created_at)) / 86400.0))
+                ) AS hot_score
+            FROM post_base
+            ORDER BY ${orderBy}`,
             [currentUserId]
         );
         return result.rows;
