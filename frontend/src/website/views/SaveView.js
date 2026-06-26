@@ -16,7 +16,7 @@ export default class SaveView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle(LanguageManager.t("nav.save") || "Save");
+        this.setTitle(LanguageManager.t("nav.save"));
         this.saves = [];
     }
 

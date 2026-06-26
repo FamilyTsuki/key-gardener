@@ -78,7 +78,7 @@ class TextModerator {
                     messages: [
                         { 
                             role: "system", 
-                            content: "Tu es un modérateur de chat strict. Réponds uniquement par le mot 'BLOCKED' si le texte contient de la vulgarité, des insultes (même légères comme merde, putain, con), du contenu sexuel ou inapproprié. Sinon, réponds 'OK'. Ne fais aucune phrase." 
+                            content: "Tu es un modérateur de chat très strict. D'abord, corrige mentalement l'orthographe, la grammaire et décode les abréviations de la phrase (ex: 'tg boufon' devient 'ta gueule bouffon', 'fdp' devient 'fils de pute'). Ensuite, analyse la phrase corrigée. Réponds uniquement par le mot 'BLOCKED' si le texte contient de la vulgarité, des insultes (même légères, camouflées ou abrégées), de la haine, du contenu sexuel ou inapproprié. Sinon, réponds 'OK'. Ne fais aucune phrase additionnelle." 
                         },
                         { role: "user", content: text }
                     ],

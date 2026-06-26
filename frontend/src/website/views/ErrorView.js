@@ -7,7 +7,7 @@ export default class ErrorView extends AbstractView {
     constructor(params) {
         super(params);
         this.errorCode = params?.errorCode || "404";
-        this.errorMessage = params?.errorMessage || LanguageManager.t("error.defaultDescription") || "Something went wrong.";
+        this.errorMessage = params?.errorMessage || LanguageManager.t("error.defaultDescription");
         this.setTitle(LanguageManager.t("error.title")?.replace("{code}", this.errorCode) || `${this.errorCode} - Error`);
     }
 
@@ -27,7 +27,7 @@ export default class ErrorView extends AbstractView {
                 el("h1", { className: "error-code-modern" }, this.errorCode),
                 el("h2", { className: "error-title" }, LanguageManager.t("error.title")?.replace("{code}", this.errorCode) || `Error ${this.errorCode}`),
                 el("p", { className: "error-desc" }, this.errorMessage),
-                el("a", { href: "/", dataset: { link: true }, className: "error-btn-glow" }, LanguageManager.t("error.backHome") || "Back to Home")
+                el("a", { href: "/", dataset: { link: true }, className: "error-btn-glow" }, LanguageManager.t("error.backHome"))
             )
         );
 

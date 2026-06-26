@@ -49,10 +49,10 @@ export class SpellUnlockedPopup {
             defaultDesc: "A magical spell."
         };
 
-        const title = LanguageManager.t("game.spellUnlocked") || "Nouveau sort débloqué !";
+        const title = LanguageManager.t("game.spellUnlocked");
         const name = LanguageManager.t(info.nameKey) || info.defaultName;
         const desc = LanguageManager.t(info.descKey) || info.defaultDesc;
-        const howTo = LanguageManager.t("game.spellHowTo") || "Tapez ce mot pour le lancer :";
+        const howTo = LanguageManager.t("game.spellHowTo");
 
         const popup = el("div", { className: "spell-unlock-overlay fade-in" },
             el("div", { className: "spell-unlock-box glass-panel" },
@@ -74,7 +74,7 @@ export class SpellUnlockedPopup {
                             if (onClose) onClose();
                         }, 500);
                     }
-                }, LanguageManager.t("common.confirm") || "Continuer")
+                }, LanguageManager.t("common.confirm"))
             )
         );
 

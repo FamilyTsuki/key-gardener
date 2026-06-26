@@ -138,7 +138,7 @@ export default class AccountView extends AbstractView {
         );
 
         const themeContainer = el("div", { className: "password-container" },
-            el("h3", { className: "password-title" }, LanguageManager.t("account.themeTitle") || "Thème (Theme)"),
+            el("h3", { className: "password-title" }, LanguageManager.t("account.themeTitle")),
             themeSwitchLabel
         );
             
@@ -211,17 +211,17 @@ export default class AccountView extends AbstractView {
                 const rank = StatisticsService.getRankFromWpm(stats.highest_wpm || 0);
 
                 const statsGrid = el("div", { className: "stats-grid" },
-                    this.createStatItem(LanguageManager.t("account.currentRank") || "Grade Actuel", rank.name, rank.class),
-                    this.createStatItem(LanguageManager.t("account.topWpm") || "Top WPM", `${stats.highest_wpm} WPM`),
-                    this.createStatItem(LanguageManager.t("account.avgWpm") || "WPM Moyen", `${stats.average_wpm} WPM`),
-                    this.createStatItem(LanguageManager.t("account.accuracy") || "Précision", `${stats.accuracy}%`),
-                    this.createStatItem(LanguageManager.t("account.wordsTyped") || "Mots Tapés", stats.total_words_typed),
-                    this.createStatItem(LanguageManager.t("account.enemiesDefeated") || "Ennemis Vaincus", stats.enemies_defeated),
-                    this.createStatItem(LanguageManager.t("account.bossesDefeated") || "Boss Vaincus", stats.bosses_defeated),
-                    this.createStatItem(LanguageManager.t("account.playtime") || "Temps de Jeu", `${Math.floor(stats.total_playtime_seconds / 60)} min`)
+                    this.createStatItem(LanguageManager.t("account.currentRank"), rank.name, rank.class),
+                    this.createStatItem(LanguageManager.t("account.topWpm"), `${stats.highest_wpm} WPM`),
+                    this.createStatItem(LanguageManager.t("account.avgWpm"), `${stats.average_wpm} WPM`),
+                    this.createStatItem(LanguageManager.t("account.accuracy"), `${stats.accuracy}%`),
+                    this.createStatItem(LanguageManager.t("account.wordsTyped"), stats.total_words_typed),
+                    this.createStatItem(LanguageManager.t("account.enemiesDefeated"), stats.enemies_defeated),
+                    this.createStatItem(LanguageManager.t("account.bossesDefeated"), stats.bosses_defeated),
+                    this.createStatItem(LanguageManager.t("account.playtime"), `${Math.floor(stats.total_playtime_seconds / 60)} min`)
                 );
 
-                this.statsContainer.appendChild(el("h3", { className: "password-title" }, LanguageManager.t("account.globalStats") || "Statistiques Globales"));
+                this.statsContainer.appendChild(el("h3", { className: "password-title" }, LanguageManager.t("account.globalStats")));
                 this.statsContainer.appendChild(statsGrid);
             }
         } catch (error) {

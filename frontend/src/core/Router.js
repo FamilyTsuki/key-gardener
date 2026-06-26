@@ -107,7 +107,7 @@ export default class Router {
                 requiresAuth: false,
                 params: { 
                     errorCode: "404", 
-                    errorMessage: LanguageManager.t("notFound.description") || "Oops! The page you are looking for has been lost in the void." 
+                    errorMessage: LanguageManager.t("notFound.description") 
                 }
             };
         }

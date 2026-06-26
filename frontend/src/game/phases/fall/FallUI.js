@@ -7,9 +7,9 @@ export class FallUI {
         this.textScrambleInstances = [];
         this.scramblers = new Map();
         
-        const leftWord = (LanguageManager.t("game.fallLeft") || "left").toLowerCase();
-        const rightWord = (LanguageManager.t("game.fallRight") || "right").toLowerCase();
-        const centerWord = (LanguageManager.t("game.fallCenter") || "center").toLowerCase();
+        const leftWord = (LanguageManager.t("game.fallLeft")).toLowerCase();
+        const rightWord = (LanguageManager.t("game.fallRight")).toLowerCase();
+        const centerWord = (LanguageManager.t("game.fallCenter")).toLowerCase();
         this.laneWords = [leftWord, rightWord, centerWord];
     }
 
@@ -23,7 +23,7 @@ export class FallUI {
 
         const deepContainer = document.getElementById("deep-container");
         if (deepContainer && deepContainer.children[0]) {
-            deepContainer.children[0].innerText = LanguageManager.t("game.fallDeep") || "deep : ";
+            deepContainer.children[0].innerText = LanguageManager.t("game.fallDeep");
         }
 
         const textElements = document.querySelectorAll(".glitch-text");

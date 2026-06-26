@@ -45,7 +45,7 @@ class ImageModerator {
                                     content: [
                                         {
                                             type: "text",
-                                            text: "Analyze this image for inappropriate content (adult content, nudity, gore, extreme violence). Answer with exactly 'true' if the image contains inappropriate content, or 'false' if it is safe."
+                                            text: "Analyze this image very strictly for any inappropriate content (including adult content, nudity, suggestive poses, gore, violence, weapons, hate symbols, or offensive gestures). Answer with exactly 'true' if the image contains ANY potentially inappropriate or unsafe content, or 'false' if it is completely safe for all audiences."
                                         },
                                         {
                                             type: "image_url",

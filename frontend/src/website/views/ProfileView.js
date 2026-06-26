@@ -19,11 +19,11 @@ export default class ProfileView extends AbstractView {
         this.container = el("div", { className: "account-container" });
         
         if (!this.userId) {
-            this.container.appendChild(el("h1", { className: "account-title" }, LanguageManager.t("profile.userNotFound") || "User not found"));
+            this.container.appendChild(el("h1", { className: "account-title" }, LanguageManager.t("profile.userNotFound")));
             return this.container;
         }
 
-        const loader = el("div", { className: "text-center mt-20" }, LanguageManager.t("common.loading") || "Loading...");
+        const loader = el("div", { className: "text-center mt-20" }, LanguageManager.t("common.loading"));
         this.container.appendChild(loader);
 
         this.loadProfile();
@@ -42,7 +42,7 @@ export default class ProfileView extends AbstractView {
             this.container.innerHTML = "";
 
             if (!data.success) {
-                this.container.appendChild(el("h1", { className: "account-title" }, data.message || LanguageManager.t("profile.userNotFound") || "User not found"));
+                this.container.appendChild(el("h1", { className: "account-title" }, data.message || LanguageManager.t("profile.userNotFound")));
                 return;
             }
 
@@ -67,9 +67,9 @@ export default class ProfileView extends AbstractView {
             
             let removeBtn = null;
             if (friendStatus === 'accepted') {
-                removeBtn = el("button", { className: "btn-danger btn-remove-friend", onclick: () => this.showRemoveConfirmModal() }, LanguageManager.t("social.removeFriendBtn") || "Remove Friend");
+                removeBtn = el("button", { className: "btn-danger btn-remove-friend", onclick: () => this.showRemoveConfirmModal() }, LanguageManager.t("social.removeFriendBtn"));
             } else if (friendStatus === 'pending') {
-                statusContainer.appendChild(el("p", { className: "text-muted profile-pending-status" }, LanguageManager.t("social.pendingStatus") || "Pending Request"));
+                statusContainer.appendChild(el("p", { className: "text-muted profile-pending-status" }, LanguageManager.t("social.pendingStatus")));
             }
             
             content.appendChild(statusContainer);
@@ -78,17 +78,17 @@ export default class ProfileView extends AbstractView {
             const rank = StatisticsService.getRankFromWpm(stats.highest_wpm || 0);
 
             const statsGrid = el("div", { className: "stats-grid" },
-                this.createStatItem(LanguageManager.t("profile.rank") || "Grade", rank.name, rank.class),
-                this.createStatItem(LanguageManager.t("account.topWpm") || "Top WPM", `${stats.highest_wpm} WPM`),
-                this.createStatItem(LanguageManager.t("account.avgWpm") || "WPM Moyen", `${stats.average_wpm} WPM`),
-                this.createStatItem(LanguageManager.t("account.accuracy") || "Précision", `${stats.accuracy}%`),
-                this.createStatItem(LanguageManager.t("account.wordsTyped") || "Mots Tapés", stats.total_words_typed),
-                this.createStatItem(LanguageManager.t("account.enemiesDefeated") || "Ennemis Vaincus", stats.enemies_defeated),
-                this.createStatItem(LanguageManager.t("account.bossesDefeated") || "Boss Vaincus", stats.bosses_defeated),
-                this.createStatItem(LanguageManager.t("account.playtime") || "Temps de Jeu", `${Math.floor(stats.total_playtime_seconds / 60)} min`)
+                this.createStatItem(LanguageManager.t("profile.rank"), rank.name, rank.class),
+                this.createStatItem(LanguageManager.t("account.topWpm"), `${stats.highest_wpm} WPM`),
+                this.createStatItem(LanguageManager.t("account.avgWpm"), `${stats.average_wpm} WPM`),
+                this.createStatItem(LanguageManager.t("account.accuracy"), `${stats.accuracy}%`),
+                this.createStatItem(LanguageManager.t("account.wordsTyped"), stats.total_words_typed),
+                this.createStatItem(LanguageManager.t("account.enemiesDefeated"), stats.enemies_defeated),
+                this.createStatItem(LanguageManager.t("account.bossesDefeated"), stats.bosses_defeated),
+                this.createStatItem(LanguageManager.t("account.playtime"), `${Math.floor(stats.total_playtime_seconds / 60)} min`)
             );
 
-            statsContainer.appendChild(el("h3", { className: "password-title" }, LanguageManager.t("account.globalStats") || "Statistiques Globales"));
+            statsContainer.appendChild(el("h3", { className: "password-title" }, LanguageManager.t("account.globalStats")));
             statsContainer.appendChild(statsGrid);
             
             content.appendChild(statsContainer);
@@ -102,7 +102,7 @@ export default class ProfileView extends AbstractView {
         } catch (error) {
             console.error("Error loading profile", error);
             this.container.innerHTML = "";
-            this.container.appendChild(el("h1", { className: "account-title" }, LanguageManager.t("profile.errorLoading") || "Error loading profile"));
+            this.container.appendChild(el("h1", { className: "account-title" }, LanguageManager.t("profile.errorLoading")));
         }
     }
 
@@ -121,16 +121,16 @@ export default class ProfileView extends AbstractView {
         const overlay = el("div", { id: modalId, className: "custom-modal-overlay" });
         const content = el("div", { className: "custom-modal-content" });
         
-        const title = el("h2", { className: "modal-title-danger" }, LanguageManager.t("social.removeFriendBtn") || "Remove Friend");
-        const msg = el("p", {}, LanguageManager.t("social.removeFriendConfirm") || "Are you sure you want to remove this friend?");
+        const title = el("h2", { className: "modal-title-danger" }, LanguageManager.t("social.removeFriendBtn"));
+        const msg = el("p", {}, LanguageManager.t("social.removeFriendConfirm"));
         
         const actions = el("div", { className: "custom-modal-actions" });
         
-        const cancelBtn = el("button", { className: "btn-secondary custom-modal-btn", onclick: () => overlay.remove() }, LanguageManager.t("social.closeBtn") || "Cancel");
+        const cancelBtn = el("button", { className: "btn-secondary custom-modal-btn", onclick: () => overlay.remove() }, LanguageManager.t("social.closeBtn"));
         const confirmBtn = el("button", { className: "btn-danger custom-modal-btn", onclick: async () => {
             overlay.remove();
             await this.removeFriend(this.userId);
-        }}, LanguageManager.t("social.removeFriendBtn") || "Remove");
+        }}, LanguageManager.t("social.removeFriendBtn"));
 
         actions.appendChild(cancelBtn);
         actions.appendChild(confirmBtn);
@@ -152,14 +152,14 @@ export default class ProfileView extends AbstractView {
             });
             const data = await res.json();
             if (data.success) {
-                FlashMessageManager.show(LanguageManager.t("social.friendRemoved") || "Friend removed", "success");
+                FlashMessageManager.show(LanguageManager.t("social.friendRemoved"), "success");
                 history.pushState(null, null, '/social');
                 window.dispatchEvent(new Event("popstate"));
             } else {
-                FlashMessageManager.show(data.message || LanguageManager.t("social.errorRemovingFriend") || "Error", "error");
+                FlashMessageManager.show(data.message || LanguageManager.t("social.errorRemovingFriend"), "error");
             }
         } catch (e) {
-            FlashMessageManager.show(LanguageManager.t("social.errorRemovingFriend") || "Error", "error");
+            FlashMessageManager.show(LanguageManager.t("social.errorRemovingFriend"), "error");
         }
     }
 

@@ -61,7 +61,7 @@ export default class GameView extends AbstractView {
         });
         const settingsBtn = el("button", {
             className: "game-settings-btn",
-            title: LanguageManager.t("settings.title") || "Settings",
+            title: LanguageManager.t("settings.title"),
             onclick: () => this.openSettings()
         },
             el("img", { src: "/asset/game_assets/textures/parametre.webp", alt: "Paramètres", className: "settings-icon" })
@@ -69,7 +69,7 @@ export default class GameView extends AbstractView {
 
         const skillTreeBtn = el("button", {
             className: "game-settings-btn",
-            title: LanguageManager.t("skilltree.title") || "Arbre de Compétences",
+            title: LanguageManager.t("skilltree.title"),
             onclick: () => this.openSkillTree()
         },
             el("span", {
@@ -81,9 +81,9 @@ export default class GameView extends AbstractView {
         this.settingsBtnContainer = el(
             "div",
             { className: "settings-btn-container" },
-            el("span", { className: "settings-btn-text" }, LanguageManager.t("skilltree.title") || "Skill Tree"),
+            el("span", { className: "settings-btn-text" }, LanguageManager.t("skilltree.title")),
             skillTreeBtn,
-            el("span", { className: "settings-btn-text" }, LanguageManager.t("settings.title") || "Settings"),
+            el("span", { className: "settings-btn-text" }, LanguageManager.t("settings.title")),
             settingsBtn
         );
         return el(
@@ -184,7 +184,7 @@ export default class GameView extends AbstractView {
                 startData = window.currentDuelData;
             } else {
                 import("../../core/utils/FlashMessageManager.js").then(module => {
-                    module.FlashMessageManager.show(LanguageManager.t("game.duelDataLost") || "Duel data lost. Please restart the duel.", "error");
+                    module.FlashMessageManager.show(LanguageManager.t("game.duelDataLost"), "error");
                 });
                 history.pushState(null, null, "/social");
                 window.dispatchEvent(new Event('popstate'));

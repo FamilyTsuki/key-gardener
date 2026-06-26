@@ -142,9 +142,9 @@ export class DuelUI {
         if (!contentBox) return;
         clear(contentBox);
 
-        contentBox.appendChild(el("span", { className: "status-title" }, LanguageManager.t("duel.jailedTitle") || "EMPRISONNÉ !"));
+        contentBox.appendChild(el("span", { className: "status-title" }, LanguageManager.t("duel.jailedTitle")));
         contentBox.appendChild(el("br"));
-        contentBox.appendChild(el("span", { className: "jail-subtitle" }, LanguageManager.t("duel.jailedSubtitle") || "Tapez le mot ci-dessous pour briser la cage et vous échapper :"));
+        contentBox.appendChild(el("span", { className: "jail-subtitle" }, LanguageManager.t("duel.jailedSubtitle")));
         contentBox.appendChild(el("br"));
         contentBox.appendChild(el("br"));
 
@@ -173,7 +173,7 @@ export class DuelUI {
                     el("div", { className: "status-overlay-stun" }),
                     el("div", { className: "status-message-box stun-message" },
                         el("span", { className: "status-icon" }, "⚡"),
-                        el("span", { className: "status-text" }, LanguageManager.t("duel.stunnedMessage") || "PARALYSÉ ! Vous avez été foudroyé, impossible d'agir !")
+                        el("span", { className: "status-text" }, LanguageManager.t("duel.stunnedMessage"))
                     )
                 );
                 document.body.appendChild(this.stunUI);
@@ -188,8 +188,8 @@ export class DuelUI {
 
     showEndOverlay(won, wpm, durationSecs, successfulStrokesCount) {
         const overlayClass = won ? "duel-end-victory" : "duel-end-defeat";
-        const titleText = won ? (LanguageManager.t("duel.victoryTitle") || "VICTOIRE !") : (LanguageManager.t("duel.defeatTitle") || "DÉFAITE...");
-        const subtitleText = won ? (LanguageManager.t("duel.victorySubtitle") || "Vous avez triomphé dans l'arène !") : (LanguageManager.t("duel.defeatSubtitle") || "Votre adversaire a été plus rapide...");
+        const titleText = won ? (LanguageManager.t("duel.victoryTitle")) : (LanguageManager.t("duel.defeatTitle"));
+        const subtitleText = won ? (LanguageManager.t("duel.victorySubtitle") || "Vous avez triomphé dans l'arène !") : (LanguageManager.t("duel.defeatSubtitle"));
         const icon = won ? "🏆" : "💀";
         const durationText = `${Math.floor(durationSecs / 60)}m ${durationSecs % 60}s`;
 
@@ -210,7 +210,7 @@ export class DuelUI {
                         this.endOverlay = null;
                         window.appRouter.navigateTo("/social");
                     }
-                }, LanguageManager.t("social.closeBtn") || "Fermer")
+                }, LanguageManager.t("social.closeBtn"))
             )
         );
         document.body.appendChild(this.endOverlay);
@@ -240,7 +240,7 @@ export class DuelUI {
         countdownOverlay.appendChild(countdownText);
         document.body.appendChild(countdownOverlay);
 
-        const steps = ["3", "2", "1", LanguageManager.t("duel.go") || "GO !"];
+        const steps = ["3", "2", "1", LanguageManager.t("duel.go")];
         const timeline = gsap.timeline({
             onComplete: () => {
                 countdownOverlay.remove();

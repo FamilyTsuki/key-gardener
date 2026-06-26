@@ -43,11 +43,11 @@ export class SettingsModal {
             );
         };
 
-        const globalSlider = createSlider(LanguageManager.t("settings.volumeGlobal") || "Volume Global", "global");
-        const musicSlider = createSlider(LanguageManager.t("settings.volumeMusic") || "Musique", "music");
-        const envSlider = createSlider(LanguageManager.t("settings.volumeEnvironment") || "Environnement", "environment");
-        const enemySlider = createSlider(LanguageManager.t("settings.volumeEnemy") || "Ennemis", "enemy");
-        const playerSlider = createSlider(LanguageManager.t("settings.volumePlayer") || "Joueur (Effets)", "player");
+        const globalSlider = createSlider(LanguageManager.t("settings.volumeGlobal"), "global");
+        const musicSlider = createSlider(LanguageManager.t("settings.volumeMusic"), "music");
+        const envSlider = createSlider(LanguageManager.t("settings.volumeEnvironment"), "environment");
+        const enemySlider = createSlider(LanguageManager.t("settings.volumeEnemy"), "enemy");
+        const playerSlider = createSlider(LanguageManager.t("settings.volumePlayer"), "player");
 
         const currentLang = LanguageManager.getLanguage();
         const langSelect = createCustomSelect([
@@ -58,7 +58,7 @@ export class SettingsModal {
         }, "settings-compact-select");
 
         const langRow = el("div", { className: "settings-row" },
-            el("label", {}, LanguageManager.t("settings.language") || "Langue"),
+            el("label", {}, LanguageManager.t("settings.language")),
             langSelect
         );
 
@@ -70,20 +70,20 @@ export class SettingsModal {
             SettingsManager.saveSettings({ keyboardLayout: newValue });
         }, "settings-compact-select");
         const layoutRow = el("div", { className: "settings-row" },
-            el("label", {}, LanguageManager.t("settings.keyboardLayout") || "Clavier"),
+            el("label", {}, LanguageManager.t("settings.keyboardLayout")),
             layoutSelect
         );
 
         const currentFullscreen = settings.fullscreen ? "true" : "false";
         const fullscreenSelect = createCustomSelect([
-            { value: "true", label: LanguageManager.t("settings.yes") || "Oui" },
-            { value: "false", label: LanguageManager.t("settings.no") || "Non" }
+            { value: "true", label: LanguageManager.t("settings.yes") },
+            { value: "false", label: LanguageManager.t("settings.no") }
         ], currentFullscreen, (newValue) => {
             SettingsManager.saveSettings({ fullscreen: newValue === "true" });
         }, "settings-compact-select");
 
         const fullscreenRow = el("div", { className: "settings-row" },
-            el("label", {}, LanguageManager.t("settings.fullscreen") || "Plein écran"),
+            el("label", {}, LanguageManager.t("settings.fullscreen")),
             fullscreenSelect
         );
 
@@ -101,12 +101,12 @@ export class SettingsModal {
                     document.exitFullscreen();
                 }
             }
-        }, LanguageManager.t("settings.toggleFullscreen") || "Basculer en Plein Écran");
+        }, LanguageManager.t("settings.toggleFullscreen"));
 
         const closeBtn = el("button", {
             className: "settings-close-btn",
             onclick: () => this.close()
-        }, LanguageManager.t("settings.close") || "Fermer");
+        }, LanguageManager.t("settings.close"));
 
         const saveAndQuitBtn = el("button", {
             className: "settings-save-quit-btn",
@@ -115,11 +115,11 @@ export class SettingsModal {
                     this.saveAndQuitCallback();
                 }
             }
-        }, LanguageManager.t("game.saveQuitBtn") || "Sauvegarder & Quitter");
+        }, LanguageManager.t("game.saveQuitBtn"));
 
         this.modalEl = el("div", { className: "settings-modal-overlay" },
             el("div", { className: "settings-modal-content" },
-                el("h2", {}, LanguageManager.t("settings.title") || "Paramètres"),
+                el("h2", {}, LanguageManager.t("settings.title")),
                 globalSlider,
                 musicSlider,
                 envSlider,

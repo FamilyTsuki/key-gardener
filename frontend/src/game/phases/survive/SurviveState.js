@@ -64,9 +64,9 @@ export class SurviveState {
         
         const dBox = new DialogueBox();
         const dialogues = [
-            LanguageManager.t("story.firstCombat1") || "C'est dangereux ici ! Tu n'as pas d'arme !",
-            LanguageManager.t("story.firstCombat2") || "Laisse-moi t'apprendre ton premier sort. Tape le mot 'spark' !",
-            LanguageManager.t("story.firstCombat3") || "Tu peux maintenant lancer une Étincelle. Bonne chance !"
+            LanguageManager.t("story.firstCombat1"),
+            LanguageManager.t("story.firstCombat2"),
+            LanguageManager.t("story.firstCombat3")
         ];
         dBox.show(dialogues, "/asset/game_assets/models/sempai.glb", () => {
             dBox.destroy();

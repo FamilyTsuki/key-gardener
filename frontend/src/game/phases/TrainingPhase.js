@@ -211,16 +211,16 @@ export class TrainingPhase extends GamePhase {
 
         if (this.currentExerciseType === "SIMON") {
             const avgTime = Math.round(this.simonRoundTimes.reduce((a, b) => a + b, 0) / this.simonRoundTimes.length);
-            resultMsg = LanguageManager.t("engine.trainingResultSimon") || "Impressionnant ! Ton temps de réaction moyen est de {ms} millisecondes.";
+            resultMsg = LanguageManager.t("engine.trainingResultSimon");
             resultMsg = resultMsg.replace("{ms}", avgTime.toString());
         } else if (this.currentExerciseType === "ALPHABET") {
             const durationSec = ((Date.now() - this.exerciseStartTime) / 1000).toFixed(1);
-            resultMsg = LanguageManager.t("engine.trainingResultAlphabet") || "Pas mal ! Tu as tapé l'alphabet en {sec} secondes.";
+            resultMsg = LanguageManager.t("engine.trainingResultAlphabet");
             resultMsg = resultMsg.replace("{sec}", durationSec.toString());
         } else {
             const durationMin = (Date.now() - this.exerciseStartTime) / 60000;
             const wpm = Math.round((this.totalKeystrokes / 5) / durationMin);
-            resultMsg = LanguageManager.t("engine.trainingResult") || "Bravo ! Ta vitesse est de {wpm} MPM.";
+            resultMsg = LanguageManager.t("engine.trainingResult");
             resultMsg = resultMsg.replace("{wpm}", wpm.toString());
         }
 

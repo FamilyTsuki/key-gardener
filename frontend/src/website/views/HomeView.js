@@ -11,7 +11,7 @@ import { SettingsManager } from "../../core/utils/SettingsManager.js";
 export default class HomeView extends AbstractView {
     constructor(params) {
         super(params);
-        this.setTitle(LanguageManager.t("nav.home") || "Home");
+        this.setTitle(LanguageManager.t("nav.home"));
         this.isCurrentView = false;
         this.hologramListeners = [];
         this.glitchFrameId = null;
@@ -170,7 +170,7 @@ export default class HomeView extends AbstractView {
                             el("a", { href: "https://discord.gg/Mv3MRXmg9P", target: "_blank", "aria-label": LanguageManager.t("home.joinDiscord") }, "Discord")
                         ),
                         el("div", { className: "footer-column" },
-                                el("h3", {}, LanguageManager.t("home.credits") || "Credits"),
+                                el("h3", {}, LanguageManager.t("home.credits")),
                                 el("p", { className: "footer-thx" }, LanguageManager.t("home.specialThank")),
                                 el("p", { className: "footer-thx" }, LanguageManager.t("home.thankSupporters"))
                             )
@@ -179,12 +179,12 @@ export default class HomeView extends AbstractView {
                         href: "/support", 
                         dataset: { link: true }, 
                         className: "footer-support-link"
-                    }, LanguageManager.t("nav.donate") || "Support the Project"),
+                    }, LanguageManager.t("nav.donate")),
                     el(
                         "div",
                         { className: "footer-bottom" },
                         el("p", { className: "home-footer-info" }, LanguageManager.t("home.rights")),
-                        el("a", { href: "/legal", dataset: { link: true }, className: "footer-legal-link" }, LanguageManager.t("legal.title") || "Legal Information")
+                        el("a", { href: "/legal", dataset: { link: true }, className: "footer-legal-link" }, LanguageManager.t("legal.title"))
                     )
                 )
             )

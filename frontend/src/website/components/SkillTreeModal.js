@@ -187,17 +187,17 @@ export class SkillTreeModal {
 
         const spellName = LanguageManager.t(spell.nameKey) || spell.defaultName;
         const spellDesc = LanguageManager.t(spell.descKey) || spell.defaultDesc;
-        const howTo = LanguageManager.t("game.spellHowTo") || "Tapez ce mot pour le lancer :";
+        const howTo = LanguageManager.t("game.spellHowTo");
 
         const storyOnly = spell.storyOnly === true;
 
         const buyBtnLabel = unlocked
-            ? (LanguageManager.t("skilltree.unlocked") || "Débloqué ✓")
+            ? (LanguageManager.t("skilltree.unlocked"))
             : storyOnly
-            ? (LanguageManager.t("skilltree.storyOnly") || "🎭 Obtenu via l'histoire")
+            ? LanguageManager.t("skilltree.storyOnly")
             : !accessible
-            ? (LanguageManager.t("skilltree.locked") || "🔒 Verrouillé")
-            : `${LanguageManager.t("skilltree.unlock") || "Débloquer"} — ${spell.cost} pt${spell.cost > 1 ? "s" : ""}`;
+            ? (LanguageManager.t("skilltree.locked"))
+            : `${LanguageManager.t("skilltree.unlock")} — ${spell.cost} pt${spell.cost > 1 ? "s" : ""}`;
 
         const buyBtn = el("button", {
             className: "st-detail-buy-btn",
@@ -261,7 +261,7 @@ export class SkillTreeModal {
             className: "st-branch-label",
             style: `left: ${BRANCH_POSITIONS.attack.labelX}%; bottom: 6%;`,
         },
-            el("span", {}, LanguageManager.t("skilltree.branchAttack") || "ATTAQUE"),
+            el("span", {}, LanguageManager.t("skilltree.branchAttack")),
             el("span", { className: "text-attack" }, this.countUnlocked("attack").toString())
         );
 
@@ -269,7 +269,7 @@ export class SkillTreeModal {
             className: "st-branch-label",
             style: `left: ${BRANCH_POSITIONS.defense.labelX}%; bottom: 6%;`,
         },
-            el("span", {}, LanguageManager.t("skilltree.branchDefense") || "DÉFENSE"),
+            el("span", {}, LanguageManager.t("skilltree.branchDefense")),
             el("span", { className: "text-defense" }, this.countUnlocked("defense").toString())
         );
 
@@ -277,7 +277,7 @@ export class SkillTreeModal {
             className: "st-branch-label",
             style: `left: ${BRANCH_POSITIONS.utility.labelX}%; bottom: 6%;`,
         },
-            el("span", {}, LanguageManager.t("skilltree.branchUtility") || "UTILITAIRE"),
+            el("span", {}, LanguageManager.t("skilltree.branchUtility")),
             el("span", { className: "text-utility" }, this.countUnlocked("utility").toString())
         );
 
@@ -286,14 +286,14 @@ export class SkillTreeModal {
 
         this.modalEl = el("div", { className: "skill-tree-overlay", tabIndex: "-1" },
             el("div", { className: "skill-tree-header" },
-                el("div", { className: "skill-tree-title" }, LanguageManager.t("skilltree.title") || "Skill Tree"),
+                el("div", { className: "skill-tree-title" }, LanguageManager.t("skilltree.title")),
                 el("div", { className: "skill-tree-points" },
-                    ` ${skillPoints} ${LanguageManager.t("skilltree.pts") || "pts"}`
+                    ` ${skillPoints} ${LanguageManager.t("skilltree.pts")}`
                 ),
                 el("button", {
                     className: "skill-tree-back-btn",
                     onclick: () => this.goBackToSettings(),
-                }, LanguageManager.t("skilltree.back") || "\u2190 Retour")
+                }, LanguageManager.t("skilltree.back"))
             ),
             svgWrapper,
             nodesContainer,

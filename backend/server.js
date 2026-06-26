@@ -65,11 +65,10 @@ const SRC_DIR = IS_PROD
 const corsOptions = {
     origin: (origin, callback) => {
         const isLocal = !origin || origin.includes("localhost") || origin.includes("127.0.0.1");
-        const isTsuki = origin && origin.includes("tsuki-dev.fr");
         const frontendUrl = process.env.FRONTEND_URL;
         const isAllowedFrontend = frontendUrl && origin && origin.startsWith(frontendUrl);
 
-        if (isLocal || isTsuki || isAllowedFrontend) {
+        if (isLocal || isAllowedFrontend) {
             return callback(null, true);
         }
 

@@ -92,7 +92,7 @@ export default class Navbar {
 
             if (user.is_admin && !this.adminLink) {
                 this.adminSep = el("span", { className: "nav-separator" }, "|");
-                this.adminLink = el("a", { href: "/admin", dataset: { link: true }, className: "admin admin-link" }, LanguageManager.t("nav.adminPanel") || "Admin Panel");
+                this.adminLink = el("a", { href: "/admin", dataset: { link: true }, className: "admin admin-link" }, LanguageManager.t("nav.adminPanel"));
                 this.navPage.appendChild(this.adminSep);
                 this.navPage.appendChild(this.adminLink);
             }

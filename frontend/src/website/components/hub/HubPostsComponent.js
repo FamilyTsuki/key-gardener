@@ -452,7 +452,7 @@ export class HubPostsComponent {
                 list.appendChild(bubble);
             });
         } catch (error) {
-            clear(list); list.appendChild(el("p", { className: "error" }, LanguageManager.t("hub.errorLoadingComments") || "Error loading comments"));
+            clear(list); list.appendChild(el("p", { className: "error" }, LanguageManager.t("hub.errorLoadingComments")));
         }
     }
 
