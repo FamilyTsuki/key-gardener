@@ -212,7 +212,7 @@ export class HubPostsComponent {
             el("div", { className: "comments-list", id: `comments-list-${post.id}` }),
             AuthService.isAuthenticated() ? el("div", { className: "add-comment-form" },
                 el("textarea", { className: "form-input comment-input", id: `comment-input-${post.id}`, placeholder: LanguageManager.t("hub.addComment") }),
-                el("button", { className: "btn-primary btn-small post-comment-btn", onclick: () => this.submitComment(post.id) }, LanguageManager.t("hub.postComment"))
+                el("button", { className: "btn-primary btn-small post-comment-btn", onclick: (e) => this.submitComment(post.id, e.currentTarget) }, LanguageManager.t("hub.postComment"))
             ) : null
         );
 
@@ -287,7 +287,7 @@ export class HubPostsComponent {
 
         const saveBtn = el("button", {
             className: "action-btn save-btn",
-            onclick: () => this.handleSaveEdit(post.id, textarea.value)
+            onclick: (e) => this.handleSaveEdit(post.id, textarea.value, e.currentTarget)
         }, LanguageManager.t("hub.save"));
 
         const cancelBtn = el("button", {
@@ -307,8 +307,16 @@ export class HubPostsComponent {
         actionsContainer.appendChild(cancelBtn);
     }
 
-    async handleSaveEdit(postId, newContent) {
+    async handleSaveEdit(postId, newContent, btn = null) {
         if (!newContent || newContent.trim().length === 0) return;
+        
+        let originalText = "";
+        if (btn) {
+            originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = originalText + "...";
+        }
+        
         try {
             const data = await PostsService.updatePost(postId, newContent);
             if (data.success && data.post) {
@@ -319,6 +327,10 @@ export class HubPostsComponent {
                 }
             }
         } catch (error) {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
             if (error.isModerated) {
                 WarningPopupManager.show(newContent, error.flaggedType, error.warningCount);
             } else {
@@ -456,11 +468,18 @@ export class HubPostsComponent {
         }
     }
 
-    async submitComment(postId) {
+    async submitComment(postId, btn = null) {
         const input = document.getElementById(`comment-input-${postId}`);
         if (!input) return;
         const content = input.value.trim();
         if (!content) return;
+
+        let originalText = "";
+        if (btn) {
+            originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = originalText + "...";
+        }
 
         try {
             const data = await PostsService.addComment(postId, content);
@@ -478,6 +497,11 @@ export class HubPostsComponent {
                 WarningPopupManager.show(content, error.flaggedType, error.warningCount);
             } else {
                 FlashMessageManager.show(error.message, "error");
+            }
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = originalText;
             }
         }
     }
