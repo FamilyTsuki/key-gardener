@@ -3,11 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { sendResetCodeEmail } = require("../utils/mailer");
-
-const validatePassword = (password) => {
-    const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-    return regex.test(password);
-};
+const { validatePassword } = require("../utils/validation");
 
 const generateToken = (userId) => {
     return jwt.sign(

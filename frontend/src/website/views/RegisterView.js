@@ -3,6 +3,7 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { ValidationUtils } from "../../core/utils/ValidationUtils.js";
 import SocketService from "../../core/services/SocketService.js?v=1";
 
 /**
@@ -43,8 +44,8 @@ export default class RegisterView extends AbstractView {
                 return;
             }
 
-            if (password.length < 6) {
-                FlashMessageManager.show(LanguageManager.t("register.passwordTooShort"), "error");
+            if (!ValidationUtils.validatePassword(password)) {
+                FlashMessageManager.show(LanguageManager.t("register.passwordRequirements"), "error");
                 return;
             }
 

@@ -3,6 +3,7 @@ import { AuthService } from "../../core/services/auth.service.js";
 import { el } from "../../core/utils/DOMBuilder.js";
 import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { ValidationUtils } from "../../core/utils/ValidationUtils.js";
 import SocketService from "../../core/services/SocketService.js?v=1";
 
 /**
@@ -174,6 +175,11 @@ export default class LoginView extends AbstractView {
         const handleSubmit = async (e) => {
             e.preventDefault();
             const newPassword = newPasswordInput.value.trim();
+
+            if (!ValidationUtils.validatePassword(newPassword)) {
+                FlashMessageManager.show(LanguageManager.t("login.passwordRequirements"), "error");
+                return;
+            }
 
             try {
                 await AuthService.resetPassword(this.resetEmail, this.resetToken, newPassword);

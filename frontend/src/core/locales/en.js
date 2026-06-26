@@ -125,6 +125,7 @@ export const en = {
         resetSuccess: "Password reset successful! Please login.",
         resetFailed: "Reset failed",
         loginFailed: "Login failed",
+        passwordRequirements: "Password must be at least 8 characters long, contain at least one number and one special character",
         or: "OR"
     },
     
@@ -139,7 +140,7 @@ export const en = {
         alreadyHaveAccount: "Already have an account? ",
         loginLink: "Login",
         passwordsDoNotMatch: "Passwords do not match",
-        passwordTooShort: "Password must be at least 6 characters",
+        passwordRequirements: "Password must be at least 8 characters long, contain at least one number and one special character",
         registerSuccess: "Registration successful!",
         registerFailed: "Registration failed"
     },
@@ -213,6 +214,7 @@ export const en = {
         newPasswordPlaceholder: "New Password",
         updatePasswordBtn: "Update Password",
         passwordFillBoth: "Please fill both password fields",
+        passwordRequirements: "Password must be at least 8 characters long, contain at least one number and one special character",
         passwordSuccess: "Password changed successfully",
         passwordFailed: "Failed to change password",
         uploadFailed: "Upload failed",

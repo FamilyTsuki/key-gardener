@@ -146,6 +146,7 @@ export const fr = {
         resetSuccess: "Mot de passe réinitialisé avec succès ! Veuillez vous connecter.",
         resetFailed: "Échec de la réinitialisation",
         loginFailed: "Échec de la connexion",
+        passwordRequirements: "Le mot de passe doit comporter au moins 8 caractères, dont un chiffre et un caractère spécial",
         or: "OU"
     },
     
@@ -160,7 +161,7 @@ export const fr = {
         alreadyHaveAccount: "Vous avez déjà un compte ? ",
         loginLink: "Se connecter",
         passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
-        passwordTooShort: "Le mot de passe doit contenir au moins 6 caractères",
+        passwordRequirements: "Le mot de passe doit comporter au moins 8 caractères, dont un chiffre et un caractère spécial",
         registerSuccess: "Inscription réussie !",
         registerFailed: "Échec de l'inscription"
     },
@@ -235,6 +236,7 @@ export const fr = {
         newPasswordPlaceholder: "Nouveau mot de passe",
         updatePasswordBtn: "Mettre à jour",
         passwordFillBoth: "Veuillez remplir les deux champs",
+        passwordRequirements: "Le mot de passe doit comporter au moins 8 caractères, dont un chiffre et un caractère spécial",
         passwordSuccess: "Mot de passe modifié avec succès",
         passwordFailed: "Échec de la modification du mot de passe",
         uploadFailed: "Échec du téléchargement",
@@ -536,7 +538,6 @@ export const fr = {
     backendErrors: {
         "All fields are required": "Tous les champs sont requis",
         "Password must be at least 8 characters long, contain at least one number and one special character": "Le mot de passe doit comporter au moins 8 caractères, dont un chiffre et un caractère spécial",
-        "Password must be at least 6 characters": "Le mot de passe doit comporter au moins 6 caractères",
         "Email already registered": "Cet email est déjà enregistré",
         "Username already taken": "Ce nom d'utilisateur est déjà pris",
         "Invalid email or password": "Email ou mot de passe invalide",

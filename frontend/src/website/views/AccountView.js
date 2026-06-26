@@ -6,6 +6,7 @@ import { FlashMessageManager } from "../../core/utils/FlashMessageManager.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { StatisticsService } from "../../core/services/statistics.service.js";
 import { createCustomSelect } from "../components/CustomSelect.js";
+import { ValidationUtils } from "../../core/utils/ValidationUtils.js";
 
 /**
  * View for displaying and managing user account information.
@@ -80,6 +81,10 @@ export default class AccountView extends AbstractView {
                     const newPwd = document.getElementById("new-password").value;
                     if (!currentPwd || !newPwd) {
                         FlashMessageManager.show(LanguageManager.t("account.passwordFillBoth"), "error");
+                        return;
+                    }
+                    if (!ValidationUtils.validatePassword(newPwd)) {
+                        FlashMessageManager.show(LanguageManager.t("account.passwordRequirements"), "error");
                         return;
                     }
                     try {
