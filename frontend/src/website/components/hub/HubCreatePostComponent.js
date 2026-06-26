@@ -1,6 +1,7 @@
 import { el, clear } from "../../../core/utils/DOMBuilder.js";
 import { PostsService } from "../../../core/services/posts.service.js";
 import { FlashMessageManager } from "../../../core/utils/FlashMessageManager.js";
+import { Icons } from "../../../core/utils/Icons.js";
 import { LanguageManager } from "../../../core/utils/LanguageManager.js";
 import { WarningPopupManager } from "../../../core/utils/ModerationWarning.js";
 
@@ -31,20 +32,7 @@ export class HubCreatePostComponent {
         });
         postTextarea.addEventListener("paste", (e) => this.handlePaste(e));
 
-        const closeIcon = el("svg", {
-            xmlns: "http://www.w3.org/2000/svg",
-            viewBox: "0 0 24 24",
-            width: "20",
-            height: "20",
-            fill: "none",
-            stroke: "currentColor",
-            "stroke-width": "2",
-            "stroke-linecap": "round",
-            "stroke-linejoin": "round"
-        },
-            el("line", { x1: "18", y1: "6", x2: "6", y2: "18" }),
-            el("line", { x1: "6", y1: "6", x2: "18", y2: "18" })
-        );
+        const closeIcon = Icons.closeLine();
 
         const closeBtn = el("button", {
             type: "button",
@@ -75,20 +63,7 @@ export class HubCreatePostComponent {
             )
         );
 
-        const plusIcon = el("svg", {
-            xmlns: "http://www.w3.org/2000/svg",
-            viewBox: "0 0 24 24",
-            width: "24",
-            height: "24",
-            fill: "none",
-            stroke: "currentColor",
-            "stroke-width": "4",
-            "stroke-linecap": "round",
-            "stroke-linejoin": "round"
-        },
-            el("line", { x1: "12", y1: "4", x2: "12", y2: "20" }),
-            el("line", { x1: "4", y1: "12", x2: "20", y2: "12" })
-        );
+        const plusIcon = Icons.plus();
 
         this.addPostToggleBtn = el("button", {
             className: "btn-primary add-post-toggle-btn",

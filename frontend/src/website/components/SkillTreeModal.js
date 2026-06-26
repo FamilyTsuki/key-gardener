@@ -2,6 +2,7 @@ import { el } from "../../core/utils/DOMBuilder.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { SettingsModal } from "./SettingsModal.js";
 import { SpellUnlockedPopup } from "../../game/ui/SpellUnlockedPopup.js";
+import { Icons } from "../../core/utils/Icons.js";
 
 const TREE_DEFINITION = {
     attack: {
@@ -134,109 +135,6 @@ export class SkillTreeModal {
         return true;
     }
 
-    buildSVGLines(containerW, containerH) {
-        const px = (pctX) => (pctX / 100) * containerW;
-        const py = (pctY) => (pctY / 100) * containerH;
-
-        const swBase = 4;
-        const swGlow = 10;
-        const paths = [];
-
-        paths.push(`
-<defs>
-  <linearGradient id="grad-attack" x1="0%" y1="100%" x2="100%" y2="0%">
-    <stop offset="0%" stop-color="#475569" stop-opacity="0.8"/>
-    <stop offset="100%" stop-color="#ef4444"/>
-  </linearGradient>
-  <linearGradient id="grad-defense" x1="100%" y1="100%" x2="0%" y2="0%">
-    <stop offset="0%" stop-color="#475569" stop-opacity="0.8"/>
-    <stop offset="100%" stop-color="#10b981"/>
-  </linearGradient>
-  <linearGradient id="grad-utility" x1="50%" y1="100%" x2="50%" y2="0%">
-    <stop offset="0%" stop-color="#475569" stop-opacity="0.8"/>
-    <stop offset="100%" stop-color="#ffd700"/>
-  </linearGradient>
-
-  <filter id="glow-attack" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="5" result="blur"/>
-    <feMerge>
-      <feMergeNode in="blur"/>
-      <feMergeNode in="SourceGraphic"/>
-    </feMerge>
-  </filter>
-  <filter id="glow-defense" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="5" result="blur"/>
-    <feMerge>
-      <feMergeNode in="blur"/>
-      <feMergeNode in="SourceGraphic"/>
-    </feMerge>
-  </filter>
-  <filter id="glow-utility" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="5" result="blur"/>
-    <feMerge>
-      <feMergeNode in="blur"/>
-      <feMergeNode in="SourceGraphic"/>
-    </feMerge>
-  </filter>
-</defs>
-        `);
-
-        const tx0 = px(50), ty0 = py(90);
-        const tx1 = px(50), ty1 = py(82);
-
-        paths.push(`<path d="M ${tx0} ${ty0} L ${tx1} ${ty1}" stroke="#475569" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>`);
-
-        const segments = [
-            {
-                destId: "spark",
-                color: "url(#grad-attack)",
-                glowColor: "#ef4444",
-                filter: "url(#glow-attack)",
-                d: `M ${tx1} ${ty1} C ${px(50)} ${py(77)}, ${px(57)} ${py(74)}, ${px(62)} ${py(72)}`
-            },
-            {
-                destId: "fireball",
-                color: "#ef4444",
-                glowColor: "#ef4444",
-                filter: "url(#glow-attack)",
-                d: `M ${px(62)} ${py(72)} C ${px(67)} ${py(70)}, ${px(70)} ${py(58)}, ${px(73)} ${py(48)}`
-            },
-            {
-                destId: "shield",
-                color: "url(#grad-defense)",
-                glowColor: "#10b981",
-                filter: "url(#glow-defense)",
-                d: `M ${tx1} ${ty1} C ${px(50)} ${py(77)}, ${px(43)} ${py(74)}, ${px(38)} ${py(72)}`
-            },
-            {
-                destId: "firecircle",
-                color: "#10b981",
-                glowColor: "#10b981",
-                filter: "url(#glow-defense)",
-                d: `M ${px(38)} ${py(72)} C ${px(33)} ${py(70)}, ${px(30)} ${py(58)}, ${px(27)} ${py(48)}`
-            },
-            {
-                destId: "heal",
-                color: "url(#grad-utility)",
-                glowColor: "#ffd700",
-                filter: "url(#glow-utility)",
-                d: `M ${tx1} ${ty1} C ${px(48)} ${py(70)}, ${px(52)} ${py(55)}, ${px(50)} ${py(40)}`
-            }
-        ];
-
-        for (const seg of segments) {
-            const unlocked = this.isUnlocked(seg.destId);
-            if (unlocked) {
-                paths.push(`<path d="${seg.d}" stroke="${seg.glowColor}" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.15" filter="${seg.filter}"/>`);
-                paths.push(`<path d="${seg.d}" stroke="${seg.color}" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.9"/>`);
-            } else {
-                paths.push(`<path d="${seg.d}" stroke="#334155" stroke-width="1.5" stroke-dasharray="3,5" stroke-linecap="round" fill="none" opacity="0.4"/>`);
-            }
-        }
-
-        return `<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;">${paths.join("")}</svg>`;
-    }
-
     buildNode(spell, branchKey, branchDef, nodeIndex) {
         const positions = BRANCH_POSITIONS[branchKey];
         const nodePos = positions.nodes[nodeIndex];
@@ -364,7 +262,7 @@ export class SkillTreeModal {
             style: `left: ${BRANCH_POSITIONS.attack.labelX}%; bottom: 6%;`,
         },
             el("span", {}, LanguageManager.t("skilltree.branchAttack") || "ATTAQUE"),
-            el("span", { style: "color: #ef4444;" }, this.countUnlocked("attack").toString())
+            el("span", { className: "text-attack" }, this.countUnlocked("attack").toString())
         );
 
         const branchLabelDefense = el("div", {
@@ -372,7 +270,7 @@ export class SkillTreeModal {
             style: `left: ${BRANCH_POSITIONS.defense.labelX}%; bottom: 6%;`,
         },
             el("span", {}, LanguageManager.t("skilltree.branchDefense") || "DÉFENSE"),
-            el("span", { style: "color: #10b981;" }, this.countUnlocked("defense").toString())
+            el("span", { className: "text-defense" }, this.countUnlocked("defense").toString())
         );
 
         const branchLabelUtility = el("div", {
@@ -380,11 +278,11 @@ export class SkillTreeModal {
             style: `left: ${BRANCH_POSITIONS.utility.labelX}%; bottom: 6%;`,
         },
             el("span", {}, LanguageManager.t("skilltree.branchUtility") || "UTILITAIRE"),
-            el("span", { style: "color: #ffd700;" }, this.countUnlocked("utility").toString())
+            el("span", { className: "text-utility" }, this.countUnlocked("utility").toString())
         );
 
         const svgWrapper = el("div", { className: "skill-tree-svg-container" });
-        svgWrapper.innerHTML = this.buildSVGLines(containerW, containerH);
+        svgWrapper.innerHTML = Icons.skillTreeLines(containerW, containerH, this.isUnlocked.bind(this));
 
         this.modalEl = el("div", { className: "skill-tree-overlay", tabIndex: "-1" },
             el("div", { className: "skill-tree-header" },

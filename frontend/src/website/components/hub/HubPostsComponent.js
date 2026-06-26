@@ -2,6 +2,7 @@ import { el, clear } from "../../../core/utils/DOMBuilder.js";
 import { AuthService } from "../../../core/services/auth.service.js";
 import { PostsService } from "../../../core/services/posts.service.js";
 import { FlashMessageManager } from "../../../core/utils/FlashMessageManager.js";
+import { Icons } from "../../../core/utils/Icons.js";
 import { LanguageManager } from "../../../core/utils/LanguageManager.js";
 import { WarningPopupManager } from "../../../core/utils/ModerationWarning.js";
 
@@ -25,22 +26,7 @@ export class HubPostsComponent {
             this.createSortButton("comments", LanguageManager.t("hub.sortComments"))
         );
 
-        const refreshIcon = el("svg", {
-            xmlns: "http://www.w3.org/2000/svg",
-            viewBox: "0 0 24 24",
-            width: "16",
-            height: "16",
-            fill: "none",
-            stroke: "currentColor",
-            "stroke-width": "2",
-            "stroke-linecap": "round",
-            "stroke-linejoin": "round",
-            className: "refresh-icon"
-        },
-            el("polyline", { points: "23 4 23 10 17 10" }),
-            el("polyline", { points: "1 20 1 14 7 14" }),
-            el("path", { d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" })
-        );
+        const refreshIcon = Icons.refresh("refresh-icon");
 
         this.refreshBtn = el("button", {
             className: "sort-btn refresh-btn",

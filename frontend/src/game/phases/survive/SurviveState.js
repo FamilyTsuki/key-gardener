@@ -415,19 +415,11 @@ export class SurviveState {
 
     triggerRescuePhaseTransition(gameEngine, shield, material) {
         const overlay = document.createElement("div");
-        overlay.style.position = "absolute";
-        overlay.style.top = "0";
-        overlay.style.left = "0";
-        overlay.style.width = "100%";
-        overlay.style.height = "100%";
-        overlay.style.backgroundColor = "#ffffff";
-        overlay.style.opacity = "0";
-        overlay.style.transition = "opacity 1.5s ease-in-out";
-        overlay.style.zIndex = "99999";
+        overlay.classList.add("rescue-phase-overlay");
         document.body.appendChild(overlay);
 
         overlay.offsetWidth;
-        overlay.style.opacity = "1";
+        overlay.classList.add("active");
 
         setTimeout(() => {
             if (shield && shield.parent) {
@@ -448,8 +440,8 @@ export class SurviveState {
                 gameEngine.isPaused = false;
                 await gameEngine.nextLevel();
 
-                overlay.style.transition = "opacity 1.0s ease-in-out";
-                overlay.style.opacity = "0";
+                overlay.classList.remove("active");
+                overlay.classList.add("fade-out");
                 setTimeout(() => overlay.remove(), 1000);
             }, 1000);
         }, 1500);

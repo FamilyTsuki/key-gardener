@@ -1,6 +1,7 @@
 import { WorldEvent } from "./WorldEvent.js";
 import * as THREE from "three";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
+import { Icons } from "../../core/utils/Icons.js";
 
 /**
  * Event for handling interaction with a hole in the world phase.
@@ -206,12 +207,7 @@ export class HoleEvent extends WorldEvent {
 
         const enterKey = document.createElement("div");
         enterKey.classList.add("enter-prompt-key");
-        enterKey.innerHTML = `
-            <svg width="40" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 10 4 15 9 20"></polyline>
-                <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
-            </svg>
-        `;
+        enterKey.appendChild(Icons.enter());
 
         const titleDiv = document.createElement("div");
         titleDiv.classList.add("enter-prompt-title");

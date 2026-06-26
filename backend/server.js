@@ -236,7 +236,7 @@ const injectHtmlPlaceholders = (html, { title, seoTags, canonicalUrl, gameName }
         .replace("</head>", `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`)
         .replace("GOOGLE_CLIENT_ID_PLACEHOLDER", process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com")
         .replace("SUPPORT_EMAIL_PLACEHOLDER", process.env.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com")
-        .replaceAll("GAME_NAME_PLACEHOLDER", gameName);
+        .replaceAll("Key Gardener", gameName);
 };
 
 app.get("*", (req, res) => {

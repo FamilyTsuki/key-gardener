@@ -1219,3 +1219,25 @@ body.dialogue-active .player-hud {
     font-size: clamp(16px, 2.5vw, 26px);
     font-weight: 700;
 }
+
+.rescue-phase-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+    z-index: 99999;
+    pointer-events: none;
+}
+
+.rescue-phase-overlay.active {
+    opacity: 1;
+}
+
+.rescue-phase-overlay.fade-out {
+    transition: opacity 1.0s ease-in-out;
+    opacity: 0;
+}
