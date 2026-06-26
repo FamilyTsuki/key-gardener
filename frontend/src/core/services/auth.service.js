@@ -5,6 +5,21 @@ import SocketService from "./SocketService.js?v=1";
  */
 export class AuthService {
     static API_URL = "/api/auth";
+    static _isAuthenticated = false;
+    static _currentUser = null;
+
+    static async init() {
+        try {
+            const user = await this.getCurrentUser();
+            if (user) {
+                this._isAuthenticated = true;
+                this._currentUser = user;
+            }
+        } catch (error) {
+            this._isAuthenticated = false;
+            this._currentUser = null;
+        }
+    }
 
     /**
      * Handles API responses, parsing JSON or text, and throwing errors if not ok.
@@ -42,17 +57,17 @@ export class AuthService {
         const response = await fetch(`${this.API_URL}/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ username, email, password }),
         });
 
         const data = await this.handleResponse(response, "Registration failed");
 
-        if (data.token) {
-            localStorage.setItem("authToken", data.token);
-        }
         if (data.user) {
             localStorage.setItem("username", data.user.username);
             localStorage.setItem("userId", data.user.id);
+            this._isAuthenticated = true;
+            this._currentUser = data.user;
         }
 
         return data;
@@ -62,23 +77,23 @@ export class AuthService {
      * Logs in a user.
      * @param {string} email - The user's email address.
      * @param {string} password - The user's password.
-     * @returns {Promise<Object>} The login response data containing the token.
+     * @returns {Promise<Object>} The login response data.
      */
     static async login(email, password) {
         const response = await fetch(`${this.API_URL}/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ email, password }),
         });
 
         const data = await this.handleResponse(response, "Login failed");
 
-        if (data.token) {
-            localStorage.setItem("authToken", data.token);
-        }
         if (data.user) {
             localStorage.setItem("username", data.user.username);
             localStorage.setItem("userId", data.user.id);
+            this._isAuthenticated = true;
+            this._currentUser = data.user;
         }
 
         return data;
@@ -93,17 +108,17 @@ export class AuthService {
         const response = await fetch(`${this.API_URL}/google`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ credential }),
         });
 
         const data = await this.handleResponse(response, "Google authentication failed");
 
-        if (data.token) {
-            localStorage.setItem("authToken", data.token);
-        }
         if (data.user) {
             localStorage.setItem("username", data.user.username);
             localStorage.setItem("userId", data.user.id);
+            this._isAuthenticated = true;
+            this._currentUser = data.user;
         }
 
         return data;
@@ -112,19 +127,20 @@ export class AuthService {
     /**
      * Logs out the current user by removing the auth token.
      */
-    static logout() {
-        localStorage.removeItem("authToken");
+    static async logout() {
+        try {
+            await fetch(`${this.API_URL}/logout`, {
+                method: "POST",
+                credentials: "include"
+            });
+        } catch (e) {
+            console.error("Logout request failed", e);
+        }
         localStorage.removeItem("username");
         localStorage.removeItem("userId");
+        this._isAuthenticated = false;
+        this._currentUser = null;
         SocketService.disconnect();
-    }
-
-    /**
-     * Retrieves the current authentication token.
-     * @returns {string|null} The auth token, or null if not found.
-     */
-    static getToken() {
-        return localStorage.getItem("authToken");
     }
 
     /**
@@ -132,7 +148,7 @@ export class AuthService {
      * @returns {boolean} True if the user is authenticated, false otherwise.
      */
     static isAuthenticated() {
-        return !!this.getToken();
+        return this._isAuthenticated;
     }
 
     /**
@@ -141,23 +157,20 @@ export class AuthService {
      * @throws {Error} If no token is found.
      */
     static async getCurrentUser() {
-        const token = this.getToken();
-        if (!token) {
-            throw new Error("No authentication token found");
-        }
-
         const response = await fetch(`${this.API_URL}/me`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            credentials: "include",
         });
 
         const data = await this.handleResponse(response, "Failed to get user data");
         if (data.user) {
             localStorage.setItem("username", data.user.username);
             localStorage.setItem("userId", data.user.id);
+            this._isAuthenticated = true;
+            this._currentUser = data.user;
         }
         return data.user;
     }
@@ -169,9 +182,8 @@ export class AuthService {
      * @throws {Error} If no token is found.
      */
     static async uploadAvatar(file) {
-        const token = this.getToken();
-        if (!token) {
-            throw new Error("No authentication token found");
+        if (!this.isAuthenticated()) {
+            throw new Error("Not authenticated");
         }
 
         const formData = new FormData();
@@ -179,9 +191,7 @@ export class AuthService {
 
         const response = await fetch(`${this.API_URL}/upload-avatar`, {
             method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+            credentials: "include",
             body: formData
         });
 
@@ -195,23 +205,25 @@ export class AuthService {
      * @throws {Error} If no token is found.
      */
     static async updateUsername(newUsername) {
-        const token = this.getToken();
-        if (!token) {
-            throw new Error("No authentication token found");
+        if (!this.isAuthenticated()) {
+            throw new Error("Not authenticated");
         }
 
         const response = await fetch(`${this.API_URL}/update-username`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            credentials: "include",
             body: JSON.stringify({ newUsername }),
         });
 
         const data = await this.handleResponse(response, "Failed to update username");
         if (data.success) {
             localStorage.setItem("username", newUsername);
+            if (this._currentUser) {
+                this._currentUser.username = newUsername;
+            }
         }
         return data;
     }
@@ -223,21 +235,24 @@ export class AuthService {
      * @throws {Error} If no token is found.
      */
     static async updateEmail(newEmail) {
-        const token = this.getToken();
-        if (!token) {
-            throw new Error("No authentication token found");
+        if (!this.isAuthenticated()) {
+            throw new Error("Not authenticated");
         }
 
         const response = await fetch(`${this.API_URL}/update-email`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            credentials: "include",
             body: JSON.stringify({ newEmail }),
         });
 
-        return this.handleResponse(response, "Failed to update email");
+        const data = await this.handleResponse(response, "Failed to update email");
+        if (data.success && this._currentUser) {
+            this._currentUser.email = newEmail;
+        }
+        return data;
     }
 
     /**
@@ -280,17 +295,16 @@ export class AuthService {
      * @throws {Error} If no token is found.
      */
     static async changePassword(currentPassword, newPassword) {
-        const token = this.getToken();
-        if (!token) {
-            throw new Error("No authentication token found");
+        if (!this.isAuthenticated()) {
+            throw new Error("Not authenticated");
         }
 
         const response = await fetch(`${this.API_URL}/change-password`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            credentials: "include",
             body: JSON.stringify({ currentPassword, newPassword }),
         });
 
@@ -303,16 +317,15 @@ export class AuthService {
      * @returns {Promise<Object>} The response data.
      */
     static async updateSettings(settings) {
-        const token = this.getToken();
-        if (!token) return { success: false };
+        if (!this.isAuthenticated()) return { success: false };
 
         try {
             const response = await fetch(`${this.API_URL}/settings`, {
                 method: "PATCH",
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(settings),
             });
             return await this.handleResponse(response, "Failed to update settings");

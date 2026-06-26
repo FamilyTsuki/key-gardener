@@ -13,7 +13,6 @@ export const en = {
         q4: "Is there a leaderboard?",
         a4: "Yes! The Community Hub features global leaderboards. You can compare your WPM (Words Per Minute) and survival time against players worldwide."
     },
-    // Router / Auth
     auth: {
         loginRequired: "You must be logged in to access this page.",
         loginFailed: "Login failed",
@@ -21,7 +20,6 @@ export const en = {
         rateLimit: "Rate limit exceeded. Please wait a moment."
     },
     
-    // Navbar
     nav: {
         login: "Login",
         save: "Save",
@@ -32,7 +30,6 @@ export const en = {
         donate: "Support the Project"
     },
     
-    // HomeView
     home: {
         title: "{gameName}",
         description: "Dive into a world where your keyboard is your only weapon. Learn to type naturally by immersing yourself in a universe blending digital and fantasy — cast spells, survive the hordes, and hunt the Virus corrupting the system.",
@@ -61,7 +58,6 @@ export const en = {
         rights: "\u00A9 2026 {gameName}. All rights reserved."
     },
     
-    // HubView
     hub: {
         title: "Community Hub",
         welcome: "Welcome to the community! Share your progress and interact with other players.",
@@ -101,7 +97,6 @@ export const en = {
         errorLoadingComments: "Error loading comments"
     },
     
-    // LoginView
     login: {
         title: "Login",
         emailPlaceholder: "Email",
@@ -129,7 +124,6 @@ export const en = {
         or: "OR"
     },
     
-    // RegisterView
     register: {
         title: "Register",
         usernamePlaceholder: "Username",
@@ -145,7 +139,6 @@ export const en = {
         registerFailed: "Registration failed"
     },
     
-    // SaveView
     save: {
         title: "Save Slots",
         loadingSaves: "Loading saves...",
@@ -166,7 +159,6 @@ export const en = {
         levelPhase: "Level: {level} - Phase: {phase}"
     },
     
-    // GameView
     game: {
         spellUnlocked: "New Spell Unlocked!",
         spellHowTo: "Type this word to cast:",
@@ -205,7 +197,6 @@ export const en = {
         duelDataLost: "Duel data lost. Please restart the duel."
     },
     
-    // AccountView
     account: {
         title: "Profile",
         logout: "Logout",
@@ -239,7 +230,6 @@ export const en = {
         globalStats: "Global Statistics"
     },
     
-    // Game Engine (IntroPhase etc.)
     engine: {
         introPrologue: "It started like any other afternoon, playing a great video game...",
         introDialogue1: "...",
@@ -407,14 +397,12 @@ export const en = {
         loading: "Loading..."
     },
     
-    // ProfileView
     profile: {
         userNotFound: "User not found",
         errorLoading: "Error loading profile",
         rank: "Rank"
     },
     
-    // SupportView
     donate: {
         title: "Support the Project",
         letterIntro1: "Welcome! {gameName} was initially created as an end-of-year academic project, and I have continued to develop it in my spare time out of pure passion.",
@@ -428,7 +416,6 @@ export const en = {
         submit: "Support the project (Ko-fi)"
     },
     
-    // SocialView
     social: {
         title: "Friends",
         addFriendTitle: "Add a friend",
@@ -547,7 +534,6 @@ export const en = {
         }
     },
     
-    // Skill Tree
     skilltree: {
         title: "Skill Tree",
         pointsAvailable: "Skill Points:",

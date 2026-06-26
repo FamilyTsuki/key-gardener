@@ -2,8 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const verifyToken = async (req, res, next) => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
+    const token = req.cookies.jwt;
 
     if (!token) {
         return res
@@ -40,8 +39,7 @@ const verifyToken = async (req, res, next) => {
 };
 
 const optionalVerifyToken = async (req, res, next) => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
+    const token = req.cookies.jwt;
 
     if (!token) {
         req.user = null;

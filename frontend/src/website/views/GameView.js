@@ -231,7 +231,6 @@ export default class GameView extends AbstractView {
      * @returns {Promise<void>}
      */
     async saveAndQuit() {
-        const token = AuthService.getToken();
         const activeSlot = localStorage.getItem("activeSaveSlot") || "1";
 
         let phase = "intro";

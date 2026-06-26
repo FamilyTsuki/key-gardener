@@ -34,6 +34,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 const compression = require("compression");
+const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
 
@@ -112,6 +113,7 @@ app.use(
 
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "10kb" }));
+app.use(cookieParser());
 app.use(xss());
 app.use(compression());
 

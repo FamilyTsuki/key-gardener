@@ -16,7 +16,6 @@ export class DeviceCapabilitiesDetector {
                 const els = document.querySelectorAll(targetElementIdOrSelector);
                 this.targetElements = Array.from(els);
             } catch (e) {
-                // ignore
             }
         }
 

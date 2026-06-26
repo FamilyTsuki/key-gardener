@@ -11,15 +11,15 @@ export class SaveService {
      * @returns {Promise<Object>} An object containing the list of saves.
      */
     static async getSaves() {
-        const token = AuthService.getToken();
+        
         if (!token) return { success: false, saves: [] };
 
         const response = await fetch(this.API_URL, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            credentials: "include",
         });
 
         const data = await response.json();
@@ -36,15 +36,15 @@ export class SaveService {
      * @throws {Error} If the user is not authenticated or the retrieval fails.
      */
     static async getSaveBySlot(slot) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("User not authenticated");
 
         const response = await fetch(`${this.API_URL}/${slot}`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            credentials: "include",
         });
 
         const data = await response.json();
@@ -62,15 +62,15 @@ export class SaveService {
      * @throws {Error} If the user is not authenticated or the save fails.
      */
     static async saveGame(slotNumber, gameState) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("User not authenticated");
 
         const response = await fetch(this.API_URL, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            credentials: "include",
             body: JSON.stringify({ slotNumber, gameState }),
         });
 
@@ -88,15 +88,15 @@ export class SaveService {
      * @throws {Error} If the user is not authenticated or the deletion fails.
      */
     static async deleteSave(slot) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("User not authenticated");
 
         const response = await fetch(`${this.API_URL}/${slot}`, {
             method: "DELETE",
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            credentials: "include",
         });
 
         const data = await response.json();

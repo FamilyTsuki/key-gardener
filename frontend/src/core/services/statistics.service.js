@@ -9,13 +9,13 @@ export class StatisticsService {
      * @returns {Promise<Object>} Statistics object.
      */
     static async getStats() {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("User is not authenticated");
 
         const response = await fetch("/api/stats", {
             headers: {
-                Authorization: `Bearer ${token}`
-            }
+            },
+            credentials: "include"
         });
         
         const data = await response.json();
@@ -32,15 +32,15 @@ export class StatisticsService {
      * @returns {Promise<Object>} The updated stats object.
      */
     static async updateStats(statsData) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("User is not authenticated");
 
         const response = await fetch("/api/stats", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
             },
+            credentials: "include",
             body: JSON.stringify(statsData)
         });
         

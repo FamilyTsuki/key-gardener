@@ -465,7 +465,6 @@ export class GameEngine {
     }
 
     async autoSave() {
-        const token = AuthService.getToken();
         const activeSlot = localStorage.getItem("activeSaveSlot") || "1";
 
         let phase = "intro";

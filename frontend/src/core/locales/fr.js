@@ -13,7 +13,6 @@ export const fr = {
         q4: "Y a-t-il un classement mondial ?",
         a4: "Oui ! Le Hub Communautaire intègre des classements mondiaux. Vous pouvez comparer votre MPM et votre temps de survie avec les joueurs du monde entier."
     },
-    // Router / Auth
     auth: {
         loginRequired: "Vous devez être connecté pour accéder à cette page.",
         loginFailed: "Échec de la connexion",
@@ -21,7 +20,6 @@ export const fr = {
         rateLimit: "Limite de requêtes dépassée. Veuillez patienter un instant."
     },
     
-    // Navbar
     nav: {
         login: "Connexion",
         save: "Sauvegarde",
@@ -32,7 +30,6 @@ export const fr = {
         donate: "Soutenir le Projet"
     },
     
-    // HomeView
     home: {
         title: "{gameName}",
         description: "Plongez dans un monde où votre clavier est votre seule arme. Apprenez à taper naturellement en vous immergeant dans un univers à la fois numérique et fantastique — lancez des sorts, survivez aux hordes et traquez le Virus qui corrompt le système.",
@@ -82,7 +79,6 @@ export const fr = {
         }
     },
     
-    // HubView
     hub: {
         title: "Centre Communautaire",
         welcome: "Bienvenue dans la communauté ! Partagez votre progression et interagissez avec les autres joueurs.",
@@ -122,7 +118,6 @@ export const fr = {
         errorLoadingComments: "Erreur lors du chargement des commentaires"
     },
     
-    // LoginView
     login: {
         title: "Connexion",
         emailPlaceholder: "Email",
@@ -150,7 +145,6 @@ export const fr = {
         or: "OU"
     },
     
-    // RegisterView
     register: {
         title: "Inscription",
         usernamePlaceholder: "Nom d'utilisateur",
@@ -166,7 +160,6 @@ export const fr = {
         registerFailed: "Échec de l'inscription"
     },
     
-    // SaveView
     save: {
         title: "Emplacements de sauvegarde",
         loadingSaves: "Chargement des sauvegardes...",
@@ -187,7 +180,6 @@ export const fr = {
         levelPhase: "Niveau : {level} - Phase : {phase}"
     },
     
-    // GameView
     game: {
         spellUnlocked: "Nouveau sort débloqué !",
         spellHowTo: "Tapez ce mot pour le lancer :",
@@ -227,7 +219,6 @@ export const fr = {
         duelDataLost: "Données de duel perdues. Veuillez relancer le duel."
     },
     
-    // AccountView
     account: {
         title: "Profil",
         logout: "Se déconnecter",
@@ -261,7 +252,6 @@ export const fr = {
         globalStats: "Statistiques Globales"
     },
     
-    // Game Engine (IntroPhase etc.)
     engine: {
         introPrologue: "Ça a commencé comme une après-midi habituelle, à jouer à un super jeu vidéo...",
         introDialogue1: "...",
@@ -429,14 +419,12 @@ export const fr = {
         loading: "Chargement..."
     },
     
-    // ProfileView
     profile: {
         userNotFound: "Utilisateur introuvable",
         errorLoading: "Erreur lors du chargement du profil",
         rank: "Grade"
     },
     
-    // SupportView
     donate: {
         title: "Soutenir le Projet",
         letterIntro1: "Bienvenue ! {gameName} a d'abord été créé dans le cadre d'un projet de fin d'année, et j'ai continué à le développer par passion sur mon temps libre.",
@@ -450,7 +438,6 @@ export const fr = {
         submit: "Soutenir le projet (Ko-fi)"
     },
     
-    // SocialView
     social: {
         title: "Amis",
         addFriendTitle: "Ajouter un ami",
@@ -574,9 +561,7 @@ export const fr = {
             sempai_victory_3: "Viens, rejoins-moi dans mon dojo pour parfaire ton entraînement !"
         }
     },
-    // Spells (already defined with name/desc format at top)
     
-    // Skill Tree
     skilltree: {
         title: "Arbre de Compétences",
         pointsAvailable: "Points de compétence :",

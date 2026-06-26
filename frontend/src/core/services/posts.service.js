@@ -41,12 +41,12 @@ export class PostsService {
      * @returns {Promise<Array>} A promise resolving to a list of posts.
      */
     static async getAllPosts(sort = "hot") {
-        const token = AuthService.getToken();
+        
         const headers = {};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        const response = await fetch(`${this.API_URL}/?sort=${sort}`, { headers });
+        const response = await fetch(`${this.API_URL}/?sort=${sort}`, { headers, credentials: "include" });
         return this.handleResponse(response, "Failed to fetch posts");
     }
 
@@ -56,12 +56,12 @@ export class PostsService {
      * @returns {Promise<Object>} A promise resolving to the post data.
      */
     static async getPostById(id) {
-        const token = AuthService.getToken();
+        
         const headers = {};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        const response = await fetch(`${this.API_URL}/${id}`, { headers });
+        const response = await fetch(`${this.API_URL}/${id}`, { headers, credentials: "include" });
         return this.handleResponse(response, "Failed to fetch post");
     }
 
@@ -71,12 +71,12 @@ export class PostsService {
      * @returns {Promise<Array>} A promise resolving to a list of the user's posts.
      */
     static async getUserPosts(userId) {
-        const token = AuthService.getToken();
+        
         const headers = {};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        const response = await fetch(`${this.API_URL}/user/${userId}`, { headers });
+        const response = await fetch(`${this.API_URL}/user/${userId}`, { headers, credentials: "include" });
         return this.handleResponse(response, "Failed to fetch user posts");
     }
 
@@ -88,7 +88,7 @@ export class PostsService {
      * @throws {Error} If the user is not authenticated.
      */
     static async createPost(content, file = null) {
-        const token = AuthService.getToken();
+        
 
         if (!token) {
             throw new Error("Not authenticated");
@@ -103,8 +103,8 @@ export class PostsService {
         const response = await fetch(`${this.API_URL}/`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
             body: formData,
         });
 
@@ -119,7 +119,7 @@ export class PostsService {
      * @throws {Error} If the user is not authenticated.
      */
     static async updatePost(id, content) {
-        const token = AuthService.getToken();
+        
 
         if (!token) {
             throw new Error("Not authenticated");
@@ -129,8 +129,8 @@ export class PostsService {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
             body: JSON.stringify({ content }),
         });
 
@@ -144,7 +144,7 @@ export class PostsService {
      * @throws {Error} If the user is not authenticated.
      */
     static async deletePost(id) {
-        const token = AuthService.getToken();
+        
 
         if (!token) {
             throw new Error("Not authenticated");
@@ -153,8 +153,8 @@ export class PostsService {
         const response = await fetch(`${this.API_URL}/${id}`, {
             method: "DELETE",
             headers: {
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
         });
 
         return this.handleResponse(response, "Failed to delete post");
@@ -167,7 +167,7 @@ export class PostsService {
      * @throws {Error} If the user is not authenticated.
      */
     static async upvotePost(id) {
-        const token = AuthService.getToken();
+        
 
         if (!token) {
             throw new Error("Not authenticated");
@@ -176,8 +176,8 @@ export class PostsService {
         const response = await fetch(`${this.API_URL}/${id}/upvote`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
         });
 
         return this.handleResponse(response, "Failed to upvote post");
@@ -190,7 +190,7 @@ export class PostsService {
      * @throws {Error} If the user is not authenticated.
      */
     static async downvotePost(id) {
-        const token = AuthService.getToken();
+        
 
         if (!token) {
             throw new Error("Not authenticated");
@@ -199,8 +199,8 @@ export class PostsService {
         const response = await fetch(`${this.API_URL}/${id}/downvote`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
         });
 
         return this.handleResponse(response, "Failed to downvote post");
@@ -212,12 +212,12 @@ export class PostsService {
      * @returns {Promise<Object>} A promise resolving to the comments data.
      */
     static async getComments(id) {
-        const token = AuthService.getToken();
+        
         const headers = {};
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
         }
-        const response = await fetch(`${this.API_URL}/${id}/comments`, { headers });
+        const response = await fetch(`${this.API_URL}/${id}/comments`, { headers, credentials: "include" });
         return this.handleResponse(response, "Failed to fetch comments");
     }
 
@@ -228,15 +228,15 @@ export class PostsService {
      * @returns {Promise<Object>} A promise resolving to the created comment data.
      */
     static async addComment(id, content) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/${id}/comments`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
             body: JSON.stringify({ content }),
         });
         return this.handleResponse(response, "Failed to add comment");
@@ -248,69 +248,69 @@ export class PostsService {
      * @returns {Promise<Object>}
      */
     static async deleteComment(commentId) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/comments/${commentId}`, {
             method: "DELETE",
             headers: {
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
         });
         return this.handleResponse(response, "Failed to delete comment");
     }
 
     static async contestModeration(content, flaggedType) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/contest`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
             body: JSON.stringify({ content, flaggedType }),
         });
         return this.handleResponse(response, "Failed to send contest report");
     }
 
     static async reportPost(postId, reason) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/${postId}/report`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
             body: JSON.stringify({ reason }),
         });
         return this.handleResponse(response, "Failed to report post");
     }
 
     static async getReportedPosts() {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/admin/reported`, {
             headers: {
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
         });
         return this.handleResponse(response, "Failed to fetch reported posts");
     }
 
     static async approvePost(postId) {
-        const token = AuthService.getToken();
+        
         if (!token) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/admin/${postId}/approve`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
         });
         return this.handleResponse(response, "Failed to approve post");
     }

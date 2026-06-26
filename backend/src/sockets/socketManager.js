@@ -15,11 +15,21 @@ const sanitize = (str) => {
     });
 };
 
+const parseCookies = (cookieString) => {
+    if (!cookieString) return {};
+    return cookieString.split(';').reduce((res, item) => {
+        const data = item.trim().split('=');
+        return { ...res, [data[0]]: data[1] };
+    }, {});
+};
+
 module.exports = (io) => {
     const duelManager = new DuelManager(io);
 
     io.use((socket, next) => {
-        const token = socket.handshake.auth?.token;
+        const cookies = parseCookies(socket.request.headers.cookie);
+        const token = cookies.jwt || socket.handshake.auth?.token;
+        
         if (!token) {
             return next(new Error("Authentication error: No token provided"));
         }

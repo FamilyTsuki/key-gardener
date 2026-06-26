@@ -1,3 +1,5 @@
+import { AuthService } from "./auth.service.js";
+
 class SocketService {
     constructor() {
         this.socket = null;
@@ -8,11 +10,10 @@ class SocketService {
         if (this.socket) return;
         
         if (typeof io !== 'undefined') {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
+            if (!AuthService.isAuthenticated()) return;
 
             this.socket = io({
-                auth: { token }
+                withCredentials: true
             });
 
             this.socket.on('connect_error', (err) => {

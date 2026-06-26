@@ -34,36 +34,42 @@ import Navbar from "./website/components/Navbar.js";
 import { EasterEgg } from "./website/components/EasterEgg.js";
 import SocketService from "./core/services/SocketService.js?v=1";
 import { FlashMessageManager } from "./core/utils/FlashMessageManager.js";
+import { AuthService } from "./core/services/auth.service.js";
+import { LanguageManager } from "./core/utils/LanguageManager.js";
 
 console.log("Website UI initialized");
 
-Navbar.render();
-EasterEgg.init();
-SocketService.connect();
+(async () => {
+    await AuthService.init();
 
-window.pendingDuelInvitations = [];
+    Navbar.render();
+    EasterEgg.init();
+    SocketService.connect();
 
-SocketService.on('duel_invitation', (data) => {
-    const exists = window.pendingDuelInvitations.some(inv => inv.fromId === data.fromId);
-    if (!exists) {
-        window.pendingDuelInvitations.push(data);
-    }
-    FlashMessageManager.show(LanguageManager.t("social.duelNotification", { user: data.fromUsername }) || `${data.fromUsername} vous a défié en duel ! Allez sur l'onglet Social pour l'affronter !`, "warning");
-    if (window.appRouter && window.appRouter.currentView && typeof window.appRouter.currentView.loadFriends === 'function') {
-        window.appRouter.currentView.loadFriends();
-    }
-});
+    window.pendingDuelInvitations = [];
 
-SocketService.on('duel_declined', (data) => {
-    FlashMessageManager.show(LanguageManager.t("social.duelDeclinedNotification", { user: data.fromUsername }) || `${data.fromUsername} a décliné votre invitation de duel.`, "error");
-});
+    SocketService.on('duel_invitation', (data) => {
+        const exists = window.pendingDuelInvitations.some(inv => inv.fromId === data.fromId);
+        if (!exists) {
+            window.pendingDuelInvitations.push(data);
+        }
+        FlashMessageManager.show(LanguageManager.t("social.duelNotification", { user: data.fromUsername }) || `${data.fromUsername} vous a défié en duel ! Allez sur l'onglet Social pour l'affronter !`, "warning");
+        if (window.appRouter && window.appRouter.currentView && typeof window.appRouter.currentView.loadFriends === 'function') {
+            window.appRouter.currentView.loadFriends();
+        }
+    });
 
-SocketService.on('duel_started', (data) => {
-    window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== data.player1.id && inv.fromId !== data.player2.id);
-    window.currentDuelData = data;
-    history.pushState(null, null, "/game?mode=duel");
-    window.dispatchEvent(new Event("popstate"));
-});
+    SocketService.on('duel_declined', (data) => {
+        FlashMessageManager.show(LanguageManager.t("social.duelDeclinedNotification", { user: data.fromUsername }) || `${data.fromUsername} a décliné votre invitation de duel.`, "error");
+    });
 
-const appRouter = new Router();
-window.appRouter = appRouter;
+    SocketService.on('duel_started', (data) => {
+        window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== data.player1.id && inv.fromId !== data.player2.id);
+        window.currentDuelData = data;
+        history.pushState(null, null, "/game?mode=duel");
+        window.dispatchEvent(new Event("popstate"));
+    });
+
+    const appRouter = new Router();
+    window.appRouter = appRouter;
+})();

@@ -13,6 +13,15 @@ const generateToken = (userId) => {
     );
 };
 
+const setTokenCookie = (res, token) => {
+    res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+};
+
 
 exports.register = async (req, res, next) => {
     try {
@@ -50,10 +59,10 @@ exports.register = async (req, res, next) => {
         const user = await User.create(username, email, hashedPassword);
 
         const token = generateToken(user.id);
+        setTokenCookie(res, token);
 
         res.status(201).json({
             success: true,
-            token,
             user: {
                 id: user.id,
                 username: user.username,
@@ -98,10 +107,10 @@ exports.login = async (req, res, next) => {
         }
 
         const token = generateToken(user.id);
+        setTokenCookie(res, token);
 
         res.json({
             success: true,
-            token,
             user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture, is_admin: user.is_admin, settings: user.settings || {} },
         });
     } catch (err) {
@@ -169,10 +178,10 @@ exports.loginWithGoogle = async (req, res, next) => {
         }
 
         const token = generateToken(user.id);
+        setTokenCookie(res, token);
 
         res.json({
             success: true,
-            token,
             user: {
                 id: user.id,
                 username: user.username,
@@ -197,6 +206,11 @@ exports.me = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+};
+
+exports.logout = (req, res) => {
+    res.clearCookie("jwt");
+    res.json({ success: true, message: "Logged out successfully" });
 };
 
 exports.uploadAvatar = async (req, res, next) => {
