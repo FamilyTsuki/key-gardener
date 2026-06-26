@@ -21,7 +21,7 @@ export default class GameView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle("Game - Keyboard Survivor");
+        this.setTitle("Game");
         this.engine = null;
         
         this.handleEscapeKey = (e) => {

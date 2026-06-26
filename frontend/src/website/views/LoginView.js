@@ -16,7 +16,7 @@ export default class LoginView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle(LanguageManager.t("login.title") + " - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("login.title"));
         this.state = "login";
         this.resetEmail = "";
         this.resetToken = "";

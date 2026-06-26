@@ -8,7 +8,7 @@ import { LanguageManager } from "../../core/utils/LanguageManager.js";
 export default class FaqView extends AbstractView {
     constructor(params) {
         super(params);
-        this.setTitle(LanguageManager.t("faq.title") + " - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("faq.title"));
         this.setMetaDescription(LanguageManager.t("faq.description"));
     }
 

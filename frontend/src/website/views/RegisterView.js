@@ -16,7 +16,7 @@ export default class RegisterView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle(LanguageManager.t("register.title") + " - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("register.title"));
     }
 
     /**

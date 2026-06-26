@@ -7,7 +7,7 @@ import AbstractView from "../../core/views/AbstractView.js";
 export class SocialView extends AbstractView {
     constructor(params) {
         super(params);
-        this.setTitle(`${LanguageManager.t("social.title")} - Keyboard Survivor`);
+        this.setTitle(LanguageManager.t("social.title"));
         this.container = el("div", { className: "social-view-container fade-in" });
         this.friends = [];
         this.searchResults = [];

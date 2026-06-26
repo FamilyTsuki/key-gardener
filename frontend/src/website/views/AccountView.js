@@ -18,7 +18,7 @@ export default class AccountView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle(LanguageManager.t("nav.account") + " - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("nav.account"));
     }
 
     /**

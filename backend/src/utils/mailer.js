@@ -38,10 +38,17 @@ async function sendResetCodeEmail(toEmail, resetCode) {
     const baseUrl = process.env.FRONTEND_URL || "http://localhost:5000";
     const resetLink = `${baseUrl}/login?reset_token=${resetCode}&email=${encodeURIComponent(toEmail)}`;
 
+    const gameName = process.env.GAME_NAME || "";
+    const emailSender = process.env.EMAIL_SENDER 
+        ? process.env.EMAIL_SENDER.replace(/Keyboard Survivor/g, gameName)
+        : (gameName ? `"${gameName}" <alban.elie590@gmail.com>` : "alban.elie590@gmail.com");
+
     const info = await transporter.sendMail({
-        from: process.env.EMAIL_SENDER || '"Keyboard Survivor" <alban.elie590@gmail.com>',
+        from: emailSender,
         to: toEmail,
-        subject: "Keyboard Survivor - Password Reset / Réinitialisation de mot de passe",
+        subject: gameName 
+            ? `${gameName} - Password Reset / Réinitialisation de mot de passe`
+            : "Password Reset / Réinitialisation de mot de passe",
         text: `You have requested to reset your password.\nClick on this link to choose a new password:\n${resetLink}\nThis link will expire in 10 minutes.\n\n---\n\nVous avez demandé la réinitialisation de votre mot de passe.\nCliquez sur ce lien pour choisir un nouveau mot de passe :\n${resetLink}\nCe lien expire dans 10 minutes.`,
         html: `<h2>Password Reset / Réinitialisation de mot de passe</h2>
 <p>You have requested to reset your password. / Vous avez demandé la réinitialisation de votre mot de passe.</p>

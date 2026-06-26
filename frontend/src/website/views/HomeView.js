@@ -11,7 +11,7 @@ import { SettingsManager } from "../../core/utils/SettingsManager.js";
 export default class HomeView extends AbstractView {
     constructor(params) {
         super(params);
-        this.setTitle("Home - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("nav.home") || "Home");
         this.isCurrentView = false;
         this.hologramListeners = [];
         this.glitchFrameId = null;

@@ -13,7 +13,7 @@ import { HubSocialComponent } from "../components/hub/HubSocialComponent.js";
 export default class HubView extends AbstractView {
     constructor(params) {
         super(params);
-        this.setTitle("Community Hub - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("hub.title") || "Community Hub");
         this.activeTab = window.location.pathname === "/social" ? "social" : "posts";
 
         this.postsComponent = new HubPostsComponent();

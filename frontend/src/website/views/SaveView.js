@@ -16,7 +16,7 @@ export default class SaveView extends AbstractView {
      */
     constructor(params) {
         super(params);
-        this.setTitle("Save - Keyboard Survivor");
+        this.setTitle(LanguageManager.t("nav.save") || "Save");
         this.saves = [];
     }
 
@@ -372,9 +372,12 @@ export default class SaveView extends AbstractView {
         const dataStr =
             "data:text/json;charset=utf-8," +
             encodeURIComponent(JSON.stringify(gameState, null, 2));
+        const gameSlug = (window.GAME_NAME || "game")
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "_");
         const downloadAnchor = el("a", {
             href: dataStr,
-            download: `keyboard_survivor_slot_${slot}.json`,
+            download: `${gameSlug}_slot_${slot}.json`,
         });
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();

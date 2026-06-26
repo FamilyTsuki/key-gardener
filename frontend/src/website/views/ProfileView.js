@@ -11,7 +11,7 @@ import { StatisticsService } from "../../core/services/statistics.service.js";
 export default class ProfileView extends AbstractView {
     constructor(params) {
         super(params);
-        this.setTitle("Profile - Keyboard Survivor");
+        this.setTitle("Profile");
         this.userId = new URLSearchParams(window.location.search).get("id");
     }
 
@@ -48,7 +48,7 @@ export default class ProfileView extends AbstractView {
 
             const { user, stats, friendStatus } = data;
             
-            this.setTitle(`${user.username} - Keyboard Survivor`);
+            this.setTitle(user.username);
             
             const avatarPath = (user.personal_picture && user.personal_picture !== "null") ? user.personal_picture : "default.webp";
             const avatarSrc = (avatarPath.startsWith('/') || avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) ? avatarPath : `/asset/img/users/${avatarPath}`;
