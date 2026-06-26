@@ -184,7 +184,7 @@ export default class GameView extends AbstractView {
                 startData = window.currentDuelData;
             } else {
                 import("../../core/utils/FlashMessageManager.js").then(module => {
-                    module.FlashMessageManager.show("Duel data lost. Please restart the duel.", "error");
+                    module.FlashMessageManager.show(LanguageManager.t("game.duelDataLost") || "Duel data lost. Please restart the duel.", "error");
                 });
                 history.pushState(null, null, "/social");
                 window.dispatchEvent(new Event('popstate'));

@@ -2,7 +2,7 @@
     padding: 60px 20px;
     max-width: 900px;
     margin: 0 auto;
-    color: white;
+    color: var(--site-color-1);
 }
 
 .faq-header {
@@ -14,7 +14,7 @@
 
 .faq-main-title {
     font-size: clamp(30px, 5vw, 48px);
-    color: var(--site-color-27);
+    color: var(--site-color-2);
     margin-bottom: 15px;
 }
 
@@ -33,8 +33,9 @@
 .faq-item {
     padding: 25px;
     border-radius: 10px;
-    border-left: 4px solid var(--site-color-27);
-    background: rgba(20, 20, 20, 0.7);
+    border: 1px solid var(--site-color-4);
+    border-left: 4px solid var(--site-color-2);
+    background: var(--site-color-3);
     transition: transform 0.2s ease;
 }
 
@@ -45,13 +46,13 @@
 .faq-question {
     font-size: 22px;
     margin-bottom: 10px;
-    color: white;
+    color: var(--site-color-2);
 }
 
 .faq-answer {
     font-size: 16px;
     line-height: 1.6;
-    color: #ccc;
+    color: var(--site-color-11);
 }
 
 /* =============== RESPONSIVE =============== */

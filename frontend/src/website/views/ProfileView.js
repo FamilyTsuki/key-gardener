@@ -19,11 +19,11 @@ export default class ProfileView extends AbstractView {
         this.container = el("div", { className: "account-container" });
         
         if (!this.userId) {
-            this.container.appendChild(el("h1", { className: "account-title" }, "User not found"));
+            this.container.appendChild(el("h1", { className: "account-title" }, LanguageManager.t("profile.userNotFound") || "User not found"));
             return this.container;
         }
 
-        const loader = el("div", { className: "text-center mt-20" }, "Loading...");
+        const loader = el("div", { className: "text-center mt-20" }, LanguageManager.t("common.loading") || "Loading...");
         this.container.appendChild(loader);
 
         this.loadProfile();
@@ -42,7 +42,7 @@ export default class ProfileView extends AbstractView {
             this.container.innerHTML = "";
 
             if (!data.success) {
-                this.container.appendChild(el("h1", { className: "account-title" }, data.message || "User not found"));
+                this.container.appendChild(el("h1", { className: "account-title" }, data.message || LanguageManager.t("profile.userNotFound") || "User not found"));
                 return;
             }
 
@@ -78,17 +78,17 @@ export default class ProfileView extends AbstractView {
             const rank = StatisticsService.getRankFromWpm(stats.highest_wpm || 0);
 
             const statsGrid = el("div", { className: "stats-grid" },
-                this.createStatItem("Grade", rank.name, rank.class),
-                this.createStatItem("Top WPM", `${stats.highest_wpm} WPM`),
-                this.createStatItem("WPM Moyen", `${stats.average_wpm} WPM`),
-                this.createStatItem("Précision", `${stats.accuracy}%`),
-                this.createStatItem("Mots Tapés", stats.total_words_typed),
-                this.createStatItem("Ennemis Vaincus", stats.enemies_defeated),
-                this.createStatItem("Boss Vaincus", stats.bosses_defeated),
-                this.createStatItem("Temps de Jeu", `${Math.floor(stats.total_playtime_seconds / 60)} min`)
+                this.createStatItem(LanguageManager.t("profile.rank") || "Grade", rank.name, rank.class),
+                this.createStatItem(LanguageManager.t("account.topWpm") || "Top WPM", `${stats.highest_wpm} WPM`),
+                this.createStatItem(LanguageManager.t("account.avgWpm") || "WPM Moyen", `${stats.average_wpm} WPM`),
+                this.createStatItem(LanguageManager.t("account.accuracy") || "Précision", `${stats.accuracy}%`),
+                this.createStatItem(LanguageManager.t("account.wordsTyped") || "Mots Tapés", stats.total_words_typed),
+                this.createStatItem(LanguageManager.t("account.enemiesDefeated") || "Ennemis Vaincus", stats.enemies_defeated),
+                this.createStatItem(LanguageManager.t("account.bossesDefeated") || "Boss Vaincus", stats.bosses_defeated),
+                this.createStatItem(LanguageManager.t("account.playtime") || "Temps de Jeu", `${Math.floor(stats.total_playtime_seconds / 60)} min`)
             );
 
-            statsContainer.appendChild(el("h3", { className: "password-title" }, "Statistiques Globales"));
+            statsContainer.appendChild(el("h3", { className: "password-title" }, LanguageManager.t("account.globalStats") || "Statistiques Globales"));
             statsContainer.appendChild(statsGrid);
             
             content.appendChild(statsContainer);
@@ -102,7 +102,7 @@ export default class ProfileView extends AbstractView {
         } catch (error) {
             console.error("Error loading profile", error);
             this.container.innerHTML = "";
-            this.container.appendChild(el("h1", { className: "account-title" }, "Error loading profile"));
+            this.container.appendChild(el("h1", { className: "account-title" }, LanguageManager.t("profile.errorLoading") || "Error loading profile"));
         }
     }
 

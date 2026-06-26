@@ -36,7 +36,7 @@ export const en = {
     home: {
         title: "{gameName}",
         description: "Dive into a world where your keyboard is your only weapon. Learn to type naturally by immersing yourself in a universe blending digital and fantasy — cast spells, survive the hordes, and hunt the Virus corrupting the system.",
-        startGame: "Start Game",
+        startGame: "Start Game ➤",
         trainingMode: "Training Mode",
         whyTitle: "Typing Reimagined",
         whyDesc: "Forget boring typing tutors. {gameName} fuses rogue-lite progression, intense dungeon crawling, and fast-paced word combat into an unforgiving trial of speed and accuracy.",
@@ -97,7 +97,8 @@ export const en = {
         report: "Report",
         reportPrompt: "Please provide a reason for reporting:",
         reportSuccess: "Post reported successfully.",
-        reportHidden: "This post has been hidden pending moderation."
+        reportHidden: "This post has been hidden pending moderation.",
+        errorLoadingComments: "Error loading comments"
     },
     
     // LoginView
@@ -160,7 +161,8 @@ export const en = {
         renameTitle: "Rename Save Slot",
         cancelBtn: "Cancel",
         deleteConfirmTitle: "Delete Save?",
-        deleteConfirmText: "Are you sure you want to delete Slot {slot}? This action is irreversible."
+        deleteConfirmText: "Are you sure you want to delete Slot {slot}? This action is irreversible.",
+        levelPhase: "Level: {level} - Phase: {phase}"
     },
     
     // GameView
@@ -198,7 +200,8 @@ export const en = {
         fallLeft: "left",
         fallCenter: "center",
         fallRight: "right",
-        fallDeep: "deep : "
+        fallDeep: "deep : ",
+        duelDataLost: "Duel data lost. Please restart the duel."
     },
     
     // AccountView
@@ -222,7 +225,16 @@ export const en = {
         french: "Français",
         themeTitle: "Theme",
         themeDark: "Dark Mode",
-        themeLight: "Light Mode"
+        themeLight: "Light Mode",
+        currentRank: "Current Rank",
+        topWpm: "Top WPM",
+        avgWpm: "Average WPM",
+        accuracy: "Accuracy",
+        wordsTyped: "Words Typed",
+        enemiesDefeated: "Enemies Defeated",
+        bossesDefeated: "Bosses Defeated",
+        playtime: "Playtime",
+        globalStats: "Global Statistics"
     },
     
     // Game Engine (IntroPhase etc.)
@@ -389,7 +401,15 @@ export const en = {
     common: {
         confirm: "Confirm",
         cancel: "Cancel",
-        skipIndicator: "↵ Enter / Space"
+        skipIndicator: "↵ Enter / Space",
+        loading: "Loading..."
+    },
+    
+    // ProfileView
+    profile: {
+        userNotFound: "User not found",
+        errorLoading: "Error loading profile",
+        rank: "Rank"
     },
     
     // SupportView
@@ -436,7 +456,9 @@ export const en = {
         waitingBtn: "Waiting...",
         closeBtn: "Close",
         acceptDuel: "Accept Duel",
-        declineDuel: "Decline"
+        declineDuel: "Decline",
+        duelNotification: "{user} challenged you to a duel! Go to the Social tab to fight!",
+        duelDeclinedNotification: "{user} declined your duel invitation."
     },
     duel: {
         spellsTitle: "Spells",
@@ -533,6 +555,7 @@ export const en = {
         storyOnly: "🎭 Obtained via story",
         pts: "pts",
         back: "← Back",
+        cost: "Cost: {cost} point(s)",
         branchAttack: "ATTACK",
         branchDefense: "DEFENSE",
         branchUtility: "UTILITY"

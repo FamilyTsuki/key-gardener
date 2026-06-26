@@ -1,5 +1,7 @@
 .save-container {
+    width: 80vw;
     max-width: 800px;
+    
     margin: 0 auto;
     padding: 20px;
     color: var(--site-color-1);
@@ -251,7 +253,7 @@
 }
 
 .save-login-text {
-    color: #94a3b8;
+    color: var(--site-color-11);
     font-size: 16px;
     margin-bottom: 20px;
 }
@@ -261,7 +263,7 @@
 }
 
 .modal-delete-text {
-    color: #94a3b8;
+    color: var(--site-color-11);
     font-size: 14px;
 }
 

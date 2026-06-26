@@ -36,7 +36,7 @@ export const fr = {
     home: {
         title: "{gameName}",
         description: "Plongez dans un monde où votre clavier est votre seule arme. Apprenez à taper naturellement en vous immergeant dans un univers à la fois numérique et fantastique — lancez des sorts, survivez aux hordes et traquez le Virus qui corrompt le système.",
-        startGame: "Commencer le jeu",
+        startGame: "Commencer le jeu ➤",
         whyTitle: "La Dactylographie Réinventée",
         whyDesc: "Oubliez les cours de frappe ennuyeux. {gameName} fusionne progression rogue-lite, exploration de donjons et combats de mots intenses dans une épreuve impitoyable de vitesse et de précision.",
         feature1Title: "Tapez Vite ou Mourez",
@@ -118,7 +118,8 @@ export const fr = {
         report: "Signaler",
         reportPrompt: "Veuillez indiquer la raison du signalement :",
         reportSuccess: "Post signalé avec succès.",
-        reportHidden: "Ce post a été masqué en attendant la modération."
+        reportHidden: "Ce post a été masqué en attendant la modération.",
+        errorLoadingComments: "Erreur lors du chargement des commentaires"
     },
     
     // LoginView
@@ -181,7 +182,8 @@ export const fr = {
         renameTitle: "Renommer la sauvegarde",
         cancelBtn: "Annuler",
         deleteConfirmTitle: "Supprimer la sauvegarde ?",
-        deleteConfirmText: "Êtes-vous sûr de vouloir supprimer l'emplacement {slot} ? Cette action est irréversible."
+        deleteConfirmText: "Êtes-vous sûr de vouloir supprimer l'emplacement {slot} ? Cette action est irréversible.",
+        levelPhase: "Niveau : {level} - Phase : {phase}"
     },
     
     // GameView
@@ -220,7 +222,8 @@ export const fr = {
         fallLeft: "gauche",
         fallCenter: "milieu",
         fallRight: "droite",
-        fallDeep: "profondeur : "
+        fallDeep: "profondeur : ",
+        duelDataLost: "Données de duel perdues. Veuillez relancer le duel."
     },
     
     // AccountView
@@ -244,7 +247,16 @@ export const fr = {
         french: "Français",
         themeTitle: "Thème",
         themeDark: "Mode Sombre",
-        themeLight: "Mode Clair"
+        themeLight: "Mode Clair",
+        currentRank: "Grade Actuel",
+        topWpm: "Top WPM",
+        avgWpm: "WPM Moyen",
+        accuracy: "Précision",
+        wordsTyped: "Mots Tapés",
+        enemiesDefeated: "Ennemis Vaincus",
+        bossesDefeated: "Boss Vaincus",
+        playtime: "Temps de Jeu",
+        globalStats: "Statistiques Globales"
     },
     
     // Game Engine (IntroPhase etc.)
@@ -411,7 +423,15 @@ export const fr = {
     common: {
         confirm: "Confirmer",
         cancel: "Annuler",
-        skipIndicator: "↵ Entrée / Espace"
+        skipIndicator: "↵ Entrée / Espace",
+        loading: "Chargement..."
+    },
+    
+    // ProfileView
+    profile: {
+        userNotFound: "Utilisateur introuvable",
+        errorLoading: "Erreur lors du chargement du profil",
+        rank: "Grade"
     },
     
     // SupportView
@@ -458,7 +478,9 @@ export const fr = {
         waitingBtn: "En attente...",
         closeBtn: "Fermer",
         acceptDuel: "Accepter le Duel",
-        declineDuel: "Décliner"
+        declineDuel: "Décliner",
+        duelNotification: "{user} vous a défié en duel ! Allez sur l'onglet Social pour l'affronter !",
+        duelDeclinedNotification: "{user} a décliné votre invitation de duel."
     },
     duel: {
         spellsTitle: "Sorts",
@@ -563,6 +585,7 @@ export const fr = {
         storyOnly: "🎭 Obtenu via l’histoire",
         pts: "pts",
         back: "← Retour",
+        cost: "Coût : {cost} point(s)",
         branchAttack: "ATTAQUE",
         branchDefense: "DÉFENSE",
         branchUtility: "UTILITAIRE"

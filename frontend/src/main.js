@@ -48,14 +48,14 @@ SocketService.on('duel_invitation', (data) => {
     if (!exists) {
         window.pendingDuelInvitations.push(data);
     }
-    FlashMessageManager.show(`${data.fromUsername} vous a défié en duel ! Allez sur l'onglet Social pour l'affronter !`, "warning");
+    FlashMessageManager.show(LanguageManager.t("social.duelNotification", { user: data.fromUsername }) || `${data.fromUsername} vous a défié en duel ! Allez sur l'onglet Social pour l'affronter !`, "warning");
     if (window.appRouter && window.appRouter.currentView && typeof window.appRouter.currentView.loadFriends === 'function') {
         window.appRouter.currentView.loadFriends();
     }
 });
 
 SocketService.on('duel_declined', (data) => {
-    FlashMessageManager.show(`${data.fromUsername} a décliné votre invitation de duel.`, "error");
+    FlashMessageManager.show(LanguageManager.t("social.duelDeclinedNotification", { user: data.fromUsername }) || `${data.fromUsername} a décliné votre invitation de duel.`, "error");
 });
 
 SocketService.on('duel_started', (data) => {

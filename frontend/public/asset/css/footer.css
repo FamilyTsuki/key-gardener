@@ -105,3 +105,22 @@
 .home-footer .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
+
+/* =============== LIGHT MODE OVERRIDES =============== */
+body[data-theme="light"] .home-footer {
+    background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.05));
+}
+
+body[data-theme="light"] .home-footer,
+body[data-theme="light"] .home-footer .footer-column h3,
+body[data-theme="light"] .home-footer .footer-column a,
+body[data-theme="light"] .home-footer .footer-thx,
+body[data-theme="light"] .home-footer .footer-bottom,
+body[data-theme="light"] .home-footer .footer-support-link {
+    color: var(--text-color) !important;
+    text-shadow: none !important;
+}
+
+body[data-theme="light"] .home-footer .footer-bottom {
+    border-top: 1px solid var(--card-border) !important;
+}

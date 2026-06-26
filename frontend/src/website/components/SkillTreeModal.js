@@ -338,7 +338,7 @@ export class SkillTreeModal {
                 el("div", { className: "st-detail-howto" }, howTo),
                 el("div", { className: "st-detail-word" }, spell.id.toUpperCase()),
                 el("div", { className: "st-detail-desc" }, spellDesc),
-                unlocked ? null : el("div", { className: "st-detail-cost" }, `Coût : ${spell.cost} point${spell.cost > 1 ? "s" : ""} de compétence`),
+                unlocked ? null : el("div", { className: "st-detail-cost" }, LanguageManager.t("skilltree.cost", { cost: spell.cost }) || `Coût : ${spell.cost} point(s)`),
                 el("div", { className: "st-detail-actions" }, buyBtn, closeBtn)
             )
         );

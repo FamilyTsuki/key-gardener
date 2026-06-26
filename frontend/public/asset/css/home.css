@@ -6,6 +6,7 @@
 /* ===============BUTTON =============== */
 
 .start-btn {
+    width: fit-content;
     padding: 10px 20px;
     background-color: var(--site-color-2);
     color: var(--site-color-12);
@@ -17,6 +18,7 @@
         background-color 0.3s ease,
         box-shadow 0.3s ease;
     cursor: pointer;
+    text-align: center;
 }
 
 .start-btn:hover {
@@ -36,12 +38,7 @@
     opacity: 1;
 }
 
-.home-btns-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-}
+
 
 /* ===============GLOBAL =============== */
 
@@ -287,7 +284,7 @@ h2.home-title {
 .home-description {
     font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 400;
-    color: #e2e8f0;
+    color: var(--site-color-1);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
@@ -337,7 +334,7 @@ h2.home-title {
 .home-info {
     font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 400;
-    color: #e2e8f0;
+    color: var(--site-color-1);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
@@ -404,4 +401,12 @@ h2.home-title {
     .start-btn {
         padding: 8px 16px;
     }
+}
+
+/* =============== LIGHT MODE OVERRIDES =============== */
+body[data-theme="light"] .home-title,
+body[data-theme="light"] .home-description,
+body[data-theme="light"] .home-info,
+body[data-theme="light"] .home-feature-title {
+    text-shadow: none;
 }

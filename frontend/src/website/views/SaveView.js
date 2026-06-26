@@ -133,7 +133,7 @@ export default class SaveView extends AbstractView {
                 "div",
                 { className: "save-info" },
                 el("div", { className: "save-slot-title" }, LanguageManager.t("save.slotPrefix") + slot),
-                el("div", { className: "save-level-phase" }, `Level: ${saveLevel} - Phase: ${savePhase}`),
+                el("div", { className: "save-level-phase" }, LanguageManager.t("save.levelPhase", { level: saveLevel, phase: savePhase }) || `Level: ${saveLevel} - Phase: ${savePhase}`),
                 el(
                     "div",
                     { className: "save-date" },

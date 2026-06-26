@@ -80,30 +80,28 @@ export default class HomeView extends AbstractView {
                             { className: "home-description" },
                             LanguageManager.t("home.description")
                         ),
+                        
                         el(
-                            "p",
-                            { className: "home-btns-container" },
-                            el(
-                                "a",
-                                {
-                                    href: "/game",
-                                    dataset: { link: true },
-                                    className: "start-btn hidden",
-                                    id: "start-btn",
-                                    onclick: (e) => {
-                                        if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
-                                            document.documentElement.requestFullscreen().then(() => {
-                                                if (navigator.keyboard && navigator.keyboard.lock) {
-                                                    navigator.keyboard.lock(["Escape"]).catch(e => console.warn(e));
-                                                }
-                                            }).catch(err => console.warn(err));
-                                        }
+                            "a",
+                            {
+                                href: "/game",
+                                dataset: { link: true },
+                                className: "start-btn hidden",
+                                id: "start-btn",
+                                onclick: (e) => {
+                                    if (SettingsManager.getSettings().fullscreen && !document.fullscreenElement) {
+                                        document.documentElement.requestFullscreen().then(() => {
+                                            if (navigator.keyboard && navigator.keyboard.lock) {
+                                                navigator.keyboard.lock(["Escape"]).catch(e => console.warn(e));
+                                            }
+                                        }).catch(err => console.warn(err));
                                     }
-                                },
-                                LanguageManager.t("home.startGame")
-                            ),
+                                }
+                            },
+                            LanguageManager.t("home.startGame")
+                        ),
 
-                        )
+                    
                     )
                 ),
                 el(
