@@ -30,15 +30,19 @@ export class PlayerState {
     }
 
     damage(amount, reason = null) {
-        if (this.isInvulnerable) return;
-        this.hp -= amount;
+        if (amount === Infinity) {
+            this.hp = 0;
+        } else {
+            if (this.isInvulnerable) return;
+            this.hp -= amount;
+        }
 
         if (reason && this.hp <= 0) {
             this.deathReason = reason;
         }
         const audio = Math.floor(Math.random() * 3) + 1;
         AudioManager.playSFX(`/asset/game_assets/sounds/damage_${audio}.wav`, "player", 0.8);
-        this.emit("hp_changed", { hp: this.hp, hpMax: this.hpMax, damage: amount });
+        this.emit("hp_changed", { hp: this.hp, hpMax: this.hpMax, damage: amount === Infinity ? 9999 : amount });
     }
 
     heal(amount) {

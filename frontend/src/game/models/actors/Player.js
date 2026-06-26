@@ -234,7 +234,7 @@ export default class Player extends Actor {
     }
 
     damage(amount, reason = null) {
-        if (this.state.isInvulnerable) return;
+        if (this.state.isInvulnerable && amount !== Infinity) return;
 
         const hasEarthBoss = this.enemiesManager && this.enemiesManager.boss && this.enemiesManager.boss.name === "EarthCore";
         if (hasEarthBoss && this.state.hp - amount <= 0) {

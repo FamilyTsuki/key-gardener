@@ -27,7 +27,6 @@ export class SurviveState {
             
             if (hasActiveAttacks) {
                 this.firstEnemyAttackFired = true;
-            } else if (this.firstEnemyAttackFired) {
                 this.firstSpellCinematicTriggered = true;
                 this.triggerFirstSpellCinematic(gameEngine);
                 return false;
