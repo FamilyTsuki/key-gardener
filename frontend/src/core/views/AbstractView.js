@@ -17,7 +17,7 @@ export default class AbstractView {
      * @param {string} title - The title for the page.
      */
     setTitle(title) {
-        const gameName = window.GAME_NAME || "";
+        const gameName = window.GAME_NAME;
         if (gameName) {
             document.title = `${title} - ${gameName}`;
         } else {

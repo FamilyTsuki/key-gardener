@@ -3,6 +3,32 @@ const fs = require("fs");
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
+const REQUIRED_ENV_VARS = [
+    "PORT",
+    "GAME_NAME",
+    "DB_USER",
+    "DB_HOST",
+    "DB_NAME",
+    "DB_PASSWORD",
+    "DB_PORT",
+    "JWT_SECRET",
+    "FRONTEND_URL",
+    "GOOGLE_CLIENT_ID",
+    "SUPPORT_EMAIL",
+    "EMAIL_SENDER",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USER",
+    "SMTP_PASS"
+];
+
+const missingEnvVars = REQUIRED_ENV_VARS.filter(name => !process.env[name]);
+if (missingEnvVars.length > 0) {
+    console.error(`❌ [FATAL] Missing required environment variables: ${missingEnvVars.join(", ")}`);
+    console.error("Please configure them in your .env file.");
+    process.exit(1);
+}
+
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -25,10 +51,10 @@ const db = require("./src/config/database");
 const app = express();
 app.set("trust proxy", 1);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 const IS_PROD = process.env.NODE_ENV === "production";
-const BASE_URL = process.env.FRONTEND_URL || "https://tsuki-dev.fr";
-const GAME_NAME = process.env.GAME_NAME || "Key Gardener";
+const BASE_URL = process.env.FRONTEND_URL;
+const GAME_NAME = process.env.GAME_NAME;
 const FRONTEND_DIR = IS_PROD
     ? path.join(__dirname, "../dist/public")
     : path.join(__dirname, "../frontend/public");
@@ -40,7 +66,7 @@ const corsOptions = {
     origin: (origin, callback) => {
         const isLocal = !origin || origin.includes("localhost") || origin.includes("127.0.0.1");
         const isTsuki = origin && origin.includes("tsuki-dev.fr");
-        const frontendUrl = process.env.FRONTEND_URL || "";
+        const frontendUrl = process.env.FRONTEND_URL;
         const isAllowedFrontend = frontendUrl && origin && origin.startsWith(frontendUrl);
 
         if (isLocal || isTsuki || isAllowedFrontend) {
@@ -228,14 +254,14 @@ const buildSeoTags = ({ title, descFr, descEn, schemaType, canonicalUrl, baseUrl
         </script>
         `;
 
-const injectHtmlPlaceholders = (html, { title, seoTags, canonicalUrl, gameName }) => {
+const injectHtmlPlaceholders = (html, { title, seoTags, canonicalUrl, gameName, googleClientId, supportEmail }) => {
     return html
         .replace(/<html lang="en">/, `<html lang="fr">`)
         .replace(/<title>.*<\/title>/, `<title>${title}</title>`)
         .replace("<!-- SSR Tags Placeholder -->", seoTags)
         .replace("</head>", `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`)
-        .replace("GOOGLE_CLIENT_ID_PLACEHOLDER", process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com")
-        .replace("SUPPORT_EMAIL_PLACEHOLDER", process.env.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com")
+        .replace("GOOGLE_CLIENT_ID_PLACEHOLDER", googleClientId)
+        .replace("SUPPORT_EMAIL_PLACEHOLDER", supportEmail)
         .replaceAll("Key Gardener", gameName);
 };
 
@@ -256,7 +282,14 @@ app.get("*", (req, res) => {
         const { title, descFr, descEn, schemaType } = buildPageMeta(req.path, GAME_NAME);
         const seoTags = buildSeoTags({ title, descFr, descEn, schemaType, canonicalUrl, baseUrl: BASE_URL, ogImage, gameName: GAME_NAME });
 
-        const finalHtml = injectHtmlPlaceholders(htmlData, { title, seoTags, canonicalUrl, gameName: GAME_NAME });
+        const finalHtml = injectHtmlPlaceholders(htmlData, {
+            title,
+            seoTags,
+            canonicalUrl,
+            gameName: GAME_NAME,
+            googleClientId: process.env.GOOGLE_CLIENT_ID,
+            supportEmail: process.env.SUPPORT_EMAIL,
+        });
         res.send(finalHtml);
     });
 });

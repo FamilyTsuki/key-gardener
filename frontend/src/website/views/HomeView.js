@@ -160,7 +160,7 @@ export default class HomeView extends AbstractView {
                             "div",
                             { className: "footer-column" },
                             el("h3", {}, LanguageManager.t("home.contactUs")),
-                            el("a", { href: `mailto:${window.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com"}` }, window.SUPPORT_EMAIL || "support.tsuki.dev@gmail.com")
+                            el("a", { href: `mailto:${window.SUPPORT_EMAIL}` }, window.SUPPORT_EMAIL)
                         ),
                         el(
                             "div",

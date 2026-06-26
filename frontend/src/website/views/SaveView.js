@@ -372,7 +372,7 @@ export default class SaveView extends AbstractView {
         const dataStr =
             "data:text/json;charset=utf-8," +
             encodeURIComponent(JSON.stringify(gameState, null, 2));
-        const gameSlug = (window.GAME_NAME || "game")
+        const gameSlug = window.GAME_NAME
             .toLowerCase()
             .replace(/[^a-z0-9]/g, "_");
         const downloadAnchor = el("a", {

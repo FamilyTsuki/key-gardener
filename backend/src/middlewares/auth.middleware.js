@@ -13,7 +13,7 @@ const verifyToken = async (req, res, next) => {
 
     jwt.verify(
         token,
-        process.env.JWT_SECRET || "super_secret_key",
+        process.env.JWT_SECRET,
         async (err, decoded) => {
             if (err) {
                 return res
@@ -50,7 +50,7 @@ const optionalVerifyToken = async (req, res, next) => {
 
     jwt.verify(
         token,
-        process.env.JWT_SECRET || "super_secret_key",
+        process.env.JWT_SECRET,
         async (err, decoded) => {
             if (err) {
                 req.user = null;

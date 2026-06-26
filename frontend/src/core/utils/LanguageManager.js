@@ -59,7 +59,7 @@ export class LanguageManager {
         }
         
         if (typeof val === 'string') {
-            const gameName = window.GAME_NAME || "";
+            const gameName = window.GAME_NAME;
             val = val.replace(/{gameName}/g, gameName);
             
             if (Object.keys(params).length > 0) {

@@ -104,7 +104,7 @@ export default class RegisterView extends AbstractView {
 
         if (window.google && window.google.accounts && window.google.accounts.id) {
             window.google.accounts.id.initialize({
-                client_id: window.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+                client_id: window.GOOGLE_CLIENT_ID,
                 callback: async (response) => {
                     try {
                         await AuthService.loginWithGoogle(response.credential);

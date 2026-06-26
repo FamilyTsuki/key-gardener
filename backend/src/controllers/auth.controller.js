@@ -12,7 +12,7 @@ const validatePassword = (password) => {
 const generateToken = (userId) => {
     return jwt.sign(
         { id: userId },
-        process.env.JWT_SECRET || "super_secret_key",
+        process.env.JWT_SECRET,
         { expiresIn: "7d" }
     );
 };

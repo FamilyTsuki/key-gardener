@@ -24,7 +24,7 @@ module.exports = (io) => {
             return next(new Error("Authentication error: No token provided"));
         }
         
-        jwt.verify(token, process.env.JWT_SECRET || "super_secret_key", async (err, decoded) => {
+        jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
             if (err) {
                 return next(new Error("Authentication error: Invalid token"));
             }

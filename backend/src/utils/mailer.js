@@ -8,8 +8,8 @@ async function initMailer() {
         if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
             transporter = nodemailer.createTransport({
                 host: process.env.SMTP_HOST,
-                port: process.env.SMTP_PORT || 587,
-                secure: process.env.SMTP_PORT == 465,
+                port: parseInt(process.env.SMTP_PORT, 10),
+                secure: parseInt(process.env.SMTP_PORT, 10) === 465,
                 auth: {
                     user: process.env.SMTP_USER,
                     pass: process.env.SMTP_PASS,
@@ -35,13 +35,11 @@ async function initMailer() {
 async function sendResetCodeEmail(toEmail, resetCode) {
     await initMailer();
 
-    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5000";
+    const baseUrl = process.env.FRONTEND_URL;
     const resetLink = `${baseUrl}/login?reset_token=${resetCode}&email=${encodeURIComponent(toEmail)}`;
 
-    const gameName = process.env.GAME_NAME || "";
-    const emailSender = process.env.EMAIL_SENDER 
-        ? process.env.EMAIL_SENDER.replace(/Keyboard Survivor/g, gameName)
-        : (gameName ? `"${gameName}" <alban.elie590@gmail.com>` : "alban.elie590@gmail.com");
+    const gameName = process.env.GAME_NAME;
+    const emailSender = process.env.EMAIL_SENDER.replace(/Keyboard Survivor/g, gameName);
 
     const info = await transporter.sendMail({
         from: emailSender,
