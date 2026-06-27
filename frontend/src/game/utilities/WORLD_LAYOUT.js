@@ -34,7 +34,7 @@ export function createWordlLayout(introType = "none", height = 30) {
         else if (number < 0.2) tab_width.push(4);
         else tab_width.push(3);
     }
-    let tab_decalage = [];
+    let offsetArray = [];
     for (let i = 0; i < tab_width.length; i++) {
         if (i >= 15 && i < 20) {
             tab_width[i] = tab_width[14];
@@ -42,25 +42,25 @@ export function createWordlLayout(introType = "none", height = 30) {
 
         if (tab_width[i] > 2) {
             let temp1 = -Math.floor(Math.random() * (tab_width[i] - 1));
-            tab_decalage.push(temp1);
+            offsetArray.push(temp1);
         } else {
-            tab_decalage.push(0);
+            offsetArray.push(0);
         }
 
         if (i >= 15 && i < 20) {
-            tab_decalage[i] = tab_decalage[14];
+            offsetArray[i] = offsetArray[14];
         }
     }
 
-    let test = 0;
+    let offsetAdjustment = 0;
     let recentlyUsed = [];
     let lastCenterIndex = 0;
     for (let y = 0; y < tab_width.length; y++) {
-        if (y % 2 === 0) test += 1;
+        if (y % 2 === 0) offsetAdjustment += 1;
 
         for (let x = 0; x < tab_width[y]; x++) {
-            let min_decal = 0;
-            if (y % 2 === 1) min_decal = 0.5;
+            let minOffset = 0;
+            if (y % 2 === 1) minOffset = 0.5;
 
             let availableLetters = tab_lettre.filter(l => !recentlyUsed.includes(l));
             if (availableLetters.length === 0) { 
@@ -73,10 +73,10 @@ export function createWordlLayout(introType = "none", height = 30) {
                 recentlyUsed.shift();
             }
 
-            let posX = x + min_decal + test + tab_decalage[y];
+            let posX = x + minOffset + offsetAdjustment + offsetArray[y];
 
             if (x === Math.floor(tab_width[y] / 2)) {
-                lastCenterIndex = x + tab_decalage[y];
+                lastCenterIndex = x + offsetArray[y];
             }
 
             worldLayout.push({
@@ -93,17 +93,17 @@ export function createWordlLayout(introType = "none", height = 30) {
     let island_widths = [2, 3, 5, 7, 7, 5, 3];
     for (let i = 0; i < island_widths.length; i++) {
         let y = y_start + i;
-        if (y % 2 === 0) test += 1;
-        let w = island_widths[i];
+        if (y % 2 === 0) offsetAdjustment += 1;
+        let actualWidth = island_widths[i];
 
-        let min_decal = y % 2 === 1 ? 0.5 : 0;
-        let decalage = lastCenterIndex - Math.floor(w / 2);
+        let minOffset = -Math.floor(actualWidth / 2);
+        let totalOffset = lastCenterIndex - Math.floor(actualWidth / 2);
 
-        for (let x = 0; x < w; x++) {
-            let posX = x + min_decal + test + decalage;
+        for (let x = 0; x < actualWidth; x++) {
+            let posX = x + minOffset + offsetAdjustment + totalOffset;
 
             let letterValue = null;
-            if (x === Math.floor(w / 2) && i <= 4) {
+            if (x === Math.floor(actualWidth / 2) && i <= 4) {
                 letterValue = (i + 1).toString();
             }
 
@@ -113,7 +113,7 @@ export function createWordlLayout(introType = "none", height = 30) {
                 y: -y,
                 letter: letterValue,
                 isPressed: false,
-                isDoorRow: i === 4
+                isIsland: true 
             });
         }
     }

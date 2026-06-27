@@ -223,7 +223,9 @@ export const en = {
         fallCenter: "center",
         fallRight: "right",
         fallDeep: "deep : ",
-        duelDataLost: "Duel data lost. Please restart the duel."
+        duelDataLost: "Duel data lost. Please restart the duel.",
+        deathDevoured: "The enemy devoured you.",
+        deathCrushed: "Crushed by an enemy."
     },
     
     /* ============================================================

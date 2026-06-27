@@ -278,7 +278,7 @@ export default class Enemies {
     spawnAt(keyObject, scene, type = "basic", options = {}) {
         if (!keyObject || !keyObject.rawPosition) {
             console.error(
-                "Erreur: La touche fournie à spawnAt est invalide",
+                "Invalid key provided to spawnAt",
                 keyObject
             );
             return;

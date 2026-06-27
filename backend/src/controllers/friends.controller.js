@@ -32,7 +32,7 @@ exports.addFriend = async (req, res) => {
         res.json({ success: true, message: 'Demande d\'ami envoyée.' });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 };
 
@@ -49,7 +49,7 @@ exports.acceptFriend = async (req, res) => {
         res.json({ success: true, message: 'Demande d\'ami acceptée.' });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 };
 
@@ -73,7 +73,7 @@ exports.getFriends = async (req, res) => {
         res.json({ success: true, friends: result.rows });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 };
 
@@ -90,7 +90,7 @@ exports.removeFriend = async (req, res) => {
         res.json({ success: true, message: 'Ami supprimé.' });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 };
 
@@ -115,7 +115,7 @@ exports.searchUsers = async (req, res) => {
         res.json({ success: true, users: result.rows });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 };
 
@@ -156,6 +156,6 @@ exports.getProfile = async (req, res) => {
         res.json({ success: true, user, stats, friendStatus });
     } catch (e) {
         console.error(e);
-        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 };

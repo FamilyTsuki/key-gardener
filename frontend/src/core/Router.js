@@ -149,7 +149,7 @@ export default class Router {
         try {
             await Promise.all(loadStyles);
         } catch (error) {
-            console.error("Erreur de chargement CSS:", error);
+            console.error("CSS loading error:", error);
         }
         if (appContainer) {
             const isEnteringGame = location.pathname === "/game";

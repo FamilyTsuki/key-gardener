@@ -78,7 +78,7 @@ class TextModerator {
      * Checks the with open a i l l m.
  * @param {any} text - The text.
      */
-    async checkWithOpenAILLM(text) {
+        async checkWithOpenAILLM(text) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
 
@@ -94,7 +94,7 @@ class TextModerator {
                     messages: [
                         { 
                             role: "system", 
-                            content: "Tu es un modérateur de chat très strict. D'abord, corrige mentalement l'orthographe, la grammaire et décode les abréviations de la phrase (ex: 'tg boufon' devient 'ta gueule bouffon', 'fdp' devient 'fils de pute'). Ensuite, analyse la phrase corrigée. Réponds uniquement par le mot 'BLOCKED' si le texte contient de la vulgarité, des insultes (même légères, camouflées ou abrégées), de la haine, du contenu sexuel ou inapproprié. Sinon, réponds 'OK'. Ne fais aucune phrase additionnelle." 
+                            content: "You are a very strict chat moderator. First, mentally correct spelling, grammar, and decode abbreviations of the sentence (e.g., 'stfu' becomes 'shut the fuck up'). Then, analyze the corrected sentence. Answer ONLY with the word 'BLOCKED' if the text contains profanity, insults (even mild, camouflaged, or abbreviated), hate speech, sexual or inappropriate content. Otherwise, answer 'OK'. Do not output any additional text or explanations." 
                         },
                         { role: "user", content: text }
                     ],
@@ -112,7 +112,7 @@ class TextModerator {
                 return reply === "BLOCKED";
             }
         } catch (error) {
-            console.error("OpenAI LLM check failed:", error);
+            console.error("OpenAI moderation error:", error);
         }
         return false;
     }

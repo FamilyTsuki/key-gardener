@@ -5,6 +5,7 @@ import { EnemyRenderer3D } from "./enemy/EnemyRenderer3D.js";
 import { EnemyUI } from "./enemy/EnemyUI.js";
 import { EnemyAI } from "./enemy/EnemyAI.js";
 import { generateUUID } from "../../utilities/UUID.js";
+import { LanguageManager } from "../../../core/utils/LanguageManager.js";
 
 export default class Enemy extends Actor {
     constructor(
@@ -147,7 +148,7 @@ export default class Enemy extends Actor {
      */
     attack(player) {
         if (!player) throw new Error("No player to attack!");
-        player.damage(this.state.damage, "L'ennemi t'a dévoré");
+            player.damage(this.state.damage, LanguageManager.t("game.deathDevoured"));
     }
 
     /**
@@ -230,7 +231,7 @@ export default class Enemy extends Actor {
     handlePlayerCollision(player) {
         if (this.ai.checkPlayerCollision(player, this.size)) {
             this.state.hp = -1;
-            player.damage(50, "Écrasé par un ennemi.");
+            player.damage(50, LanguageManager.t("game.deathCrushed"));
             this.die();
         }
     }
