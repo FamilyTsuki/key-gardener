@@ -40,6 +40,34 @@ class TextModerator {
             .replace(/(.)\1+/g, "$1");
     }
 
+
+    /**
+     * Checks for ASCII Art patterns (e.g. braille characters, repeated special characters).
+     * @param {any} text - The text to check.
+     */
+    checkAsciiArt(text) {
+        if (!text) return false;
+        
+        const brailleRegex = /[\u2800-\u28FF]/g;
+        const brailleMatches = text.match(brailleRegex);
+        if (brailleMatches && brailleMatches.length > 5) {
+            return true;
+        }
+
+        const specialArtRegex = /[\u0F00-\u0FFF\u3000-\u30FF\u2000-\u206F\u2500-\u257F]/g;
+        const specialMatches = text.match(specialArtRegex);
+        if (specialMatches && specialMatches.length > 10) {
+            return true;
+        }
+
+        const repeatedSymbolRegex = /([^a-zA-Z0-9\s\.,!?'"-])\1{5,}/g;
+        if (repeatedSymbolRegex.test(text)) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Checks the local self harm.
      * @param {any} squashedText - The squashedText.
@@ -62,7 +90,7 @@ class TextModerator {
 
         const squashed = this.squashText(text);
 
-        if (this.forbiddenRegex.test(squashed) || this.checkLocalSelfHarm(squashed, text)) {
+        if (this.forbiddenRegex.test(squashed) || this.checkLocalSelfHarm(squashed, text) || this.checkAsciiArt(text)) {
             return true;
         }
 
@@ -94,7 +122,7 @@ class TextModerator {
                     messages: [
                         { 
                             role: "system", 
-                            content: "You are a very strict chat moderator. First, mentally correct spelling, grammar, and decode abbreviations of the sentence (e.g., 'stfu' becomes 'shut the fuck up'). Then, analyze the corrected sentence. Answer ONLY with the word 'BLOCKED' if the text contains profanity, insults (even mild, camouflaged, or abbreviated), hate speech, sexual or inappropriate content. Otherwise, answer 'OK'. Do not output any additional text or explanations." 
+                            content: "You are a strict, multilingual chat moderator (expert in English and French). Analyze the user's text and detect: 1. Obfuscated or camouflaged bad words (e.g., 'm3rde', 'f.u.c.k', 'p u t e', leetspeak). 2. Profanity, insults, toxicity, harassment, or hate speech (racism, homophobia, etc.). 3. Explicit sexual content, NSFW descriptions, or inappropriate roleplay. 4. Encouragement of self-harm, suicide, or real-world violence. 5. ASCII art representing inappropriate shapes. 6. Inappropriate emojis or emoji combinations (e.g., sexual implications with eggplant 🍆, peach 🍑, or sweat drops 💦). If the text contains ANY of the above, reply ONLY with the exact word 'BLOCKED'. If the text is safe, benign, or harmless gaming banter, reply ONLY with the exact word 'OK'. Do not provide any explanations, punctuation, or additional text." 
                         },
                         { role: "user", content: text }
                     ],
