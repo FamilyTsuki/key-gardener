@@ -571,6 +571,27 @@ body[data-theme="light"] #easter-egg-canvas {
 .custom-select-options::-webkit-scrollbar {
     width: 6px;
 }
+
+/* =============== CUSTOM SCROLLBAR =============== */
+::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--card-border);
+    border-radius: 7px;
+    border: 3px solid var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color);
+}
+
 .custom-select-options::-webkit-scrollbar-thumb {
     background: var(--card-border);
     border-radius: 10px;

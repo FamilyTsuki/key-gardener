@@ -108,7 +108,10 @@
 
 /* =============== LIGHT MODE OVERRIDES =============== */
 body[data-theme="light"] .home-footer {
-    background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.05));
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 body[data-theme="light"] .home-footer,

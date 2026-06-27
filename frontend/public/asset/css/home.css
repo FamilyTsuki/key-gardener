@@ -410,3 +410,16 @@ body[data-theme="light"] .home-info,
 body[data-theme="light"] .home-feature-title {
     text-shadow: none;
 }
+
+body[data-theme="light"] .home-presantation-container,
+body[data-theme="light"] .home-info-container,
+body[data-theme="light"] .home-motivation-container {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 1.5rem;
+    box-sizing: border-box;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}

@@ -41,7 +41,6 @@ export default class HomeView extends AbstractView {
     }
     async render() {
         this.isCurrentView = true;
-        const tunnelContainer = el("div", { id: "tunnel-container" });
         const svgFilter = el("div", {},
             el("svg", { className: "hologram-svg-filter", width: "0", height: "0" },
                 el("filter", { id: "hologram-distortion-filter" },
@@ -59,7 +58,6 @@ export default class HomeView extends AbstractView {
         const container = el(
             "div",
             {},
-            tunnelContainer,
             svgFilter,
             el(
                 "main",
@@ -189,14 +187,12 @@ export default class HomeView extends AbstractView {
                 )
             )
         );
-        this.tunnelContainer = tunnelContainer;
         return container;
     }
     async init() {
-        if (this.tunnelContainer) {
-            this.caveAnimation = new CaveAnimation(this.tunnelContainer);
-            this.caveAnimation.init();
-        }
+        this.caveAnimation = new CaveAnimation(null);
+        this.caveAnimation.init();
+        
         const deviceDetector = new DeviceCapabilitiesDetector(".start-btn", () => AuthService.isAuthenticated());
         deviceDetector.initialize();
         this.setupHologramListeners();
