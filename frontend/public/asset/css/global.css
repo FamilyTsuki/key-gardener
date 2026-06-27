@@ -316,125 +316,19 @@ html:has(body.in-game), body.in-game {
     background-color: var(--card-border);
     color: var(--text-muted);
     cursor: not-allowed;
-    pointer-events: none;
-    z-index: 9999;
-}
-
-
-
-@media (max-width: 480px) {
-    #global-loader {
-        font-size: 1.1rem;
-        letter-spacing: 2px;
-    }
-    
-    .loader-content {
-        gap: 1.5rem;
-    }
-    
-    .cyber-spinner {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .cyber-spinner::before {
-        top: 6px;
-        left: 6px;
-        right: 6px;
-        bottom: 6px;
-    }
-    
-    .cyber-spinner::after {
-        top: 14px;
-        left: 14px;
-        right: 14px;
-        bottom: 14px;
-    }
-}
-
-/* =============== GLOBAL UTILITY CLASSES =============== */
-
-.glass-panel {
-    background: var(--dark-overlay-dense);
-    border: 1px solid var(--card-border);
-    border-radius: 28px;
-    box-shadow: var(--shadow-glow);
-}
-
-.form-input {
-    width: 100%;
-    padding: 16px 20px;
-    border-radius: 16px;
-    border: 1px solid var(--card-border);
-    background: var(--light-overlay);
-    color: var(--text-color);
-    font-size: 1.1rem;
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
-}
-
-.form-input::placeholder {
-    color: var(--text-muted);
-}
-
-.form-input:focus {
-    border-color: var(--primary-color);
-    background: var(--light-overlay-hover);
-    box-shadow: var(--focus-ring);
-}
-
-.form-input:-webkit-autofill,
-.form-input:-webkit-autofill:hover, 
-.form-input:-webkit-autofill:focus, 
-.form-input:-webkit-autofill:active {
-    transition: background-color 5000s ease-in-out 0s;
-    -webkit-text-fill-color: var(--text-color) !important;
-}
-
-.btn-primary {
-    width: 100%;
-    padding: 16px 20px;
-    border: none;
-    border-radius: 16px;
-    background-color: var(--primary-color);
-    color: var(--bg-color);
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-sizing: border-box;
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    background-color: var(--primary-hover);
-    box-shadow: var(--shadow-glow);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
-}
-
-.btn-primary:disabled,
-.btn-primary:disabled:hover,
-.btn-primary:disabled:active {
-    background-color: var(--card-border);
-    color: var(--text-muted);
-    cursor: not-allowed;
     transform: none;
     box-shadow: none;
 }
 
 /* =============== LIGHT MODE CONFIGURATION =============== */
 body[data-theme="light"] {
-    --primary-color: #008c38;
-    --primary-hover: #00a342;
-    --secondary-color: #007a8c;
-    --secondary-hover: #008f9c;
-    --primary-translucent: rgba(0, 140, 56, 0.15);
-    --primary-translucent-hover: rgba(0, 140, 56, 0.08);
-    --secondary-translucent: rgba(0, 122, 140, 0.15);
+    --primary-color: #00ff66;
+    --primary-hover: #00cc52;
+    --secondary-color: #0ea5e9;
+    --secondary-hover: #0284c7;
+    --primary-translucent: rgba(0, 255, 102, 0.15);
+    --primary-translucent-hover: rgba(0, 255, 102, 0.08);
+    --secondary-translucent: rgba(14, 165, 233, 0.15);
     --bg-color: #f8fafc;
     --text-color: #0f172a;
     --text-muted: #475569;
@@ -447,9 +341,7 @@ body[data-theme="light"] {
     --white: #0f172a;
     --black: #f8fafc;
     --shadow-glow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    --focus-ring: 0 0 0 3px rgba(0, 179, 71, 0.3);
-
-
+    --focus-ring: 0 0 0 3px rgba(0, 255, 102, 0.3);
 }
 
 body[data-theme="light"] #page-transition {
