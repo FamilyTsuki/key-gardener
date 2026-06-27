@@ -31,7 +31,7 @@
 
 .game-over-title {
     margin: 0;
-    font-family: var(--site-color-13), 'Impact', Arial, sans-serif;
+    font-family: var(--font-main), 'Impact', Arial, sans-serif;
     font-size: clamp(40px, 7vw, 90px);
     font-weight: 900;
     color: #c0504d;
@@ -40,7 +40,7 @@
 
 .game-over-reason {
     margin: 0;
-    font-family: var(--site-color-13), Arial, sans-serif;
+    font-family: var(--font-main), Arial, sans-serif;
     font-size: clamp(14px, 1.8vw, 20px);
     color: rgba(200, 200, 200, 0.65);
     letter-spacing: 3px;

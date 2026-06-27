@@ -19,7 +19,7 @@
     font-size: clamp(2rem, 3.5vw, 3.5rem);
     margin: 0;
     letter-spacing: 0.04em;
-    color: var(--site-color-1);
+    color: var(--text-color);
 }
 
 .register-container > div {
@@ -37,26 +37,26 @@
 }
 .register-link {
     font-size: 1.1rem;
-    color: var(--site-color-11);
+    color: var(--text-muted);
     margin-top: 10px;
 }
 
 .register-link a {
-    color: var(--site-color-2);
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s ease;
 }
 
 .register-link a:hover {
-    color: var(--site-color-36);
+    color: var(--primary-hover);
 }
 
 .login-separator {
     display: flex;
     align-items: center;
     text-align: center;
-    color: var(--site-color-11);
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin: 10px 0;
 }

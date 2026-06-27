@@ -4,7 +4,7 @@
     
     margin: 0 auto;
     padding: 20px;
-    color: var(--site-color-1);
+    color: var(--text-color);
 }
 
 .save-title {
@@ -12,7 +12,7 @@
     font-weight: 800;
     text-align: left;
     margin-bottom: 30px;
-    color: var(--site-color-2);
+    color: var(--primary-color);
 }
 
 .save-slots {
@@ -26,8 +26,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--site-color-3);
-    border: 1px solid var(--site-color-4);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 20px;
     transition: border-color 0.2s ease, transform 0.2s ease;
@@ -35,14 +35,14 @@
 }
 
 .save-card:hover {
-    border-color: var(--site-color-2);
+    border-color: var(--primary-color);
     transform: translateY(-2px);
     z-index: 10;
 }
 
 .save-card.menu-open {
     z-index: 50;
-    border-color: var(--site-color-2);
+    border-color: var(--primary-color);
 }
 
 .save-info {
@@ -54,22 +54,22 @@
 .save-slot-title {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--site-color-2);
+    color: var(--primary-color);
 }
 
 .save-name {
     font-size: 1rem;
-    color: var(--site-color-1);
+    color: var(--text-color);
 }
 
 .save-date {
     font-size: 0.85rem;
-    color: var(--site-color-11);
+    color: var(--text-muted);
 }
 
 .save-empty {
     font-size: 0.95rem;
-    color: var(--site-color-11);
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -80,8 +80,8 @@
 }
 
 .play-btn {
-    background: var(--site-color-2);
-    color: var(--site-color-12);
+    background: var(--primary-color);
+    color: var(--bg-color);
     border: none;
     padding: 10px 24px;
     border-radius: 8px;
@@ -93,7 +93,7 @@
 
 .play-btn:hover {
     transform: translateY(-2px);
-    background-color: var(--site-color-36);
+    background-color: var(--primary-hover);
 }
 
 .play-btn:active {
@@ -103,7 +103,7 @@
 .menu-btn {
     background: none;
     border: none;
-    color: var(--site-color-11);
+    color: var(--text-muted);
     font-size: 20px;
     cursor: pointer;
     padding: 4px 8px;
@@ -111,16 +111,16 @@
 }
 
 .menu-btn:hover {
-    color: var(--site-color-2);
-    background: var(--site-color-43);
+    color: var(--primary-color);
+    background: var(--primary-translucent-hover);
 }
 
 .context-menu {
     position: absolute;
     right: 20px;
     top: 60px;
-    background: var(--site-color-3);
-    border: 1px solid var(--site-color-2);
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
     border-radius: 8px;
     z-index: 100;
     min-width: 140px;
@@ -136,7 +136,7 @@
 .context-item {
     background: none;
     border: none;
-    color: var(--site-color-1);
+    color: var(--text-color);
     padding: 10px 16px;
     text-align: left;
     font-size: 0.9rem;
@@ -146,17 +146,17 @@
 }
 
 .context-item:hover {
-    background: var(--site-color-7);
-    color: var(--site-color-2);
+    background: var(--primary-translucent);
+    color: var(--primary-color);
 }
 
 .context-item.delete {
-    color: var(--site-color-8);
+    color: var(--danger-color);
 }
 
 .context-item.delete:hover {
-    background: var(--site-color-45);
-    color: var(--site-color-15);
+    background: var(--danger-translucent);
+    color: var(--white);
 }
 
 .modal-backdrop {
@@ -173,8 +173,8 @@
 }
 
 .modal-content {
-    background: var(--site-color-3);
-    border: 1px solid var(--site-color-2);
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
     border-radius: 12px;
     padding: 24px;
     width: 320px;
@@ -186,15 +186,15 @@
 .modal-title {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--site-color-2);
+    color: var(--primary-color);
 }
 
 .modal-input {
-    background: var(--site-color-5);
-    border: 1px solid var(--site-color-4);
+    background: var(--black);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 10px 14px;
-    color: var(--site-color-1);
+    color: var(--text-color);
     font-size: 1rem;
     font-family: inherit;
     outline: none;
@@ -202,7 +202,7 @@
 }
 
 .modal-input:focus {
-    border-color: var(--site-color-2);
+    border-color: var(--primary-color);
 }
 
 .modal-actions {
@@ -224,22 +224,22 @@
 
 .modal-btn.cancel {
     background: transparent;
-    color: var(--site-color-11);
-    border: 1px solid var(--site-color-4);
+    color: var(--text-muted);
+    border: 1px solid var(--card-border);
 }
 
 .modal-btn.cancel:hover {
-    color: var(--site-color-1);
-    border-color: var(--site-color-2);
+    color: var(--text-color);
+    border-color: var(--primary-color);
 }
 
 .modal-btn.confirm {
-    background: var(--site-color-2);
-    color: var(--site-color-12);
+    background: var(--primary-color);
+    color: var(--bg-color);
 }
 
 .modal-btn.confirm:hover {
-    background: var(--site-color-36);
+    background: var(--primary-hover);
     transform: translateY(-2px);
 }
 
@@ -253,17 +253,17 @@
 }
 
 .save-login-text {
-    color: var(--site-color-11);
+    color: var(--text-muted);
     font-size: 16px;
     margin-bottom: 20px;
 }
 
 .modal-btn.confirm.delete-confirm {
-    background-color: var(--site-color-8);
+    background-color: var(--danger-color);
 }
 
 .modal-delete-text {
-    color: var(--site-color-11);
+    color: var(--text-muted);
     font-size: 14px;
 }
 
@@ -300,7 +300,7 @@
 
 .save-level-phase {
     font-size: 0.9em;
-    color: var(--site-color-1);
+    color: var(--text-color);
     margin-bottom: 5px;
     opacity: 0.8;
 }

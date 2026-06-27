@@ -3,20 +3,20 @@
     max-width: 800px;
     margin: 40px auto;
     padding: 20px;
-    color: var(--site-color-1);
+    color: var(--text-color);
 }
 
 .social-title {
     font-size: 2.5rem;
     font-weight: 800;
-    color: var(--site-color-2);
-    text-shadow: 0 0 15px var(--site-color-7);
+    color: var(--primary-color);
+    text-shadow: 0 0 15px var(--primary-translucent);
     margin-bottom: 2rem;
 }
 
 .add-friend-section {
-    background: var(--site-color-3);
-    border: 1px solid var(--site-color-4);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
     backdrop-filter: blur(10px);
     transition: border-color 0.3s ease;
@@ -24,11 +24,11 @@
 }
 
 .add-friend-section:focus-within {
-    border-color: var(--site-color-2);
+    border-color: var(--primary-color);
 }
 
 .social-view-container h3 {
-    color: var(--site-color-2);
+    color: var(--primary-color);
     font-size: 1.4rem;
     font-weight: 700;
     margin-top: 0;
@@ -38,7 +38,7 @@
 
 .friends-list-container h3 {
     margin-top: 35px;
-    border-bottom: 1px solid var(--site-color-4);
+    border-bottom: 1px solid var(--card-border);
     padding-bottom: 10px;
 }
 
@@ -57,20 +57,20 @@
 }
 
 .search-results::-webkit-scrollbar-thumb {
-    background: var(--site-color-4);
+    background: var(--card-border);
     border-radius: 3px;
 }
 
 .search-results::-webkit-scrollbar-thumb:hover {
-    background: var(--site-color-11);
+    background: var(--text-muted);
 }
 
 .search-result-card, .friend-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--site-color-6);
-    border: 1px solid var(--site-color-4);
+    background: var(--light-overlay);
+    border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 14px 20px;
     margin-top: 12px;
@@ -78,8 +78,8 @@
 }
 
 .search-result-card:hover, .friend-card:hover {
-    background: var(--site-color-52);
-    border-color: var(--site-color-2);
+    background: var(--light-overlay-hover);
+    border-color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 255, 102, 0.05);
 }
@@ -89,8 +89,8 @@
     height: 48px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--site-color-2);
-    background-color: var(--site-color-5);
+    border: 2px solid var(--primary-color);
+    background-color: var(--black);
     transition: border-color 0.25s ease, transform 0.25s ease;
 }
 
@@ -102,18 +102,18 @@
 }
 
 .friend-user-info:hover .friend-username {
-    color: var(--site-color-2);
+    color: var(--primary-color);
 }
 
 .friend-user-info:hover .avatar-small {
-    border-color: var(--site-color-14);
+    border-color: var(--secondary-color);
     transform: scale(1.05);
 }
 
 .friend-username {
     font-size: 1.15rem;
     font-weight: 600;
-    color: var(--site-color-1);
+    color: var(--text-color);
     transition: color 0.2s ease;
 }
 
@@ -129,8 +129,8 @@
     padding: 16px 20px;
     border: none;
     border-radius: 16px;
-    background-color: var(--site-color-8);
-    color: var(--site-color-15);
+    background-color: var(--danger-color);
+    color: var(--white);
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
@@ -140,7 +140,7 @@
 
 .btn-danger:hover {
     transform: translateY(-2px);
-    background-color: var(--site-color-9);
+    background-color: var(--danger-hover);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
@@ -149,18 +149,18 @@
 }
 
 .btn-danger:disabled {
-    background-color: var(--site-color-4);
-    color: var(--site-color-11);
+    background-color: var(--card-border);
+    color: var(--text-muted);
     cursor: not-allowed;
     pointer-events: none;
 }
 .btn-secondary {
     width: 100%;
     padding: 16px 20px;
-    border: 1px solid var(--site-color-4);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
-    background-color: var(--site-color-6);
-    color: var(--site-color-1);
+    background-color: var(--light-overlay);
+    color: var(--text-color);
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
@@ -170,8 +170,8 @@
 
 .btn-secondary:hover {
     transform: translateY(-2px);
-    background-color: var(--site-color-52);
-    border-color: var(--site-color-2);
+    background-color: var(--light-overlay-hover);
+    border-color: var(--primary-color);
 }
 
 .btn-secondary:active {
@@ -179,7 +179,7 @@
 }
 
 .text-muted {
-    color: var(--site-color-11);
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -219,12 +219,12 @@
 }
 
 .card-bg {
-    background: var(--site-color-3);
+    background: var(--card-bg);
     box-shadow: 0 6px 22px rgba(0, 0, 0, 0.2);
 }
 
 .card-bg-light {
-    background: var(--site-color-6);
+    background: var(--light-overlay);
 }
 
 .custom-modal-overlay {
@@ -243,8 +243,8 @@
 }
 
 .custom-modal-content {
-    background: var(--site-color-3);
-    border: 1px solid var(--site-color-4);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     padding: 30px;
     border-radius: 16px;
     max-width: 400px;
@@ -259,7 +259,7 @@
 }
 
 .custom-modal-content p {
-    color: var(--site-color-1);
+    color: var(--text-color);
     margin-bottom: 25px;
     font-size: 1.1rem;
 }
@@ -316,6 +316,6 @@
 }
 
 .modal-title-danger {
-    color: var(--site-color-8);
+    color: var(--danger-color);
 }
 

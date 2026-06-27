@@ -8,8 +8,8 @@
 .start-btn {
     width: fit-content;
     padding: 10px 20px;
-    background-color: var(--site-color-2);
-    color: var(--site-color-12);
+    background-color: var(--primary-color);
+    color: var(--bg-color);
     border-radius: 16px;
     text-decoration: none;
     font-size: clamp(20px, 3vw, 28px);
@@ -22,11 +22,11 @@
 }
 
 .start-btn:hover {
-    background-color: var(--site-color-36);
+    background-color: var(--primary-hover);
 }
 
 .training-link {
-    color: var(--site-color-12);
+    color: var(--bg-color);
     text-decoration: underline;
     font-size: clamp(14px, 1.5vw, 18px);
     opacity: 0.8;
@@ -63,7 +63,7 @@
     display: block;
     position: relative;
     z-index: 2;
-    filter: var(--site-color-37);
+    filter: var(--hologram-filter, none);
 }
 
 .hologram-glitch-layer {
@@ -72,7 +72,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: var(--site-color-38);
+    background-image: var(--img-url);
     background-size: cover;
     background-position: center;
     pointer-events: none;
@@ -82,7 +82,7 @@
     mix-blend-mode: screen;
     mask-image: 
         radial-gradient(
-            150% 120px at calc(var(--site-color-39) * 100%) calc(var(--site-color-40) * 100%),
+            150% 120px at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
             rgba(0, 0, 0, 1) 0%,
             rgba(0, 0, 0, 0.8) 30%,
             rgba(0, 0, 0, 0.4) 60%,
@@ -101,7 +101,7 @@
         );
     -webkit-mask-image: 
         radial-gradient(
-            150% 120px at calc(var(--site-color-39) * 100%) calc(var(--site-color-40) * 100%),
+            150% 120px at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
             rgba(0, 0, 0, 1) 0%,
             rgba(0, 0, 0, 0.8) 30%,
             rgba(0, 0, 0, 0.4) 60%,
@@ -124,13 +124,13 @@
 
 .hologram-glitch-layer.cyan-layer {
     filter: grayscale(0.5) sepia(0.5) hue-rotate(185deg) saturate(2) brightness(1.4) contrast(1.2);
-    opacity: calc(0.4 * var(--site-color-41));
+    opacity: calc(0.4 * var(--hover-intensity, 0));
     animation: glitch-cyan-layer 0.08s infinite steps(2);
 }
 
 .hologram-glitch-layer.blue-layer {
     filter: grayscale(0.5) sepia(0.5) hue-rotate(205deg) saturate(2) brightness(1.3) contrast(1.2);
-    opacity: calc(0.4 * var(--site-color-41));
+    opacity: calc(0.4 * var(--hover-intensity, 0));
     animation: glitch-blue-layer 0.08s infinite steps(2);
 }
 
@@ -150,7 +150,7 @@
     pointer-events: none;
     z-index: 6;
     border-radius: 2vw;
-    opacity: calc(0.4 * var(--site-color-41));
+    opacity: calc(0.4 * var(--hover-intensity, 0));
     animation: scanline-roll 10s linear infinite, hologram-flicker 0.15s infinite;
 }
 
@@ -170,7 +170,7 @@
     background-size: 4px 4px;
     pointer-events: none;
     z-index: 6;
-    opacity: calc(1 * var(--site-color-41));
+    opacity: calc(1 * var(--hover-intensity, 0));
 }
 
 .hologram-tear-layer {
@@ -179,22 +179,22 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: var(--site-color-38);
+    background-image: var(--img-url);
     background-size: cover;
     background-position: center;
     border-radius: 2vw;
     pointer-events: none;
     z-index: 4;
-    filter: var(--site-color-42);
-    opacity: calc(1 * var(--site-color-41));
+    filter: var(--hologram-mouse-filter, none);
+    opacity: calc(1 * var(--hover-intensity, 0));
     mask-image: radial-gradient(
-        circle 120px at calc(var(--site-color-39) * 100%) calc(var(--site-color-40) * 100%),
+        circle 120px at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
         rgba(0, 0, 0, 1) 0%,
         rgba(0, 0, 0, 0.6) 40%,
         rgba(0, 0, 0, 0) 100%
     );
     -webkit-mask-image: radial-gradient(
-        circle 120px at calc(var(--site-color-39) * 100%) calc(var(--site-color-40) * 100%),
+        circle 120px at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
         rgba(0, 0, 0, 1) 0%,
         rgba(0, 0, 0, 0.6) 40%,
         rgba(0, 0, 0, 0) 100%
@@ -249,7 +249,7 @@
     font-size: clamp(40px, 8vw, 90px);
     font-weight: 800;
     margin: 0;
-    color: var(--site-color-2);
+    color: var(--primary-color);
     line-height: 1.1;
     text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
 }
@@ -284,7 +284,7 @@ h2.home-title {
 .home-description {
     font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 400;
-    color: var(--site-color-1);
+    color: var(--text-color);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
@@ -334,7 +334,7 @@ h2.home-title {
 .home-info {
     font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 400;
-    color: var(--site-color-1);
+    color: var(--text-color);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
@@ -346,7 +346,7 @@ h2.home-title {
 }
 
 .home-feature-title {
-    color: var(--site-color-2);
+    color: var(--primary-color);
     margin-top: 1rem;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
