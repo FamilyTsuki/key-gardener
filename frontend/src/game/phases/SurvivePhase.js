@@ -133,6 +133,22 @@ export class SurvivePhase extends GamePhase {
         };
         window.addEventListener("earth_boss_sempai_rescue", this.sempaiRescueListener);
 
+        this.unlockShieldListener = () => {
+            if (this.gameEngine && this.gameEngine.unlockedSpells && !this.gameEngine.unlockedSpells.includes("shield")) {
+                this.gameEngine.unlockedSpells.push("shield");
+            }
+            if (this.player && this.player.spells) {
+                this.player.spells.unlockSpell("shield");
+            }
+            if (this.input && typeof this.input.setupSpellListUI === "function") {
+                this.input.setupSpellListUI();
+            }
+            if (this.gameEngine) {
+                this.gameEngine.autoSave();
+            }
+        };
+        window.addEventListener("earth_boss_unlock_shield", this.unlockShieldListener);
+
         if (this.options.boss) await this.enemies.spawnBoss(this.renderer.worldGroup);
         if (this.options.bugBoss) await this.enemies.spawnBugBoss(this.renderer.worldGroup, this.gameEngine.currentLevel);
         if (this.options.earthBoss) await this.enemies.spawnEarthBoss(this.renderer.worldGroup);
@@ -397,6 +413,9 @@ export class SurvivePhase extends GamePhase {
         }
         if (this.sempaiRescueListener) {
             window.removeEventListener("earth_boss_sempai_rescue", this.sempaiRescueListener);
+        }
+        if (this.unlockShieldListener) {
+            window.removeEventListener("earth_boss_unlock_shield", this.unlockShieldListener);
         }
     }
 }

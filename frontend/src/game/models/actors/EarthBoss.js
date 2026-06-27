@@ -203,14 +203,29 @@ export default class EarthBoss extends Actor {
                             "/asset/game_assets/models/sempai.glb",
                             () => {
                                 dBox.destroy();
-                                window.dispatchEvent(new CustomEvent("resume_game_after_dialogue"));
                                 
-                                this.attackPhase = "charging";
-                                this.stateTimer = 0;
-                                this.targetX = 5;
-                                this._createGuideMesh();
-                                this._createChargeSphere();
-                                AudioManager.playSFX("/asset/game_assets/sounds/warn.wav", "enemy", 0.8);
+                                const hasShield = player && player.spells && player.spells.getWordSpells().includes("shield");
+                                
+                                const startAttack = () => {
+                                    window.dispatchEvent(new CustomEvent("resume_game_after_dialogue"));
+                                    this.attackPhase = "charging";
+                                    this.stateTimer = 0;
+                                    this.targetX = 5;
+                                    this._createGuideMesh();
+                                    this._createChargeSphere();
+                                    AudioManager.playSFX("/asset/game_assets/sounds/warn.wav", "enemy", 0.8);
+                                };
+
+                                if (!hasShield) {
+                                    import("../../ui/SpellUnlockedPopup.js").then((popupModule) => {
+                                        popupModule.SpellUnlockedPopup.show("shield", () => {
+                                            window.dispatchEvent(new CustomEvent("earth_boss_unlock_shield"));
+                                            startAttack();
+                                        });
+                                    });
+                                } else {
+                                    startAttack();
+                                }
                             },
                             true
                         );
