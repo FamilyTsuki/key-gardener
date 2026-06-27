@@ -52,6 +52,10 @@ exports.createPost = async (req, res, next) => {
         const { content } = req.body;
         const userId = req.user.id;
 
+        if (content && content.length > 1000) {
+            return res.status(400).json({ success: false, message: "Content exceeds maximum length of 1000 characters." });
+        }
+
         if (req.user && req.user.warning_count >= 40) {
             return res.status(403).json({
                 success: false,
@@ -164,6 +168,10 @@ exports.updatePost = async (req, res, next) => {
         const { id } = req.params;
         const { content } = req.body;
         const userId = req.user.id;
+
+        if (content && content.length > 1000) {
+            return res.status(400).json({ success: false, message: "Content exceeds maximum length of 1000 characters." });
+        }
 
         if (req.user && req.user.warning_count >= 4) {
             return res.status(403).json({
@@ -339,6 +347,10 @@ exports.addComment = async (req, res, next) => {
         const { id } = req.params;
         const { content } = req.body;
         const userId = req.user.id;
+
+        if (content && content.length > 1000) {
+            return res.status(400).json({ success: false, message: "Content exceeds maximum length of 1000 characters." });
+        }
 
         if (req.user && req.user.warning_count >= 4) {
             return res.status(403).json({

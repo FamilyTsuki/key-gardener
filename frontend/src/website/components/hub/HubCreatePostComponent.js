@@ -28,11 +28,11 @@ export class HubCreatePostComponent {
 
         this.previewContainer = el("div", { id: "media-preview" });
 
-        const postTextarea = el("textarea", {
+        const postTextarea = el("textarea", { maxLength: 1000, 
             id: "post-content",
             className: "form-input",
             placeholder: LanguageManager.t("hub.shareProgress")
-        });
+         });
         postTextarea.addEventListener("paste", (e) => this.handlePaste(e));
 
         const closeIcon = Icons.closeLine();

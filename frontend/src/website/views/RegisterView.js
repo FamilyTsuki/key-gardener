@@ -26,10 +26,10 @@ export default class RegisterView extends AbstractView {
      * @returns {Promise<HTMLElement>} The register view container element.
      */
     async render() {
-        const usernameInput = el("input", { type: "text", placeholder: LanguageManager.t("register.usernamePlaceholder"), required: true, className: "form-input", id: "username", "aria-label": "Username", autocomplete: "username" });
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("register.emailPlaceholder"), required: true, className: "form-input", id: "reg-email", "aria-label": "Email Address", autocomplete: "email" });
-        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.passwordPlaceholder"), required: true, className: "form-input", id: "reg-password", "aria-label": "Password", autocomplete: "new-password" });
-        const confirmPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.confirmPasswordPlaceholder"), required: true, className: "form-input", id: "confirm-password", "aria-label": "Confirm Password", autocomplete: "new-password" });
+        const usernameInput = el("input", { maxLength: 50,  type: "text", placeholder: LanguageManager.t("register.usernamePlaceholder"), required: true, className: "form-input", id: "username", "aria-label": "Username", autocomplete: "username"  });
+        const emailInput = el("input", { maxLength: 100,  type: "email", placeholder: LanguageManager.t("register.emailPlaceholder"), required: true, className: "form-input", id: "reg-email", "aria-label": "Email Address", autocomplete: "email"  });
+        const passwordInput = el("input", { maxLength: 100,  type: "password", placeholder: LanguageManager.t("register.passwordPlaceholder"), required: true, className: "form-input", id: "reg-password", "aria-label": "Password", autocomplete: "new-password"  });
+        const confirmPasswordInput = el("input", { maxLength: 100,  type: "password", placeholder: LanguageManager.t("register.confirmPasswordPlaceholder"), required: true, className: "form-input", id: "confirm-password", "aria-label": "Confirm Password", autocomplete: "new-password"  });
 
         const consentContainer = el("div", { className: "consent-container" },
             (this.consentCheckbox = el("input", { type: "checkbox", id: "register-consent", required: true })),

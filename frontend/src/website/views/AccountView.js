@@ -70,8 +70,8 @@ export default class AccountView extends AbstractView {
             }, LanguageManager.t("account.logout"));
         const passwordContainer = el("div", { className: "password-container" },
             el("h3", { className: "password-title" }, LanguageManager.t("account.changePasswordTitle")),
-            el("input", { type: "password", id: "current-password", placeholder: LanguageManager.t("account.currentPasswordPlaceholder"), className: "form-input password-input" }),
-            el("input", { type: "password", id: "new-password", placeholder: LanguageManager.t("account.newPasswordPlaceholder"), className: "form-input password-input" }),
+            el("input", { maxLength: 100,  type: "password", id: "current-password", placeholder: LanguageManager.t("account.currentPasswordPlaceholder"), className: "form-input password-input"  }),
+            el("input", { maxLength: 100,  type: "password", id: "new-password", placeholder: LanguageManager.t("account.newPasswordPlaceholder"), className: "form-input password-input"  }),
             el("button", { 
                 className: "btn-primary", 
                 onclick: async () => {
@@ -268,7 +268,7 @@ export default class AccountView extends AbstractView {
      * Replaces the username text with an input field.
      */
     editUsernameClick() {
-        const input = el("input", { type: "text", value: this.usernameSpan.textContent, className: "form-input name" });
+        const input = el("input", { maxLength: 50,  type: "text", value: this.usernameSpan.textContent, className: "form-input name"  });
         this.usernameSpan.replaceWith(input);
         input.focus();
         
@@ -325,7 +325,7 @@ export default class AccountView extends AbstractView {
      * Replaces the email text with an input field.
      */
     editUsermailClick() {
-        const input = el("input", { type: "email", value: this.usermail.textContent, className: "form-input" });
+        const input = el("input", { maxLength: 100,  type: "email", value: this.usermail.textContent, className: "form-input"  });
         this.usermail.replaceWith(input);
         input.focus();
         

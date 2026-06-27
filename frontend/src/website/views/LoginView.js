@@ -65,8 +65,8 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The login form element.
      */
     createLoginForm() {
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", id: "email", "aria-label": "Email Address", autocomplete: "username" });
-        const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "form-input", id: "password", "aria-label": "Password", autocomplete: "current-password" });
+        const emailInput = el("input", { maxLength: 100,  type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", id: "email", "aria-label": "Email Address", autocomplete: "username"  });
+        const passwordInput = el("input", { maxLength: 100,  type: "password", placeholder: LanguageManager.t("login.passwordPlaceholder"), required: true, className: "form-input", id: "password", "aria-label": "Password", autocomplete: "current-password"  });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -126,7 +126,7 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The forgot password form element.
      */
     createForgotForm() {
-        const emailInput = el("input", { type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", "aria-label": "Email Address" });
+        const emailInput = el("input", { maxLength: 100,  type: "email", placeholder: LanguageManager.t("login.emailPlaceholder"), required: true, className: "form-input", "aria-label": "Email Address"  });
 
         const handleSubmit = async (e) => {
             e.preventDefault();
@@ -170,7 +170,7 @@ export default class LoginView extends AbstractView {
      * @returns {HTMLElement} The reset password form element.
      */
     createResetForm() {
-        const newPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "form-input", "aria-label": "New Password", autocomplete: "new-password" });
+        const newPasswordInput = el("input", { maxLength: 100,  type: "password", placeholder: LanguageManager.t("login.newPasswordPlaceholder"), required: true, className: "form-input", "aria-label": "New Password", autocomplete: "new-password"  });
 
         const handleSubmit = async (e) => {
             e.preventDefault();

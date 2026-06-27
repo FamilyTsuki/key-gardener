@@ -242,7 +242,7 @@ export class HubPostsComponent {
         const commentsSection = el("div", { className: "comments-section hidden", id: `comments-${post.id}` },
             el("div", { className: "comments-list", id: `comments-list-${post.id}` }),
             AuthService.isAuthenticated() ? el("div", { className: "add-comment-form" },
-                el("textarea", { className: "form-input comment-input", id: `comment-input-${post.id}`, placeholder: LanguageManager.t("hub.addComment") }),
+                el("textarea", { maxLength: 1000,  className: "form-input comment-input", id: `comment-input-${post.id }`, placeholder: LanguageManager.t("hub.addComment") }),
                 el("button", { className: "btn-primary btn-small post-comment-btn", onclick: (e) => this.submitComment(post.id, e.currentTarget) }, LanguageManager.t("hub.postComment"))
             ) : null
         );
@@ -326,7 +326,7 @@ export class HubPostsComponent {
         const actionsContainer = postElement.querySelector(".post-actions-container");
         if (!contentP || !actionsContainer) return;
 
-        const textarea = el("textarea", { className: "form-input edit-post-textarea" });
+        const textarea = el("textarea", { maxLength: 1000,  className: "form-input edit-post-textarea"  });
         textarea.value = post.content;
 
         const saveBtn = el("button", {
@@ -434,11 +434,11 @@ export class HubPostsComponent {
         const modalContent = el("div", { className: "report-modal-content" });
         
         const title = el("h3", { className: "report-modal-title" }, LanguageManager.t("hub.reportPrompt"));
-        const textarea = el("textarea", { 
+        const textarea = el("textarea", { maxLength: 1000,  
             className: "report-modal-textarea",
             rows: "4", 
             placeholder: LanguageManager.t("hub.reportPrompt")
-        });
+         });
         
         const btnContainer = el("div", { className: "report-modal-actions" });
         const cancelBtn = el("button", { className: "btn-secondary report-modal-btn", onclick: () => modal.remove() }, LanguageManager.t("hub.cancel"));

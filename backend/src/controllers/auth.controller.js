@@ -35,6 +35,10 @@ exports.register = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
 
+        if (username && username.length > 50) return res.status(400).json({ success: false, message: "Username too long (max 50 chars)" });
+        if (email && email.length > 100) return res.status(400).json({ success: false, message: "Email too long (max 100 chars)" });
+        if (password && password.length > 100) return res.status(400).json({ success: false, message: "Password too long (max 100 chars)" });
+
         if (!username || !email || !password) {
             return res
                 .status(400)
