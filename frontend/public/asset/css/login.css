@@ -30,10 +30,119 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-}.login-container form {    width: 100%;    display: flex;    flex-direction: column;    gap: 18px;}/* ============================================================
+}
+
+.login-container form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* ============================================================
    FORMS & INPUTS
    ============================================================ */
-.input-wrapper {    width: 100%;    display: flex;    flex-direction: column;    gap: 8px;}.register-link {    font-size: 1.1rem;    color: var(--text-muted);    margin-top: 10px;}.register-link a {    color: var(--primary-color);    text-decoration: none;    font-weight: 600;    transition: color 0.2s ease;}.register-link a:hover {    color: var(--primary-hover);}#login-message {    min-height: 24px;}.auth-error {    color: var(--danger-color);    font-size: 1rem;    text-align: center;    margin: 0;}.auth-success {    color: var(--success-color);    font-size: 1rem;    text-align: center;    margin: 0;}.reset-info-text {    color: var(--text-color);    margin-bottom: 1rem;    text-align: center;    font-size: 1.1rem;}.forgot-link {    color: var(--text-muted);    margin: 0;    align-self: flex-end;    cursor: pointer;    transition: color 0.2s ease;}.forgot-link:hover {    color: var(--primary-hover);}.login-separator {    display: flex;    align-items: center;    text-align: center;    color: var(--text-muted);    font-size: 0.85rem;    margin: 10px 0;}.login-separator::before,.login-separator::after {    content: '';    flex: 1;    border-bottom: 1px solid rgba(255, 255, 255, 0.15);}.login-separator:not(:empty)::before {    margin-right: .75em;}.login-separator:not(:empty)::after {    margin-left: .75em;}.google-btn-container {    width: 100%;    display: flex;    justify-content: center;    margin-top: 5px;}/* ============================================================
+.input-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.register-link {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+}
+
+.register-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.register-link a:hover {
+    color: var(--primary-hover);
+}
+
+#login-message {
+    min-height: 24px;
+}
+
+.auth-error {
+    color: var(--danger-color);
+    font-size: 1rem;
+    text-align: center;
+    margin: 0;
+}
+
+.auth-success {
+    color: var(--success-color);
+    font-size: 1rem;
+    text-align: center;
+    margin: 0;
+}
+
+.reset-info-text {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.forgot-link {
+    color: var(--text-muted);
+    margin: 0;
+    align-self: flex-end;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.forgot-link:hover {
+    color: var(--primary-hover);
+}
+
+.login-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 10px 0;
+}
+
+.login-separator::before,
+.login-separator::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.login-separator:not(:empty)::before {
+    margin-right: 0.75em;
+}
+
+.login-separator:not(:empty)::after {
+    margin-left: 0.75em;
+}
+
+.google-btn-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+/* ============================================================
    RESPONSIVE DESIGN
    ============================================================ */
-@media (max-width: 600px) {    .login-container {        padding: 28px 20px;        gap: 18px;    }    .register-link,    .reset-info-text {        font-size: 0.95rem;    }}
+@media (max-width: 600px) {
+    .login-container {
+        padding: 28px 20px;
+        gap: 18px;
+    }
+    .register-link,
+    .reset-info-text {
+        font-size: 0.95rem;
+    }
+}

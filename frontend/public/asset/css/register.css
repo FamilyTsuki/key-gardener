@@ -59,15 +59,15 @@
 }
 .login-separator::before,
 .login-separator::after {
-    content: '';
+    content: "";
     flex: 1;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 .login-separator:not(:empty)::before {
-    margin-right: .75em;
+    margin-right: 0.75em;
 }
 .login-separator:not(:empty)::after {
-    margin-left: .75em;
+    margin-left: 0.75em;
 }
 .google-btn-container {
     width: 100%;
@@ -98,7 +98,9 @@
     position: relative;
     flex-shrink: 0;
     margin-top: 2px;
-    transition: border-color 0.22s ease, background-color 0.22s ease;
+    transition:
+        border-color 0.22s ease,
+        background-color 0.22s ease;
 }
 .consent-container input[type="checkbox"]:hover {
     border-color: var(--primary-color);
@@ -128,7 +130,9 @@
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
-    transition: color 0.2s ease, text-shadow 0.2s ease;
+    transition:
+        color 0.2s ease,
+        text-shadow 0.2s ease;
 }
 .consent-container label a:hover {
     color: var(--primary-hover);

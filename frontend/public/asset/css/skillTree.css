@@ -19,7 +19,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background-image: 
+    background-image:
         linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 50px 50px;
@@ -102,8 +102,8 @@
 .st-node-circle {
     width: 56px;
     height: 56px;
-    border-radius: 12px; 
-    transform: rotate(45deg); 
+    border-radius: 12px;
+    transform: rotate(45deg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -112,7 +112,7 @@
     transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .st-node-icon {
-    transform: rotate(-45deg); 
+    transform: rotate(-45deg);
     font-size: 1.5rem;
     display: flex;
     align-items: center;
@@ -127,7 +127,7 @@
     transform: rotate(-45deg) scale(1.05);
 }
 .st-node-label {
-    margin-top: 18px; 
+    margin-top: 18px;
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 1px;
@@ -144,37 +144,46 @@
 .st-node.attack .st-node-circle {
     border-color: rgba(239, 68, 68, 1);
     color: #ef4444;
-}.st-node.attack.unlocked .st-node-circle {
+}
+.st-node.attack.unlocked .st-node-circle {
     border-color: #ef4444;
     background: rgba(239, 68, 68, 1);
     color: #fca5a5;
-}.st-node.attack.unlocked .st-node-label {
+}
+.st-node.attack.unlocked .st-node-label {
     color: #fca5a5;
-}.st-node.attack.can-afford .st-node-circle {
+}
+.st-node.attack.can-afford .st-node-circle {
     border-color: rgba(239, 68, 68, 1);
 }
 .st-node.defense .st-node-circle {
     border-color: rgba(16, 185, 129, 1);
     color: #10b981;
-}.st-node.defense.unlocked .st-node-circle {
+}
+.st-node.defense.unlocked .st-node-circle {
     border-color: #10b981;
     background: rgba(16, 185, 129, 1);
     color: #6ee7b7;
-}.st-node.defense.unlocked .st-node-label {
+}
+.st-node.defense.unlocked .st-node-label {
     color: #6ee7b7;
-}.st-node.defense.can-afford .st-node-circle {
+}
+.st-node.defense.can-afford .st-node-circle {
     border-color: rgba(16, 185, 129, 1);
 }
 .st-node.utility .st-node-circle {
     border-color: rgba(245, 158, 11, 1);
     color: #f59e0b;
-}.st-node.utility.unlocked .st-node-circle {
+}
+.st-node.utility.unlocked .st-node-circle {
     border-color: #f59e0b;
     background: rgba(245, 158, 11, 1);
     color: #fde68a;
-}.st-node.utility.unlocked .st-node-label {
+}
+.st-node.utility.unlocked .st-node-label {
     color: #fde68a;
-}.st-node.utility.can-afford .st-node-circle {
+}
+.st-node.utility.can-afford .st-node-circle {
     border-color: rgba(245, 158, 11, 1);
 }
 .st-node.locked {
@@ -200,7 +209,15 @@
     background: rgba(15, 23, 42, 0.6) !important;
     opacity: 0.75;
 }
-.st-node.cant-afford.attack .st-node-circle  { color: rgba(239, 68, 68, 0.7) !important; }.st-node.cant-afford.defense .st-node-circle { color: rgba(16, 185, 129, 0.7) !important; }.st-node.cant-afford.utility .st-node-circle { color: rgba(245, 158, 11, 0.7) !important; }
+.st-node.cant-afford.attack .st-node-circle {
+    color: rgba(239, 68, 68, 0.7) !important;
+}
+.st-node.cant-afford.defense .st-node-circle {
+    color: rgba(16, 185, 129, 0.7) !important;
+}
+.st-node.cant-afford.utility .st-node-circle {
+    color: rgba(245, 158, 11, 0.7) !important;
+}
 .st-node.cant-afford:hover .st-node-circle {
     opacity: 1;
 }
@@ -211,8 +228,13 @@
    ANIMATIONS
    ============================================================ */
 @keyframes st-pulse {
-    0%, 100% { border-color: rgba(255, 255, 255, 0.2); }
-    50%       { border-color: currentColor; }
+    0%,
+    100% {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        border-color: currentColor;
+    }
 }
 .st-branch-label {
     position: absolute;
@@ -261,7 +283,15 @@
     position: relative;
     animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.st-detail-box.attack  { border-color: rgba(239, 68, 68, 0.2); }.st-detail-box.defense { border-color: rgba(16, 185, 129, 0.2); }.st-detail-box.utility { border-color: rgba(245, 158, 11, 0.2); }
+.st-detail-box.attack {
+    border-color: rgba(239, 68, 68, 0.2);
+}
+.st-detail-box.defense {
+    border-color: rgba(16, 185, 129, 0.2);
+}
+.st-detail-box.utility {
+    border-color: rgba(245, 158, 11, 0.2);
+}
 .st-detail-icon {
     font-size: 4rem;
     margin-bottom: 12px;
@@ -286,7 +316,15 @@
     letter-spacing: 5px;
     margin: 8px 0 16px;
 }
-.st-detail-box.attack  .st-detail-word { color: #f87171; }.st-detail-box.defense .st-detail-word { color: #34d399; }.st-detail-box.utility .st-detail-word { color: #fde68a; }
+.st-detail-box.attack .st-detail-word {
+    color: #f87171;
+}
+.st-detail-box.defense .st-detail-word {
+    color: #34d399;
+}
+.st-detail-box.utility .st-detail-word {
+    color: #fde68a;
+}
 .st-detail-desc {
     color: #94a3b8;
     font-size: 0.95rem;
@@ -313,7 +351,18 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
-.st-detail-box.attack  .st-detail-buy-btn { background: #ef4444; color: #fff; }.st-detail-box.defense .st-detail-buy-btn { background: #10b981; color: #fff; }.st-detail-box.utility .st-detail-buy-btn { background: #f59e0b; color: #000; }
+.st-detail-box.attack .st-detail-buy-btn {
+    background: #ef4444;
+    color: #fff;
+}
+.st-detail-box.defense .st-detail-buy-btn {
+    background: #10b981;
+    color: #fff;
+}
+.st-detail-box.utility .st-detail-buy-btn {
+    background: #f59e0b;
+    color: #000;
+}
 .st-detail-buy-btn:hover {
     filter: brightness(1.1);
     transform: translateY(-1px);
@@ -341,8 +390,37 @@
     color: #fff;
 }
 @keyframes popIn {
-    0%   { transform: scale(0.95); opacity: 0; }
-    100% { transform: scale(1);   opacity: 1; }
+    0% {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
-@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-.text-attack { color: #ef4444; }.text-defense { color: #10b981; }.text-utility { color: #ffd700; }
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+.text-attack {
+    color: #ef4444;
+}
+.text-defense {
+    color: #10b981;
+}
+.text-utility {
+    color: #ffd700;
+}

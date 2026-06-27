@@ -43,7 +43,7 @@ export default class DonateView {
         );
 
         const avatarContainer = el("div", { className: "letter-avatar-container" },
-            el("img", { src: "/asset/img/home_battle.webp", alt: "Developer", className: "letter-avatar" })
+            el("img", { src: "/asset/img/boykisser.gif", alt: "Developer", className: "letter-avatar" })
         );
 
         const letter = el("div", { className: "support-letter" },

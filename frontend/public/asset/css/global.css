@@ -125,7 +125,8 @@ body.in-game #app {
     margin-top: 0 !important;
     overflow: hidden !important;
 }
-html:has(body.in-game), body.in-game {
+html:has(body.in-game),
+body.in-game {
     overflow: hidden !important;
 }
 #page-transition {
@@ -167,7 +168,9 @@ html:has(body.in-game), body.in-game {
     text-transform: uppercase;
     letter-spacing: 4px;
     opacity: 1;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition:
+        opacity 0.5s ease,
+        visibility 0.5s ease;
 }
 #global-loader.hidden {
     opacity: 0;
@@ -206,7 +209,9 @@ html:has(body.in-game), body.in-game {
     animation-delay: 0.4s;
 }
 @keyframes pulseDot {
-    0%, 80%, 100% {
+    0%,
+    80%,
+    100% {
         opacity: 0.2;
         transform: scale(0.8);
     }
@@ -263,12 +268,21 @@ html:has(body.in-game), body.in-game {
    ANIMATIONS
    ============================================================ */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 @keyframes loader-pulse-glow {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
 }
 body[data-theme="light"] {
     --primary-color: #00ff66;
@@ -369,7 +383,9 @@ body[data-theme="light"] #easter-egg-canvas {
     padding: 14px 20px;
     color: var(--text-color);
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
     font-size: 1.05rem;
 }
 .custom-option:hover {
@@ -391,8 +407,7 @@ body[data-theme="light"] #easter-egg-canvas {
     right: 20px;
     color: var(--primary-color);
 }
-.custom-select-options
-::-webkit-scrollbar {
+.custom-select-options ::-webkit-scrollbar {
     width: 6px;
 }
 ::-webkit-scrollbar {
@@ -445,7 +460,8 @@ body[data-theme="light"] #easter-egg-canvas {
     align-items: center;
     text-align: center;
     transform: translateY(20px);
-    animation: globalModalSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: globalModalSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)
+        forwards;
 }
 .global-modal-title {
     font-size: 1.6rem;
@@ -495,7 +511,9 @@ body[data-theme="light"] #easter-egg-canvas {
     transform: translateY(0);
 }
 @keyframes globalModalFadeIn {
-    to { opacity: 1; }
+    to {
+        opacity: 1;
+    }
 }
 @keyframes globalModalSlideIn {
     from {

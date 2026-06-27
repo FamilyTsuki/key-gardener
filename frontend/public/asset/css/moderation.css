@@ -86,7 +86,10 @@
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s, transform 0.15s, border-color 0.2s;
+    transition:
+        background 0.2s,
+        transform 0.15s,
+        border-color 0.2s;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     width: 100%;
@@ -96,7 +99,9 @@
     background: #ff003c;
     color: #ffffff;
     border: none;
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
 }
 .scary-btn-primary:hover {
     transform: translateY(-2px);

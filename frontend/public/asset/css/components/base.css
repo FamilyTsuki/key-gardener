@@ -1,18 +1,83 @@
-/* ============================================================
+/* ============================================================
    CARDS & PANELS
    ============================================================ */
-.glass-panel {    background: var(--dark-overlay-dense);    border: 1px solid var(--card-border);    border-radius: 28px;    }/* ============================================================
+.glass-panel {
+    background: var(--dark-overlay-dense);
+    border: 1px solid var(--card-border);
+    border-radius: 28px;
+}
+
+/* ============================================================
    FORMS & INPUTS
    ============================================================ */
-.form-input {    width: 100%;    padding: 16px 20px;    border-radius: 16px;    border: 1px solid var(--card-border);    background: var(--light-overlay);    color: var(--text-color);    font-size: 1.1rem;    outline: none;    box-sizing: border-box;    transition: border-color 0.22s ease, background 0.22s ease;}.form-input::placeholder {    color: var(--text-muted);}.form-input:focus {    border-color: var(--primary-color);    background: var(--light-overlay-hover);    }.form-input:-webkit-autofill,.form-input:-webkit-autofill:hover, .form-input:-webkit-autofill:focus, .form-input:-webkit-autofill:active {    transition: background-color 5000s ease-in-out 0s;    -webkit-text-fill-color: var(--text-color) !important;}/* ============================================================
+.form-input {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    background: var(--light-overlay);
+    color: var(--text-color);
+    font-size: 1.1rem;
+    outline: none;
+    box-sizing: border-box;
+    transition:
+        border-color 0.22s ease,
+        background 0.22s ease;
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    background: var(--light-overlay-hover);
+}
+
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus,
+.form-input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: var(--text-color) !important;
+}
+
+/* ============================================================
    BUTTONS
    ============================================================ */
-.btn-primary {    width: 100%;    padding: 16px 20px;    border: none;    border-radius: 16px;    background-color: var(--primary-color);    color: var(--bg-color);    font-size: 1.1rem;    font-weight: 700;    cursor: pointer;    box-sizing: border-box;    transition: transform 0.2s ease, background-color 0.2s ease;}.btn-primary:hover {
+.btn-primary {
+    width: 100%;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 16px;
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.btn-primary:hover {
     transform: translateY(-2px);
     background-color: var(--primary-hover);
-}.btn-primary:active {
+}
+
+.btn-primary:active {
     transform: translateY(0);
-}.btn-primary:disabled,.btn-primary:disabled:hover,.btn-primary:disabled:active {    background-color: var(--card-border);    color: var(--text-muted);    cursor: not-allowed;    transform: none;    }
+}
+
+.btn-primary:disabled,
+.btn-primary:disabled:hover,
+.btn-primary:disabled:active {
+    background-color: var(--card-border);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+}
 .btn-danger {
     width: 100%;
     padding: 16px 20px;
@@ -24,7 +89,9 @@
     font-weight: 700;
     cursor: pointer;
     box-sizing: border-box;
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
 }
 .btn-danger:hover {
     transform: translateY(-2px);

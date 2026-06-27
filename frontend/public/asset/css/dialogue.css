@@ -1,4 +1,104 @@
 /* ============================================================
    MODALS & OVERLAYS
    ============================================================ */
-.dialogue-box-container {    position: absolute;    bottom: 0;    left: 50%;    transform: translate(-50%, 20px);    z-index: 100;    opacity: 0;    pointer-events: none;    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);    display: flex;    align-items: flex-end;    width: 90%;    max-width: 850px;}.dialogue-box-container.visible {    opacity: 1;    transform: translate(-50%, 0);    pointer-events: auto;}.dialogue-box-bubble {    position: relative;    background: white;    color: black;    padding: 15px 30px;    border-radius: 15px;    font-size: clamp(14px, 2vw, 20px);    font-weight: bold;    display: flex;    align-items: center;    width: 70%;    min-height: 100px;        border: 3px solid #ccc;    z-index: 2;    margin-bottom: 7vh;    transform: scale(0.9);    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);}.dialogue-box-container.visible .dialogue-box-bubble {    transform: scale(1);}.dialogue-box-text {    position: relative;    z-index: 10;    display: inline-block;}.dialogue-box-speaker {    width: 45%;    max-width: 600px;    aspect-ratio: 4 / 5;    display: flex;    justify-content: center;    align-items: flex-end;    position: relative;    z-index: 1;    margin-left: -15%;    transform: translateY(40px);    opacity: 0;    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out;}.dialogue-box-container.visible .dialogue-box-speaker {    transform: translateY(0);    opacity: 1;}.dialogue-box-speaker img {    max-width: 100%;    max-height: 100%;    object-fit: contain;    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));}.dialogue-box-speaker canvas {    width: 100% !important;    height: 100% !important;    outline: none;    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));}.dialogue-skip-indicator {    position: absolute;    bottom: 10px;    right: 20px;    font-size: 14px;    font-weight: bold;    color: #888;    animation: blinkPrompt 1.5s infinite;    font-family: inherit;    pointer-events: none;    z-index: 20;}
+.dialogue-box-container {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 20px);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: flex-end;
+    width: 90%;
+    max-width: 850px;
+}
+
+.dialogue-box-container.visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+}
+
+.dialogue-box-bubble {
+    position: relative;
+    background: white;
+    color: black;
+    padding: 15px 30px;
+    border-radius: 15px;
+    font-size: clamp(14px, 2vw, 20px);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    width: 70%;
+    min-height: 100px;
+
+    border: 3px solid #ccc;
+    z-index: 2;
+    margin-bottom: 7vh;
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dialogue-box-container.visible .dialogue-box-bubble {
+    transform: scale(1);
+}
+
+.dialogue-box-text {
+    position: relative;
+    z-index: 10;
+    display: inline-block;
+}
+
+.dialogue-box-speaker {
+    width: 45%;
+    max-width: 600px;
+    aspect-ratio: 4 / 5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1;
+    margin-left: -15%;
+    transform: translateY(40px);
+    opacity: 0;
+    transition:
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.5s ease-out;
+}
+
+.dialogue-box-container.visible .dialogue-box-speaker {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.dialogue-box-speaker img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+.dialogue-box-speaker canvas {
+    width: 100% !important;
+    height: 100% !important;
+    outline: none;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+.dialogue-skip-indicator {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #888;
+    animation: blinkPrompt 1.5s infinite;
+    font-family: inherit;
+    pointer-events: none;
+    z-index: 20;
+}
