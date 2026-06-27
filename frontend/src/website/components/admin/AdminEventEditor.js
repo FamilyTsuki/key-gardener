@@ -17,7 +17,7 @@ export class AdminEventEditor {
      * Renders.
  * @param {Event} availableEvents - The availableEvents.
      */
-    render(availableEvents) {
+    render(availableEvents, hasOuter = true) {
         this.container.innerHTML = "";
         this.renderRemoveButton();
         this.container.appendChild(this.renderHeader(availableEvents));
@@ -26,7 +26,7 @@ export class AdminEventEditor {
             this.container.appendChild(this.renderTrigger());
         }
 
-        this.container.appendChild(this.renderFields());
+        this.container.appendChild(this.renderFields(hasOuter));
         return this.container;
     }
 
@@ -88,9 +88,12 @@ export class AdminEventEditor {
     /**
      * Renders the fields.
      */
-    renderFields() {
+    renderFields(hasOuter = true) {
         const row = el("div", { className: "block-row" });
         this.definition.fields.forEach(field => {
+            if (!hasOuter && (field.id === "minSpawnDistance" || field.id === "maxSpawnDistance")) {
+                return;
+            }
             row.appendChild(this.renderField(field));
         });
         return row;

@@ -51,8 +51,7 @@ export class SurvivePhase extends GamePhase {
         const scene = this.gameEngine.scene;
         this.renderer.init(scene, this.gameEngine.camera, this.decorType);
 
-        const padSides = this.options.paddingSides !== undefined ? this.options.paddingSides : 3;
-        const padTB = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 5;
+        const { padSides, padTB } = this.getPaddingValues();
         this.keyboard = Keyboard.init(
             this.renderer.worldGroup,
             getExtendedMapLayout(padSides, padTB),
@@ -113,9 +112,8 @@ export class SurvivePhase extends GamePhase {
         this.input = new SurviveInput(this);
 
         this.settingsListener = () => {
-            const ps = this.options.paddingSides !== undefined ? this.options.paddingSides : 0;
-            const pt = this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 0;
-            this.updateLayout(ps, pt);
+            const { padSides, padTB } = this.getPaddingValues();
+            this.updateLayout(padSides, padTB);
         };
         window.addEventListener("settings_updated", this.settingsListener);
 
@@ -215,6 +213,14 @@ export class SurvivePhase extends GamePhase {
  * @param {string} padSides - The padSides.
  * @param {any} padTB - The padTB.
      */
+    getPaddingValues() {
+        const isDungeon = this.decorType === "dungeon";
+        const hasOuter = isDungeon ? true : (this.options.hasOuterTiles !== undefined ? (this.options.hasOuterTiles === true || this.options.hasOuterTiles === "true") : true);
+        const padSides = hasOuter ? (this.options.paddingSides !== undefined ? this.options.paddingSides : 3) : 0;
+        const padTB = hasOuter ? (this.options.paddingTopBottom !== undefined ? this.options.paddingTopBottom : 5) : 0;
+        return { padSides, padTB };
+    }
+
     updateLayout(padSides, padTB) {
         if (!this.keyboard || !this.keyboard.rebuild) return;
         this.keyboard.rebuild(getExtendedMapLayout(padSides, padTB), { paddingSides: padSides, paddingTopBottom: padTB });

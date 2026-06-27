@@ -162,8 +162,10 @@ export class AdminPreview3D {
             layout = getKeyboardLayout();
             theme = "training";
         } else {
-            padSides = options.paddingSides !== undefined ? Number(options.paddingSides) : 3;
-            padTB = options.paddingTopBottom !== undefined ? Number(options.paddingTopBottom) : 5;
+            const isDungeon = (options.decorType || "default") === "dungeon";
+            const hasOuter = isDungeon ? true : (options.hasOuterTiles !== undefined ? (options.hasOuterTiles === true || options.hasOuterTiles === "true" || options.hasOuterTiles === 1) : true);
+            padSides = hasOuter ? (options.paddingSides !== undefined ? Number(options.paddingSides) : 3) : 0;
+            padTB = hasOuter ? (options.paddingTopBottom !== undefined ? Number(options.paddingTopBottom) : 5) : 0;
             layout = getExtendedMapLayout(padSides, padTB);
         }
 

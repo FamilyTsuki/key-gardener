@@ -328,6 +328,9 @@ export const en = {
         grotte: "Cave",
         bossType: "Boss Type:",
         none: "None",
+        hasOuterTiles: "Outer Tiles:",
+        yes: "Yes",
+        no: "No",
         paddingTopBottom: "Top/Bottom Padding:",
         paddingSides: "Sides Padding:",
         spawnDistance: "Spawn Distance:",
@@ -654,4 +657,4 @@ export const en = {
         firstCombat3: "You can now cast a Spark. Good luck!"
     }
 };
-
+

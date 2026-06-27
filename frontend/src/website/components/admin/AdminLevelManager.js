@@ -286,7 +286,13 @@ export class AdminLevelManager {
         
         const editorElement = this.currentPhaseEditor.render();
         editorElement.addEventListener('input', () => this.updatePreview());
-        editorElement.addEventListener('change', () => this.updatePreview());
+        editorElement.addEventListener('change', () => {
+            if (this.currentEventEditors && this.currentEventEditors.length > 0) {
+                this.currentLevel.options.storyEvents = this.currentEventEditors.map(editor => editor.getValues());
+            }
+            this.renderEventEditors();
+            this.updatePreview();
+        });
 
         this.phaseContainer.appendChild(editorElement);
     }
@@ -383,7 +389,10 @@ export class AdminLevelManager {
         });
 
         this.currentEventEditors.push(editor);
-        const editorElement = editor.render(availableEvents);
+        const phaseVals = this.currentPhaseEditor ? this.currentPhaseEditor.getValues() : {};
+        const isDungeon = phaseVals.decorType === "dungeon";
+        const hasOuter = isDungeon || (phaseVals.hasOuterTiles !== "false" && phaseVals.hasOuterTiles !== false);
+        const editorElement = editor.render(availableEvents, hasOuter);
         
         editorElement.addEventListener('input', () => this.updatePreview());
         editorElement.addEventListener('change', () => this.updatePreview());
@@ -405,7 +414,10 @@ export class AdminLevelManager {
              onChangeType: oldEditor.onChangeType
          });
          
-         const newElement = newEditor.render(availableEvents);
+         const phaseVals = this.currentPhaseEditor ? this.currentPhaseEditor.getValues() : {};
+         const isDungeon = phaseVals.decorType === "dungeon";
+         const hasOuter = isDungeon || (phaseVals.hasOuterTiles !== "false" && phaseVals.hasOuterTiles !== false);
+         const newElement = newEditor.render(availableEvents, hasOuter);
          newElement.addEventListener('input', () => this.updatePreview());
          newElement.addEventListener('change', () => this.updatePreview());
          

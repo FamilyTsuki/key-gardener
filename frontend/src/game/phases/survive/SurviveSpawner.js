@@ -102,9 +102,11 @@ export class SurviveSpawner {
  * @param {boolean} maxMapDist - The maxMapDist.
      */
     getSpawnDistances(options, maxMapDist) {
-        let minDist = options.minSpawnDistance ?? this.phase.options.minSpawnDistance ?? this.phase.options.spawnDistance ?? 5;
-        let maxDist = options.maxSpawnDistance ?? this.phase.options.maxSpawnDistance ?? 999;
-        if (maxMapDist > 0) {
+        const isDungeon = this.phase.decorType === "dungeon";
+        const hasOuter = isDungeon ? true : (this.phase.options.hasOuterTiles !== undefined ? (this.phase.options.hasOuterTiles === true || this.phase.options.hasOuterTiles === "true") : true);
+        let minDist = hasOuter ? (options.minSpawnDistance ?? this.phase.options.minSpawnDistance ?? this.phase.options.spawnDistance ?? 5) : 0;
+        let maxDist = hasOuter ? (options.maxSpawnDistance ?? this.phase.options.maxSpawnDistance ?? 999) : 999;
+        if (hasOuter && maxMapDist > 0) {
             maxDist = Math.min(maxDist, maxMapDist);
             minDist = Math.min(minDist, maxMapDist * 0.7);
         }

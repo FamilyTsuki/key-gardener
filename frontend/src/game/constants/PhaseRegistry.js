@@ -16,8 +16,10 @@ export const PHASE_REGISTRY = [
             { id: "decorType", type: "select", labelKey: "admin.decor", options: DECOR_OPTIONS, defaultValue: "default" },
             { id: "duration", type: "number", labelKey: "admin.duration", placeholderKey: "admin.infinite", defaultValue: null },
             { id: "playerHp", type: "number", labelKey: "admin.playerHp", placeholderKey: "admin.immortal", defaultValue: null },
-            { id: "paddingTopBottom", type: "number", labelKey: "admin.paddingTopBottom", defaultValue: 5 },
-            { id: "paddingSides", type: "number", labelKey: "admin.paddingSides", defaultValue: 3 }
+            { id: "hasOuterTiles", type: "select", labelKey: "admin.hasOuterTiles", options: [
+                { value: "true", labelKey: "admin.yes" },
+                { value: "false", labelKey: "admin.no" }
+            ], defaultValue: "true" }
         ]
     },
     {
