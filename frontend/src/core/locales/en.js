@@ -1,4 +1,8 @@
 export const en = {
+
+    /* ============================================================
+       FAQ SECTION
+       ============================================================ */
     faq: {
         title: "FAQ & Tips",
         description: "Learn how to improve your typing speed and master {gameName} with these helpful tips and answers to common questions.",
@@ -13,6 +17,10 @@ export const en = {
         q4: "Is there a leaderboard?",
         a4: "Yes! The Community Hub features global leaderboards. You can compare your WPM (Words Per Minute) and survival time against players worldwide."
     },
+
+    /* ============================================================
+       AUTH SECTION
+       ============================================================ */
     auth: {
         loginRequired: "You must be logged in to access this page.",
         loginFailed: "Login failed",
@@ -20,6 +28,9 @@ export const en = {
         rateLimit: "Rate limit exceeded. Please wait a moment."
     },
     
+    /* ============================================================
+       NAV SECTION
+       ============================================================ */
     nav: {
         login: "Login",
         save: "Save",
@@ -30,6 +41,9 @@ export const en = {
         donate: "Support the Project"
     },
     
+    /* ============================================================
+       HOME SECTION
+       ============================================================ */
     home: {
         title: "{gameName}",
         description: "Dive into a world where your keyboard is your only weapon. Learn to type naturally by immersing yourself in a universe blending digital and fantasy — cast spells, survive the hordes, and hunt the Virus corrupting the system.",
@@ -58,6 +72,9 @@ export const en = {
         rights: "\u00A9 2026 {gameName}. All rights reserved."
     },
     
+    /* ============================================================
+       HUB SECTION
+       ============================================================ */
     hub: {
         title: "Community Hub",
         welcome: "Welcome to the community! Share your progress and interact with other players.",
@@ -97,6 +114,9 @@ export const en = {
         errorLoadingComments: "Error loading comments"
     },
     
+    /* ============================================================
+       LOGIN SECTION
+       ============================================================ */
     login: {
         title: "Login",
         emailPlaceholder: "Email",
@@ -124,6 +144,9 @@ export const en = {
         or: "OR"
     },
     
+    /* ============================================================
+       REGISTER SECTION
+       ============================================================ */
     register: {
         title: "Register",
         usernamePlaceholder: "Username",
@@ -139,6 +162,9 @@ export const en = {
         registerFailed: "Registration failed"
     },
     
+    /* ============================================================
+       SAVE SECTION
+       ============================================================ */
     save: {
         title: "Save Slots",
         loadingSaves: "Loading saves...",
@@ -159,6 +185,9 @@ export const en = {
         levelPhase: "Level: {level} - Phase: {phase}"
     },
     
+    /* ============================================================
+       GAME SECTION
+       ============================================================ */
     game: {
         spellUnlocked: "New Spell Unlocked!",
         spellHowTo: "Type this word to cast:",
@@ -197,6 +226,9 @@ export const en = {
         duelDataLost: "Duel data lost. Please restart the duel."
     },
     
+    /* ============================================================
+       ACCOUNT SECTION
+       ============================================================ */
     account: {
         title: "Profile",
         logout: "Logout",
@@ -230,6 +262,9 @@ export const en = {
         globalStats: "Global Statistics"
     },
     
+    /* ============================================================
+       ENGINE SECTION
+       ============================================================ */
     engine: {
         introPrologue: "It started like any other afternoon, playing a great video game...",
         introDialogue1: "...",
@@ -249,6 +284,10 @@ export const en = {
         trainingResultAlphabet: "Not bad! You typed the alphabet in {sec} seconds.",
         nextLevel: "Next Level"
     },
+
+    /* ============================================================
+       ADMIN SECTION
+       ============================================================ */
     admin: {
         title: "Levels",
         loading: "Loading...",
@@ -365,6 +404,10 @@ export const en = {
         errorApprovePost: "Error approving post",
         errorDeletePost: "Error deleting post"
     },
+
+    /* ============================================================
+       SETTINGS SECTION
+       ============================================================ */
     settings: {
         title: "Settings",
         volumeGlobal: "Global Volume",
@@ -380,16 +423,28 @@ export const en = {
         no: "No",
         close: "Close"
     },
+
+    /* ============================================================
+       NOTFOUND SECTION
+       ============================================================ */
     notFound: {
         title: "404 - Page Not Found",
         description: "Oops! The page you are looking for has been lost in the void.",
         backHome: "Back to Home"
     },
+
+    /* ============================================================
+       ERROR SECTION
+       ============================================================ */
     error: {
         title: "Error {code}",
         defaultDescription: "Something went wrong.",
         backHome: "Back to Home"
     },
+
+    /* ============================================================
+       COMMON SECTION
+       ============================================================ */
     common: {
         confirm: "Confirm",
         cancel: "Cancel",
@@ -397,12 +452,18 @@ export const en = {
         loading: "Loading..."
     },
     
+    /* ============================================================
+       PROFILE SECTION
+       ============================================================ */
     profile: {
         userNotFound: "User not found",
         errorLoading: "Error loading profile",
         rank: "Rank"
     },
     
+    /* ============================================================
+       DONATE SECTION
+       ============================================================ */
     donate: {
         title: "Support the Project",
         letterIntro1: "Welcome! {gameName} was initially created as an end-of-year academic project, and I have continued to develop it in my spare time out of pure passion.",
@@ -416,6 +477,9 @@ export const en = {
         submit: "Support the project (Ko-fi)"
     },
     
+    /* ============================================================
+       SOCIAL SECTION
+       ============================================================ */
     social: {
         title: "Friends",
         addFriendTitle: "Add a friend",
@@ -449,6 +513,10 @@ export const en = {
         duelNotification: "{user} challenged you to a duel! Go to the Social tab to fight!",
         duelDeclinedNotification: "{user} declined your duel invitation."
     },
+
+    /* ============================================================
+       DUEL SECTION
+       ============================================================ */
     duel: {
         spellsTitle: "Spells",
         defensesTitle: "Required Shields",
@@ -470,6 +538,10 @@ export const en = {
         labelHeavy: "Heavy",
         labelRandom: "Random"
     },
+
+    /* ============================================================
+       LEGAL SECTION
+       ============================================================ */
     legal: {
         title: "Legal Information",
         description: "Read the legal information, privacy policy, and terms of service for {gameName}.",
@@ -486,6 +558,10 @@ export const en = {
         termsTitle: "Terms of Service",
         termsContent: "<h3>Acceptance of Terms</h3><p>By using {gameName}, you agree to these terms of service.</p><h3>Account Rules</h3><p>You are responsible for keeping your account secure. Any form of cheating, exploiting bugs, or inappropriate behavior in the Community Hub is strictly prohibited and may result in an immediate account ban.</p><h3>Liability</h3><p>The game is provided 'as is' without any warranty. We are not responsible for any data loss or damage caused by the use of this service.</p>"
     },
+
+    /* ============================================================
+       MODERATION SECTION
+       ============================================================ */
     moderation: {
         alertTitle: "Security Alert",
         alertText1: "Your post was detected as non-compliant with our moderation rules.",
@@ -500,6 +576,10 @@ export const en = {
         contestError: "Unable to submit the contest.",
         mediaPlaceholder: "[Media Content]"
     },
+
+    /* ============================================================
+       BOSS SECTION
+       ============================================================ */
     boss: {
         earth: {
             sempai_warn_1: "Alert, my student! The very fabric of the system is overloading...",
@@ -511,6 +591,10 @@ export const en = {
             sempai_victory_3: "Come, join me in my dojo to perfect your training!"
         }
     },
+
+    /* ============================================================
+       SPELLS SECTION
+       ============================================================ */
     spells: {
         spark: {
             name: "Spark",
@@ -534,6 +618,9 @@ export const en = {
         }
     },
     
+    /* ============================================================
+       SKILLTREE SECTION
+       ============================================================ */
     skilltree: {
         title: "Skill Tree",
         pointsAvailable: "Skill Points:",
@@ -549,6 +636,9 @@ export const en = {
         branchUtility: "UTILITY"
     },
 
+    /* ============================================================
+       STORY SECTION
+       ============================================================ */
     story: {
         firstCombat1: "It's dangerous here! You have no weapon!",
         firstCombat2: "Let me teach you your first spell. Type the word 'spark'!",

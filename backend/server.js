@@ -104,7 +104,7 @@ app.use(
                 "worker-src": ["'self'", "blob:"],
                 "child-src": ["'self'", "blob:", "https://accounts.google.com"],
                 "frame-src": ["'self'", "https://accounts.google.com"],
-                "img-src": ["'self'", "data:", "blob:", "https://lh3.googleusercontent.com", "https://media.tenor.com"],
+                "img-src": ["'self'", "data:", "blob:", "https://lh3.googleusercontent.com"],
                 "media-src": ["'self'", "blob:"],
             },
         },

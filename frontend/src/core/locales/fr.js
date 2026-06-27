@@ -1,4 +1,8 @@
 export const fr = {
+
+    /* ============================================================
+       FAQ SECTION
+       ============================================================ */
     faq: {
         title: "FAQ & Astuces",
         description: "Apprenez à améliorer votre vitesse de frappe et maîtrisez {gameName} grâce à nos astuces et aux réponses aux questions fréquentes.",
@@ -13,6 +17,10 @@ export const fr = {
         q4: "Y a-t-il un classement mondial ?",
         a4: "Oui ! Le Hub Communautaire intègre des classements mondiaux. Vous pouvez comparer votre MPM et votre temps de survie avec les joueurs du monde entier."
     },
+
+    /* ============================================================
+       AUTH SECTION
+       ============================================================ */
     auth: {
         loginRequired: "Vous devez être connecté pour accéder à cette page.",
         loginFailed: "Échec de la connexion",
@@ -20,6 +28,9 @@ export const fr = {
         rateLimit: "Limite de requêtes dépassée. Veuillez patienter un instant."
     },
     
+    /* ============================================================
+       NAV SECTION
+       ============================================================ */
     nav: {
         login: "Connexion",
         save: "Sauvegarde",
@@ -30,6 +41,9 @@ export const fr = {
         donate: "Soutenir le Projet"
     },
     
+    /* ============================================================
+       HOME SECTION
+       ============================================================ */
     home: {
         title: "{gameName}",
         description: "Plongez dans un monde où votre clavier est votre seule arme. Apprenez à taper naturellement en vous immergeant dans un univers à la fois numérique et fantastique — lancez des sorts, survivez aux hordes et traquez le Virus qui corrompt le système.",
@@ -56,6 +70,10 @@ export const fr = {
         thankSupporters: "à tous nos supporters et joueurs qui rendent {gameName} possible !",
         rights: "\u00A9 2026 {gameName}. Tous droits réservés."
     },
+
+    /* ============================================================
+       SPELLS SECTION
+       ============================================================ */
     spells: {
         spark: {
             name: "Étincelle",
@@ -79,6 +97,9 @@ export const fr = {
         }
     },
     
+    /* ============================================================
+       HUB SECTION
+       ============================================================ */
     hub: {
         title: "Centre Communautaire",
         welcome: "Bienvenue dans la communauté ! Partagez votre progression et interagissez avec les autres joueurs.",
@@ -118,6 +139,9 @@ export const fr = {
         errorLoadingComments: "Erreur lors du chargement des commentaires"
     },
     
+    /* ============================================================
+       LOGIN SECTION
+       ============================================================ */
     login: {
         title: "Connexion",
         emailPlaceholder: "Email",
@@ -145,6 +169,9 @@ export const fr = {
         or: "OU"
     },
     
+    /* ============================================================
+       REGISTER SECTION
+       ============================================================ */
     register: {
         title: "Inscription",
         usernamePlaceholder: "Nom d'utilisateur",
@@ -160,6 +187,9 @@ export const fr = {
         registerFailed: "Échec de l'inscription"
     },
     
+    /* ============================================================
+       SAVE SECTION
+       ============================================================ */
     save: {
         title: "Emplacements de sauvegarde",
         loadingSaves: "Chargement des sauvegardes...",
@@ -180,6 +210,9 @@ export const fr = {
         levelPhase: "Niveau : {level} - Phase : {phase}"
     },
     
+    /* ============================================================
+       GAME SECTION
+       ============================================================ */
     game: {
         spellUnlocked: "Nouveau sort débloqué !",
         spellHowTo: "Tapez ce mot pour le lancer :",
@@ -219,6 +252,9 @@ export const fr = {
         duelDataLost: "Données de duel perdues. Veuillez relancer le duel."
     },
     
+    /* ============================================================
+       ACCOUNT SECTION
+       ============================================================ */
     account: {
         title: "Profil",
         logout: "Se déconnecter",
@@ -252,6 +288,9 @@ export const fr = {
         globalStats: "Statistiques Globales"
     },
     
+    /* ============================================================
+       ENGINE SECTION
+       ============================================================ */
     engine: {
         introPrologue: "Ça a commencé comme une après-midi habituelle, à jouer à un super jeu vidéo...",
         introDialogue1: "...",
@@ -271,6 +310,10 @@ export const fr = {
         trainingResultAlphabet: "Pas mal ! Tu as tapé l'alphabet en {sec} secondes.",
         nextLevel: "Niveau Suivant",
     },
+
+    /* ============================================================
+       ADMIN SECTION
+       ============================================================ */
     admin: {
         title: "Niveaux",
         loading: "Chargement...",
@@ -387,6 +430,10 @@ export const fr = {
         errorApprovePost: "Erreur lors de l'approbation du post",
         errorDeletePost: "Erreur lors de la suppression du post"
     },
+
+    /* ============================================================
+       SETTINGS SECTION
+       ============================================================ */
     settings: {
         title: "Paramètres",
         volumeGlobal: "Volume Global",
@@ -402,16 +449,28 @@ export const fr = {
         no: "Non",
         close: "Fermer"
     },
+
+    /* ============================================================
+       NOTFOUND SECTION
+       ============================================================ */
     notFound: {
         title: "404 - Page Introuvable",
         description: "Oups ! La page que vous cherchez s'est perdue dans le vide.",
         backHome: "Retour à l'accueil"
     },
+
+    /* ============================================================
+       ERROR SECTION
+       ============================================================ */
     error: {
         title: "Erreur {code}",
         defaultDescription: "Une erreur est survenue.",
         backHome: "Retour à l'accueil"
     },
+
+    /* ============================================================
+       COMMON SECTION
+       ============================================================ */
     common: {
         confirm: "Confirmer",
         cancel: "Annuler",
@@ -419,12 +478,18 @@ export const fr = {
         loading: "Chargement..."
     },
     
+    /* ============================================================
+       PROFILE SECTION
+       ============================================================ */
     profile: {
         userNotFound: "Utilisateur introuvable",
         errorLoading: "Erreur lors du chargement du profil",
         rank: "Grade"
     },
     
+    /* ============================================================
+       DONATE SECTION
+       ============================================================ */
     donate: {
         title: "Soutenir le Projet",
         letterIntro1: "Bienvenue ! {gameName} a d'abord été créé dans le cadre d'un projet de fin d'année, et j'ai continué à le développer par passion sur mon temps libre.",
@@ -438,6 +503,9 @@ export const fr = {
         submit: "Soutenir le projet (Ko-fi)"
     },
     
+    /* ============================================================
+       SOCIAL SECTION
+       ============================================================ */
     social: {
         title: "Amis",
         addFriendTitle: "Ajouter un ami",
@@ -471,6 +539,10 @@ export const fr = {
         duelNotification: "{user} vous a défié en duel ! Allez sur l'onglet Social pour l'affronter !",
         duelDeclinedNotification: "{user} a décliné votre invitation de duel."
     },
+
+    /* ============================================================
+       DUEL SECTION
+       ============================================================ */
     duel: {
         spellsTitle: "Sorts",
         defensesTitle: "Boucliers Requis",
@@ -492,6 +564,10 @@ export const fr = {
         labelHeavy: "Lourd",
         labelRandom: "Aléatoire"
     },
+
+    /* ============================================================
+       LEGAL SECTION
+       ============================================================ */
     legal: {
         title: "Informations Légales",
         description: "Consultez les informations légales, la politique de confidentialité et les conditions d'utilisation de {gameName}.",
@@ -508,6 +584,10 @@ export const fr = {
         termsTitle: "Conditions d'Utilisation",
         termsContent: "<h3>Acceptation des Conditions</h3><p>En utilisant {gameName}, vous acceptez ces conditions d'utilisation.</p><h3>Règles de Compte</h3><p>Vous êtes responsable de la sécurité de votre compte. Toute forme de triche, d'exploitation de bugs, ou de comportement inapproprié dans le Hub Communautaire est strictement interdite et peut entraîner un bannissement immédiat du compte.</p><h3>Responsabilité</h3><p>Le jeu est fourni 'tel quel' sans aucune garantie. Nous ne sommes pas responsables de la perte de données ou des dommages causés par l'utilisation de ce service.</p>"
     },
+
+    /* ============================================================
+       MODERATION SECTION
+       ============================================================ */
     moderation: {
         alertTitle: "Alerte de Sécurité",
         alertText1: "Votre publication a été détectée comme non conforme à nos règles de modération.",
@@ -522,6 +602,10 @@ export const fr = {
         contestError: "Impossible d'envoyer la contestation.",
         mediaPlaceholder: "[Contenu Média]"
     },
+
+    /* ============================================================
+       BACKENDERRORS SECTION
+       ============================================================ */
     backendErrors: {
         "All fields are required": "Tous les champs sont requis",
         "Password must be at least 8 characters long, contain at least one number and one special character": "Le mot de passe doit comporter au moins 8 caractères, dont un chiffre et un caractère spécial",
@@ -550,6 +634,10 @@ export const fr = {
         "Save slot is already empty": "L'emplacement de sauvegarde est déjà vide",
         "Save deleted successfully": "Sauvegarde supprimée avec succès"
     },
+
+    /* ============================================================
+       BOSS SECTION
+       ============================================================ */
     boss: {
         earth: {
             sempai_warn_1: "Alerte, mon élève ! La structure même du système est en train de se surcharger...",
@@ -562,6 +650,9 @@ export const fr = {
         }
     },
     
+    /* ============================================================
+       SKILLTREE SECTION
+       ============================================================ */
     skilltree: {
         title: "Arbre de Compétences",
         pointsAvailable: "Points de compétence :",
@@ -577,6 +668,9 @@ export const fr = {
         branchUtility: "UTILITAIRE"
     },
 
+    /* ============================================================
+       STORY SECTION
+       ============================================================ */
     story: {
         firstCombat1: "C'est dangereux ici ! Tu n'as pas d'arme !",
         firstCombat2: "Laisse-moi t'apprendre ton premier sort. Tape le mot 'spark' !",
