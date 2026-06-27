@@ -1,7 +1,7 @@
 <div align="center">
   <img src="frontend/public/asset/img/favicon.webp" alt="Logo" width="150" height="150">
   
-  <h1 align="center">Keyboard Survivor: Tentacle Siege</h1>
+  <h1 align="center">[GAME_NAME]</h1>
   <p align="center">
     A stunning 3D typing game built with modern web technologies. 
     <br />
@@ -48,7 +48,7 @@
 
 ## About The Project
 
-**Keyboard Survivor** is built around a simple yet powerful philosophy: **natural learning through immersion**. The core principle is to plunge the player into an engaging, high-stakes 3D environment where mastering the keyboard is the only way to survive. By blending fast-paced gameplay with typing mechanics, players naturally improve their typing speed and accuracy without ever feeling the tedious "obligation to learn."
+**[GAME_NAME]** is built around a simple yet powerful philosophy: **natural learning through immersion**. The core principle is to plunge the player into an engaging, high-stakes 3D environment where mastering the keyboard is the only way to survive. By blending fast-paced gameplay with typing mechanics, players naturally improve their typing speed and accuracy without ever feeling the tedious "obligation to learn."
 
 Moving away from traditional 2D web interfaces, this project utilizes WebGL and modern CSS to create an incredibly immersive experience. Alongside the core game, the project includes a fully featured website with user accounts, a community hub, advanced settings, and an administration dashboard.
 

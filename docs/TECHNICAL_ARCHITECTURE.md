@@ -1,71 +1,110 @@
-# 🏗️ Architecture Technique : Keyboard Survivor
+*Read this in other languages: [Français](TECHNICAL_ARCHITECTURE.fr.md)*
 
-Bienvenue dans la documentation technique du projet. Ce fichier s'adresse aux développeurs et détaille l'ensemble de la stack, des choix architecturaux et de l'organisation du code.
+<div align="center">
+  <h1>Technical Architecture: [GAME_NAME]</h1>
+  <p>Comprehensive overview of the stack, architectural decisions, and codebase organization.</p>
+</div>
 
-L'application repose sur une **architecture Client-Serveur découplée**, garantissant flexibilité et performances maximales. Le choix principal a été de ne pas utiliser de gros frameworks front-end (comme React) pour garder un contrôle absolu sur la boucle de rendu 3D.
+<div align="center">
 
----
+[![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Three.js](https://img.shields.io/badge/Three.js-black?logo=three.js&logoColor=white)](https://threejs.org/)
 
-## 💻 1. Le Backend (Node.js & Express)
-Le backend sert d'API REST pour le site et le jeu. Il gère l'authentification, les sauvegardes et la communauté (Hub). Il respecte scrupuleusement le motif **MVC (Modèle-Vue-Contrôleur)**.
+</div>
 
-### Structure des dossiers (`/backend/src/`)
-- **`controllers/`** : Logique métier (ex: vérification des identifiants, création d'un post).
-- **`models/`** : Couche d'accès à la base de données PostgreSQL (utilisation directe du module `pg` pour des requêtes optimisées).
-- **`routes/`** : Fichiers d'aiguillage des requêtes HTTP vers les contrôleurs.
-- **`middlewares/`** : Fonctions d'interception critiques pour la sécurité (`auth.middleware.js` pour valider les tokens, limiteurs de requêtes).
-- **`utils/`** : Outils transverses (ex: `mailer.js` pour l'envoi d'emails SMTP de récupération de mot de passe).
-
-### Sécurité & Optimisations 🔒
-- **Authentification Stateless** : Gérée via **JSON Web Tokens (JWT)**.
-- **Mots de passe** : Hachés avec **bcrypt**. Les tokens de récupération de compte sont des clés hexadécimales de 64 caractères très sécurisées.
-- **Boucliers (Middlewares)** : 
-  - `helmet` (Headers HTTP sécurisés)
-  - `xss-clean` (Protection contre les injections XSS)
-  - `express-rate-limit` (Prévention contre le spam et les attaques DDoS)
-  - `cors` (Contrôle d'accès)
-  - `compression` (Compression Gzip des réponses pour réduire la bande passante).
+The application is built upon a **Decoupled Client-Server architecture**, ensuring maximum flexibility and performance. A core design decision was to avoid heavy front-end frameworks (like React or Vue) to maintain absolute control over the 3D rendering loop and adhere to strict Vanilla JavaScript patterns.
 
 ---
 
-## 🎨 2. Le Frontend Web (Vanilla JavaScript)
-La structure web (Navigation, Hub, Connexion) est construite en pur JavaScript Orienté Objet (Vanilla JS).
+## 1. The Backend (Node.js & Express)
 
-### Le Routeur Maison (`core/Router.js`)
-L'application fonctionne comme une **Single Page Application (SPA)** grâce à un routeur développé sur-mesure utilisant l'API `History` (pushState).
-- **Chargement dynamique** : Le routeur injecte automatiquement les fichiers CSS spécifiques à la vue chargée.
-- **Anti-clignotement** : Un système de temporisation (debounce de 250ms) empêche l'écran de chargement de clignoter inutilement sur les requêtes très rapides.
+The backend serves as a REST API for both the website and the game. It handles authentication, save states, and the community Hub, strictly following the **MVC (Model-View-Controller)** pattern.
 
-### Architecture UI
-- **DOMBuilder (`core/utils/DOMBuilder.js`)** : Fonction utilitaire `el()` permettant de construire l'arbre DOM via du JavaScript de façon lisible et imbriquée (façon React `createElement`).
-- **Vues (`website/views/`)** : Chaque page (Home, Hub, Login) est une classe héritant de `AbstractView`.
-- **Services (`core/services/`)** : Classes Singleton abstraient les appels API (ex: `AuthService`, `PostsService`). Un intercepteur global sur `window.fetch` (dans `main.js`) détecte automatiquement toute requête pour afficher un mini-loader en bas à droite de l'écran.
+### Architecture Flow
+
+```mermaid
+graph TD;
+    Client[Vanilla JS SPA] -->|HTTP Requests| Router[Express Router]
+    Router -->|Validates| Middleware[Middlewares auth/rate-limit]
+    Middleware --> Controller[Controllers]
+    Controller --> Model[Models / Database]
+    Model -->|pg queries| DB[(PostgreSQL)]
+    DB --> Model
+    Model --> Controller
+    Controller -->|JSON Response| Client
+```
+
+### Directory Structure (`/backend/src/`)
+- **`controllers/`**: Business logic (e.g., verifying credentials, creating a post).
+- **`models/`**: Database access layer (direct use of the `pg` module for optimized queries).
+- **`routes/`**: Routing configuration mapping HTTP endpoints to controllers.
+- **`middlewares/`**: Critical interception functions for security (`auth.middleware.js` to validate JWTs, rate limiters).
+- **`utils/`**: Shared utilities (e.g., `mailer.js` for SMTP password recovery emails).
+
+### Security & Optimizations > [!IMPORTANT]
+> Security is handled at multiple layers to prevent common vulnerabilities and abuse.
+
+- **Stateless Authentication**: Managed via **JSON Web Tokens (JWT)** stored in HttpOnly cookies.
+- **Passwords**: Hashed using **bcrypt**. Account recovery tokens are secure 64-character hexadecimal keys.
+- **Middlewares**: 
+  - `helmet` (Secure HTTP headers)
+  - `xss-clean` (Protection against XSS injections)
+  - `express-rate-limit` (Prevention against spam and DDoS attacks)
+  - `cors` (Access control)
+  - `compression` (Gzip compression of responses to reduce bandwidth usage)
+
+---
+
+## 2. The Web Frontend (Vanilla JavaScript)
+
+The web structure (Navigation, Hub, Login) is built in pure Object-Oriented JavaScript (Vanilla JS).
+
+> [!TIP]
+> By avoiding virtual DOM overhead, the UI remains lightning-fast and perfectly syncs with the 3D game engine constraints.
+
+### Custom Router (`core/Router.js`)
+The application operates as a **Single Page Application (SPA)** using a custom-built router leveraging the History API (`pushState`).
+- **Dynamic Loading**: The router automatically injects CSS files specific to the loaded view.
+- **Anti-Flicker**: A debounce system (250ms) prevents the global loading screen from flashing unnecessarily on fast network requests.
+
+### UI Architecture
+- **DOMBuilder (`core/utils/DOMBuilder.js`)**: Utility function `el()` to build the DOM tree via JavaScript in a readable, nested way (similar to React's `createElement`).
+- **Views (`website/views/`)**: Each page (Home, Hub, Login) is a class inheriting from `AbstractView`.
+- **Services (`core/services/`)**: Singleton classes abstracting API calls (e.g., `AuthService`, `PostsService`). A global interceptor on `window.fetch` automatically displays a mini-loader during network activity.
 
 ### CSS & Design
-- **Vanilla CSS** : Aucun framework externe (pas de Tailwind/Bootstrap).
-- **Design System** : Utilisation massive des variables CSS (Custom Properties) dans `global.css` pour gérer les couleurs, les ombres néon et l'effet "Glassmorphism" .
+- **Vanilla CSS**: No external frameworks (no Tailwind/Bootstrap).
+- **Componentized Design**: Shared utility classes (`.btn-primary`, `.glass-panel`) are centralized in `components/base.css`.
+- **Theming**: Heavy use of CSS Custom Properties in `global.css` for dynamic Light/Dark mode, neon shadows, and Glassmorphism effects.
 
 ---
 
-## 🕹️ 3. Le Moteur de Jeu (`frontend/src/game/`)
-C'est le cœur interactif de Keyboard Survivor. Totalement indépendant des vues web, il est structuré pour gérer les entités 3D et les frappes clavier.
+## 3. The Game Engine (`frontend/src/game/`)
 
-### L'Écosystème 3D
-- **Three.js** : Librairie WebGL utilisée pour le rendu du monde (Lumières, Modèles GLTF, Animations procédurales).
-- **GSAP (GreenSock)** : Utilisé pour fluidifier les animations complexes et les effets de scroll hors de la boucle de jeu principale.
+This is the interactive core of [GAME_NAME]. Completely independent of the web views, it is structured to manage 3D entities and keyboard inputs with high performance.
 
-### La Structure du Code de Jeu
-- **`engine/` (GameEngine)** : Gère l'initialisation de Three.js et la boucle de rendu infinie via `requestAnimationFrame` à 60 FPS.
-- **`phases/`** : Séparation stricte des états de jeu via des classes dédiées :
-  - `ExplorePhase` (Courir dans le couloir hexagonal).
-  - `EventPhase` (Typing game pour franchir les obstacles ou événements aléatoires).
-  - `ArenaPhase` (Combat de boss et survie sur la grille du clavier physique).
-- **`managers/` (ex: KeyboardManager)** : Module vital qui écoute passivement les frappes clavier, valide les mots saisis et déclenche les Events ou les sorts (`FIRE`, `HEAL`).
-- **`events/` & `models/`** : Contiennent la logique des entités (le Joueur, les Bugs, les Mots à taper comme `BridgeWordEvent.js`).
+### 3D Ecosystem
+- **Three.js**: WebGL library used for world rendering (Lights, GLTF Models, Procedural animations).
+- **GSAP (GreenSock)**: Used to smooth out complex animations and scroll effects outside the main game loop.
+
+### Game Code Structure
+- **`engine/` (GameEngine)**: Handles Three.js initialization and the infinite rendering loop via `requestAnimationFrame` targeting 60 FPS.
+- **`phases/`**: Strict separation of game states using dedicated classes:
+  - `ExplorePhase`: Running in the hexagonal corridor.
+  - `EventPhase`: Typing game to overcome obstacles or random events.
+  - `ArenaPhase`: Boss fights and survival on the physical keyboard grid.
+- **`managers/` (e.g., KeyboardManager)**: A vital module that passively listens to keystrokes, validates typed words, and triggers Events or spells (`FIRE`, `HEAL`).
+- **`events/` & `models/`**: Contain the logic for entities (Player, Bugs, Target Words like `BridgeWordEvent.js`).
 
 ---
 
-## 📖 4. Standards de Développement ("Clean Code")
-- **Naming & Langue** : L'intégralité du code (noms de fichiers, variables, classes, commentaires techniques) est rédigée en **Anglais**, pour respecter les standards professionnels.
-- **Lisibilité** : Le code doit être auto-porteur. La logique lourde est fragmentée en petites fonctions aux noms explicites plutôt que d'être noyée sous des commentaires.
-- **Asynchronisme** : Utilisation généralisée de `async/await` pour éviter les callbacks hell, notamment lors du chargement des textures Three.js et des requêtes réseau.
+## 4. Development Standards ("Clean Code")
+
+> [!NOTE]
+> Maintaining a clean and scalable codebase is our highest priority.
+
+- **Naming & Language**: The entire codebase (filenames, variables, classes, technical comments) is written in **English**, adhering to professional industry standards.
+- **Readability**: Code must be self-explanatory. Heavy logic is fragmented into small, explicitly named functions rather than being buried under comments.
+- **Asynchronicity**: Widespread use of `async/await` to avoid callback hell, particularly when loading Three.js textures and handling network requests.

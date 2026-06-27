@@ -1,7 +1,7 @@
-# ⌨️ Cahier des Charges : Projet "Keyboard Survivor : Tentacle Siege"
+# ⌨️ Cahier des Charges : Projet "[GAME_NAME]"
 
 ## 1. Présentation du Projet
-**Keyboard Survivor** est un projet hybride innovant combinant un site web interactif et un jeu d'action/survie en 3D. L'objectif est de **ludifier l'apprentissage de la frappe au clavier** via des mécaniques de jeu intenses où le périphérique d'entrée devient le terrain de jeu.
+**[GAME_NAME]** est un projet hybride innovant combinant un site web interactif et un jeu d'action/survie en 3D. L'objectif est de **ludifier l'apprentissage de la frappe au clavier** via des mécaniques de jeu intenses où le périphérique d'entrée devient le terrain de jeu.
 
 ---
 
