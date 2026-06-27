@@ -90,7 +90,7 @@ export class SurviveState {
                 gameEngine.autoSave();
                 gameEngine.isPaused = false;
             });
-        });
+        }, true);
     }
 
     /**
