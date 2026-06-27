@@ -80,14 +80,16 @@
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 .play-btn:hover {
     transform: translateY(-2px);
     background-color: var(--primary-hover);
+    box-shadow: 0 4px 15px var(--primary-translucent);
 }
 .play-btn:active {
     transform: translateY(0);
+    box-shadow: 0 2px 5px var(--primary-translucent);
 }
 .menu-btn {
     background: none;
@@ -212,13 +214,16 @@
 .modal-btn.confirm {
     background: var(--primary-color);
     color: var(--bg-color);
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 .modal-btn.confirm:hover {
-    background: var(--primary-hover);
     transform: translateY(-2px);
+    background-color: var(--primary-hover);
+    box-shadow: 0 4px 15px var(--primary-translucent);
 }
 .modal-btn.confirm:active {
     transform: translateY(0);
+    box-shadow: 0 2px 5px var(--primary-translucent);
 }
 .save-login-container {
     text-align: center;
@@ -256,7 +261,8 @@
     .play-btn {
         flex: 1;
         text-align: center;
-    }
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
 
     .save-title {
         font-size: 2rem;

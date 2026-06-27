@@ -126,8 +126,8 @@ export default class RegisterView extends AbstractView {
                 {
                     theme: "outline",
                     size: "large",
-                    width: "100%",
-                    text: "signin_with",
+                    width: 280,
+                    text: "signup_with",
                     shape: "rectangular"
                 }
             );

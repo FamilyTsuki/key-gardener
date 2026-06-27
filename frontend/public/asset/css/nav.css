@@ -30,11 +30,11 @@ nav {
     white-space: nowrap;
     transition: border-color 0.2s ease, color 0.2s ease;
 }
-nav a:hover {
+nav a:not(.login):hover {
     border-bottom: 3px solid var(--primary-color);
     padding-bottom: 4px;
 }
-nav a.active {
+nav a.active:not(.login) {
     border-bottom: 3px solid var(--primary-color);
     padding-bottom: 4px;
 }
@@ -56,10 +56,12 @@ nav {
     border-radius: 15px;
     font-size: clamp(18px, 3.5vw, 35px);
     font-weight: bold;
-    transition: background-color 0.2s ease;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 .login:hover {
+    transform: translateY(-2px);
     background-color: var(--primary-hover);
+    box-shadow: 0 4px 15px var(--primary-translucent);
 }
 .nav-user {
     display: flex;
@@ -105,4 +107,9 @@ nav {
     .nav-separator {
         display: none;
     }
+}
+
+.login:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px var(--primary-translucent);
 }

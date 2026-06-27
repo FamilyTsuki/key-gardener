@@ -247,7 +247,7 @@ export default class LoginView extends AbstractView {
                 {
                     theme: "outline",
                     size: "large",
-                    width: "100%",
+                    width: 280,
                     text: "signin_with",
                     shape: "rectangular"
                 }

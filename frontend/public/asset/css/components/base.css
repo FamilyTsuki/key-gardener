@@ -57,10 +57,11 @@
 .btn-primary:hover {
     transform: translateY(-2px);
     background-color: var(--primary-hover);
-    box-shadow: var(--shadow-glow);
+    box-shadow: 0 4px 15px var(--primary-translucent);
 }
 .btn-primary:active {
     transform: translateY(0);
+    box-shadow: 0 2px 5px var(--primary-translucent);
 }
 .btn-primary:disabled,.btn-primary:disabled:hover,.btn-primary:disabled:active {
     background-color: var(--card-border);
