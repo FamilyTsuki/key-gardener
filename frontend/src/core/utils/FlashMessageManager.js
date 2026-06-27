@@ -7,61 +7,46 @@ import { LanguageManager } from "./LanguageManager.js";
  */
 export const FlashMessageManager = {
     /**
-     * Shows a confirmation flash message.
-     * @param {any} message - The message.
+     * Shows a universal confirmation modal.
+     * @param {any} title - The title of the modal.
+     * @param {any} message - The message body.
+     * @param {any} confirmText - Optional custom confirm button text.
+     * @param {any} cancelText - Optional custom cancel button text.
+     * @param {any} confirmClass - Optional CSS class for the confirm button.
      * @returns {Promise<boolean>}
      */
-    confirm(message) {
+    confirm(title, message, confirmText = null, cancelText = null, confirmClass = "danger") {
         return new Promise((resolve) => {
-            const container = this._getOrCreateContainer();
-
-            const confirmBtn = el(
-                "button",
-                {
-                    className: "flash-btn flash-btn-confirm",
-                },
-                LanguageManager.t("common.confirm")
-            );
-
-            const cancelBtn = el(
-                "button",
-                {
-                    className: "flash-btn flash-btn-cancel",
-                },
-                LanguageManager.t("common.cancel")
-            );
-
-            const buttonsContainer = el(
-                "div",
-                { className: "flash-buttons" },
-                cancelBtn,
-                confirmBtn
-            );
-
-            const messageEl = el(
-                "div",
-                {
-                    className: "flash-message flash-confirm flash-persistent",
-                },
-                el("div", { className: "flash-confirm-wrapper" },
-                    el("span", { className: "flash-text" }, message),
-                    buttonsContainer
+            const modalOverlay = el("div", { className: "global-modal-overlay" });
+            const modalBox = el("div", { className: "global-modal-box" },
+                el("h2", { className: "global-modal-title" }, title),
+                el("p", { className: "global-modal-text" }, message),
+                el("div", { className: "global-modal-actions" },
+                    el("button", { 
+                        className: "global-modal-btn cancel",
+                        onclick: () => {
+                            modalOverlay.remove();
+                            resolve(false);
+                        }
+                    }, cancelText || LanguageManager.t("common.cancel") || "Cancel"),
+                    el("button", { 
+                        className: "global-modal-btn confirm",
+                        onclick: () => {
+                            modalOverlay.remove();
+                            resolve(true);
+                        }
+                    }, confirmText || LanguageManager.t("common.confirm") || "Confirm")
                 )
             );
 
-            confirmBtn.onclick = (e) => {
-                e.stopPropagation();
-                this._remove(messageEl);
-                resolve(true);
-            };
+            if (confirmClass !== "danger") {
+                const btn = modalBox.querySelector(".confirm");
+                btn.style.background = "var(--primary-color)";
+                btn.style.boxShadow = "0 4px 15px var(--primary-translucent)";
+            }
 
-            cancelBtn.onclick = (e) => {
-                e.stopPropagation();
-                this._remove(messageEl);
-                resolve(false);
-            };
-
-            container.appendChild(messageEl);
+            modalOverlay.appendChild(modalBox);
+            document.body.appendChild(modalOverlay);
         });
     },
 

@@ -511,7 +511,7 @@ export class AdminLevelManager {
      * Handles the delete level event/action.
      */
     async handleDeleteLevel() {
-        const confirmed = await FlashMessageManager.confirm(`${LanguageManager.t("admin.confirmDelete")} ${this.currentLevel.level_number} ?`);
+        const confirmed = await FlashMessageManager.confirm(LanguageManager.t("common.confirm"), `${LanguageManager.t("admin.confirmDelete")} ${this.currentLevel.level_number} ?`);
         if (!confirmed) return;
 
         const token = localStorage.getItem("authToken");

@@ -45,9 +45,10 @@ export default class Router {
         });
         const initRouter = () => {
             document.body.addEventListener("click", (e) => {
-                if (e.target.matches("[data-link]")) {
+                const link = e.target.closest("[data-link]");
+                if (link) {
                     e.preventDefault();
-                    this.navigateTo(e.target.href);
+                    this.navigateTo(link.href);
                 }
             });
             this.route();

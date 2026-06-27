@@ -24,6 +24,19 @@ window.fetch = async function (...args) {
     window.incrementLoader();
     try {
         const response = await originalFetch.apply(this, args);
+        
+        // Global 401 interceptor
+        if (response.status === 401) {
+            const url = typeof args[0] === 'string' ? args[0] : (args[0] && args[0].url ? args[0].url : "");
+            if (url && !url.includes("/login") && !url.includes("/register")) {
+                import("./core/services/auth.service.js").then(({ AuthService }) => {
+                    if (AuthService.isAuthenticated()) {
+                        AuthService.forceLogout();
+                    }
+                }).catch(e => console.warn(e));
+            }
+        }
+        
         return response;
     } finally {
         window.decrementLoader();

@@ -128,34 +128,16 @@ export default class ProfileView extends AbstractView {
     /**
      * Shows the remove confirm modal.
      */
-    showRemoveConfirmModal() {
-        const modalId = "remove-friend-modal";
-        const existingModal = document.getElementById(modalId);
-        if (existingModal) existingModal.remove();
-
-        const overlay = el("div", { id: modalId, className: "custom-modal-overlay" });
-        const content = el("div", { className: "custom-modal-content" });
-        
-        const title = el("h2", { className: "modal-title-danger" }, LanguageManager.t("social.removeFriendBtn"));
-        const msg = el("p", {}, LanguageManager.t("social.removeFriendConfirm"));
-        
-        const actions = el("div", { className: "custom-modal-actions" });
-        
-        const cancelBtn = el("button", { className: "btn-secondary custom-modal-btn", onclick: () => overlay.remove() }, LanguageManager.t("social.closeBtn"));
-        const confirmBtn = el("button", { className: "btn-danger custom-modal-btn", onclick: async () => {
-            overlay.remove();
+    async showRemoveConfirmModal() {
+        const confirmed = await FlashMessageManager.confirm(
+            LanguageManager.t("social.removeFriendBtn"),
+            LanguageManager.t("social.removeFriendConfirm"),
+            LanguageManager.t("social.removeFriendBtn"),
+            LanguageManager.t("social.closeBtn")
+        );
+        if (confirmed) {
             await this.removeFriend(this.userId);
-        }}, LanguageManager.t("social.removeFriendBtn"));
-
-        actions.appendChild(cancelBtn);
-        actions.appendChild(confirmBtn);
-
-        content.appendChild(title);
-        content.appendChild(msg);
-        content.appendChild(actions);
-        overlay.appendChild(content);
-
-        document.body.appendChild(overlay);
+        }
     }
 
     /**

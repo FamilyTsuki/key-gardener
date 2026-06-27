@@ -394,28 +394,15 @@ export default class AccountView extends AbstractView {
         }
     }
 
-    showDeleteModal() {
-        const modalOverlay = el("div", { className: "delete-modal-overlay" });
-        const modalBox = el("div", { className: "delete-modal-box" },
-            el("h2", { className: "delete-modal-title" }, LanguageManager.t("account.deleteAccountTitle")),
-            el("p", { className: "delete-modal-text" }, LanguageManager.t("account.deleteAccountConfirm")),
-            el("div", { className: "delete-modal-actions" },
-                el("button", { 
-                    className: "delete-modal-btn cancel",
-                    onclick: () => modalOverlay.remove() 
-                }, LanguageManager.t("account.cancel") || "Cancel"),
-                el("button", { 
-                    className: "delete-modal-btn confirm",
-                    onclick: async () => {
-                        modalOverlay.remove();
-                        await this.handleDeleteAccount();
-                    } 
-                }, LanguageManager.t("account.deleteAccountBtn"))
-            )
+    async showDeleteModal() {
+        const confirmed = await FlashMessageManager.confirm(
+            LanguageManager.t("account.deleteAccountTitle"),
+            LanguageManager.t("account.deleteAccountConfirm"),
+            LanguageManager.t("account.deleteAccountBtn")
         );
-
-        modalOverlay.appendChild(modalBox);
-        document.body.appendChild(modalOverlay);
+        if (confirmed) {
+            await this.handleDeleteAccount();
+        }
     }
 
     async handleDeleteAccount() {

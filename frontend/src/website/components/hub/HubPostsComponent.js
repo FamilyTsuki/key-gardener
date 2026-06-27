@@ -405,7 +405,7 @@ export class HubPostsComponent {
      * @param {any} postId - The postId.
      */
     async handleDelete(postId) {
-        const confirmed = await FlashMessageManager.confirm(LanguageManager.t("hub.deleteConfirm"));
+        const confirmed = await FlashMessageManager.confirm(LanguageManager.t("common.confirm"), LanguageManager.t("hub.deleteConfirm"));
         if (!confirmed) return;
         try {
             await PostsService.deletePost(postId);
@@ -583,7 +583,7 @@ export class HubPostsComponent {
      * @param {any} postId - The postId.
      */
     async deleteComment(commentId, postId) {
-        const confirmed = await FlashMessageManager.confirm(LanguageManager.t("hub.deleteConfirm"));
+        const confirmed = await FlashMessageManager.confirm(LanguageManager.t("common.confirm"), LanguageManager.t("hub.deleteConfirm"));
         if (!confirmed) return;
         try {
             await PostsService.deleteComment(commentId);
