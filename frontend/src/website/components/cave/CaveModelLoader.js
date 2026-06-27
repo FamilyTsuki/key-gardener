@@ -14,7 +14,7 @@ export class CaveModelLoader {
     async loadModels() {
         return new Promise((resolve) => {
             let loadedAssetCount = 0;
-            const totalAssetsToLoad = 2;
+            const totalAssetsToLoad = 4;
 
             const verifyLoadingStatus = () => {
                 loadedAssetCount++;
@@ -61,6 +61,7 @@ export class CaveModelLoader {
                 arrowGroup.position.set(33, 68, -71);
                 arrowGroup.rotation.set(0, -0.3, 0);
                 this.scene.add(arrowGroup);
+                verifyLoadingStatus();
             });
             
             ModelLoader.load('/asset/game_assets/models/player_3.glb', (gltf) => {
@@ -276,6 +277,7 @@ export class CaveModelLoader {
                 });
                 
                 this.scene.add(this.blackHoleObject);
+                verifyLoadingStatus();
             });
         });
     }

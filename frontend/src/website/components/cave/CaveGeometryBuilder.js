@@ -12,6 +12,14 @@ export class CaveGeometryBuilder {
      * Builds the cave environment.
      */
     async buildCaveEnvironment() {
+        const textureLoader = new THREE.TextureLoader();
+        const [soilTexture, soilNormalTexture] = await Promise.all([
+            textureLoader.loadAsync('/asset/game_assets/textures/soil.webp'),
+            textureLoader.loadAsync('/asset/game_assets/textures/soil_normal.webp')
+        ]);
+        this.soilTexture = soilTexture;
+        this.soilNormalTexture = soilNormalTexture;
+
         this.caveMesh = this.createCaveMesh();
         this.scene.add(this.caveMesh);
         this.createSpace();
@@ -37,13 +45,10 @@ export class CaveGeometryBuilder {
 
         this.applyDeformationAndColors(geometry);
 
-        const textureLoader = new THREE.TextureLoader();
-        this.soilTexture = textureLoader.load('/asset/game_assets/textures/soil.webp');
         this.soilTexture.wrapS = THREE.RepeatWrapping;
         this.soilTexture.wrapT = THREE.RepeatWrapping;
         this.soilTexture.repeat.set(15, 60);
 
-        this.soilNormalTexture = textureLoader.load('/asset/game_assets/textures/soil_normal.webp');
         this.soilNormalTexture.wrapS = THREE.RepeatWrapping;
         this.soilNormalTexture.wrapT = THREE.RepeatWrapping;
         this.soilNormalTexture.repeat.set(15, 60);
