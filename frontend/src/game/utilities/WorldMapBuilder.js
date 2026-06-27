@@ -7,8 +7,8 @@ import { applyTriplanarMapping } from './TextureUtils.js';
 export class WorldMapBuilder {
     /**
      * Creates a texture with a letter on it.
-     * @param {string} letter - The letter to draw.
-     * @param {HTMLImageElement} [stoneImage] - Optional background image.
+     * @param {any} letter - The letter.
+     * @param {any} stoneImage - The stoneImage.
      * @returns {THREE.CanvasTexture|null} The generated texture or null.
      */
     static createLetterTexture(letter, stoneImage) {
@@ -42,8 +42,8 @@ export class WorldMapBuilder {
 
     /**
      * Creates a beveled hexagon group.
-     * @param {THREE.Material|THREE.Material[]} sideMaterial - The material for the sides.
-     * @param {THREE.Material|THREE.Material[]} topMaterial - The material for the top.
+     * @param {any} sideMaterial - The sideMaterial.
+     * @param {any} topMaterial - The topMaterial.
      * @returns {THREE.Group} The constructed 3D group.
      */
     static createBeveledHexagon(sideMaterial, topMaterial) {
@@ -82,8 +82,8 @@ export class WorldMapBuilder {
 
     /**
      * Generates the environment such as floor and walls and adds it to the group.
-     * @param {THREE.Group} group - The parent group to add the environment to.
-     * @param {THREE.Texture} [stoneTexture] - The texture for the floor.
+     * @param {any} group - The group.
+     * @param {any} stoneTexture - The stoneTexture.
      */
     static buildEnvironment(group, stoneTexture) {
         const environmentWidth = 50;
@@ -231,9 +231,9 @@ export class WorldMapBuilder {
 
     /**
      * Constructs the hexagon meshes for the map layout and adds them to the group.
-     * @param {THREE.Group} group - The parent group to add the hexagons to.
-     * @param {Array} mapLayout - The map layout data.
-     * @param {THREE.Texture} [stoneTexture] - The texture for the hexagons.
+     * @param {any} group - The group.
+     * @param {any} mapLayout - The mapLayout.
+     * @param {any} stoneTexture - The stoneTexture.
      * @returns {Object} An object containing references to leftDoorPivot and rightDoorPivot if a door exists.
      */
     static buildHexagons(group, mapLayout, stoneTexture) {

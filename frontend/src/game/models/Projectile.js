@@ -9,14 +9,14 @@ import { AudioManager } from "../managers/AudioManager.js";
 export default class Projectile extends DamageObject {
     /**
      * Creates a new Projectile.
-     * @param {{x: number, y: number}} position - The starting position.
-     * @param {{width: number, height: number}} size - The size of the projectile.
-     * @param {number} damage - The amount of damage dealt.
-     * @param {{x: number, y: number}} velocity - The movement velocity.
-     * @param {THREE.Scene} scene - The THREE.js scene.
-     * @param {string} [team="player"] - The team this projectile belongs to.
-     * @param {number} [spacing=3.2] - The spacing multiplier.
-     * @param {THREE.Object3D} modelSource - The 3D model source to clone.
+     * @param {any} position - The position.
+     * @param {any} size - The size.
+     * @param {any} damage - The damage.
+     * @param {any} velocity - The velocity.
+     * @param {any} scene - The scene.
+     * @param {any} team - The team.
+     * @param {any} spacing - The spacing.
+     * @param {any} modelSource - The modelSource.
      */
     constructor(
         position,
@@ -98,8 +98,8 @@ export default class Projectile extends DamageObject {
 
     /**
      * Updates the projectile's position and state.
-     * @param {Object} cible - The target object.
-     * @param {number} deltaTime - The time elapsed since the last update.
+     * @param {any} cible - The cible.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(cible, deltaTime) {
         this.timer += deltaTime;
@@ -154,6 +154,12 @@ export default class Projectile extends DamageObject {
 
     /**
      * Destroys the projectile and removes it from the scene.
+     * @param {any} position - The position.
+     * @param {any} size - The size.
+     * @param {any} damage - The damage.
+     * @param {any} velocity - The velocity.
+     * @param {any} team - The team.
+     * @param {any} spacing - The spacing.
      */
     reset(
         position,
@@ -219,7 +225,7 @@ export default class Projectile extends DamageObject {
     }
 
     /**
-     * Dies.
+     * Handles the death logic of the entity.
      */
     die() {
         this.isDead = true;
@@ -238,7 +244,7 @@ export default class Projectile extends DamageObject {
     }
 
     /**
-     * Destroies.
+     * Destroys the projectile and cleans up resources.
      */
     destroy() {
         this.die();
@@ -262,7 +268,7 @@ export default class Projectile extends DamageObject {
 
     /**
      * Draws the projectile on a 2D canvas (not implemented).
-     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+     * @param {any} ctx - The ctx.
      */
     draw(ctx) {}
 }

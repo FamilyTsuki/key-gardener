@@ -3,10 +3,10 @@ import { el } from "../../core/utils/DOMBuilder.js";
 /**
  * Creates a custom stylized select dropdown.
  * 
- * @param {Array<{value: string, label: string}>} options - The options for the dropdown.
- * @param {string} selectedValue - The initially selected value.
- * @param {Function} onChange - Callback function triggered when a new option is selected.
- * @param {string} className - Optional additional CSS classes.
+ * @param {any} options - The options.
+ * @param {any} selectedValue - The selectedValue.
+ * @param {any} onChange - The onChange.
+ * @param {any} className - The className.
  * @returns {HTMLElement} The custom select DOM element.
  */
 export function createCustomSelect(options, selectedValue, onChange, className = "") {

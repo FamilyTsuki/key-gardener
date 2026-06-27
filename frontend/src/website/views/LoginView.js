@@ -13,7 +13,7 @@ export default class LoginView extends AbstractView {
     /**
      * Creates an instance of LoginView.
      *
-     * @param {Object} params - The route parameters.
+     * @param {any} params - The params.
      */
     constructor(params) {
         super(params);

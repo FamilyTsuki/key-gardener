@@ -11,7 +11,7 @@ class ModelLoader {
 
     /**
      * Loads the async.
- * @param {any} url - The url.
+     * @param {any} url - The url.
      */
     async loadAsync(url) {
         if (this.cache.has(url)) {
@@ -41,7 +41,7 @@ class ModelLoader {
 
     /**
      * _clones the scene.
- * @param {any} scene - The scene.
+     * @param {any} scene - The scene.
      */
     _cloneScene(scene) {
         let hasBones = false;
@@ -54,11 +54,11 @@ class ModelLoader {
     }
 
     /**
-     * Loads.
- * @param {any} url - The url.
- * @param {any} onLoad - The onLoad.
- * @param {any} onProgress - The onProgress.
- * @param {any} onError - The onError.
+     * Loads the resource or data.
+     * @param {any} url - The url.
+     * @param {any} onLoad - The onLoad.
+     * @param {any} onProgress - The onProgress.
+     * @param {any} onError - The onError.
      */
     load(url, onLoad, onProgress, onError) {
         this.loadAsync(url).then(onLoad).catch(onError);

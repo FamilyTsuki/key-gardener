@@ -18,8 +18,8 @@ export class SurviveSpawner {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the survive spawner logic.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (!this.active) return;
@@ -61,8 +61,8 @@ export class SurviveSpawner {
 
     /**
      * Spawns the enemy.
- * @param {any} type - The type.
- * @param {any} options - The options.
+     * @param {any} type - The type.
+     * @param {any} options - The options.
      */
     spawnEnemy(type = null, options = {}) {
         if (!this.phase.keyboard || !this.phase.enemies) return;
@@ -98,8 +98,8 @@ export class SurviveSpawner {
 
     /**
      * Get the spawn distances.
- * @param {any} options - The options.
- * @param {boolean} maxMapDist - The maxMapDist.
+     * @param {any} options - The options.
+     * @param {any} maxMapDist - The maxMapDist.
      */
     getSpawnDistances(options, maxMapDist) {
         const isDungeon = this.phase.decorType === "dungeon";
@@ -147,9 +147,9 @@ export class SurviveSpawner {
 
     /**
      * Get the valid spawn keys.
- * @param {any} type - The type.
- * @param {boolean} minSpawnDist - The minSpawnDist.
- * @param {boolean} maxSpawnDist - The maxSpawnDist.
+     * @param {any} type - The type.
+     * @param {any} minSpawnDist - The minSpawnDist.
+     * @param {any} maxSpawnDist - The maxSpawnDist.
      */
     getValidSpawnKeys(type, minSpawnDist, maxSpawnDist) {
         const keys = this.phase.keyboard.keyboardLayout;
@@ -164,10 +164,10 @@ export class SurviveSpawner {
 
     /**
      * Checks whether is key available.
- * @param {any} key - The key.
- * @param {any} type - The type.
- * @param {boolean} minSpawnDist - The minSpawnDist.
- * @param {boolean} maxSpawnDist - The maxSpawnDist.
+     * @param {any} key - The key.
+     * @param {any} type - The type.
+     * @param {any} minSpawnDist - The minSpawnDist.
+     * @param {any} maxSpawnDist - The maxSpawnDist.
      */
     isKeyAvailable(key, type, minSpawnDist, maxSpawnDist) {
         if (this.isOccupiedByEnemy(key) || this.isOccupiedByPlayer(key)) return false;
@@ -183,7 +183,7 @@ export class SurviveSpawner {
 
     /**
      * Checks whether is occupied by enemy.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     isOccupiedByEnemy(key) {
         return this.phase.enemies.container.some(e => 
@@ -195,7 +195,7 @@ export class SurviveSpawner {
 
     /**
      * Checks whether is occupied by player.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     isOccupiedByPlayer(key) {
         if (!this.phase.player) return false;

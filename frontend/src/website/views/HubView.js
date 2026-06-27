@@ -22,7 +22,7 @@ export default class HubView extends AbstractView {
     }
 
     /**
-     * Renders.
+     * Renders the hub view.
      */
     async render() {
         const postsElements = this.postsComponent.render();
@@ -85,7 +85,7 @@ export default class HubView extends AbstractView {
     }
 
     /**
-     * Initializes the .
+     * Initializes the hub view.
      */
     async init() {
         if (this.activeTab === "social") {
@@ -97,7 +97,7 @@ export default class HubView extends AbstractView {
 
     /**
      * Switches the tab.
- * @param {any} tab - The tab.
+     * @param {any} tab - The tab.
      */
     switchTab(tab) {
         if (this.activeTab === tab && this.container.querySelector(`.hub-tab-btn[data-tab="${tab}"]`).classList.contains("active")) return;

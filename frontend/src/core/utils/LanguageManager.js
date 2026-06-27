@@ -6,7 +6,7 @@ export class LanguageManager {
     
     /**
      * Set the current language and reload the page to apply changes.
-     * @param {string} lang - The language code ('en' or 'fr').
+     * @param {any} lang - The lang.
      */
     static setLanguage(lang) {
         if (this.locales[lang]) {
@@ -27,7 +27,7 @@ export class LanguageManager {
     /**
      * Tries to translate a raw English string (usually from backend) 
      * by looking it up in the 'backendErrors' locale dictionary.
-     * @param {string} msg - The raw message to translate.
+     * @param {any} msg - The msg.
      * @returns {string} The translated message or original if not found.
      */
     static translateMessage(msg) {
@@ -41,8 +41,8 @@ export class LanguageManager {
 
     /**
      * Get a translated string by its key path (e.g., 'home.title').
-     * @param {string} key - The translation key path.
-     * @param {Object} [params] - Optional parameters to replace in the string (e.g. { slot: 1 }).
+     * @param {any} key - The key.
+     * @param {any} params - The params.
      * @returns {string} The translated string or the key itself if not found.
      */
     static t(key, params = {}) {

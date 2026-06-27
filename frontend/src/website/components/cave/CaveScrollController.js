@@ -137,7 +137,7 @@ export class CaveScrollController {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the scroll controller listeners.
      */
     cleanup() {
         if (this.scrollTween) {

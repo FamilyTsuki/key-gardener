@@ -11,12 +11,12 @@ export default class HexTile extends GameObject {
 
   /**
    * Creates a new hex tile.
-   * @param {string|number} id - The unique identifier of the tile.
-   * @param {number} x - The x coordinate on the grid.
-   * @param {number} y - The y coordinate on the grid.
-   * @param {boolean} isPressed - Whether the tile is currently pressed.
-   * @param {number} tileSize - The size of the tile.
-   * @param {string} [letter] - The letter associated with this tile.
+   * @param {any} id - The id.
+   * @param {any} x - The x.
+   * @param {any} y - The y.
+   * @param {any} isPressed - The isPressed.
+   * @param {any} tileSize - The tileSize.
+   * @param {any} letter - The letter.
    */
   constructor(id, x, y, isPressed, tileSize, letter) {
     const R = 1.5;
@@ -53,7 +53,7 @@ export default class HexTile extends GameObject {
 
   /**
    * Sets the is pressed.
- * @param {any} val - The is pressed value.
+   * @param {any} val - The val.
    */
   set isPressed(val) {
     this.#isPressed = val;

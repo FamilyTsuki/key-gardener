@@ -28,7 +28,7 @@ export class DuelPhase extends GamePhase {
     }
 
     /**
-     * Initializes the .
+     * Initializes the duel phase.
      */
     async init() {
         const scene = this.gameEngine.scene;
@@ -80,15 +80,15 @@ export class DuelPhase extends GamePhase {
 
     /**
      * Handles the key down event/action.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         this.input.handleKeyDown(event);
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the duel phase state.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (this.renderer.decor) this.renderer.decor.update(deltaTime);
@@ -113,7 +113,7 @@ export class DuelPhase extends GamePhase {
 
     /**
      * Updates the stun states.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateStunStates(deltaTime) {
         if (this.localPlayer && this.localPlayer.stunTimer > 0) {
@@ -143,7 +143,7 @@ export class DuelPhase extends GamePhase {
 
     /**
      * Updates the player states.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updatePlayerStates(deltaTime) {
         if (this.localPlayer) this.localPlayer.update(deltaTime);
@@ -152,7 +152,7 @@ export class DuelPhase extends GamePhase {
 
     /**
      * Updates the jail visuals.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateJailVisuals(deltaTime) {
         if (this.localJailCage) this.renderer.updateJailVisual(this.localJailCage, deltaTime);
@@ -170,7 +170,7 @@ export class DuelPhase extends GamePhase {
 
     /**
      * Updates the projectiles and zones.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateProjectilesAndZones(deltaTime) {
         for (let i = this.state.slowZones.length - 1; i >= 0; i--) {
@@ -213,14 +213,14 @@ export class DuelPhase extends GamePhase {
     }
 
     /**
-     * Draws.
+     * Draws the elements to the canvas or screen.
      */
     draw() {
         this.renderer.draw(this.localPlayer, this.remotePlayer);
     }
 
     /**
-     * Cleanups.
+     * Cleans up the duel phase resources.
      */
     cleanup() {
         this.ui.cleanup();

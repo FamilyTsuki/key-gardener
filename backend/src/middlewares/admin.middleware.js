@@ -3,9 +3,9 @@ const User = require("../models/User");
 
 /**
  * Requires the admin.
- * @param {Object} req - The Express request object.
- * @param {Object} res - The Express response object.
- * @param {Function} next - The Express next middleware function.
+ * @param {any} req - The req.
+ * @param {any} res - The res.
+ * @param {any} next - The next.
  */
 const requireAdmin = async (req, res, next) => {
     try {

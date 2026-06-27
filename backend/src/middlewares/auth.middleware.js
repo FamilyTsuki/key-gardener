@@ -3,9 +3,9 @@ const User = require("../models/User");
 
 /**
  * Verifies the token.
- * @param {Object} req - The Express request object.
- * @param {Object} res - The Express response object.
- * @param {Function} next - The Express next middleware function.
+ * @param {any} req - The req.
+ * @param {any} res - The res.
+ * @param {any} next - The next.
  */
 const verifyToken = async (req, res, next) => {
     const token = req.cookies.jwt;
@@ -46,9 +46,9 @@ const verifyToken = async (req, res, next) => {
 
 /**
  * Optionals the verify token.
- * @param {Object} req - The Express request object.
- * @param {Object} res - The Express response object.
- * @param {Function} next - The Express next middleware function.
+ * @param {any} req - The req.
+ * @param {any} res - The res.
+ * @param {any} next - The next.
  */
 const optionalVerifyToken = async (req, res, next) => {
     const token = req.cookies.jwt;

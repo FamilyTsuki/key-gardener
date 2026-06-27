@@ -9,34 +9,34 @@ export class WorldEvent {
 
     /**
      * Called before the WorldMap meshes are generated to allow the event to mutate the layout.
-     * @param {Array} mapLayout - The raw layout array.
+     * @param {any} mapLayout - The mapLayout.
      */
     modifyLayout(mapLayout) {}
 
     /**
      * Called when the WorldPhase initializes.
-     * @param {WorldPhase} worldPhase - The instance of WorldPhase.
-     * @param {THREE.Scene} scene - The main three.js scene.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} scene - The scene.
      */
     async init(worldPhase, scene) {}
 
     /**
      * Called every frame.
-     * @param {WorldPhase} worldPhase - The instance of WorldPhase.
-     * @param {number} deltaTime - Time elapsed since last frame.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(worldPhase, deltaTime) {}
 
     /**
      * Called on key press.
-     * @param {WorldPhase} worldPhase - The instance of WorldPhase.
-     * @param {KeyboardEvent} event - The keydown event.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} event - The event.
      */
     handleKeyDown(worldPhase, event) {}
 
     /**
      * Called when the WorldPhase is cleaned up.
-     * @param {WorldPhase} worldPhase - The instance of WorldPhase.
+     * @param {any} worldPhase - The worldPhase.
      */
     cleanup(worldPhase) {}
 }

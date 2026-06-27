@@ -36,7 +36,7 @@ export class SurvivePhase extends GamePhase {
 
     /**
      * Parses the string options.
- * @param {any} str - The str.
+     * @param {any} str - The str.
      */
     parseStringOptions(str) {
         return {
@@ -45,7 +45,7 @@ export class SurvivePhase extends GamePhase {
     }
 
     /**
-     * Initializes the .
+     * Initializes the survive phase.
      */
     async init() {
         const scene = this.gameEngine.scene;
@@ -210,8 +210,6 @@ export class SurvivePhase extends GamePhase {
 
     /**
      * Updates the layout.
- * @param {string} padSides - The padSides.
- * @param {any} padTB - The padTB.
      */
     getPaddingValues() {
         const isDungeon = this.decorType === "dungeon";
@@ -253,8 +251,8 @@ export class SurvivePhase extends GamePhase {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the survive phase state.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (!this.state.update(deltaTime, this.gameEngine)) return;
@@ -292,7 +290,7 @@ export class SurvivePhase extends GamePhase {
 
     /**
      * Updates the pathing.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updatePathing(deltaTime) {
         this.pathUpdateTimer += deltaTime;
@@ -304,7 +302,7 @@ export class SurvivePhase extends GamePhase {
 
     /**
      * Updates the projectiles and bonks.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateProjectilesAndBonks(deltaTime) {
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
@@ -345,7 +343,7 @@ export class SurvivePhase extends GamePhase {
     }
 
     /**
-     * Draws.
+     * Draws the elements to the canvas or screen.
      */
     draw() {
         this.renderer.draw(this.keyboard, this.player, this.enemies);
@@ -353,14 +351,14 @@ export class SurvivePhase extends GamePhase {
 
     /**
      * Handles the key down event/action.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         if (this.input) this.input.handleKeyDown(event);
     }
 
     /**
-     * Cleanups.
+     * Cleans up the survive phase resources and listeners.
      */
     cleanup() {
         this.renderer.cleanup(this.gameEngine.scene);

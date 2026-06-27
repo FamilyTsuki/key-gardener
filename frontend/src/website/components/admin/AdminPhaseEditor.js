@@ -10,7 +10,7 @@ export class AdminPhaseEditor {
     }
 
     /**
-     * Renders.
+     * Renders the phase editor.
      */
     render() {
         const row = el("div", { className: "block-row" });
@@ -35,7 +35,7 @@ export class AdminPhaseEditor {
 
     /**
      * Renders the field.
- * @param {any} field - The field.
+     * @param {any} field - The field.
      */
     renderField(field) {
         const group = el("div", { className: "form-group compact-group" });
@@ -50,7 +50,7 @@ export class AdminPhaseEditor {
 
     /**
      * Get the field value.
- * @param {any} field - The field.
+     * @param {any} field - The field.
      */
     getFieldValue(field) {
         if (this.options[field.id] !== undefined) {
@@ -61,9 +61,9 @@ export class AdminPhaseEditor {
 
     /**
      * Creates the input for field.
- * @param {any} field - The field.
- * @param {any} group - The group.
- * @param {any} value - The value.
+     * @param {any} field - The field.
+     * @param {any} group - The group.
+     * @param {any} value - The value.
      */
     createInputForField(field, group, value) {
         if (field.type === "select") {
@@ -75,9 +75,9 @@ export class AdminPhaseEditor {
 
     /**
      * Creates the select field.
- * @param {any} field - The field.
- * @param {any} group - The group.
- * @param {any} value - The value.
+     * @param {any} field - The field.
+     * @param {any} group - The group.
+     * @param {any} value - The value.
      */
     createSelectField(field, group, value) {
         const options = field.options.map(opt => ({
@@ -92,9 +92,9 @@ export class AdminPhaseEditor {
 
     /**
      * Creates the number field.
- * @param {any} field - The field.
- * @param {any} group - The group.
- * @param {any} value - The value.
+     * @param {any} field - The field.
+     * @param {any} group - The group.
+     * @param {any} value - The value.
      */
     createNumberField(field, group, value) {
         const input = el("input", { type: "number", className: "block-input", value: value !== null ? value : '' });

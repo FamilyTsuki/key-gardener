@@ -13,7 +13,7 @@ export default class FaqView extends AbstractView {
     }
 
     /**
-     * Renders.
+     * Renders the FAQ view.
      */
     async render() {
         const container = el("main", { className: "content faq-container", role: "main" },
@@ -34,8 +34,8 @@ export default class FaqView extends AbstractView {
 
     /**
      * Creates the faq item.
- * @param {any} questionKey - The questionKey.
- * @param {any} answerKey - The answerKey.
+     * @param {any} questionKey - The questionKey.
+     * @param {any} answerKey - The answerKey.
      */
     createFaqItem(questionKey, answerKey) {
         return el("article", { className: "faq-item glass-panel" },

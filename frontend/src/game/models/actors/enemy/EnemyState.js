@@ -38,8 +38,8 @@ export class EnemyState {
 
     /**
      * Handles the  event/action.
- * @param {Event} event - The event.
- * @param {Function} callback - The callback.
+     * @param {any} event - The event.
+     * @param {any} callback - The callback.
      */
     on(event, callback) {
         if (!this.listeners[event]) this.listeners[event] = [];
@@ -47,9 +47,9 @@ export class EnemyState {
     }
 
     /**
-     * Emits.
- * @param {Event} event - The event.
- * @param {any} data - The data.
+     * Emits an event to the socket or listeners.
+     * @param {any} event - The event.
+     * @param {any} data - The data.
      */
     emit(event, data) {
         if (this.listeners[event]) {
@@ -59,7 +59,7 @@ export class EnemyState {
 
     /**
      * Takes the damage.
- * @param {any} amount - The amount.
+     * @param {any} amount - The amount.
      */
     takeDamage(amount) {
         if (this.isDead) return;

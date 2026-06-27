@@ -7,8 +7,8 @@ export default class GameObject {
 
   /**
    *
-   * @param {Object} rawPosition = {x: Number, y: Number}
-   * @param {Object} position = {x: Number, y: Number}
+   * @param {any} rawPosition - The rawPosition.
+   * @param {any} position - The position.
    */
   constructor(rawPosition, position) {
     this.rawPosition = { ...rawPosition };
@@ -52,7 +52,7 @@ export default class GameObject {
 
   /**
    * Sets the x.
- * @param {any} X - The x value.
+   * @param {any} X - The X.
    */
   set x(X) {
     this.position.x = X;
@@ -60,7 +60,7 @@ export default class GameObject {
 
   /**
    * Sets the y.
- * @param {any} Y - The y value.
+   * @param {any} Y - The Y.
    */
   set y(Y) {
     this.position.y = Y;

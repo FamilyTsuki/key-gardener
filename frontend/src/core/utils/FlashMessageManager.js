@@ -8,7 +8,7 @@ import { LanguageManager } from "./LanguageManager.js";
 export const FlashMessageManager = {
     /**
      * Shows a confirmation flash message.
-     * @param {string} message - The message content.
+     * @param {any} message - The message.
      * @returns {Promise<boolean>}
      */
     confirm(message) {
@@ -67,10 +67,10 @@ export const FlashMessageManager = {
 
     /**
      * Shows a flash message.
-     * @param {string} message - The message content.
-     * @param {string} [type="success"] - The type of flash message (e.g., success, error, info).
-     * @param {boolean} [persistent=false] - Whether the message should stay until explicitly closed.
-     * @param {Function|null} [onClickCallback=null] - Optional callback function triggered when the message is clicked.
+     * @param {any} message - The message.
+     * @param {any} type - The type.
+     * @param {any} persistent - The persistent.
+     * @param {any} onClickCallback - The onClickCallback.
      */
     show(
         message,
@@ -176,8 +176,8 @@ export const FlashMessageManager = {
 
     /**
      * Removes a flash message element from the DOM with an animation.
-     * @param {Element} element - The DOM element of the flash message to remove.
      * @private
+     * @param {any} element - The element.
      */
     _remove(element) {
         if (
@@ -205,8 +205,8 @@ export const FlashMessageManager = {
 
     /**
      * Gets or creates the container element for flash messages.
-     * @returns {Element} The flash messages container.
      * @private
+     * @returns {Element} The flash messages container.
      */
     _getOrCreateContainer() {
         let container = document.getElementById("flash-container");

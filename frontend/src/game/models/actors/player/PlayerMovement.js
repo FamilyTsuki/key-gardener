@@ -24,8 +24,8 @@ export class PlayerMovement {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the player movement logic.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (!this.isMoving) {
@@ -115,8 +115,8 @@ export class PlayerMovement {
 
     /**
      * Starts the movement.
- * @param {any} newPosition - The newPosition.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} newPosition - The newPosition.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     startMovement(newPosition, keyboardLayout) {
         if (this.pendingWormRepel) {
@@ -155,8 +155,8 @@ export class PlayerMovement {
 
     /**
      * Begins the repel movement.
- * @param {any} newPosition - The newPosition.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} newPosition - The newPosition.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     beginRepelMovement(newPosition, keyboardLayout) {
         this.startPosition = { x: this.x, y: this.y };
@@ -196,7 +196,7 @@ export class PlayerMovement {
 
     /**
      * Updates the facing direction.
- * @param {any} newPosition - The newPosition.
+     * @param {any} newPosition - The newPosition.
      */
     updateFacingDirection(newPosition) {
         const dx = newPosition.x - this.targetPosition.x;
@@ -210,8 +210,8 @@ export class PlayerMovement {
 
     /**
      * Calculates the target offset y.
- * @param {any} newPosition - The newPosition.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} newPosition - The newPosition.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     calculateTargetOffsetY(newPosition, keyboardLayout) {
         if (newPosition.offsetY !== undefined) return newPosition.offsetY;
@@ -228,7 +228,7 @@ export class PlayerMovement {
 
     /**
      * Get the tile surface height.
- * @param {any} keyObj - The keyObj.
+     * @param {any} keyObj - The keyObj.
      */
     getTileSurfaceHeight(keyObj) {
         if (!keyObj || !keyObj.mesh) return 0.225;
@@ -251,9 +251,9 @@ export class PlayerMovement {
 
     /**
      * Checks for worm blockade.
- * @param {any} newPosition - The newPosition.
- * @param {any} keyboardLayout - The keyboardLayout.
- * @param {any} enemiesManager - The enemiesManager.
+     * @param {any} newPosition - The newPosition.
+     * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} enemiesManager - The enemiesManager.
      */
     checkForWormBlockade(newPosition, keyboardLayout, enemiesManager) {
         if (!keyboardLayout || !enemiesManager || this.pendingWormRepel) return;
@@ -287,9 +287,9 @@ export class PlayerMovement {
 
     /**
      * Get the keys on segment.
- * @param {any} start - The start.
- * @param {any} end - The end.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} start - The start.
+     * @param {any} end - The end.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     getKeysOnSegment(start, end, keyboardLayout) {
         const keys = keyboardLayout.filter(key => {
@@ -305,9 +305,9 @@ export class PlayerMovement {
 
     /**
      * Distances to segment.
- * @param {any} p - The p.
- * @param {any} a - The a.
- * @param {any} b - The b.
+     * @param {any} p - The p.
+     * @param {any} a - The a.
+     * @param {any} b - The b.
      */
     distanceToSegment(p, a, b) {
         const abX = b.x - a.x, abY = b.y - a.y;
@@ -321,9 +321,9 @@ export class PlayerMovement {
 
     /**
      * Checks the repel when idle.
- * @param {any} keyboardLayout - The keyboardLayout.
- * @param {any} enemiesManager - The enemiesManager.
- * @param {any} onRepelExecute - The onRepelExecute.
+     * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} enemiesManager - The enemiesManager.
+     * @param {any} onRepelExecute - The onRepelExecute.
      */
     checkRepelWhenIdle(keyboardLayout, enemiesManager, onRepelExecute) {
         if (this.isMoving || !keyboardLayout || !enemiesManager) return;

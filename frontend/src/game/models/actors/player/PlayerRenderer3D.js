@@ -48,7 +48,7 @@ export class PlayerRenderer3D {
 
     /**
      * Updates the position.
- * @param {any} movementState - The movementState.
+     * @param {any} movementState - The movementState.
      */
     updatePosition(movementState) {
         const worldCurrentX = movementState.x * this.spacingX + this.offsetX;
@@ -58,7 +58,7 @@ export class PlayerRenderer3D {
 
     /**
      * Updates the rotation.
- * @param {any} facingDirection - The facingDirection.
+     * @param {any} facingDirection - The facingDirection.
      */
     updateRotation(facingDirection) {
         const angle = Math.atan2(
@@ -70,10 +70,10 @@ export class PlayerRenderer3D {
 
     /**
      * Renders the movement animation.
- * @param {any} movementState - The movementState.
- * @param {any} startPos - The startPos.
- * @param {any} targetPos - The targetPos.
- * @param {any} pendingWormRepel - The pendingWormRepel.
+     * @param {any} movementState - The movementState.
+     * @param {any} startPos - The startPos.
+     * @param {any} targetPos - The targetPos.
+     * @param {any} pendingWormRepel - The pendingWormRepel.
      */
     renderMovementAnimation(movementState, startPos, targetPos, pendingWormRepel) {
         if (!this.playerModel) return;
@@ -87,10 +87,10 @@ export class PlayerRenderer3D {
 
     /**
      * Applies the jump animation.
- * @param {any} movementState - The movementState.
- * @param {any} startPos - The startPos.
- * @param {any} targetPos - The targetPos.
- * @param {any} pendingWormRepel - The pendingWormRepel.
+     * @param {any} movementState - The movementState.
+     * @param {any} startPos - The startPos.
+     * @param {any} targetPos - The targetPos.
+     * @param {any} pendingWormRepel - The pendingWormRepel.
      */
     applyJumpAnimation(movementState, startPos, targetPos, pendingWormRepel) {
         const jumpAmplitude = 2.0;
@@ -135,7 +135,7 @@ export class PlayerRenderer3D {
 
     /**
      * Applies the crouch.
- * @param {any} percentage - The percentage.
+     * @param {any} percentage - The percentage.
      */
     applyCrouch(percentage) {
         if (!this.playerModel) return;
@@ -176,7 +176,7 @@ export class PlayerRenderer3D {
     }
 
     /**
-     * Destroies.
+     * Destroys the player 3D renderer and cleans up resources.
      */
     destroy() {
         if (this.scene && this.mesh) {

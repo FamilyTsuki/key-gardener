@@ -15,7 +15,7 @@ export class HubCreatePostComponent {
     }
 
     /**
-     * Renders.
+     * Renders the post creation component.
      */
     render() {
         const fileInput = el("input", {
@@ -106,7 +106,7 @@ export class HubCreatePostComponent {
 
     /**
      * Handles the media selection event/action.
- * @param {Event} e - The e.
+     * @param {any} e - The e.
      */
     handleMediaSelection(e) {
         const file = e.target.files[0];
@@ -118,7 +118,7 @@ export class HubCreatePostComponent {
 
     /**
      * Handles the paste event/action.
- * @param {Event} e - The e.
+     * @param {any} e - The e.
      */
     handlePaste(e) {
         const clipboardItems = e.clipboardData?.items;
@@ -138,7 +138,7 @@ export class HubCreatePostComponent {
 
     /**
      * Shows the media preview.
- * @param {any} file - The file.
+     * @param {any} file - The file.
      */
     showMediaPreview(file) {
         clear(this.previewContainer);
@@ -181,7 +181,7 @@ export class HubCreatePostComponent {
 
     /**
      * Adds the post.
- * @param {Event} e - The e.
+     * @param {any} e - The e.
      */
     async addPost(e) {
         const postTextarea = document.getElementById("post-content");

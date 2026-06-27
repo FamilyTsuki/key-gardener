@@ -20,7 +20,7 @@ export class IntroPhase extends GamePhase {
 
     /**
      * Creates an instance of IntroPhase.
-     * @param {GameEngine} gameEngine - The game engine instance.
+     * @param {any} gameEngine - The gameEngine.
      */
     constructor(gameEngine) {
         super(gameEngine);
@@ -407,7 +407,7 @@ export class IntroPhase extends GamePhase {
 
     /**
      * Updates the logic for this phase.
-     * @param {number} _deltaTime - The time elapsed since the last update.
+     * @param {any} _deltaTime - The _deltaTime.
      */
     update(_deltaTime) {}
 
@@ -418,7 +418,7 @@ export class IntroPhase extends GamePhase {
 
     /**
      * Handles keyboard interactions during the intro.
-     * @param {KeyboardEvent} _event - The keyboard event.
+     * @param {any} _event - The _event.
      */
     handleKeyDown(_event) {
         if (

@@ -10,10 +10,10 @@ export class SurviveRenderer {
     }
 
     /**
-     * Initializes the .
- * @param {any} scene - The scene.
- * @param {any} camera - The camera.
- * @param {any} decorType - The decorType.
+     * Initializes the survive renderer.
+     * @param {any} scene - The scene.
+     * @param {any} camera - The camera.
+     * @param {any} decorType - The decorType.
      */
     init(scene, camera, decorType) {
         camera.position.set(15, 18, 7);
@@ -30,8 +30,8 @@ export class SurviveRenderer {
 
     /**
      * Updates the camera.
- * @param {any} camera - The camera.
- * @param {any} enemies - The enemies.
+     * @param {any} camera - The camera.
+     * @param {any} enemies - The enemies.
      */
     updateCamera(camera, enemies) {
         const hasBugBoss = enemies && enemies.boss && enemies.boss.name === "GiantBug" && !enemies.boss.isDead;
@@ -66,7 +66,7 @@ export class SurviveRenderer {
 
     /**
      * Updates the decor.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateDecor(deltaTime) {
         if (!this.decor) return;
@@ -84,10 +84,10 @@ export class SurviveRenderer {
     }
 
     /**
-     * Draws.
- * @param {any} keyboard - The keyboard.
- * @param {any} player - The player.
- * @param {any} enemies - The enemies.
+     * Draws the elements to the canvas or screen.
+     * @param {any} keyboard - The keyboard.
+     * @param {any} player - The player.
+     * @param {any} enemies - The enemies.
      */
     draw(keyboard, player, enemies) {
         if (keyboard && player) {
@@ -103,8 +103,8 @@ export class SurviveRenderer {
     }
 
     /**
-     * Cleanups.
- * @param {any} scene - The scene.
+     * Cleans up survive renderer resources.
+     * @param {any} scene - The scene.
      */
     cleanup(scene) {
         if (this.worldGroupPivot) {

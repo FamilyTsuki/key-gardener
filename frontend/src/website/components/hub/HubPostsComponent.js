@@ -15,7 +15,7 @@ export class HubPostsComponent {
     }
 
     /**
-     * Renders.
+     * Renders the posts component.
      */
     render() {
         this.postsContainer = el("div", { id: "posts-container" },
@@ -53,9 +53,9 @@ export class HubPostsComponent {
 
     /**
      * Creates the sort button.
- * @param {any} value - The value.
- * @param {any} label - The label.
- * @param {boolean} isActive - The isActive.
+     * @param {any} value - The value.
+     * @param {any} label - The label.
+     * @param {any} isActive - The isActive.
      */
     createSortButton(value, label, isActive = false) {
         return el("button", {
@@ -67,8 +67,8 @@ export class HubPostsComponent {
 
     /**
      * Handles the sort change event/action.
- * @param {Event} e - The e.
- * @param {any} value - The value.
+     * @param {any} e - The e.
+     * @param {any} value - The value.
      */
     async handleSortChange(e, value) {
         if (this.currentSort === value) return;
@@ -95,7 +95,7 @@ export class HubPostsComponent {
     }
 
     /**
-     * Initializes the .
+     * Initializes the posts component.
      */
     async init() {
         if (!this.postsContainer) return;
@@ -145,7 +145,7 @@ export class HubPostsComponent {
 
     /**
      * Prepends the post.
- * @param {any} post - The post.
+     * @param {any} post - The post.
      */
     prependPost(post) {
         const noPostsText = this.postsContainer.querySelector("p");
@@ -159,7 +159,7 @@ export class HubPostsComponent {
 
     /**
      * Creates the post element.
- * @param {any} post - The post.
+     * @param {any} post - The post.
      */
     createPostElement(post) {
         let mediaElement = null;
@@ -258,7 +258,7 @@ export class HubPostsComponent {
 
     /**
      * Checks whether is video.
- * @param {any} url - The url.
+     * @param {any} url - The url.
      */
     isVideo(url) {
         if (!url) return false;
@@ -268,8 +268,8 @@ export class HubPostsComponent {
 
     /**
      * Handles the vote event/action.
- * @param {string} postId - The postId.
- * @param {any} type - The type.
+     * @param {any} postId - The postId.
+     * @param {any} type - The type.
      */
     async handleVote(postId, type) {
         if (!AuthService.isAuthenticated()) {
@@ -316,7 +316,7 @@ export class HubPostsComponent {
 
     /**
      * Handles the edit event/action.
- * @param {any} post - The post.
+     * @param {any} post - The post.
      */
     handleEdit(post) {
         const postElement = document.getElementById(`post-${post.id}`);
@@ -353,9 +353,9 @@ export class HubPostsComponent {
 
     /**
      * Handles the save edit event/action.
- * @param {string} postId - The postId.
- * @param {any} newContent - The newContent.
- * @param {any} btn - The btn.
+     * @param {any} postId - The postId.
+     * @param {any} newContent - The newContent.
+     * @param {any} btn - The btn.
      */
     async handleSaveEdit(postId, newContent, btn = null) {
         if (!newContent || newContent.trim().length === 0) return;
@@ -402,7 +402,7 @@ export class HubPostsComponent {
 
     /**
      * Handles the delete event/action.
- * @param {string} postId - The postId.
+     * @param {any} postId - The postId.
      */
     async handleDelete(postId) {
         const confirmed = await FlashMessageManager.confirm(LanguageManager.t("hub.deleteConfirm"));
@@ -424,7 +424,7 @@ export class HubPostsComponent {
 
     /**
      * Handles the report event/action.
- * @param {string} postId - The postId.
+     * @param {any} postId - The postId.
      */
     async handleReport(postId) {
         const existingModal = document.getElementById("report-modal");
@@ -481,7 +481,7 @@ export class HubPostsComponent {
 
     /**
      * Toggles the comments.
- * @param {string} postId - The postId.
+     * @param {any} postId - The postId.
      */
     async toggleComments(postId) {
         const section = document.getElementById(`comments-${postId}`);
@@ -497,7 +497,7 @@ export class HubPostsComponent {
 
     /**
      * Loads the comments.
- * @param {string} postId - The postId.
+     * @param {any} postId - The postId.
      */
     async loadComments(postId) {
         const list = document.getElementById(`comments-list-${postId}`);
@@ -536,8 +536,8 @@ export class HubPostsComponent {
 
     /**
      * Submits the comment.
- * @param {string} postId - The postId.
- * @param {any} btn - The btn.
+     * @param {any} postId - The postId.
+     * @param {any} btn - The btn.
      */
     async submitComment(postId, btn = null) {
         const input = document.getElementById(`comment-input-${postId}`);
@@ -579,8 +579,8 @@ export class HubPostsComponent {
 
     /**
      * Deletes the comment.
- * @param {string} commentId - The commentId.
- * @param {string} postId - The postId.
+     * @param {any} commentId - The commentId.
+     * @param {any} postId - The postId.
      */
     async deleteComment(commentId, postId) {
         const confirmed = await FlashMessageManager.confirm(LanguageManager.t("hub.deleteConfirm"));

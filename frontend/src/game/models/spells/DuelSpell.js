@@ -33,7 +33,7 @@ export class DuelSpell {
 
     /**
      * Initializes the visuals.
- * @param {any} fireballGltf - The fireballGltf.
+     * @param {any} fireballGltf - The fireballGltf.
      */
     initVisuals(fireballGltf) {
         if (fireballGltf) {
@@ -65,7 +65,7 @@ export class DuelSpell {
 
     /**
      * Resets the visuals.
- * @param {any} fireballGltf - The fireballGltf.
+     * @param {any} fireballGltf - The fireballGltf.
      */
     resetVisuals(fireballGltf) {
         while (this.visualGroup.children.length > 0) {
@@ -123,9 +123,9 @@ export class DuelSpell {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} targetModel - The targetModel.
+     * Updates the spell state and position.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} targetModel - The targetModel.
      */
     update(deltaTime, targetModel) {
         if (this.isDestroyed) return;
@@ -172,14 +172,14 @@ export class DuelSpell {
 
     /**
      * Handles the hit event/action.
- * @param {any} targetModel - The targetModel.
+     * @param {any} targetModel - The targetModel.
      */
     onHit(targetModel) {
         this.destroy();
     }
 
     /**
-     * Destroies.
+     * Destroys the spell instance and cleans up resources.
      */
     destroy() {
         this.isDestroyed = true;
@@ -200,7 +200,7 @@ export class LightSpell extends DuelSpell {
 
     /**
      * Initializes the visuals.
- * @param {any} fireballGltf - The fireballGltf.
+     * @param {any} fireballGltf - The fireballGltf.
      */
     initVisuals(fireballGltf) {
         const geo = new THREE.SphereGeometry(0.3, 16, 16);
@@ -250,7 +250,7 @@ export class StunSpell extends DuelSpell {
 
     /**
      * Initializes the visuals.
- * @param {any} fireballGltf - The fireballGltf.
+     * @param {any} fireballGltf - The fireballGltf.
      */
     initVisuals(fireballGltf) {
         const geo = new THREE.OctahedronGeometry(0.4);
@@ -276,7 +276,7 @@ export class StunSpell extends DuelSpell {
 
     /**
      * Handles the hit event/action.
- * @param {any} targetModel - The targetModel.
+     * @param {any} targetModel - The targetModel.
      */
     onHit(targetModel) {
         super.onHit(targetModel);
@@ -299,7 +299,7 @@ export class HealSpell extends DuelSpell {
 
     /**
      * Initializes the visuals.
- * @param {any} fireballGltf - The fireballGltf.
+     * @param {any} fireballGltf - The fireballGltf.
      */
     initVisuals(fireballGltf) {
         const group = new THREE.Group();
@@ -340,7 +340,7 @@ export class JailSpell extends DuelSpell {
 
     /**
      * Initializes the visuals.
- * @param {any} fireballGltf - The fireballGltf.
+     * @param {any} fireballGltf - The fireballGltf.
      */
     initVisuals(fireballGltf) {
         const geo = new THREE.CylinderGeometry(0.35, 0.35, 0.7, 8, 1);
@@ -367,7 +367,7 @@ export class JailSpell extends DuelSpell {
 
     /**
      * Handles the hit event/action.
- * @param {any} targetModel - The targetModel.
+     * @param {any} targetModel - The targetModel.
      */
     onHit(targetModel) {
         super.onHit(targetModel);
@@ -399,9 +399,9 @@ export class SlowZone {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} enemyProjectiles - The enemyProjectiles.
+     * Updates the spell state and position.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} enemyProjectiles - The enemyProjectiles.
      */
     update(deltaTime, enemyProjectiles) {
         if (this.isExpired) return;
@@ -426,7 +426,7 @@ export class SlowZone {
     }
 
     /**
-     * Destroies.
+     * Destroys the spell instance and cleans up resources.
      */
     destroy() {
         this.isExpired = true;

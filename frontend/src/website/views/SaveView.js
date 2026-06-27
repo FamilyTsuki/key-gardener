@@ -12,7 +12,7 @@ export default class SaveView extends AbstractView {
     /**
      * Creates an instance of SaveView.
      *
-     * @param {Object} params - The route parameters.
+     * @param {any} params - The params.
      */
     constructor(params) {
         super(params);
@@ -111,8 +111,8 @@ export default class SaveView extends AbstractView {
     /**
      * Creates the DOM elements for a specific save slot card.
      *
-     * @param {number} slot - The slot number (1-3).
-     * @param {Object} save - The save data for this slot.
+     * @param {any} slot - The slot.
+     * @param {any} save - The save.
      * @returns {HTMLElement} The save slot card element.
      */
     buildSlotCard(slot, save) {
@@ -255,7 +255,7 @@ export default class SaveView extends AbstractView {
     /**
      * Toggles the visibility of the context menu for a specific slot.
      *
-     * @param {number} slot - The slot number.
+     * @param {any} slot - The slot.
      */
     toggleContextMenu(slot) {
         document.querySelectorAll(".context-menu").forEach((menu) => {
@@ -297,8 +297,8 @@ export default class SaveView extends AbstractView {
     /**
      * Starts the game using the provided save slot and game state.
      *
-     * @param {number} slot - The slot number to use.
-     * @param {Object} gameState - The initial or loaded state for the game.
+     * @param {any} slot - The slot.
+     * @param {any} gameState - The gameState.
      */
     startGame(slot, gameState) {
         localStorage.setItem("activeSaveSlot", slot);
@@ -310,8 +310,8 @@ export default class SaveView extends AbstractView {
     /**
      * Opens a modal to rename a specific save slot.
      *
-     * @param {number} slot - The slot number to rename.
-     * @param {Object} gameState - The current game state of the slot.
+     * @param {any} slot - The slot.
+     * @param {any} gameState - The gameState.
      */
     openRenameModal(slot, gameState) {
         const input = el("input", {
@@ -365,8 +365,8 @@ export default class SaveView extends AbstractView {
     /**
      * Exports the save game data as a JSON file for download.
      *
-     * @param {number} slot - The slot number being exported.
-     * @param {Object} gameState - The game state data to export.
+     * @param {any} slot - The slot.
+     * @param {any} gameState - The gameState.
      */
     exportSave(slot, gameState) {
         const dataStr =
@@ -387,7 +387,7 @@ export default class SaveView extends AbstractView {
     /**
      * Opens a confirmation modal before deleting a save slot.
      *
-     * @param {number} slot - The slot number to delete.
+     * @param {any} slot - The slot.
      */
     confirmDelete(slot) {
         const confirmBtn = el(

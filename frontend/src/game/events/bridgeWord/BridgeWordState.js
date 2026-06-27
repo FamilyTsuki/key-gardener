@@ -30,9 +30,9 @@ export class BridgeWordState {
     }
 
     /**
-     * Ons.
- * @param {any} event - The event.
- * @param {any} callback - The callback.
+     * Registers an event handler callback.
+     * @param {any} event - The event.
+     * @param {any} callback - The callback.
      */
     on(event, callback) {
         if (!this.listeners[event]) this.listeners[event] = [];
@@ -40,9 +40,9 @@ export class BridgeWordState {
     }
 
     /**
-     * Emits.
- * @param {any} event - The event.
- * @param {Object} data - The data payload.
+     * Emits an event to the socket or listeners.
+     * @param {any} event - The event.
+     * @param {any} data - The data.
      */
     emit(event, data) {
         if (this.listeners[event]) {
@@ -58,8 +58,8 @@ export class BridgeWordState {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the bridge word game state.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         let needsUIUpdate = false;
@@ -159,7 +159,7 @@ export class BridgeWordState {
 
     /**
      * Handles the character.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     handleCharacter(key) {
         if (this.errorKey) this.clearError();
@@ -211,7 +211,7 @@ export class BridgeWordState {
 
     /**
      * Triggers the error.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     triggerError(key) {
         this.errorKey = key;

@@ -15,8 +15,8 @@ export class DuelUI {
 
     /**
      * Builds the u i.
- * @param {any} localData - The localData.
- * @param {any} remoteData - The remoteData.
+     * @param {any} localData - The localData.
+     * @param {any} remoteData - The remoteData.
      */
     buildUI(localData, remoteData) {
         const hud = document.getElementById("player-hud");
@@ -61,8 +61,8 @@ export class DuelUI {
 
     /**
      * Updates the spells u i.
- * @param {any} availableSpells - The availableSpells.
- * @param {any} currentTypedSpell - The currentTypedSpell.
+     * @param {any} availableSpells - The availableSpells.
+     * @param {any} currentTypedSpell - The currentTypedSpell.
      */
     updateSpellsUI(availableSpells, currentTypedSpell) {
         if (!this.spellsUI) return;
@@ -105,9 +105,9 @@ export class DuelUI {
 
     /**
      * Updates the defenses u i.
- * @param {any} projectiles - The projectiles.
- * @param {any} localData - The localData.
- * @param {any} currentTypedDefense - The currentTypedDefense.
+     * @param {any} projectiles - The projectiles.
+     * @param {any} localData - The localData.
+     * @param {any} currentTypedDefense - The currentTypedDefense.
      */
     updateDefensesUI(projectiles, localData, currentTypedDefense) {
         if (!this.defensesUI) return;
@@ -158,8 +158,8 @@ export class DuelUI {
 
     /**
      * Updates the jail u i.
- * @param {any} jailEscapeWord - The jailEscapeWord.
- * @param {any} currentTypedJail - The currentTypedJail.
+     * @param {any} jailEscapeWord - The jailEscapeWord.
+     * @param {any} currentTypedJail - The currentTypedJail.
      */
     updateJailUI(jailEscapeWord, currentTypedJail) {
         const contentBox = document.getElementById("jail-content-box");
@@ -195,7 +195,7 @@ export class DuelUI {
 
     /**
      * Updates the stun u i.
- * @param {boolean} isStunned - The isStunned.
+     * @param {any} isStunned - The isStunned.
      */
     updateStunUI(isStunned) {
         if (isStunned) {
@@ -219,10 +219,10 @@ export class DuelUI {
 
     /**
      * Shows the end overlay.
- * @param {any} won - The won.
- * @param {any} wpm - The wpm.
- * @param {any} durationSecs - The durationSecs.
- * @param {number} successfulStrokesCount - The successfulStrokesCount.
+     * @param {any} won - The won.
+     * @param {any} wpm - The wpm.
+     * @param {any} durationSecs - The durationSecs.
+     * @param {any} successfulStrokesCount - The successfulStrokesCount.
      */
     showEndOverlay(won, wpm, durationSecs, successfulStrokesCount) {
         const overlayClass = won ? "duel-end-victory" : "duel-end-defeat";
@@ -256,8 +256,8 @@ export class DuelUI {
 
     /**
      * Announces the spell.
- * @param {any} attackerName - The attackerName.
- * @param {any} spellType - The spellType.
+     * @param {any} attackerName - The attackerName.
+     * @param {any} spellType - The spellType.
      */
     announceSpell(attackerName, spellType) {
         const spellNames = {
@@ -279,7 +279,7 @@ export class DuelUI {
 
     /**
      * Starts the countdown.
- * @param {Function} onCompleteCallback - The onCompleteCallback.
+     * @param {any} onCompleteCallback - The onCompleteCallback.
      */
     startCountdown(onCompleteCallback) {
         const countdownOverlay = el("div", { id: "duel-countdown-overlay", className: "duel-countdown-overlay" });
@@ -305,7 +305,7 @@ export class DuelUI {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the duel UI component resources.
      */
     cleanup() {
         const announcerContainer = document.getElementById("duel-announcer-container");

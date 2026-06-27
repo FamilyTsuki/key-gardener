@@ -29,13 +29,13 @@ export default class FireCircle extends Spell {
 
   /**
    * Constructs a FireCircle spell.
-   * @param {string} word - The trigger word for the spell.
-   * @param {number} damage - The damage dealt per tick.
-   * @param {number} range - The radius of the fire circle.
-   * @param {number} duration - The duration the spell remains active.
-   * @param {THREE.Scene} scene - The scene to render the spell in.
-   * @param {Player} player - The player casting the spell.
-   * @param {Object} enemies - The enemies manager containing targetable enemies.
+   * @param {any} word - The word.
+   * @param {any} damage - The damage.
+   * @param {any} range - The range.
+   * @param {any} duration - The duration.
+   * @param {any} scene - The scene.
+   * @param {any} player - The player.
+   * @param {any} enemies - The enemies.
    */
   constructor(word, damage, range, duration, scene, player, enemies) {
     super(word, damage, range);
@@ -112,7 +112,7 @@ export default class FireCircle extends Spell {
 
   /**
    * Updates the spell's visual effect and state over time.
-   * @param {number} deltaTime - The time elapsed since the last frame.
+   * @param {any} deltaTime - The deltaTime.
    */
   update(deltaTime) {
     if (this.#isActive && this.#mesh) {

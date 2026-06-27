@@ -22,8 +22,8 @@ export class EnemyMovement {
 
     /**
      * Initializes the spawn.
- * @param {boolean} isWorm - The isWorm.
- * @param {any} position - The position.
+     * @param {any} isWorm - The isWorm.
+     * @param {any} position - The position.
      */
     setupSpawn(isWorm, position) {
         if (isWorm) {
@@ -58,7 +58,7 @@ export class EnemyMovement {
 
     /**
      * Updates the spawn.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateSpawn(deltaTime) {
         if (!this.isSpawning) return false;
@@ -83,7 +83,7 @@ export class EnemyMovement {
 
     /**
      * Set the path.
- * @param {any} newPath - The newPath.
+     * @param {any} newPath - The newPath.
      */
     setPath(newPath) {
         this.path = newPath;
@@ -112,7 +112,7 @@ export class EnemyMovement {
 
     /**
      * Updates the jump.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateJump(deltaTime) {
         if (this.jumpDelayTimer > 0) {

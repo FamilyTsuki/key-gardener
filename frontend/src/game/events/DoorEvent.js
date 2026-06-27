@@ -30,7 +30,7 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Mutates the map layout to specify which tile is the door tile.
-     * @param {Array} mapLayout - The raw map layout array.
+     * @param {any} mapLayout - The mapLayout.
      */
     modifyLayout(mapLayout) {
         const doorRow = mapLayout.filter((t) => t.isDoorRow);
@@ -45,8 +45,8 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Initializes the door event, building the door mesh on the designated tile.
-     * @param {WorldPhase} worldPhase - The world phase instance.
-     * @param {THREE.Scene} scene - The scene instance.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} scene - The scene.
      * @returns {Promise<void>}
      */
     async init(worldPhase, scene) {
@@ -61,8 +61,8 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Creates a decorative door on a given tile mesh.
-     * @param {THREE.Object3D} parentMesh - The parent mesh for the door.
-     * @param {THREE.Texture} [stoneTexture] - The texture for the door walls/tunnel.
+     * @param {any} parentMesh - The parentMesh.
+     * @param {any} stoneTexture - The stoneTexture.
      */
     buildDoor(parentMesh, stoneTexture) {
         const doorGroup = new THREE.Group();
@@ -333,8 +333,8 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Updates the state of the door event, checking player proximity.
-     * @param {WorldPhase} worldPhase - The world phase instance.
-     * @param {number} deltaTime - Time elapsed since last frame.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} deltaTime - The deltaTime.
      */
 
     update(worldPhase, deltaTime) {
@@ -364,8 +364,8 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Handles keyboard input during the door sequence or interaction.
-     * @param {WorldPhase} worldPhase - The world phase instance.
-     * @param {KeyboardEvent} event - The keyboard event.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} event - The event.
      * @returns {boolean} True if the event was intercepted, false otherwise.
      */
     handleKeyDown(worldPhase, event) {
@@ -459,7 +459,7 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Cleans up the UI overlay and timeouts.
-     * @param {WorldPhase} worldPhase - The world phase instance.
+     * @param {any} worldPhase - The worldPhase.
      */
     cleanup(worldPhase) {
         if (this.uiOverlay) {
@@ -475,7 +475,7 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Starts the door opening mini-game sequence.
-     * @param {WorldPhase} worldPhase - The world phase instance.
+     * @param {any} worldPhase - The worldPhase.
      */
     startDoorSequence(worldPhase) {
         this.isDoorSequenceActive = true;
@@ -513,7 +513,7 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Completes the door sequence and opens the door.
-     * @param {WorldPhase} worldPhase - The world phase instance.
+     * @param {any} worldPhase - The worldPhase.
      * @returns {Promise<void>}
      */
     async completeDoorSequence(worldPhase) {
@@ -533,7 +533,7 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Shows a prompt indicating the player can enter the portal.
-     * @param {WorldPhase} worldPhase - The world phase instance.
+     * @param {any} worldPhase - The worldPhase.
      */
     showEnterPrompt(worldPhase) {
         if (this.enterPromptOverlay) return;
@@ -560,7 +560,7 @@ export class DoorEvent extends WorldEvent {
 
     /**
      * Hides the enter prompt.
-     * @param {WorldPhase} worldPhase - The world phase instance.
+     * @param {any} worldPhase - The worldPhase.
      */
     hideEnterPrompt(worldPhase) {
         if (this.enterPromptOverlay) {

@@ -19,8 +19,8 @@ export class EnemyUI {
 
     /**
      * Updates the hp bar.
- * @param {any} hp - The hp.
- * @param {any} hpMax - The hpMax.
+     * @param {any} hp - The hp.
+     * @param {any} hpMax - The hpMax.
      */
     updateHpBar(hp, hpMax) {
         const ctx = this.hpContext;
@@ -48,8 +48,8 @@ export class EnemyUI {
 
     /**
      * Shows the floating damage.
- * @param {any} position - The position.
- * @param {any} amount - The amount.
+     * @param {any} position - The position.
+     * @param {any} amount - The amount.
      */
     showFloatingDamage(position, amount) {
         if (!position) return;
@@ -64,7 +64,7 @@ export class EnemyUI {
 
     /**
      * Set the visible.
- * @param {boolean} isVisible - The isVisible.
+     * @param {any} isVisible - The isVisible.
      */
     setVisible(isVisible) {
         this.hpSprite.visible = isVisible;
@@ -72,7 +72,7 @@ export class EnemyUI {
 
     /**
      * Attaches to model.
- * @param {any} model - The model.
+     * @param {any} model - The model.
      */
     attachToModel(model) {
         model.add(this.hpSprite);

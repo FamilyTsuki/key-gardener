@@ -16,7 +16,7 @@ export default class ProfileView extends AbstractView {
     }
 
     /**
-     * Renders.
+     * Renders the profile view.
      */
     async render() {
         this.container = el("div", { className: "account-container" });
@@ -114,9 +114,9 @@ export default class ProfileView extends AbstractView {
 
     /**
      * Creates the stat item.
- * @param {any} label - The label.
- * @param {any} value - The value.
- * @param {any} valueClass - The valueClass.
+     * @param {any} label - The label.
+     * @param {any} value - The value.
+     * @param {any} valueClass - The valueClass.
      */
     createStatItem(label, value, valueClass = "") {
         return el("div", { className: "stat-item" },
@@ -160,7 +160,7 @@ export default class ProfileView extends AbstractView {
 
     /**
      * Removes the friend.
- * @param {string} userId - The userId.
+     * @param {any} userId - The userId.
      */
     async removeFriend(userId) {
         try {

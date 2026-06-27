@@ -28,9 +28,9 @@ export class JumpWordState {
     }
 
     /**
-     * Ons.
- * @param {any} event - The event.
- * @param {any} callback - The callback.
+     * Registers an event handler callback.
+     * @param {any} event - The event.
+     * @param {any} callback - The callback.
      */
     on(event, callback) {
         if (!this.listeners[event]) this.listeners[event] = [];
@@ -38,9 +38,9 @@ export class JumpWordState {
     }
 
     /**
-     * Emits.
- * @param {any} event - The event.
- * @param {Object} data - The data payload.
+     * Emits an event to the socket or listeners.
+     * @param {any} event - The event.
+     * @param {any} data - The data.
      */
     emit(event, data) {
         if (this.listeners[event]) {
@@ -56,15 +56,15 @@ export class JumpWordState {
     }
 
     /**
-     * Percentages.
+     * Retrieves the progress percentage.
      */
     get percentage() {
         return Math.min(1.0, this.completedCount / this.targetCompletedCount);
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the jump word game state.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         let needsUIUpdate = false;
@@ -164,7 +164,7 @@ export class JumpWordState {
 
     /**
      * Handles the character.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     handleCharacter(key) {
         if (this.errorKey) this.clearError();
@@ -216,7 +216,7 @@ export class JumpWordState {
 
     /**
      * Triggers the error.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     triggerError(key) {
         this.errorKey = key;

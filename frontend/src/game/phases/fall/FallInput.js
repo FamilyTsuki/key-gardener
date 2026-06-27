@@ -6,7 +6,7 @@ export class FallInput {
 
     /**
      * Handles the key down event/action.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         if (!this.phase.state.isReady || !this.phase.player || this.phase.player.isMoving || 
@@ -49,7 +49,7 @@ export class FallInput {
 
     /**
      * Moves the player to lane.
- * @param {any} laneX - The laneX.
+     * @param {any} laneX - The laneX.
      */
     movePlayerToLane(laneX) {
         this.phase.player.move({ 

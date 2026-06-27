@@ -9,11 +9,11 @@ export class EnemyAI {
 
     /**
      * Updates the sniper logic.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} player - The player.
- * @param {any} projectiles - The projectiles.
- * @param {any} projectileModel - The projectileModel.
- * @param {any} scene - The scene.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} player - The player.
+     * @param {any} projectiles - The projectiles.
+     * @param {any} projectileModel - The projectileModel.
+     * @param {any} scene - The scene.
      */
     updateSniperLogic(deltaTime, player, projectiles, projectileModel, scene) {
         if (!this.state.isSniper || this.state.isDead) return;
@@ -27,10 +27,10 @@ export class EnemyAI {
 
     /**
      * Shoots the projectile.
- * @param {any} player - The player.
- * @param {any} projectiles - The projectiles.
- * @param {any} projectileModel - The projectileModel.
- * @param {any} scene - The scene.
+     * @param {any} player - The player.
+     * @param {any} projectiles - The projectiles.
+     * @param {any} projectileModel - The projectileModel.
+     * @param {any} scene - The scene.
      */
     shootProjectile(player, projectiles, projectileModel, scene) {
         if (!projectiles || !projectileModel) return;
@@ -60,8 +60,8 @@ export class EnemyAI {
 
     /**
      * Checks the player collision.
- * @param {any} player - The player.
- * @param {any} size - The size.
+     * @param {any} player - The player.
+     * @param {any} size - The size.
      */
     checkPlayerCollision(player, size) {
         if (this.state.isWorm) return false;
@@ -88,10 +88,10 @@ export class EnemyAI {
 
     /**
      * Checks a a b b collision.
- * @param {any} posA - The posA.
- * @param {any} sizeA - The sizeA.
- * @param {any} posB - The posB.
- * @param {any} sizeB - The sizeB.
+     * @param {any} posA - The posA.
+     * @param {any} sizeA - The sizeA.
+     * @param {any} posB - The posB.
+     * @param {any} sizeB - The sizeB.
      */
     checkAABBCollision(posA, sizeA, posB, sizeB) {
         return posA.x < posB.x + sizeB.width &&

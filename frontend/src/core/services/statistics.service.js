@@ -28,7 +28,7 @@ export class StatisticsService {
 
     /**
      * Sends new stats to update the user's profile.
-     * @param {Object} statsData - Stats from the recent play session.
+     * @param {any} statsData - The statsData.
      * @returns {Promise<Object>} The updated stats object.
      */
     static async updateStats(statsData) {
@@ -54,7 +54,7 @@ export class StatisticsService {
 
     /**
      * Calculates the user's rank based on their WPM.
-     * @param {number} wpm - Words per minute.
+     * @param {any} wpm - The wpm.
      * @returns {Object} Rank name and class for styling.
      */
     static getRankFromWpm(wpm) {

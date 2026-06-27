@@ -52,7 +52,7 @@ export class WorldPhase extends GamePhase {
     }
 
     /**
-     * Initializes the .
+     * Initializes the world phase.
      */
     async init() {
         const scene = this.gameEngine.scene;
@@ -146,7 +146,7 @@ export class WorldPhase extends GamePhase {
 
     /**
      * Executes the event action.
- * @param {Event} eventToTrigger - The eventToTrigger.
+     * @param {any} eventToTrigger - The eventToTrigger.
      */
     executeEventAction(eventToTrigger) {
         if (eventToTrigger.actionType === "heal") {
@@ -160,8 +160,8 @@ export class WorldPhase extends GamePhase {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the world phase state and animations.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (!this.player || !this.player.isAlive()) {
@@ -309,7 +309,7 @@ export class WorldPhase extends GamePhase {
     }
 
     /**
-     * Draws.
+     * Draws the elements to the canvas or screen.
      */
     draw() {
         if (this.player && this.player.mesh && this.playerLight) {
@@ -399,8 +399,8 @@ export class WorldPhase extends GamePhase {
 
     /**
      * Runs the intro animation.
- * @param {any} introType - The introType.
- * @param {any} spawnTile - The spawnTile.
+     * @param {any} introType - The introType.
+     * @param {any} spawnTile - The spawnTile.
      */
     async runIntroAnimation(introType, spawnTile) {
         this.isPlayingIntro = true;
@@ -482,7 +482,7 @@ export class WorldPhase extends GamePhase {
 
     /**
      * Handles the key down event/action.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         if (this.isPlayingIntro) return;
@@ -519,7 +519,7 @@ export class WorldPhase extends GamePhase {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the world phase resources and listeners.
      */
     cleanup() {
         if (this.dialogueTimeout) {

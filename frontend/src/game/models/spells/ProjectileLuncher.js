@@ -11,10 +11,10 @@ export default class ProjectileLuncher extends Spell {
 
   /**
    * Constructs a ProjectileLuncher spell.
-   * @param {string} word - The trigger word for the spell.
-   * @param {number} damage - The damage dealt by the projectile.
-   * @param {number} range - The range of the spell.
-   * @param {THREE.Group} projectileModel - The 3D model for the projectile.
+   * @param {any} word - The word.
+   * @param {any} damage - The damage.
+   * @param {any} range - The range.
+   * @param {any} projectileModel - The projectileModel.
    */
   constructor(word, damage, range, projectileModel) {
     super(word, damage, range);
@@ -24,11 +24,11 @@ export default class ProjectileLuncher extends Spell {
 
   /**
    * Shoots a projectile towards the target.
-   * @param {Object} target - The target position {x, y}.
-   * @param {Player} player - The player shooting the projectile.
-   * @param {THREE.Scene} scene - The scene to add the projectile to.
-   * @returns {Projectile} The created projectile.
    * @throws {Error} If no target is provided.
+   * @param {any} target - The target.
+   * @param {any} player - The player.
+   * @param {any} scene - The scene.
+   * @returns {Projectile} The created projectile.
    */
   shootProjectile(target, player, scene) {
     if (!target) {
@@ -66,9 +66,9 @@ export default class ProjectileLuncher extends Spell {
 
   /**
    * Activates the spell's effect, shooting at the closest enemy.
-   * @param {Object} closestEnemy - The closest enemy data {instance: Enemy, dist: number}.
-   * @param {Player} player - The player casting the spell.
-   * @param {THREE.Scene} scene - The scene to render the spell in.
+   * @param {any} closestEnemy - The closestEnemy.
+   * @param {any} player - The player.
+   * @param {any} scene - The scene.
    * @returns {Projectile|boolean} The created projectile, or false if out of range.
    */
   effect(closestEnemy, player, scene) {

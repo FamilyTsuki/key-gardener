@@ -3,10 +3,10 @@ import * as THREE from "three";
 export class StyxDecor {
 
     /**
-     * Builds.
- * @param {any} scene - The scene.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * Builds the decoration elements.
+     * @param {any} scene - The scene.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static build(scene, decorGroup, disposables) {
         const raft = new THREE.Group();
@@ -181,11 +181,11 @@ export class StyxDecor {
 
     /**
      * _creates the chaotic wall.
- * @param {string} width - The width.
- * @param {any} height - The height.
- * @param {any} wallMat - The wallMat.
- * @param {any} wallEdgesMat - The wallEdgesMat.
- * @param {boolean} disposables - The disposables.
+     * @param {any} width - The width.
+     * @param {any} height - The height.
+     * @param {any} wallMat - The wallMat.
+     * @param {any} wallEdgesMat - The wallEdgesMat.
+     * @param {any} disposables - The disposables.
      */
     static _createChaoticWall(width, height, wallMat, wallEdgesMat, disposables) {
         const segsX = Math.floor(width / 10);

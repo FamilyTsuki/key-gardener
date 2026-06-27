@@ -15,7 +15,7 @@ export default class AccountView extends AbstractView {
     /**
      * Creates an instance of AccountView.
      *
-     * @param {Object} params - The route parameters.
+     * @param {any} params - The params.
      */
     constructor(params) {
         super(params);
@@ -252,6 +252,9 @@ export default class AccountView extends AbstractView {
 
     /**
      * Creates a DOM element for a single stat item.
+     * @param {any} label - The label.
+     * @param {any} value - The value.
+     * @param {any} valueClass - The valueClass.
      */
     createStatItem(label, value, valueClass = "") {
         return el("div", { className: "stat-item" },
@@ -284,7 +287,7 @@ export default class AccountView extends AbstractView {
     /**
      * Cancels the username editing and restores the text span.
      *
-     * @param {HTMLInputElement} input - The input field for the username.
+     * @param {any} input - The input.
      */
     cancelEditUsername(input) {
         input.replaceWith(this.usernameSpan);
@@ -295,7 +298,7 @@ export default class AccountView extends AbstractView {
     /**
      * Saves the new username if it has changed and updates the display.
      *
-     * @param {HTMLInputElement} input - The input field containing the new username.
+     * @param {any} input - The input.
      * @returns {Promise<void>}
      */
     async saveUsername(input) {
@@ -341,7 +344,7 @@ export default class AccountView extends AbstractView {
     /**
      * Cancels the email editing and restores the text span.
      *
-     * @param {HTMLInputElement} input - The input field for the email.
+     * @param {any} input - The input.
      */
     cancelEditUsermail(input) {
         input.replaceWith(this.usermail);
@@ -352,7 +355,7 @@ export default class AccountView extends AbstractView {
     /**
      * Saves the new email if it has changed and updates the display.
      *
-     * @param {HTMLInputElement} input - The input field containing the new email.
+     * @param {any} input - The input.
      * @returns {Promise<void>}
      */
     async saveUsermail(input) {

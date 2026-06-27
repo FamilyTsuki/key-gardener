@@ -4,7 +4,7 @@ export class DuelDecorBuilder {
 
     /**
      * Builds the arena.
- * @param {any} scene - The scene.
+     * @param {any} scene - The scene.
      */
     static buildArena(scene) {
         const decorGroup = new THREE.Group();

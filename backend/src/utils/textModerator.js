@@ -24,7 +24,7 @@ class TextModerator {
 
     /**
      * Squashs the text.
- * @param {any} text - The text.
+     * @param {any} text - The text.
      */
     squashText(text) {
         if (!text) return "";
@@ -42,8 +42,8 @@ class TextModerator {
 
     /**
      * Checks the local self harm.
- * @param {any} squashedText - The squashedText.
- * @param {any} originalText - The originalText.
+     * @param {any} squashedText - The squashedText.
+     * @param {any} originalText - The originalText.
      */
     checkLocalSelfHarm(squashedText, originalText) {
         const lower = originalText.toLowerCase();
@@ -55,7 +55,7 @@ class TextModerator {
 
     /**
      * Has the inappropriate content.
- * @param {any} text - The text.
+     * @param {any} text - The text.
      */
     async hasInappropriateContent(text) {
         if (!text) return false;
@@ -76,7 +76,7 @@ class TextModerator {
 
     /**
      * Checks the with open a i l l m.
- * @param {any} text - The text.
+     * @param {any} text - The text.
      */
         async checkWithOpenAILLM(text) {
         const controller = new AbortController();

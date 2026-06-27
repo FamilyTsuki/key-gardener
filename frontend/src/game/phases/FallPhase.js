@@ -24,7 +24,7 @@ export class FallPhase extends GamePhase {
     }
 
     /**
-     * Initializes the .
+     * Initializes the fall phase.
      */
     async init() {
         const scene = this.gameEngine.scene;
@@ -85,7 +85,7 @@ export class FallPhase extends GamePhase {
     }
 
     /**
-     * Resizes.
+     * Resizes the viewport and camera aspect ratio.
      */
     resize() {
         const camera = this.gameEngine.camera;
@@ -118,8 +118,8 @@ export class FallPhase extends GamePhase {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the fall phase state.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (this.player && !this.player.isAlive()) return;
@@ -140,20 +140,20 @@ export class FallPhase extends GamePhase {
     }
 
     /**
-     * Draws.
+     * Draws the elements to the canvas or screen.
      */
     draw() {}
 
     /**
      * Handles the key down event/action.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         this.input.handleKeyDown(event);
     }
 
     /**
-     * Cleanups.
+     * Cleans up the fall phase resources.
      */
     cleanup() {
         if (this.windAmbiance) {

@@ -128,9 +128,9 @@ exports.login = async (req, res, next) => {
 
 /**
  * Handles authentication via Google OAuth2 credential validation.
- * @param {Object} req - The Express request object containing the Google ID token.
- * @param {Object} res - The Express response object.
- * @param {Function} next - The next middleware function.
+ * @param {any} req - The req.
+ * @param {any} res - The res.
+ * @param {any} next - The next.
  * @returns {Promise<void>}
  */
 exports.loginWithGoogle = async (req, res, next) => {
@@ -398,6 +398,9 @@ exports.updateSettings = async (req, res, next) => {
 
 /**
  * Delete the user account (Right to be Forgotten).
+ * @param {any} req - The req.
+ * @param {any} res - The res.
+ * @param {any} next - The next.
  */
 exports.deleteAccount = async (req, res, next) => {
     try {

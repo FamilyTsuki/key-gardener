@@ -8,9 +8,9 @@ export default class Spell {
 
   /**
    * Creates a new spell.
-   * @param {string} word - The word used to cast the spell.
-   * @param {number} damage - The amount of damage the spell deals.
-   * @param {number} range - The range of the spell.
+   * @param {any} word - The word.
+   * @param {any} damage - The damage.
+   * @param {any} range - The range.
    */
   constructor(word, damage, range) {
     this.word = word;

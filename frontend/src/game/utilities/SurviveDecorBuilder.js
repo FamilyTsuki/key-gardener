@@ -13,8 +13,8 @@ export class SurviveDecorBuilder {
     /**
      * Main entry point to build and add the requested decor to the scene.
      *
-     * @param {string} type - The type of decor to build (e.g., 'mine', 'styx', 'dungeon').
-     * @param {THREE.Scene} scene - The Three.js scene to attach the decor to.
+     * @param {any} type - The type.
+     * @param {any} scene - The scene.
      * @returns {{decorGroup: THREE.Group, update: Function, cleanup: Function}} Object containing the decor group, the update loop function, and the memory cleanup function.
      */
     static buildDecor(type, scene) {

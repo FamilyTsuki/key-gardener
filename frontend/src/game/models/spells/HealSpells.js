@@ -13,9 +13,9 @@ export default class HealSpell extends Spell {
 
     /**
      * Activates the healing effect on the player.
-     * @param {Enemy} closestEnemy - The closest enemy (unused for heal).
-     * @param {Player} player - The player to be healed.
-     * @param {THREE.Scene} scene - The scene to render visual effects in.
+     * @param {any} closestEnemy - The closestEnemy.
+     * @param {any} player - The player.
+     * @param {any} scene - The scene.
      * @returns {boolean} True if healed, false otherwise.
      */
     effect(closestEnemy, player, scene) {
@@ -34,7 +34,7 @@ export default class HealSpell extends Spell {
 
     /**
      * Triggers the visual healing effect around the player.
-     * @param {Player} player - The player instance.
+     * @param {any} player - The player.
      */
     triggerVisualEffect(player) {
         const geometry = new THREE.SphereGeometry(1.5, 32, 32);

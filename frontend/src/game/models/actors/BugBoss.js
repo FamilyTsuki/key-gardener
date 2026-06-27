@@ -117,11 +117,11 @@ export default class BugBoss extends Actor {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} playerPos - The playerPos.
- * @param {any} projectiles - The projectiles.
- * @param {any} bonks - The bonks.
+     * Updates the Bug Boss state and animations.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} playerPos - The playerPos.
+     * @param {any} projectiles - The projectiles.
+     * @param {any} bonks - The bonks.
      */
     update(deltaTime, playerPos, projectiles, bonks) {
         if (this.hp < 0) return;
@@ -141,7 +141,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Updates the death animation.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateDeathAnimation(deltaTime) {
         this.deathProgress += deltaTime / 1500;
@@ -168,7 +168,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Splaies the legs.
- * @param {any} t - The t.
+     * @param {any} t - The t.
      */
     splayLegs(t) {
         const legs = [
@@ -185,9 +185,9 @@ export default class BugBoss extends Actor {
 
     /**
      * Splaies the leg.
- * @param {string} side - The side.
- * @param {any} type - The type.
- * @param {any} t - The t.
+     * @param {any} side - The side.
+     * @param {any} type - The type.
+     * @param {any} t - The t.
      */
     splayLeg(side, type, t) {
         const prefix = side === "left" ? "" : "R_";
@@ -231,8 +231,8 @@ export default class BugBoss extends Actor {
 
     /**
      * Get the leg target direction.
- * @param {string} side - The side.
- * @param {any} type - The type.
+     * @param {any} side - The side.
+     * @param {any} type - The type.
      */
     getLegTargetDirection(side, type) {
         const xSign = side === "left" ? 1 : -1;
@@ -242,7 +242,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Updates the emerge animation.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateEmergeAnimation(deltaTime) {
         this.emergeProgress += deltaTime * 0.0018;
@@ -282,7 +282,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Updates the mesh position.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateMeshPosition(deltaTime) {
         this.totalTime += deltaTime * 0.001;
@@ -356,7 +356,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Resets the inactive claw bones.
- * @param {string} activeSide - The activeSide.
+     * @param {any} activeSide - The activeSide.
      */
     resetInactiveClawBones(activeSide) {
         const inactiveSide = activeSide === "left" ? "right" : "left";
@@ -385,7 +385,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Get the claw bones.
- * @param {string} side - The side.
+     * @param {any} side - The side.
      */
     getClawBones(side) {
         const prefix = side === "left" ? "" : "R_";
@@ -399,7 +399,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Get the claw initial transforms.
- * @param {string} side - The side.
+     * @param {any} side - The side.
      */
     getClawInitialTransforms(side) {
         const prefix = side === "left" ? "" : "R_";
@@ -428,8 +428,8 @@ export default class BugBoss extends Actor {
 
     /**
      * Applies the claw tip counter rotation.
- * @param {any} bones - The bones.
- * @param {any} transforms - The transforms.
+     * @param {any} bones - The bones.
+     * @param {any} transforms - The transforms.
      */
     applyClawTipCounterRotation(bones, transforms) {
         if (!bones.tip || !transforms.tipInParentInitial) {
@@ -444,9 +444,9 @@ export default class BugBoss extends Actor {
 
     /**
      * Applies the claw translations.
- * @param {any} bones - The bones.
- * @param {any} transforms - The transforms.
- * @param {any} stretch - The stretch.
+     * @param {any} bones - The bones.
+     * @param {any} transforms - The transforms.
+     * @param {any} stretch - The stretch.
      */
     applyClawTranslations(bones, transforms, stretch) {
         if (bones.joint0 && transforms.joint0Pos) {
@@ -462,9 +462,9 @@ export default class BugBoss extends Actor {
 
     /**
      * Solves the i k.
- * @param {any} bones - The bones.
- * @param {any} targetWorldPos - The targetWorldPos.
- * @param {any} iterations - The iterations.
+     * @param {any} bones - The bones.
+     * @param {any} targetWorldPos - The targetWorldPos.
+     * @param {any} iterations - The iterations.
      */
     solveIK(bones, targetWorldPos, iterations = 8) {
         const tipWorldPos = new THREE.Vector3();
@@ -594,11 +594,11 @@ export default class BugBoss extends Actor {
 
     /**
      * Calculates the claw target and stretch.
- * @param {any} elapsed - The elapsed.
- * @param {any} initialTipWorldPos - The initialTipWorldPos.
- * @param {any} targetWorldPos - The targetWorldPos.
- * @param {any} targetWorldPosAbove - The targetWorldPosAbove.
- * @param {any} targetStretch - The targetStretch.
+     * @param {any} elapsed - The elapsed.
+     * @param {any} initialTipWorldPos - The initialTipWorldPos.
+     * @param {any} targetWorldPos - The targetWorldPos.
+     * @param {any} targetWorldPosAbove - The targetWorldPosAbove.
+     * @param {any} targetStretch - The targetStretch.
      */
     calculateClawTargetAndStretch(elapsed, initialTipWorldPos, targetWorldPos, targetWorldPosAbove, targetStretch) {
         const warning = this.currentWarningDuration || 0.5;
@@ -642,10 +642,10 @@ export default class BugBoss extends Actor {
 
     /**
      * Updates the attack timers.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} playerPos - The playerPos.
- * @param {any} projectiles - The projectiles.
- * @param {any} bonks - The bonks.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} playerPos - The playerPos.
+     * @param {any} projectiles - The projectiles.
+     * @param {any} bonks - The bonks.
      */
     updateAttackTimers(deltaTime, playerPos, projectiles, bonks) {
         this.stateTimer += deltaTime;
@@ -678,8 +678,8 @@ export default class BugBoss extends Actor {
 
     /**
      * Attacks the fireball.
- * @param {any} playerPos - The playerPos.
- * @param {any} projectiles - The projectiles.
+     * @param {any} playerPos - The playerPos.
+     * @param {any} projectiles - The projectiles.
      */
     attackFireball(playerPos, projectiles) {
         const isEnraged = this.hp < this.hpMax / 2;
@@ -726,8 +726,8 @@ export default class BugBoss extends Actor {
 
     /**
      * Attacks the claw.
- * @param {any} playerPos - The playerPos.
- * @param {any} bonks - The bonks.
+     * @param {any} playerPos - The playerPos.
+     * @param {any} bonks - The bonks.
      */
     attackClaw(playerPos, bonks) {
         console.log("Claw target coordinates:", playerPos.x, playerPos.y);
@@ -760,7 +760,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Checks the collision.
- * @param {any} other - The other.
+     * @param {any} other - The other.
      */
     checkCollision(other) {
         return (
@@ -772,7 +772,7 @@ export default class BugBoss extends Actor {
     }
 
     /**
-     * Dies.
+     * Handles the death logic of the entity.
      */
     die() {
         const bossUI = document.getElementById("boss-ui");
@@ -781,7 +781,7 @@ export default class BugBoss extends Actor {
 
     /**
      * Takes the damage.
- * @param {any} nb - The nb.
+     * @param {any} nb - The nb.
      */
     takeDamage(nb) {
         if (this.isDying || this.hp < 0) return;

@@ -17,11 +17,11 @@ export class DuelRenderer {
     }
 
     /**
-     * Initializes the .
- * @param {any} scene - The scene.
- * @param {any} camera - The camera.
- * @param {any} localData - The localData.
- * @param {any} remoteData - The remoteData.
+     * Initializes the duel renderer.
+     * @param {any} scene - The scene.
+     * @param {any} camera - The camera.
+     * @param {any} localData - The localData.
+     * @param {any} remoteData - The remoteData.
      */
     async init(scene, camera, localData, remoteData) {
         this.decor = DuelDecorBuilder.buildArena(scene);
@@ -68,7 +68,7 @@ export class DuelRenderer {
 
     /**
      * Updates the camera.
- * @param {any} camera - The camera.
+     * @param {any} camera - The camera.
      */
     updateCamera(camera) {
         camera.position.set(0, 11, 13.0);
@@ -77,7 +77,7 @@ export class DuelRenderer {
 
     /**
      * Creates the stun visual.
- * @param {any} playerModel - The playerModel.
+     * @param {any} playerModel - The playerModel.
      */
     createStunVisual(playerModel) {
         const group = new THREE.Group();
@@ -98,8 +98,8 @@ export class DuelRenderer {
 
     /**
      * Updates the stun visual.
- * @param {boolean} visual - The visual.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} visual - The visual.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateStunVisual(visual, deltaTime) {
         if (!visual) return;
@@ -111,7 +111,7 @@ export class DuelRenderer {
 
     /**
      * Creates the jail visual.
- * @param {any} playerModel - The playerModel.
+     * @param {any} playerModel - The playerModel.
      */
     createJailVisual(playerModel) {
         const cageGeo = new THREE.CylinderGeometry(1.2, 1.2, 2.5, 8, 1, true);
@@ -124,8 +124,8 @@ export class DuelRenderer {
 
     /**
      * Updates the jail visual.
- * @param {boolean} visual - The visual.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} visual - The visual.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateJailVisual(visual, deltaTime) {
         if (!visual) return;
@@ -136,8 +136,8 @@ export class DuelRenderer {
 
     /**
      * Plaies the hit animation.
- * @param {any} model - The model.
- * @param {boolean} isLocal - The isLocal.
+     * @param {any} model - The model.
+     * @param {any} isLocal - The isLocal.
      */
     playHitAnimation(model, isLocal) {
         if (!model) return;
@@ -155,9 +155,9 @@ export class DuelRenderer {
     }
 
     /**
-     * Draws.
- * @param {any} localPlayer - The localPlayer.
- * @param {any} remotePlayer - The remotePlayer.
+     * Draws the elements to the canvas or screen.
+     * @param {any} localPlayer - The localPlayer.
+     * @param {any} remotePlayer - The remotePlayer.
      */
     draw(localPlayer, remotePlayer) {
         if (this.localKeyboard && localPlayer) {
@@ -176,8 +176,8 @@ export class DuelRenderer {
     }
 
     /**
-     * Cleanups.
- * @param {any} scene - The scene.
+     * Cleans up the duel renderer resources.
+     * @param {any} scene - The scene.
      */
     cleanup(scene) {
         if (this.localKeyboardPivot) scene.remove(this.localKeyboardPivot);

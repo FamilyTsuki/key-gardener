@@ -4,7 +4,8 @@
 export class DeviceCapabilitiesDetector {
     /**
      * Initializes the detector for a set of target elements.
-     * @param {string} targetElementIdOrSelector - The ID or CSS selector of the target elements to toggle visibility.
+     * @param {any} targetElementIdOrSelector - The targetElementIdOrSelector.
+     * @param {any} additionalCheck - The additionalCheck.
      */
     constructor(targetElementIdOrSelector, additionalCheck = () => true) {
         this.targetElements = [];

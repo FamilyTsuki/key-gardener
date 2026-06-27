@@ -80,7 +80,7 @@ export default class Player extends Actor {
 
     /**
      * Sets the hp.
- * @param {any} val - The hp value.
+     * @param {any} val - The val.
      */
     set hp(val) { this.state.hp = val; }
 
@@ -121,13 +121,13 @@ export default class Player extends Actor {
 
     /**
      * Sets the x.
- * @param {any} val - The x value.
+     * @param {any} val - The val.
      */
     set x(val) { this.movement.x = val; }
 
     /**
      * Sets the y.
- * @param {any} val - The y value.
+     * @param {any} val - The val.
      */
     set y(val) { this.movement.y = val; }
     
@@ -164,7 +164,7 @@ export default class Player extends Actor {
 
     /**
      * Sets the offset y.
- * @param {any} val - The offset y value.
+     * @param {any} val - The val.
      */
     set offsetY(val) { this.movement.offsetY = val; }
     
@@ -180,7 +180,7 @@ export default class Player extends Actor {
 
     /**
      * Sets the allow speed up.
- * @param {any} val - The allow speed up value.
+     * @param {any} val - The val.
      */
     set allowSpeedUp(val) { this.movement.allowSpeedUp = val; }
 
@@ -191,7 +191,7 @@ export default class Player extends Actor {
 
     /**
      * Sets the movement duration.
- * @param {any} val - The movement duration value.
+     * @param {any} val - The val.
      */
     set movementDuration(val) { this.movement.movementDuration = val; }
 
@@ -207,7 +207,7 @@ export default class Player extends Actor {
 
     /**
      * Sets the spacing x.
- * @param {any} val - The spacing x value.
+     * @param {any} val - The val.
      */
     set spacingX(val) { this.renderer.spacingX = val; }
 
@@ -218,7 +218,7 @@ export default class Player extends Actor {
 
     /**
      * Sets the spacing z.
- * @param {any} val - The spacing z value.
+     * @param {any} val - The val.
      */
     set spacingZ(val) { this.renderer.spacingZ = val; }
 
@@ -229,7 +229,7 @@ export default class Player extends Actor {
 
     /**
      * Sets the offset x.
- * @param {any} val - The offset x value.
+     * @param {any} val - The val.
      */
     set offsetX(val) { this.renderer.offsetX = val; }
 
@@ -240,7 +240,7 @@ export default class Player extends Actor {
 
     /**
      * Sets the offset z.
- * @param {any} val - The offset z value.
+     * @param {any} val - The val.
      */
     set offsetZ(val) { this.renderer.offsetZ = val; }
 
@@ -252,7 +252,7 @@ export default class Player extends Actor {
     }
 
     /**
-     * Destroies.
+     * Destroys the player instance and cleans up resources.
      */
     destroy() {
         if (this.shieldGroup) {
@@ -276,18 +276,18 @@ export default class Player extends Actor {
     }
 
     /**
-     * Attacks.
- * @param {any} word - The word.
- * @param {any} closestEnemy - The closestEnemy.
+     * Triggers the attack action.
+     * @param {any} word - The word.
+     * @param {any} closestEnemy - The closestEnemy.
      */
     attack(word, closestEnemy = null) {
         return this.spells.attack(word, closestEnemy, this, this.scene);
     }
 
     /**
-     * Moves.
- * @param {any} newPosition - The newPosition.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * Updates the movement of the entity.
+     * @param {any} newPosition - The newPosition.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     move(newPosition, keyboardLayout = null) {
         this.movement.checkForWormBlockade(newPosition, keyboardLayout, this.enemiesManager);
@@ -299,9 +299,9 @@ export default class Player extends Actor {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * Updates the player state and logic.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     update(deltaTime = 0.0166, keyboardLayout = null) {
         if (!this.handleDeathState()) return;
@@ -341,7 +341,7 @@ export default class Player extends Actor {
 
     /**
      * Handles the hp changed event/action.
- * @param {any} data - The data.
+     * @param {any} data - The data.
      */
     handleHpChanged(data) {
         this.ui.updateHpBar(data.hp, data.hpMax);
@@ -357,9 +357,9 @@ export default class Player extends Actor {
 
     /**
      * Executes the idle repel.
- * @param {any} worm - The worm.
- * @param {any} repelKey - The repelKey.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} worm - The worm.
+     * @param {any} repelKey - The repelKey.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     executeIdleRepel(worm, repelKey, keyboardLayout) {
         if (worm.type === "hazard_worm") this.damage(20, "Brûlé par un ver informatique");
@@ -386,7 +386,7 @@ export default class Player extends Actor {
 
     /**
      * Handles the idle tile height event/action.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     handleIdleTileHeight(keyboardLayout) {
         if (this.movement.isMoving || !keyboardLayout) return;
@@ -399,16 +399,16 @@ export default class Player extends Actor {
 
     /**
      * Applies the crouch.
- * @param {any} percentage - The percentage.
+     * @param {any} percentage - The percentage.
      */
     applyCrouch(percentage) {
         this.renderer.applyCrouch(percentage);
     }
 
     /**
-     * Damages.
- * @param {any} amount - The amount.
- * @param {any} reason - The reason.
+     * Applies damage to the entity.
+     * @param {any} amount - The amount.
+     * @param {any} reason - The reason.
      */
     damage(amount, reason = null) {
         if (this.state.isInvulnerable && amount !== Infinity) return;
@@ -428,8 +428,8 @@ export default class Player extends Actor {
     }
 
     /**
-     * Heals.
- * @param {any} amount - The amount.
+     * Restores health to the entity.
+     * @param {any} amount - The amount.
      */
     heal(amount) {
         this.state.heal(amount);
@@ -437,8 +437,8 @@ export default class Player extends Actor {
 
     /**
      * Handles the key press event/action.
- * @param {any} key - The key.
- * @param {any} findClosestEnemy - The findClosestEnemy.
+     * @param {any} key - The key.
+     * @param {any} findClosestEnemy - The findClosestEnemy.
      */
     handleKeyPress(key, findClosestEnemy) {
         return this.spells.handleKeyPress(key);
@@ -446,7 +446,7 @@ export default class Player extends Actor {
 
     /**
      * Activates the shield.
- * @param {any} amount - The amount.
+     * @param {any} amount - The amount.
      */
     activateShield(amount) {
         this.shieldEnergy = Math.min(300, this.shieldEnergy + amount);
@@ -492,7 +492,7 @@ export default class Player extends Actor {
 
     /**
      * Updates the shield.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateShield(deltaTime) {
         if (this.shieldEnergy <= 0) {

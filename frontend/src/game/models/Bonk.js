@@ -8,11 +8,12 @@ import { AudioManager } from "../managers/AudioManager.js";
 export default class Bonk extends DamageObject {
     /**
      * Creates a new Bonk attack.
-     * @param {{x: number, y: number}} position - The position of the attack.
-     * @param {{width: number, height: number}} size - The size of the attack area.
-     * @param {number} damage - The amount of damage dealt.
-     * @param {THREE.Scene} scene - The THREE.js scene.
-     * @param {number} spacing - The spacing multiplier for the position.
+     * @param {any} position - The position.
+     * @param {any} size - The size.
+     * @param {any} damage - The damage.
+     * @param {any} scene - The scene.
+     * @param {any} spacing - The spacing.
+     * @param {any} duration - The duration.
      */
     constructor(position, size, damage, scene, spacing, duration = 500) {
         super(position, size, damage);
@@ -43,8 +44,8 @@ export default class Bonk extends DamageObject {
 
     /**
      * Updates the Bonk attack state.
-     * @param {number} deltaTime - The time elapsed since the last update.
-     * @param {Object} player - The player object to check for collisions.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} player - The player.
      */
     update(deltaTime, player) {
         this.timer += deltaTime;
@@ -86,7 +87,7 @@ export default class Bonk extends DamageObject {
 
     /**
      * Draws the Bonk attack area on the 2D canvas.
-     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+     * @param {any} ctx - The ctx.
      */
     draw(ctx) {
         ctx.save();

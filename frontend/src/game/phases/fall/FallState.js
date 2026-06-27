@@ -18,8 +18,8 @@ export class FallState {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the fall game state.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (!this.isReady) return 0;

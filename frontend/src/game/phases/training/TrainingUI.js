@@ -118,9 +118,9 @@ export class TrainingUI {
 
     /**
      * Shows the prompt.
- * @param {any} message - The message.
- * @param {any} wordsToType - The wordsToType.
- * @param {any} currentTyped - The currentTyped.
+     * @param {any} message - The message.
+     * @param {any} wordsToType - The wordsToType.
+     * @param {any} currentTyped - The currentTyped.
      */
     showPrompt(message, wordsToType, currentTyped) {
         this.container.classList.remove("training-ui-hidden");
@@ -156,9 +156,9 @@ export class TrainingUI {
 
     /**
      * Shows the exercise.
- * @param {any} targetWord - The targetWord.
- * @param {any} currentTyped - The currentTyped.
- * @param {any} progressText - The progressText.
+     * @param {any} targetWord - The targetWord.
+     * @param {any} currentTyped - The currentTyped.
+     * @param {any} progressText - The progressText.
      */
     showExercise(targetWord, currentTyped, progressText) {
         this.container.classList.remove("training-ui-hidden");
@@ -202,14 +202,14 @@ export class TrainingUI {
     }
 
     /**
-     * Hides.
+     * Hides the UI component.
      */
     hide() {
         this.container.classList.add("training-ui-hidden");
     }
 
     /**
-     * Destroies.
+     * Destroys the training UI and cleans up resources.
      */
     destroy() {
         if (this.container && this.container.parentNode) {

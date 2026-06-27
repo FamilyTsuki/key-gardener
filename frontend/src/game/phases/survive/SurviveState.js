@@ -21,9 +21,9 @@ export class SurviveState {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} gameEngine - The gameEngine.
+     * Updates the survive game state.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} gameEngine - The gameEngine.
      */
     update(deltaTime, gameEngine) {
         if (!this.firstSpellCinematicTriggered && gameEngine.unlockedSpells && gameEngine.unlockedSpells.length === 0) {
@@ -65,7 +65,7 @@ export class SurviveState {
 
     /**
      * Triggers the first spell cinematic.
- * @param {any} gameEngine - The gameEngine.
+     * @param {any} gameEngine - The gameEngine.
      */
     triggerFirstSpellCinematic(gameEngine) {
         gameEngine.isPaused = true;
@@ -95,7 +95,7 @@ export class SurviveState {
 
     /**
      * Checks the boss death.
- * @param {any} gameEngine - The gameEngine.
+     * @param {any} gameEngine - The gameEngine.
      */
     checkBossDeath(gameEngine) {
         if (this.phase.enemies && this.phase.enemies.boss && this.phase.enemies.boss.isDead && !this.isTransitioningToNextLevel) {
@@ -120,7 +120,7 @@ export class SurviveState {
 
     /**
      * Process the story events.
- * @param {any} gameEngine - The gameEngine.
+     * @param {any} gameEngine - The gameEngine.
      */
     processStoryEvents(gameEngine) {
         if (!this.storyEvents) return;
@@ -151,7 +151,7 @@ export class SurviveState {
 
     /**
      * Executes the event action.
- * @param {Event} eventToTrigger - The eventToTrigger.
+     * @param {any} eventToTrigger - The eventToTrigger.
      */
     executeEventAction(eventToTrigger) {
         if (eventToTrigger.actionType === "heal" && this.phase.player) {
@@ -179,7 +179,7 @@ export class SurviveState {
 
     /**
      * Applies the spawner config.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     applySpawnerConfig(event) {
         const spawner = this.phase.spawner;
@@ -201,7 +201,7 @@ export class SurviveState {
 
     /**
      * Triggers the phase transition.
- * @param {any} gameEngine - The gameEngine.
+     * @param {any} gameEngine - The gameEngine.
      */
     triggerPhaseTransition(gameEngine) {
         this.isTransitioningToNextLevel = true;
@@ -223,7 +223,7 @@ export class SurviveState {
 
     /**
      * Triggers the earth boss cinematic.
- * @param {any} gameEngine - The gameEngine.
+     * @param {any} gameEngine - The gameEngine.
      */
     triggerEarthBossCinematic(gameEngine) {
         gameEngine.isPaused = true;
@@ -379,8 +379,8 @@ export class SurviveState {
 
     /**
      * Spawns the rescue shield.
- * @param {any} position - The position.
- * @param {any} gameEngine - The gameEngine.
+     * @param {any} position - The position.
+     * @param {any} gameEngine - The gameEngine.
      */
     spawnRescueShield(position, gameEngine) {
         const rescueGeo = new THREE.SphereGeometry(3.2, 32, 32);
@@ -455,9 +455,9 @@ export class SurviveState {
 
     /**
      * Triggers the rescue phase transition.
- * @param {any} gameEngine - The gameEngine.
- * @param {any} shield - The shield.
- * @param {any} material - The material.
+     * @param {any} gameEngine - The gameEngine.
+     * @param {any} shield - The shield.
+     * @param {any} material - The material.
      */
     triggerRescuePhaseTransition(gameEngine, shield, material) {
         const overlay = document.createElement("div");

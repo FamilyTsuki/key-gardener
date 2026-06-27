@@ -10,8 +10,8 @@ export class PlayerUI {
 
     /**
      * Updates the hp bar.
- * @param {any} hp - The hp.
- * @param {any} hpMax - The hpMax.
+     * @param {any} hp - The hp.
+     * @param {any} hpMax - The hpMax.
      */
     updateHpBar(hp, hpMax) {
         if (hp === Infinity) {
@@ -37,7 +37,7 @@ export class PlayerUI {
 
     /**
      * Updates the hp color.
- * @param {any} ratio - The ratio.
+     * @param {any} ratio - The ratio.
      */
     updateHpColor(ratio) {
         if (ratio > 0.3) {
@@ -60,9 +60,9 @@ export class PlayerUI {
 
     /**
      * Shows the floating text.
- * @param {any} position - The position.
- * @param {any} amount - The amount.
- * @param {any} type - The type.
+     * @param {any} position - The position.
+     * @param {any} amount - The amount.
+     * @param {any} type - The type.
      */
     showFloatingText(position, amount, type) {
         if (!position) return;
@@ -87,8 +87,8 @@ export class PlayerUI {
 
     /**
      * Shows the game over screen.
- * @param {any} reason - The reason.
- * @param {Function} onDeathCallback - The onDeathCallback.
+     * @param {any} reason - The reason.
+     * @param {any} onDeathCallback - The onDeathCallback.
      */
     showGameOverScreen(reason, onDeathCallback) {
         const container = document.querySelector(".game-container");
@@ -102,7 +102,7 @@ export class PlayerUI {
 
     /**
      * Builds the game over d o m.
- * @param {any} reason - The reason.
+     * @param {any} reason - The reason.
      */
     buildGameOverDOM(reason) {
         const screen = document.createElement("div");
@@ -128,9 +128,9 @@ export class PlayerUI {
 
     /**
      * Schedules the game over transitions.
- * @param {any} screen - The screen.
- * @param {any} container - The container.
- * @param {Function} onDeathCallback - The onDeathCallback.
+     * @param {any} screen - The screen.
+     * @param {any} container - The container.
+     * @param {any} onDeathCallback - The onDeathCallback.
      */
     scheduleGameOverTransitions(screen, container, onDeathCallback) {
         setTimeout(() => {

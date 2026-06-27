@@ -21,7 +21,7 @@ export class HoleEvent extends WorldEvent {
 
     /**
      * Mutates the map layout to create the hole by hiding the mesh.
-     * @param {Array} mapLayout - The raw map layout array.
+     * @param {any} mapLayout - The mapLayout.
      */
     modifyLayout(mapLayout) {
         if (!mapLayout || mapLayout.length === 0) return;
@@ -40,8 +40,8 @@ export class HoleEvent extends WorldEvent {
 
     /**
      * Initializes the hole event.
-     * @param {WorldPhase} worldPhase - The world phase instance.
-     * @param {THREE.Scene} scene - The scene instance.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} scene - The scene.
      * @returns {Promise<void>}
      */
     async init(worldPhase, scene) {
@@ -61,8 +61,8 @@ export class HoleEvent extends WorldEvent {
 
     /**
      * Updates the state of the hole event, checking player proximity.
-     * @param {WorldPhase} worldPhase - The world phase instance.
-     * @param {number} deltaTime - Time elapsed since last frame.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(worldPhase, deltaTime) {
         if (!worldPhase.player || !worldPhase.worldMap || !this.holeTileId) return;
@@ -85,8 +85,8 @@ export class HoleEvent extends WorldEvent {
 
     /**
      * Handles keyboard input during the hole interaction.
-     * @param {WorldPhase} worldPhase - The world phase instance.
-     * @param {KeyboardEvent} event - The keyboard event.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} event - The event.
      * @returns {boolean} True if the event was intercepted, false otherwise.
      */
     handleKeyDown(worldPhase, event) {
@@ -125,7 +125,8 @@ export class HoleEvent extends WorldEvent {
 
     /**
      * Animates the player falling into the hole.
-     * @param {Player} player - The player to animate.
+     * @param {any} player - The player.
+     * @param {any} holeTile - The holeTile.
      * @returns {Promise<void>} Resolves when the animation completes.
      */
     animateFall(player, holeTile) {
@@ -169,7 +170,7 @@ export class HoleEvent extends WorldEvent {
 
     /**
      * Cleans up the UI overlay and timeouts.
-     * @param {WorldPhase} worldPhase - The world phase instance.
+     * @param {any} worldPhase - The worldPhase.
      */
     cleanup(worldPhase) {
         if (this.uiOverlay) {
@@ -191,7 +192,7 @@ export class HoleEvent extends WorldEvent {
 
     /**
      * Shows a prompt indicating the player can enter the portal.
-     * @param {WorldPhase} worldPhase - The world phase instance.
+     * @param {any} worldPhase - The worldPhase.
      */
     showEnterPrompt(worldPhase) {
         if (this.enterPromptOverlay) return;
@@ -218,7 +219,7 @@ export class HoleEvent extends WorldEvent {
 
     /**
      * Hides the enter prompt.
-     * @param {WorldPhase} worldPhase - The world phase instance.
+     * @param {any} worldPhase - The worldPhase.
      */
     hideEnterPrompt(worldPhase) {
         if (this.enterPromptOverlay) {

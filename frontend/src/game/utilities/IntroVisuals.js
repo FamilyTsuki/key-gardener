@@ -4,7 +4,7 @@
 export class AmbientBackground {
     /**
      * Constructs an AmbientBackground instance.
-     * @param {HTMLElement} parentContainer - The DOM element to attach the canvas to.
+     * @param {any} parentContainer - The parentContainer.
      */
     constructor(parentContainer) {
         this.canvas = document.createElement("canvas");
@@ -87,7 +87,7 @@ export class AmbientBackground {
 export class GlitchEffect {
     /**
      * Constructs a GlitchEffect instance.
-     * @param {HTMLElement} parentContainer - The DOM element to attach the canvas to.
+     * @param {any} parentContainer - The parentContainer.
      */
     constructor(parentContainer) {
         this.canvas = document.createElement("canvas");

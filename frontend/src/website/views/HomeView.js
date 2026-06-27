@@ -21,8 +21,8 @@ export default class HomeView extends AbstractView {
 
     /**
      * Renders the hologram.
- * @param {any} imgSrc - The imgSrc.
- * @param {any} altText - The altText.
+     * @param {any} imgSrc - The imgSrc.
+     * @param {any} altText - The altText.
      */
     renderHologram(imgSrc, altText) {
         const img = el("img", {
@@ -47,7 +47,7 @@ export default class HomeView extends AbstractView {
     }
 
     /**
-     * Renders.
+     * Renders the home view.
      */
     async render() {
         this.isCurrentView = true;
@@ -200,7 +200,7 @@ export default class HomeView extends AbstractView {
     }
 
     /**
-     * Initializes the .
+     * Initializes the home view.
      */
     async init() {
         this.caveAnimation = new CaveAnimation(null);
@@ -348,7 +348,7 @@ export default class HomeView extends AbstractView {
     }
 
     /**
-     * Destroies.
+     * Destroys the home view and cleans up resources.
      */
     destroy() {
         this.isCurrentView = false;

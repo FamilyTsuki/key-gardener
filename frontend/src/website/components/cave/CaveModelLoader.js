@@ -284,11 +284,11 @@ export class CaveModelLoader {
 
     /**
      * Positions the model on wall.
- * @param {any} model - The model.
- * @param {any} minNormY - The minNormY.
- * @param {any} maxNormY - The maxNormY.
- * @param {any} seed - The seed.
- * @param {boolean} isBone - The isBone.
+     * @param {any} model - The model.
+     * @param {any} minNormY - The minNormY.
+     * @param {any} maxNormY - The maxNormY.
+     * @param {any} seed - The seed.
+     * @param {any} isBone - The isBone.
      */
     positionModelOnWall(model, minNormY = 0, maxNormY = 1, seed = -1, isBone = true) {
         const prng = (s) => {

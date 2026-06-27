@@ -3,10 +3,10 @@ import * as THREE from "three";
 export class MineDecor {
 
     /**
-     * Builds.
- * @param {any} scene - The scene.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * Builds the decoration elements.
+     * @param {any} scene - The scene.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static build(scene, decorGroup, disposables) {
         scene.background = new THREE.Color(0x222222);
@@ -43,8 +43,8 @@ export class MineDecor {
 
     /**
      * _builds the mine clutter.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static _buildMineClutter(decorGroup, disposables) {
         const woodMat = new THREE.MeshStandardMaterial({ 
@@ -143,8 +143,8 @@ export class MineDecor {
 
     /**
      * _builds the mine elevator.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static _buildMineElevator(decorGroup, disposables) {
         const brassMat = new THREE.MeshStandardMaterial({ 
@@ -212,11 +212,11 @@ export class MineDecor {
 
     /**
      * _builds the mine grates.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
- * @param {any} brassMat - The brassMat.
- * @param {any} beamHGeo - The beamHGeo.
- * @param {any} beamDGeo - The beamDGeo.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
+     * @param {any} brassMat - The brassMat.
+     * @param {any} beamHGeo - The beamHGeo.
+     * @param {any} beamDGeo - The beamDGeo.
      */
     static _buildMineGrates(decorGroup, disposables, brassMat, beamHGeo, beamDGeo) {
         const grateMat = new THREE.MeshStandardMaterial({
@@ -289,7 +289,7 @@ export class MineDecor {
 
     /**
      * _builds the mine lighting.
- * @param {any} decorGroup - The decorGroup.
+     * @param {any} decorGroup - The decorGroup.
      */
     static _buildMineLighting(decorGroup) {
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.2); 
@@ -307,8 +307,8 @@ export class MineDecor {
 
     /**
      * _builds the mine particles.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static _buildMineParticles(decorGroup, disposables) {
         const particleCount = 40;
@@ -332,8 +332,8 @@ export class MineDecor {
 
     /**
      * _builds the mine walls.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static _buildMineWalls(decorGroup, disposables) {
         const wallMat = new THREE.MeshStandardMaterial({ 
@@ -374,11 +374,11 @@ export class MineDecor {
 
     /**
      * _creates the chaotic wall.
- * @param {string} width - The width.
- * @param {any} height - The height.
- * @param {any} wallMat - The wallMat.
- * @param {any} wallEdgesMat - The wallEdgesMat.
- * @param {boolean} disposables - The disposables.
+     * @param {any} width - The width.
+     * @param {any} height - The height.
+     * @param {any} wallMat - The wallMat.
+     * @param {any} wallEdgesMat - The wallEdgesMat.
+     * @param {any} disposables - The disposables.
      */
     static _createChaoticWall(width, height, wallMat, wallEdgesMat, disposables) {
         const segsX = Math.floor(width / 10);

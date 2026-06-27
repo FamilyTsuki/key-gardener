@@ -9,7 +9,7 @@ export class TunnelAnimation {
     /**
      * Initializes the tunnel animation within the provided container.
      *
-     * @param {HTMLElement} [containerElement] - The DOM element where the canvas will be appended. If not provided, appends to document.body.
+     * @param {any} containerElement - The containerElement.
      */
     static init(containerElement) {
         gsap.registerPlugin(ScrollTrigger);

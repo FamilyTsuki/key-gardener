@@ -6,7 +6,7 @@ import { el } from "../utils/DOMBuilder.js";
 export default class AbstractView {
     /**
      * Initializes the view with routing parameters.
-     * @param {Object} params - The routing parameters.
+     * @param {any} params - The params.
      */
     constructor(params) {
         this.params = params;
@@ -14,7 +14,7 @@ export default class AbstractView {
 
     /**
      * Sets the document title.
-     * @param {string} title - The title for the page.
+     * @param {any} title - The title.
      */
     setTitle(title) {
         const gameName = window.GAME_NAME;
@@ -27,7 +27,7 @@ export default class AbstractView {
 
     /**
      * Sets the meta description for SEO.
-     * @param {string} description - The description for the page.
+     * @param {any} description - The description.
      */
     setMetaDescription(description) {
         let meta = document.querySelector('meta[name="description"]');

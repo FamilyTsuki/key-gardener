@@ -6,10 +6,10 @@ export default class ShieldSpell extends Spell {
     }
 
     /**
-     * Effects.
- * @param {any} closestEnemy - The closestEnemy.
- * @param {any} player - The player.
- * @param {any} scene - The scene.
+     * Applies the spell effects.
+     * @param {any} closestEnemy - The closestEnemy.
+     * @param {any} player - The player.
+     * @param {any} scene - The scene.
      */
     effect(closestEnemy, player, scene) {
         if (player) {

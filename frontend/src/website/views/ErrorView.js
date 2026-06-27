@@ -12,7 +12,7 @@ export default class ErrorView extends AbstractView {
     }
 
     /**
-     * Renders.
+     * Renders the error view.
      */
     async render() {
         this.tunnelContainer = el("div", { 
@@ -38,7 +38,7 @@ export default class ErrorView extends AbstractView {
     }
 
     /**
-     * Initializes the .
+     * Initializes the error view.
      */
     async init() {
         if (this.tunnelContainer) {
@@ -48,7 +48,7 @@ export default class ErrorView extends AbstractView {
     }
 
     /**
-     * Destroies.
+     * Destroys the error view and cleans up resources.
      */
     destroy() {
         if (this.animation && typeof this.animation.destroy === 'function') {

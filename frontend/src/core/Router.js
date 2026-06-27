@@ -61,7 +61,7 @@ export default class Router {
     }
     /**
      * Navigates to a specific URL without reloading the page.
-     * @param {string} url - The target URL.
+     * @param {any} url - The url.
      */
     navigateTo(url) {
         history.pushState(null, null, url);

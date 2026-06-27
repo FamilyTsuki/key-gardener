@@ -21,7 +21,7 @@ export class EnemyRenderer3D {
 
     /**
      * Creates the spawn zone.
- * @param {any} position - The position.
+     * @param {any} position - The position.
      */
     createSpawnZone(position) {
         const geoWidth = 1.0 * this.spacing * 0.9;
@@ -41,7 +41,7 @@ export class EnemyRenderer3D {
 
     /**
      * Loads the model.
- * @param {any} modelArg - The modelArg.
+     * @param {any} modelArg - The modelArg.
      */
     loadModel(modelArg) {
         const resolveModel = (gltfOrScene) => {
@@ -81,7 +81,7 @@ export class EnemyRenderer3D {
 
     /**
      * Updates the animations.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateAnimations(deltaTime) {
         if (this.animationMixer) {
@@ -91,8 +91,8 @@ export class EnemyRenderer3D {
 
     /**
      * Renders the spawn animation.
- * @param {any} movementState - The movementState.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} movementState - The movementState.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     renderSpawnAnimation(movementState, keyboardLayout) {
         if (this.isWorm) {
@@ -104,8 +104,8 @@ export class EnemyRenderer3D {
 
     /**
      * Renders the worm spawn.
- * @param {any} movementState - The movementState.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} movementState - The movementState.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     renderWormSpawn(movementState, keyboardLayout) {
         const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === movementState.actualKey) : null;
@@ -135,8 +135,8 @@ export class EnemyRenderer3D {
 
     /**
      * Renders the bug spawn.
- * @param {any} movementState - The movementState.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} movementState - The movementState.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     renderBugSpawn(movementState, keyboardLayout) {
         const currentX = movementState.spawnSource.x + (movementState.position.x - movementState.spawnSource.x) * movementState.spawnProgress;
@@ -156,8 +156,8 @@ export class EnemyRenderer3D {
 
     /**
      * Finalizes the spawn.
- * @param {any} movementState - The movementState.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} movementState - The movementState.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     finalizeSpawn(movementState, keyboardLayout) {
         this.mesh.position.set(movementState.position.x * this.spacing, 0, movementState.position.y * this.spacing);
@@ -175,9 +175,9 @@ export class EnemyRenderer3D {
 
     /**
      * Renders the movement.
- * @param {any} movementState - The movementState.
- * @param {any} progression - The progression.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} movementState - The movementState.
+     * @param {any} progression - The progression.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     renderMovement(movementState, progression, keyboardLayout) {
         this.mesh.position.set(movementState.position.x * this.spacing, 0, movementState.position.y * this.spacing);
@@ -203,8 +203,8 @@ export class EnemyRenderer3D {
 
     /**
      * Looks at target.
- * @param {any} targetX - The targetX.
- * @param {any} targetY - The targetY.
+     * @param {any} targetX - The targetX.
+     * @param {any} targetY - The targetY.
      */
     lookAtTarget(targetX, targetY) {
         const targetPos = new THREE.Vector3(targetX * this.spacing, 0, targetY * this.spacing);
@@ -221,7 +221,7 @@ export class EnemyRenderer3D {
 
     /**
      * Get the tile surface height.
- * @param {any} keyObj - The keyObj.
+     * @param {any} keyObj - The keyObj.
      */
     getTileSurfaceHeight(keyObj) {
         if (!keyObj || !keyObj.mesh) return 0.225;
@@ -253,7 +253,7 @@ export class EnemyRenderer3D {
     }
 
     /**
-     * Destroies.
+     * Destroys the enemy 3D renderer and cleans up resources.
      */
     destroy() {
         if (this.animationMixer) {

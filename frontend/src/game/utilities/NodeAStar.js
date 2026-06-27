@@ -15,10 +15,10 @@ export default class NodeAStar {
 
   /**
    * Constructs a NodeAStar instance.
-   * @param {string} key - The unique identifier of the node.
-   * @param {Object} position - The coordinates of the node {x, y}.
-   * @param {Array<Object>} neighbours - The list of neighboring nodes.
-   * @param {NodeAStar|null} [parent=null] - The parent node in the path.
+   * @param {any} key - The key.
+   * @param {any} position - The position.
+   * @param {any} neighbours - The neighbours.
+   * @param {any} parent - The parent.
    */
   constructor(key, position, neighbours, parent = null) {
     this.#key = key;
@@ -70,7 +70,7 @@ export default class NodeAStar {
 
   /**
    * Sets the neighbours.
- * @param {any} newNeighbours - The neighbours value.
+   * @param {any} newNeighbours - The newNeighbours.
    */
   set neighbours(newNeighbours) {
     this.#neighbours = newNeighbours;
@@ -86,7 +86,7 @@ export default class NodeAStar {
 
   /**
    * Sets the cost object for pathfinding.
-   * @param {Object} newCost - The new cost object {g, h, f}.
+   * @param {any} newCost - The newCost.
    */
   set cost(newCost) {
     this.#cost = newCost;
@@ -94,7 +94,7 @@ export default class NodeAStar {
 
   /**
    * Sets the parent node.
-   * @param {NodeAStar|null} newParent - The new parent node.
+   * @param {any} newParent - The newParent.
    */
   set parent(newParent) {
     this.#parent = newParent;
@@ -102,7 +102,7 @@ export default class NodeAStar {
 
   /**
    * Creates a copy of this node with a specific parent.
-   * @param {NodeAStar|null} parent - The parent for the copied node.
+   * @param {any} parent - The parent.
    * @returns {NodeAStar} A new instance of NodeAStar with the same properties.
    */
   copy(parent) {

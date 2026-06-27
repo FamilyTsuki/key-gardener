@@ -7,6 +7,7 @@ import { SettingsManager } from "../../core/utils/SettingsManager.js";
 export class FlameWallEvent extends WorldEvent {
     /**
      * Creates an instance of FlameWallEvent.
+     * @param {any} config - The config.
      */
     constructor(config = {}) {
         super(config.gameEngine);
@@ -20,8 +21,8 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Initializes the flame wall event, creating 3D objects and aligning them behind the player.
-     * @param {Object} worldPhase
-     * @param {THREE.Scene} scene
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} scene - The scene.
      * @returns {Promise<void>}
      */
     async init(worldPhase, scene) {
@@ -80,7 +81,7 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Randomizes the position of a fire particle.
-     * @param {THREE.Mesh} particle
+     * @param {any} particle - The particle.
      */
     randomizeParticlePosition(particle) {
         const xOffset = (Math.random() - 0.5) * 150;
@@ -111,7 +112,7 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Positions the wall group behind the player at the start of the event.
-     * @param {Object} worldPhase
+     * @param {any} worldPhase - The worldPhase.
      */
     positionWallBehindPlayer(worldPhase) {
         if (!worldPhase.player || !worldPhase.player.mesh) return;
@@ -124,8 +125,8 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Updates the logic for the flame wall per frame.
-     * @param {Object} worldPhase
-     * @param {number} deltaTime
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(worldPhase, deltaTime) {
         if (!this.canUpdate(worldPhase)) return;
@@ -159,7 +160,7 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Checks if the event can be updated safely.
-     * @param {Object} worldPhase
+     * @param {any} worldPhase - The worldPhase.
      * @returns {boolean}
      */
     canUpdate(worldPhase) {
@@ -168,7 +169,7 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Animates the fire particles.
-     * @param {number} deltaTime
+     * @param {any} deltaTime - The deltaTime.
      */
     updateParticles(deltaTime) {
         this.particles.forEach(p => {
@@ -184,7 +185,7 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Checks if the flame wall has overtaken the player's 3D position.
-     * @param {Object} worldPhase
+     * @param {any} worldPhase - The worldPhase.
      */
     checkCollisionWithPlayer(worldPhase) {
         if (!worldPhase.player || !worldPhase.player.mesh) return;
@@ -196,7 +197,7 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Triggers the game over state and halts the event progression.
-     * @param {Object} worldPhase
+     * @param {any} worldPhase - The worldPhase.
      */
     triggerGameOver(worldPhase) {
         this.isGameOver = true;
@@ -212,8 +213,8 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Intercepts keydown inputs during the game over state.
-     * @param {Object} worldPhase
-     * @param {KeyboardEvent} event
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} event - The event.
      * @returns {boolean} True if the input is intercepted and blocked.
      */
     handleKeyDown(worldPhase, event) {
@@ -222,7 +223,7 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Cleans up all 3D meshes and DOM elements used by the event.
-     * @param {Object} worldPhase
+     * @param {any} worldPhase - The worldPhase.
      */
     cleanup(worldPhase) {
         this.cleanupWallGroup(worldPhase);
@@ -231,7 +232,7 @@ export class FlameWallEvent extends WorldEvent {
 
     /**
      * Cleans up and disposes the 3D meshes for the wall.
-     * @param {Object} worldPhase
+     * @param {any} worldPhase - The worldPhase.
      */
     cleanupWallGroup(worldPhase) {
         if (this.fireSound) {

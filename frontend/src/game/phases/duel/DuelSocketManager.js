@@ -15,7 +15,7 @@ export class DuelSocketManager {
     }
 
     /**
-     * Registers.
+     * Registers the socket event listeners.
      */
     register() {
         SocketService.on('spell_spawned', this.boundOnSpellSpawned);
@@ -29,7 +29,7 @@ export class DuelSocketManager {
     }
 
     /**
-     * Unregisters.
+     * Unregisters the socket event listeners.
      */
     unregister() {
         SocketService.off('spell_spawned', this.boundOnSpellSpawned);
@@ -42,7 +42,7 @@ export class DuelSocketManager {
 
     /**
      * Handles the opponent move event/action.
- * @param {any} data - The data.
+     * @param {any} data - The data.
      */
     onOpponentMove(data) {
         if (this.phase.remotePlayer) {
@@ -71,7 +71,7 @@ export class DuelSocketManager {
 
     /**
      * Handles the spell spawned event/action.
- * @param {any} data - The data.
+     * @param {any} data - The data.
      */
     onSpellSpawned(data) {
         const { spellId, attackerId, targetId, spellType, requiredLength, speedMultiplier } = data;
@@ -125,7 +125,7 @@ export class DuelSocketManager {
 
     /**
      * Handles the spell blocked event/action.
- * @param {any} data - The data.
+     * @param {any} data - The data.
      */
     onSpellBlocked(data) {
         const { spellId } = data;
@@ -144,7 +144,7 @@ export class DuelSocketManager {
 
     /**
      * Handles the hp update event/action.
- * @param {any} data - The data.
+     * @param {any} data - The data.
      */
     onHpUpdate(data) {
         const state = this.phase.state;
@@ -177,7 +177,7 @@ export class DuelSocketManager {
 
     /**
      * Handles the duel ended event/action.
- * @param {any} data - The data.
+     * @param {any} data - The data.
      */
     onDuelEnded(data) {
         const state = this.phase.state;

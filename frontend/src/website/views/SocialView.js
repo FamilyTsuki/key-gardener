@@ -14,7 +14,7 @@ export class SocialView extends AbstractView {
     }
 
     /**
-     * Renders.
+     * Renders the social view.
      */
     async render() {
         this.container.innerHTML = "";
@@ -48,7 +48,7 @@ export class SocialView extends AbstractView {
 
     /**
      * Handles the search event/action.
- * @param {any} query - The query.
+     * @param {any} query - The query.
      */
     async handleSearch(query) {
         const container = document.getElementById("search-results-container");
@@ -119,8 +119,8 @@ export class SocialView extends AbstractView {
 
     /**
      * Adds the friend.
- * @param {any} username - The username.
- * @param {HTMLElement} btnElement - The btnElement.
+     * @param {any} username - The username.
+     * @param {any} btnElement - The btnElement.
      */
     async addFriend(username, btnElement) {
         if (btnElement) {
@@ -152,7 +152,7 @@ export class SocialView extends AbstractView {
 
     /**
      * Accepts the friend.
- * @param {string} friendId - The friendId.
+     * @param {any} friendId - The friendId.
      */
     async acceptFriend(friendId) {
         try {
@@ -240,8 +240,8 @@ export class SocialView extends AbstractView {
 
     /**
      * Invites the duel.
- * @param {string} targetUserId - The targetUserId.
- * @param {HTMLElement} btnElement - The btnElement.
+     * @param {any} targetUserId - The targetUserId.
+     * @param {any} btnElement - The btnElement.
      */
     inviteDuel(targetUserId, btnElement) {
         if (btnElement) {
@@ -260,7 +260,7 @@ export class SocialView extends AbstractView {
 
     /**
      * Accepts the duel.
- * @param {string} fromId - The fromId.
+     * @param {any} fromId - The fromId.
      */
     acceptDuel(fromId) {
         window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
@@ -270,7 +270,7 @@ export class SocialView extends AbstractView {
 
     /**
      * Declines the duel.
- * @param {string} fromId - The fromId.
+     * @param {any} fromId - The fromId.
      */
     declineDuel(fromId) {
         window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
@@ -280,7 +280,7 @@ export class SocialView extends AbstractView {
 
     /**
      * Shows the profile.
- * @param {any} friendData - The friendData.
+     * @param {any} friendData - The friendData.
      */
     showProfile(friendData) {
         history.pushState(null, null, `/profile?id=${friendData.user_id}`);
@@ -289,7 +289,7 @@ export class SocialView extends AbstractView {
 
     /**
      * Removes the friend.
- * @param {string} userId - The userId.
+     * @param {any} userId - The userId.
      */
     async removeFriend(userId) {
         try {
@@ -311,7 +311,7 @@ export class SocialView extends AbstractView {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the social view resources and listeners.
      */
     async cleanup() {
     }

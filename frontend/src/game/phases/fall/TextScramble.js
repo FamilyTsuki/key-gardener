@@ -40,7 +40,7 @@ export class TextScramble {
 
     /**
      * Updates the intensity.
- * @param {any} deep - The deep.
+     * @param {any} deep - The deep.
      */
     updateIntensity(deep) {
         const startThreshold = 1500;
@@ -60,7 +60,7 @@ export class TextScramble {
 
     /**
      * Set the char set.
- * @param {any} setName - The setName.
+     * @param {any} setName - The setName.
      */
     setCharSet(setName) {
         if (this.charSets[setName]) {
@@ -72,7 +72,7 @@ export class TextScramble {
 
     /**
      * Set the text.
- * @param {any} newText - The newText.
+     * @param {any} newText - The newText.
      */
     setText(newText) {
         const oldText = this.el.innerText;
@@ -95,7 +95,7 @@ export class TextScramble {
     }
 
     /**
-     * Updates.
+     * Updates the text scramble animation frame.
      */
     update() {
         let output = '';
@@ -136,7 +136,7 @@ export class TextScramble {
     }
 
     /**
-     * Destroies.
+     * Destroys the text scramble instance and cleans up resources.
      */
     destroy() {
         cancelAnimationFrame(this.frameRequest);

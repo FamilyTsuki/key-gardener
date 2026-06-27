@@ -14,7 +14,7 @@ export default class LegalView extends AbstractView {
     }
 
     /**
-     * Renders.
+     * Renders the legal view.
      */
     async render() {
 
@@ -68,7 +68,7 @@ export default class LegalView extends AbstractView {
     }
 
     /**
-     * Initializes the .
+     * Initializes the legal view.
      */
     async init() {
 

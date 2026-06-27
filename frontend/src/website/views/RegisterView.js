@@ -13,7 +13,7 @@ export default class RegisterView extends AbstractView {
     /**
      * Creates an instance of RegisterView.
      *
-     * @param {Object} params - The route parameters.
+     * @param {any} params - The params.
      */
     constructor(params) {
         super(params);
@@ -31,9 +31,9 @@ export default class RegisterView extends AbstractView {
         const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.passwordPlaceholder"), required: true, className: "form-input", id: "reg-password", "aria-label": "Password", autocomplete: "new-password" });
         const confirmPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.confirmPasswordPlaceholder"), required: true, className: "form-input", id: "confirm-password", "aria-label": "Confirm Password", autocomplete: "new-password" });
 
-        const consentContainer = el("div", { className: "consent-container", style: "display: flex; align-items: flex-start; gap: 10px; text-align: left; margin-bottom: 15px;" },
-            (this.consentCheckbox = el("input", { type: "checkbox", id: "register-consent", required: true, style: "margin-top: 5px;" })),
-            el("label", { htmlFor: "register-consent", style: "font-size: 0.9rem; color: var(--text-muted);" })
+        const consentContainer = el("div", { className: "consent-container" },
+            (this.consentCheckbox = el("input", { type: "checkbox", id: "register-consent", required: true })),
+            el("label", { htmlFor: "register-consent" })
         );
         consentContainer.querySelector("label").innerHTML = LanguageManager.t("register.consentLabel");
 

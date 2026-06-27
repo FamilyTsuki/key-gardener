@@ -55,7 +55,7 @@ export default class Enemy extends Actor {
 
     /**
      * Sets the hp.
- * @param {any} val - The hp value.
+     * @param {any} val - The val.
      */
     set hp(val) { this.state.hp = val; }
 
@@ -86,7 +86,7 @@ export default class Enemy extends Actor {
 
     /**
      * Sets the actual key.
- * @param {any} val - The actual key value.
+     * @param {any} val - The val.
      */
     set actualKey(val) { this.movement.actualKey = val; }
 
@@ -102,7 +102,7 @@ export default class Enemy extends Actor {
 
     /**
      * Sets the path.
- * @param {any} val - The path value.
+     * @param {any} val - The val.
      */
     set path(val) { this.movement.setPath(val); }
 
@@ -123,7 +123,7 @@ export default class Enemy extends Actor {
 
     /**
      * Handles the hp changed event/action.
- * @param {any} data - The data.
+     * @param {any} data - The data.
      */
     handleHpChanged(data) {
         if (this.renderer.mesh && this.renderer.mesh.position && data.damage) {
@@ -136,15 +136,15 @@ export default class Enemy extends Actor {
 
     /**
      * Takes the damage.
- * @param {any} amount - The amount.
+     * @param {any} amount - The amount.
      */
     takeDamage(amount) {
         this.state.takeDamage(amount);
     }
 
     /**
-     * Attacks.
- * @param {any} player - The player.
+     * Triggers the attack action.
+     * @param {any} player - The player.
      */
     attack(player) {
         if (!player) throw new Error("No player to attack!");
@@ -152,18 +152,18 @@ export default class Enemy extends Actor {
     }
 
     /**
-     * Moves.
+     * Updates the movement of the entity.
      */
     move() {
         this.movement.startJump();
     }
 
     /**
-     * Updates.
- * @param {any} player - The player.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} keyboardLayout - The keyboardLayout.
- * @param {any} projectiles - The projectiles.
+     * Updates the enemy state and logic.
+     * @param {any} player - The player.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} projectiles - The projectiles.
      */
     update(player, deltaTime = 0.016, keyboardLayout = null, projectiles = null) {
         this.renderer.updateAnimations(deltaTime);
@@ -183,8 +183,8 @@ export default class Enemy extends Actor {
 
     /**
      * Handles the spawn event/action.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     handleSpawn(deltaTime, keyboardLayout) {
         if (!this.movement.isSpawning) return false;
@@ -203,7 +203,7 @@ export default class Enemy extends Actor {
 
     /**
      * Updates the looking direction.
- * @param {any} player - The player.
+     * @param {any} player - The player.
      */
     updateLookingDirection(player) {
         if (!this.movement.isJumping) {
@@ -226,7 +226,7 @@ export default class Enemy extends Actor {
 
     /**
      * Handles the player collision event/action.
- * @param {any} player - The player.
+     * @param {any} player - The player.
      */
     handlePlayerCollision(player) {
         if (this.ai.checkPlayerCollision(player, this.size)) {
@@ -237,7 +237,7 @@ export default class Enemy extends Actor {
     }
 
     /**
-     * Dies.
+     * Handles the death logic of the entity.
      */
     die() {
         this.renderer.destroy();
@@ -246,7 +246,7 @@ export default class Enemy extends Actor {
 
     /**
      * Get the tile surface height.
- * @param {any} keyObj - The keyObj.
+     * @param {any} keyObj - The keyObj.
      */
     getTileSurfaceHeight(keyObj) {
         return this.renderer.getTileSurfaceHeight(keyObj);

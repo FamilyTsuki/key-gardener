@@ -20,8 +20,8 @@ export class TempoEvent extends WorldEvent {
 
     /**
      * Initializes the tempo event and builds its UI.
-     * @param {Object} worldPhase
-     * @param {THREE.Scene} scene
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} scene - The scene.
      * @returns {Promise<void>}
      */
     async init(worldPhase, scene) {
@@ -63,8 +63,8 @@ export class TempoEvent extends WorldEvent {
 
     /**
      * Updates the event logic per frame.
-     * @param {Object} worldPhase
-     * @param {number} deltaTime
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(worldPhase, deltaTime) {
         this.timeElapsed += deltaTime;
@@ -81,7 +81,7 @@ export class TempoEvent extends WorldEvent {
 
     /**
      * Animates the balls based on the rhythm progress.
-     * @param {number} progress
+     * @param {any} progress - The progress.
      */
     updateBallPositions(progress) {
         if (!this.leftBall || !this.rightBall) return;
@@ -95,7 +95,7 @@ export class TempoEvent extends WorldEvent {
 
     /**
      * Updates the visual state of the center target based on rhythm proximity.
-     * @param {number} closestDistance
+     * @param {any} closestDistance - The closestDistance.
      */
     updateTargetVisuals(closestDistance) {
         if (!this.centerTarget) return;
@@ -110,8 +110,8 @@ export class TempoEvent extends WorldEvent {
 
     /**
      * Intercepts keydown events to enforce rhythm constraints on player movement.
-     * @param {Object} worldPhase
-     * @param {KeyboardEvent} event
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} event - The event.
      * @returns {boolean} True if the input is intercepted and blocked.
      */
     handleKeyDown(worldPhase, event) {
@@ -123,7 +123,7 @@ export class TempoEvent extends WorldEvent {
 
     /**
      * Checks if a pressed key is a valid movement key.
-     * @param {string} key
+     * @param {any} key - The key.
      * @returns {boolean}
      */
     isMovementKey(key) {
@@ -162,7 +162,7 @@ export class TempoEvent extends WorldEvent {
 
     /**
      * Cleans up all resources used by the event.
-     * @param {Object} worldPhase
+     * @param {any} worldPhase - The worldPhase.
      */
     cleanup(worldPhase) {
         if (this.uiOverlay) {

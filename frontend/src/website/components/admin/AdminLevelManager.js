@@ -22,7 +22,7 @@ export class AdminLevelManager {
     }
 
     /**
-     * Initializes the .
+     * Initializes the admin level manager.
      */
     async init() {
         await this.loadDynamicEntities();
@@ -71,7 +71,7 @@ export class AdminLevelManager {
 
     /**
      * Shows the error.
- * @param {any} message - The message.
+     * @param {any} message - The message.
      */
     showError(message) {
         clear(this.mainContainer);
@@ -107,7 +107,7 @@ export class AdminLevelManager {
 
     /**
      * Populates the levels list.
- * @param {boolean} listContainer - The listContainer.
+     * @param {any} listContainer - The listContainer.
      */
     populateLevelsList(listContainer) {
         const maxLevel = this.levels.reduce((max, l) => Math.max(max, l.level_number), 0);
@@ -136,7 +136,7 @@ export class AdminLevelManager {
 
     /**
      * Creates the new level object.
- * @param {any} levelNumber - The levelNumber.
+     * @param {any} levelNumber - The levelNumber.
      */
     createNewLevelObject(levelNumber) {
         return {
@@ -149,7 +149,7 @@ export class AdminLevelManager {
 
     /**
      * Selects the level.
- * @param {any} levelNumber - The levelNumber.
+     * @param {any} levelNumber - The levelNumber.
      */
     selectLevel(levelNumber) {
         this.activeLevelNumber = levelNumber;
@@ -260,7 +260,7 @@ export class AdminLevelManager {
 
     /**
      * Handles the phase change event/action.
- * @param {boolean} newPhaseType - The newPhaseType.
+     * @param {any} newPhaseType - The newPhaseType.
      */
     handlePhaseChange(newPhaseType) {
         this.currentLevel.phase_type = newPhaseType;
@@ -351,8 +351,8 @@ export class AdminLevelManager {
 
     /**
      * Adds the event editor.
- * @param {any} evt - The evt.
- * @param {any} container - The container.
+     * @param {any} evt - The evt.
+     * @param {any} container - The container.
      */
     addEventEditor(evt, container) {
         const availableEvents = getEventsForPhase(this.currentLevel.phase_type || "survive");
@@ -402,11 +402,11 @@ export class AdminLevelManager {
 
     /**
      * Creates the configured event editor.
- * @param {any} newDef - The newDef.
- * @param {any} newData - The newData.
- * @param {any} oldEditor - The oldEditor.
- * @param {Event} availableEvents - The availableEvents.
- * @param {any} container - The container.
+     * @param {any} newDef - The newDef.
+     * @param {any} newData - The newData.
+     * @param {any} oldEditor - The oldEditor.
+     * @param {any} availableEvents - The availableEvents.
+     * @param {any} container - The container.
      */
     createConfiguredEventEditor(newDef, newData, oldEditor, availableEvents, container) {
          const newEditor = new AdminEventEditor(newDef, newData, {
@@ -572,7 +572,7 @@ export class AdminLevelManager {
 
     /**
      * Process the imported file.
- * @param {any} content - The content.
+     * @param {any} content - The content.
      */
     async processImportedFile(content) {
         try {
@@ -616,7 +616,7 @@ export class AdminLevelManager {
     }
 
     /**
-     * Destroies.
+     * Destroys the level manager and cleans up resources.
      */
     destroy() {
         if (this.preview3D) {

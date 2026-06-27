@@ -30,7 +30,7 @@ export class TrainingPhase extends GamePhase {
     }
 
     /**
-     * Initializes the .
+     * Initializes the training phase.
      */
     async init() {
         AudioManager.init();
@@ -144,7 +144,7 @@ export class TrainingPhase extends GamePhase {
 
     /**
      * Starts the exercise.
- * @param {any} type - The type.
+     * @param {any} type - The type.
      */
     startExercise(type) {
         this.trainingState = "EXERCISE";
@@ -331,7 +331,7 @@ export class TrainingPhase extends GamePhase {
     }
 
     /**
-     * Draws.
+     * Draws the elements to the canvas or screen.
      */
     draw() {
         this.renderer.draw(this.keyboard, this.player, null);
@@ -339,7 +339,7 @@ export class TrainingPhase extends GamePhase {
 
     /**
      * Handles the key down event/action.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         if (!this.player || !this.isReady || this.gameEngine.isPaused) return;
@@ -367,7 +367,7 @@ export class TrainingPhase extends GamePhase {
 
     /**
      * Handles the waiting answer key event/action.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     handleWaitingAnswerKey(key) {
         if (key === "Backspace") {
@@ -432,7 +432,7 @@ export class TrainingPhase extends GamePhase {
 
     /**
      * Handles the exercise key event/action.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     handleExerciseKey(key) {
         if (this.currentExerciseType === "SIMON") {
@@ -508,8 +508,8 @@ export class TrainingPhase extends GamePhase {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the training phase state.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (!this.isReady || this.gameEngine.isPaused) return;
@@ -520,7 +520,7 @@ export class TrainingPhase extends GamePhase {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the training phase resources and listeners.
      */
     cleanup() {
         this.renderer.cleanup(this.gameEngine.scene);

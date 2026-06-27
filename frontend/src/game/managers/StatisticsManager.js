@@ -10,7 +10,7 @@ export class StatisticsManager {
 
     /**
      * Records the keystroke.
- * @param {string} isValid - The isValid.
+     * @param {any} isValid - The isValid.
      */
     recordKeystroke(isValid) {
         if (isValid) {
@@ -29,7 +29,7 @@ export class StatisticsManager {
 
     /**
      * Records the enemy defeated.
- * @param {boolean} isBoss - The isBoss.
+     * @param {any} isBoss - The isBoss.
      */
     recordEnemyDefeated(isBoss = false) {
         this.enemiesDefeated++;
@@ -40,7 +40,7 @@ export class StatisticsManager {
 
     /**
      * Adds the playtime.
- * @param {any} seconds - The seconds.
+     * @param {any} seconds - The seconds.
      */
     addPlaytime(seconds) {
         this.playtimeSeconds += seconds;

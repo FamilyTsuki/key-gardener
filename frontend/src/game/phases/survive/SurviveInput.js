@@ -44,7 +44,7 @@ export class SurviveInput {
 
     /**
      * Handles the key down event/action.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         if (!this.phase.player || !this.phase.player.isAlive() || this.phase.state.isTransitioningToNextLevel || !this.phase.state.isReady) return;
@@ -59,8 +59,8 @@ export class SurviveInput {
 
     /**
      * Process the movement.
- * @param {any} target - The target.
- * @param {any} originalKey - The originalKey.
+     * @param {any} target - The target.
+     * @param {any} originalKey - The originalKey.
      */
     processMovement(target, originalKey) {
         let moveResult = { blocked: false };
@@ -87,7 +87,7 @@ export class SurviveInput {
 
     /**
      * Process the spell.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     processSpell(key) {
         let word = this.phase.player.handleKeyPress(key);
@@ -99,7 +99,7 @@ export class SurviveInput {
 
     /**
      * Applies the pending spell.
- * @param {any} projectiles - The projectiles.
+     * @param {any} projectiles - The projectiles.
      */
     applyPendingSpell(projectiles) {
         if (!this.pendingSpell || this.phase.player.isMoving) return;
@@ -136,7 +136,7 @@ export class SurviveInput {
     }
 
     /**
-     * Cleanups.
+     * Cleans up survive phase inputs and listeners.
      */
     cleanup() {
         const spellListContainer = document.getElementById("spell-list-container");

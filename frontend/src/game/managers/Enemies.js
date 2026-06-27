@@ -23,10 +23,10 @@ export default class Enemies {
 
     /**
      * Creates an instance of Enemies manager.
-     * @param {Array<Object>} keyboardLayout - The layout of keys on the keyboard.
-     * @param {THREE.Group} enemyModel - The 3D model for basic enemies.
-     * @param {THREE.Group} fireballModel - The 3D model for the fireball projectile.
-     * @param {Map<string, Object>} [riggedModels=new Map()] - Optional map of type -> GLTF for rigged models.
+     * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} enemyModel - The enemyModel.
+     * @param {any} fireballModel - The fireballModel.
+     * @param {any} riggedModels - The riggedModels.
      */
     constructor(keyboardLayout, enemyModel, fireballModel, riggedModels = new Map()) {
         this.#aStarGrid = new Map();
@@ -58,7 +58,7 @@ export default class Enemies {
 
     /**
      * Rebuilds the A* grid based on a new keyboard layout.
-     * @param {Array<Object>} keyboardLayout - The new layout.
+     * @param {any} keyboardLayout - The keyboardLayout.
      */
     rebuildGrid(keyboardLayout) {
         this.#aStarGrid = new Map();
@@ -105,7 +105,7 @@ export default class Enemies {
 
     /**
      * Adds an enemy at the given position.
-     * @param {Object} position - The position to spawn the enemy.
+     * @param {any} position - The position.
      */
     add(position) {
         this.#container.push(new Enemy(position, 50, 50, this.#enemyModel));
@@ -131,11 +131,11 @@ export default class Enemies {
 
     /**
      * Updates all enemies and the boss.
-     * @param {Object} playerPos - The player's current position.
-     * @param {Array<Projectile>} projectiles - The active projectiles in the scene.
-     * @param {Array<Object>} bonks - Active bonks or hit effects.
-     * @param {Player} player - The player instance.
-     * @param {number} deltaTime - The time elapsed since the last update.
+     * @param {any} playerPos - The playerPos.
+     * @param {any} projectiles - The projectiles.
+     * @param {any} bonks - The bonks.
+     * @param {any} player - The player.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(playerPos, projectiles, bonks, player, deltaTime) {
         for (let i = this.#container.length - 1; i >= 0; i--) {
@@ -181,8 +181,8 @@ export default class Enemies {
 
     /**
      * Updates pathfinding for enemies to reach the target key.
-     * @param {string} playerKey - The key the player is currently on.
-     * @param {Keyboard} keyboard - The keyboard manager instance.
+     * @param {any} playerKey - The playerKey.
+     * @param {any} keyboard - The keyboard.
      */
     updatePath(playerKey, keyboard) {
         for (const enemy of this.#container) {
@@ -240,7 +240,7 @@ export default class Enemies {
 
     /**
      * Finds the closest enemy to the player.
-     * @param {Object} playerPos - The player's position.
+     * @param {any} playerPos - The playerPos.
      * @returns {Object|boolean} An object with the closest enemy and distance, or false if no enemies.
      */
     findClosestEnemy(playerPos) {
@@ -270,9 +270,10 @@ export default class Enemies {
 
     /**
      * Spawns an enemy at a specific key.
-     * @param {Object} keyObject - The key on which to spawn the enemy.
-     * @param {THREE.Scene} scene - The main three.js scene.
-     * @param {string} [type="basic"] - The type of enemy to spawn.
+     * @param {any} keyObject - The keyObject.
+     * @param {any} scene - The scene.
+     * @param {any} type - The type.
+     * @param {any} options - The options.
      * @returns {Enemy} The spawned enemy instance.
      */
     spawnAt(keyObject, scene, type = "basic", options = {}) {
@@ -317,7 +318,7 @@ export default class Enemies {
 
     /**
      * Loads and spawns the boss.
-     * @param {THREE.Scene} scene - The main three.js scene.
+     * @param {any} scene - The scene.
      * @returns {Promise<void>}
      */
     async spawnBoss(scene) {
@@ -348,8 +349,8 @@ export default class Enemies {
 
     /**
      * Spawns the bug boss.
- * @param {any} scene - The scene.
- * @param {any} level - The level.
+     * @param {any} scene - The scene.
+     * @param {any} level - The level.
      */
     async spawnBugBoss(scene, level = 1) {
         this.isSpawningBoss = true;
@@ -376,7 +377,7 @@ export default class Enemies {
 
     /**
      * Spawns the earth boss.
- * @param {any} scene - The scene.
+     * @param {any} scene - The scene.
      */
     async spawnEarthBoss(scene) {
         this.isSpawningBoss = true;
@@ -404,9 +405,9 @@ export default class Enemies {
 
 /**
  * Finds valid neighbour keys for pathfinding.
- * @param {string} keyTargetedName - The key's identifier.
- * @param {Object} position - The key's raw grid position.
- * @param {Array<Object>} keyboardLayout - The keyboard layout definition.
+ * @param {any} keyTargetedName - The keyTargetedName.
+ * @param {any} position - The position.
+ * @param {any} keyboardLayout - The keyboardLayout.
  * @returns {Array<string>} An array of neighbour key identifiers.
  */
 function findNeighbours(keyTargetedName, position, keyboardLayout) {

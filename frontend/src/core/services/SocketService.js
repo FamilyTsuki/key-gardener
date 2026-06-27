@@ -7,7 +7,7 @@ class SocketService {
     }
 
     /**
-     * Connects.
+     * Performs the connects operation.
      */
     connect() {
         if (this.socket) return;
@@ -34,9 +34,9 @@ class SocketService {
     }
 
     /**
-     * Ons.
- * @param {any} event - The event.
- * @param {any} callback - The callback.
+     * Registers an event handler callback.
+     * @param {any} event - The event.
+     * @param {any} callback - The callback.
      */
     on(event, callback) {
         if (!this.listeners.has(event)) {
@@ -50,9 +50,9 @@ class SocketService {
     }
 
     /**
-     * Offs.
- * @param {any} event - The event.
- * @param {any} callback - The callback.
+     * Performs the offs operation.
+     * @param {any} event - The event.
+     * @param {any} callback - The callback.
      */
     off(event, callback) {
         if (this.listeners.has(event)) {
@@ -68,9 +68,9 @@ class SocketService {
     }
 
     /**
-     * Emits.
- * @param {any} event - The event.
- * @param {Object} data - The data payload.
+     * Emits an event to the socket or listeners.
+     * @param {any} event - The event.
+     * @param {any} data - The data.
      */
     emit(event, data) {
         if (this.socket) {
@@ -79,7 +79,7 @@ class SocketService {
     }
 
     /**
-     * Disconnects.
+     * Performs the disconnects operation.
      */
     disconnect() {
         if (this.socket) {

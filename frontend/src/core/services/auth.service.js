@@ -26,10 +26,10 @@ export class AuthService {
 
     /**
      * Handles API responses, parsing JSON or text, and throwing errors if not ok.
-     * @param {Response} response - The fetch response object.
-     * @param {string} defaultError - The default error message to use if none is provided by the server.
-     * @returns {Promise<any>} The parsed response data.
      * @throws {Error} If the response is not ok.
+     * @param {any} response - The response.
+     * @param {any} defaultError - The defaultError.
+     * @returns {Promise<any>} The parsed response data.
      */
     static async handleResponse(response, defaultError) {
         const contentType = response.headers.get("content-type");
@@ -51,9 +51,9 @@ export class AuthService {
 
     /**
      * Registers a new user.
-     * @param {string} username - The user's username.
-     * @param {string} email - The user's email address.
-     * @param {string} password - The user's password.
+     * @param {any} username - The username.
+     * @param {any} email - The email.
+     * @param {any} password - The password.
      * @returns {Promise<Object>} The registration response data.
      */
     static async register(username, email, password) {
@@ -78,8 +78,8 @@ export class AuthService {
 
     /**
      * Logs in a user.
-     * @param {string} email - The user's email address.
-     * @param {string} password - The user's password.
+     * @param {any} email - The email.
+     * @param {any} password - The password.
      * @returns {Promise<Object>} The login response data.
      */
     static async login(email, password) {
@@ -104,7 +104,7 @@ export class AuthService {
 
     /**
      * Authenticates the user with a Google OAuth credential token.
-     * @param {string} credential - The Google OAuth2 ID token.
+     * @param {any} credential - The credential.
      * @returns {Promise<Object>} The authentication response containing JWT and user profile.
      */
     static async loginWithGoogle(credential) {
@@ -156,8 +156,8 @@ export class AuthService {
 
     /**
      * Fetches the current user's profile data.
-     * @returns {Promise<Object>} The user profile data.
      * @throws {Error} If no token is found.
+     * @returns {Promise<Object>} The user profile data.
      */
     static async getCurrentUser() {
         const response = await fetch(`${this.API_URL}/me`, {
@@ -180,9 +180,9 @@ export class AuthService {
 
     /**
      * Uploads a new avatar for the user.
-     * @param {File} file - The image file to upload.
-     * @returns {Promise<Object>} The upload response data.
      * @throws {Error} If no token is found.
+     * @param {any} file - The file.
+     * @returns {Promise<Object>} The upload response data.
      */
     static async uploadAvatar(file) {
         if (!this.isAuthenticated()) {
@@ -203,9 +203,9 @@ export class AuthService {
 
     /**
      * Updates the user's username.
-     * @param {string} newUsername - The new username.
-     * @returns {Promise<Object>} The update response data.
      * @throws {Error} If no token is found.
+     * @param {any} newUsername - The newUsername.
+     * @returns {Promise<Object>} The update response data.
      */
     static async updateUsername(newUsername) {
         if (!this.isAuthenticated()) {
@@ -233,9 +233,9 @@ export class AuthService {
 
     /**
      * Updates the user's email address.
-     * @param {string} newEmail - The new email address.
-     * @returns {Promise<Object>} The update response data.
      * @throws {Error} If no token is found.
+     * @param {any} newEmail - The newEmail.
+     * @returns {Promise<Object>} The update response data.
      */
     static async updateEmail(newEmail) {
         if (!this.isAuthenticated()) {
@@ -260,7 +260,7 @@ export class AuthService {
 
     /**
      * Requests a password reset for a given email address.
-     * @param {string} email - The email address to reset the password for.
+     * @param {any} email - The email.
      * @returns {Promise<Object>} The response data.
      */
     static async requestPasswordReset(email) {
@@ -275,9 +275,9 @@ export class AuthService {
 
     /**
      * Resets a user's password using a reset code.
-     * @param {string} email - The user's email address.
-     * @param {string} code - The password reset code.
-     * @param {string} newPassword - The new password.
+     * @param {any} email - The email.
+     * @param {any} code - The code.
+     * @param {any} newPassword - The newPassword.
      * @returns {Promise<Object>} The response data.
      */
     static async resetPassword(email, code, newPassword) {
@@ -292,10 +292,10 @@ export class AuthService {
 
     /**
      * Changes the current user's password.
-     * @param {string} currentPassword - The current password.
-     * @param {string} newPassword - The new password.
-     * @returns {Promise<Object>} The response data.
      * @throws {Error} If no token is found.
+     * @param {any} currentPassword - The currentPassword.
+     * @param {any} newPassword - The newPassword.
+     * @returns {Promise<Object>} The response data.
      */
     static async changePassword(currentPassword, newPassword) {
         if (!this.isAuthenticated()) {
@@ -316,7 +316,7 @@ export class AuthService {
 
     /**
      * Updates user settings in the backend.
-     * @param {Object} settings - The settings object to merge.
+     * @param {any} settings - The settings.
      * @returns {Promise<Object>} The response data.
      */
     static async updateSettings(settings) {
@@ -340,6 +340,7 @@ export class AuthService {
 
     /**
      * Helper to sync backend settings to local storage.
+     * @param {any} settings - The settings.
      */
     static syncSettingsToLocalStorage(settings) {
     }

@@ -117,9 +117,9 @@ export class AdminPreview3D {
 
     /**
      * Renders the preview.
- * @param {boolean} phaseType - The phaseType.
- * @param {any} options - The options.
- * @param {Event} events - The events.
+     * @param {any} phaseType - The phaseType.
+     * @param {any} options - The options.
+     * @param {any} events - The events.
      */
     renderPreview(phaseType, options, events) {
         this.clearScene();
@@ -137,8 +137,8 @@ export class AdminPreview3D {
 
     /**
      * Renders the survive preview.
- * @param {any} options - The options.
- * @param {boolean} phaseType - The phaseType.
+     * @param {any} options - The options.
+     * @param {any} phaseType - The phaseType.
      */
     renderSurvivePreview(options, phaseType) {
         this.camera.position.set(15, 18, 7);
@@ -201,7 +201,7 @@ export class AdminPreview3D {
 
     /**
      * Renders the world preview.
- * @param {any} options - The options.
+     * @param {any} options - The options.
      */
     renderWorldPreview(options) {
         this.camera.position.set(12, 110, 15);
@@ -245,7 +245,7 @@ export class AdminPreview3D {
 
     /**
      * Initializes the world player pos.
- * @param {any} wMap - The wMap.
+     * @param {any} wMap - The wMap.
      */
     setupWorldPlayerPos(wMap) {
         const spawnTile = wMap.mapLayout.find(t => t.isSpawn) || wMap.mapLayout[1] || wMap.mapLayout[0];
@@ -260,8 +260,8 @@ export class AdminPreview3D {
 
     /**
      * Initializes the world outro.
- * @param {any} wMap - The wMap.
- * @param {any} outroType - The outroType.
+     * @param {any} wMap - The wMap.
+     * @param {any} outroType - The outroType.
      */
     setupWorldOutro(wMap, outroType) {
         const doorRow = wMap.mapLayout.filter((t) => t.isDoorRow);
@@ -281,8 +281,8 @@ export class AdminPreview3D {
 
     /**
      * Builds the door event.
- * @param {any} wMap - The wMap.
- * @param {any} exitTile - The exitTile.
+     * @param {any} wMap - The wMap.
+     * @param {any} exitTile - The exitTile.
      */
     buildDoorEvent(wMap, exitTile) {
         const doorGroup = new THREE.Group();
@@ -313,7 +313,7 @@ export class AdminPreview3D {
 
     /**
      * Builds the hole event.
- * @param {any} exitTile - The exitTile.
+     * @param {any} exitTile - The exitTile.
      */
     buildHoleEvent(exitTile) {
         const holeGeo = new THREE.CylinderGeometry(1.3, 1.3, 15, 32);
@@ -325,8 +325,8 @@ export class AdminPreview3D {
 
     /**
      * Renders the events previews.
- * @param {boolean} phaseType - The phaseType.
- * @param {Event} events - The events.
+     * @param {any} phaseType - The phaseType.
+     * @param {any} events - The events.
      */
     renderEventsPreviews(phaseType, events) {
         if (!events) return;
@@ -357,7 +357,7 @@ export class AdminPreview3D {
     }
 
     /**
-     * Destroies.
+     * Destroys the 3D preview and cleans up resources.
      */
     destroy() {
         if (this.renderer) {

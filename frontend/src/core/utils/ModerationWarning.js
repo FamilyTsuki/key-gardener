@@ -6,10 +6,10 @@ import { LanguageManager } from "./LanguageManager.js";
 class ModerationWarning {
 
     /**
-     * Shows.
- * @param {any} content - The content.
- * @param {any} flaggedType - The flaggedType.
- * @param {any} warningCount - The warningCount.
+     * Shows the UI popup or warning.
+     * @param {any} content - The content.
+     * @param {any} flaggedType - The flaggedType.
+     * @param {any} warningCount - The warningCount.
      */
     show(content, flaggedType, warningCount = 1) {
         const flagTypeLabel = flaggedType === "image"

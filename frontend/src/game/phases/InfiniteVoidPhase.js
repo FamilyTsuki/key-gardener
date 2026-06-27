@@ -33,7 +33,7 @@ export class InfiniteVoidPhase extends GamePhase {
     }
 
     /**
-     * Initializes the .
+     * Initializes the infinite void phase.
      */
     async init() {
         const scene = this.gameEngine.scene;
@@ -113,8 +113,8 @@ export class InfiniteVoidPhase extends GamePhase {
 
     /**
      * Generates the row.
- * @param {any} layoutArray - The layoutArray.
- * @param {number} yIndex - The yIndex.
+     * @param {any} layoutArray - The layoutArray.
+     * @param {any} yIndex - The yIndex.
      */
     generateRow(layoutArray, yIndex) {
         let test = Math.abs(yIndex) % 2 === 0 ? 1 : 0;
@@ -146,8 +146,8 @@ export class InfiniteVoidPhase extends GamePhase {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the infinite void phase state.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (!this.player || !this.isReady) return;
@@ -290,8 +290,8 @@ export class InfiniteVoidPhase extends GamePhase {
 
     /**
      * Get the grid x index.
- * @param {any} posX - The posX.
- * @param {any} yVal - The yVal.
+     * @param {any} posX - The posX.
+     * @param {any} yVal - The yVal.
      */
     getGridXIndex(posX, yVal) {
         const absY = Math.abs(yVal);
@@ -302,8 +302,8 @@ export class InfiniteVoidPhase extends GamePhase {
 
     /**
      * Get the pos x.
- * @param {string} xIdx - The xIdx.
- * @param {any} yVal - The yVal.
+     * @param {any} xIdx - The xIdx.
+     * @param {any} yVal - The yVal.
      */
     getPosX(xIdx, yVal) {
         const absY = Math.abs(yVal);
@@ -417,8 +417,8 @@ export class InfiniteVoidPhase extends GamePhase {
 
     /**
      * Animates the fall.
- * @param {any} player - The player.
- * @param {any} holeTile - The holeTile.
+     * @param {any} player - The player.
+     * @param {any} holeTile - The holeTile.
      */
     animateFall(player, holeTile) {
         return new Promise((resolve) => {
@@ -523,7 +523,7 @@ export class InfiniteVoidPhase extends GamePhase {
 
     /**
      * Handles the key down event/action.
- * @param {Event} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         if (this.isPlayingIntro || !this.isReady) return;
@@ -586,7 +586,7 @@ export class InfiniteVoidPhase extends GamePhase {
     }
 
     /**
-     * Draws.
+     * Draws the elements to the canvas or screen.
      */
     draw() {
         if (this.player && this.player.mesh && this.playerLight) {
@@ -611,7 +611,7 @@ export class InfiniteVoidPhase extends GamePhase {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the infinite void phase resources.
      */
     cleanup() {
         if (this.typingContainer) {

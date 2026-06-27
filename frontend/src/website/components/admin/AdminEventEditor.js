@@ -14,8 +14,9 @@ export class AdminEventEditor {
     }
 
     /**
-     * Renders.
- * @param {Event} availableEvents - The availableEvents.
+     * Renders the event editor.
+     * @param {any} availableEvents - The availableEvents.
+     * @param {any} hasOuter - The hasOuter.
      */
     render(availableEvents, hasOuter = true) {
         this.container.innerHTML = "";
@@ -41,7 +42,7 @@ export class AdminEventEditor {
 
     /**
      * Renders the header.
- * @param {Event} availableEvents - The availableEvents.
+     * @param {any} availableEvents - The availableEvents.
      */
     renderHeader(availableEvents) {
         const options = availableEvents.map(e => ({ 
@@ -87,6 +88,7 @@ export class AdminEventEditor {
 
     /**
      * Renders the fields.
+     * @param {any} hasOuter - The hasOuter.
      */
     renderFields(hasOuter = true) {
         const row = el("div", { className: "block-row" });
@@ -101,7 +103,7 @@ export class AdminEventEditor {
 
     /**
      * Renders the field.
- * @param {any} field - The field.
+     * @param {any} field - The field.
      */
     renderField(field) {
         const group = el("div", { className: "form-group compact-group" });
@@ -116,7 +118,7 @@ export class AdminEventEditor {
 
     /**
      * Get the field value.
- * @param {any} field - The field.
+     * @param {any} field - The field.
      */
     getFieldValue(field) {
         if (this.data[field.id] !== undefined) {
@@ -127,9 +129,9 @@ export class AdminEventEditor {
 
     /**
      * Creates the input for field.
- * @param {any} field - The field.
- * @param {any} group - The group.
- * @param {any} value - The value.
+     * @param {any} field - The field.
+     * @param {any} group - The group.
+     * @param {any} value - The value.
      */
     createInputForField(field, group, value) {
         if (field.type === "select") {
@@ -145,9 +147,9 @@ export class AdminEventEditor {
 
     /**
      * Creates the select field.
- * @param {any} field - The field.
- * @param {any} group - The group.
- * @param {any} value - The value.
+     * @param {any} field - The field.
+     * @param {any} group - The group.
+     * @param {any} value - The value.
      */
     createSelectField(field, group, value) {
         const options = field.options.map(opt => ({
@@ -162,9 +164,9 @@ export class AdminEventEditor {
 
     /**
      * Creates the number field.
- * @param {any} field - The field.
- * @param {any} group - The group.
- * @param {any} value - The value.
+     * @param {any} field - The field.
+     * @param {any} group - The group.
+     * @param {any} value - The value.
      */
     createNumberField(field, group, value) {
         const input = el("input", { 
@@ -179,9 +181,9 @@ export class AdminEventEditor {
 
     /**
      * Creates the text field.
- * @param {any} field - The field.
- * @param {any} group - The group.
- * @param {any} value - The value.
+     * @param {any} field - The field.
+     * @param {any} group - The group.
+     * @param {any} value - The value.
      */
     createTextField(field, group, value) {
         const isTextarea = field.type === "textarea";
@@ -206,8 +208,8 @@ export class AdminEventEditor {
 
     /**
      * Creates the weights field.
- * @param {any} field - The field.
- * @param {any} group - The group.
+     * @param {any} field - The field.
+     * @param {any} group - The group.
      */
     createWeightsField(field, group) {
         const weightsContainer = el("div", { className: "spawner-weights-container" });
@@ -231,7 +233,7 @@ export class AdminEventEditor {
 
     /**
      * Get the weight value.
- * @param {any} typeKey - The typeKey.
+     * @param {any} typeKey - The typeKey.
      */
     getWeightValue(typeKey) {
         if (this.data.enemyWeights && this.data.enemyWeights[typeKey] !== undefined) {
@@ -242,7 +244,7 @@ export class AdminEventEditor {
 
     /**
      * Collects the weights.
- * @param {any} weightInputs - The weightInputs.
+     * @param {any} weightInputs - The weightInputs.
      */
     collectWeights(weightInputs) {
         const weights = {};

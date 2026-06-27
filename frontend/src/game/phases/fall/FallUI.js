@@ -14,7 +14,7 @@ export class FallUI {
     }
 
     /**
-     * Initializes the .
+     * Initializes the fall UI component.
      */
     init() {
         const leftColumn = document.getElementById("left-column");
@@ -50,7 +50,7 @@ export class FallUI {
 
     /**
      * Updates the columns text.
- * @param {any} typedWord - The typedWord.
+     * @param {any} typedWord - The typedWord.
      */
     updateColumnsText(typedWord) {
         const updateElement = (id, targetWord) => {
@@ -72,7 +72,7 @@ export class FallUI {
 
     /**
      * Get the warn element.
- * @param {any} laneX - The laneX.
+     * @param {any} laneX - The laneX.
      */
     getWarnElement(laneX) {
         if (laneX === -6) return document.getElementById("left-warn-img");
@@ -94,7 +94,7 @@ export class FallUI {
 
     /**
      * Updates the deep.
- * @param {any} currentDeep - The currentDeep.
+     * @param {any} currentDeep - The currentDeep.
      */
     updateDeep(currentDeep) {
         const deepContainer = document.getElementById("deep-container");
@@ -117,7 +117,7 @@ export class FallUI {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the fall UI component resources.
      */
     cleanup() {
         const leftColumn = document.getElementById("left-column");

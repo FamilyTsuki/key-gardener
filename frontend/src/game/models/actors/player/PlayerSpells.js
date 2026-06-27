@@ -13,11 +13,11 @@ export class PlayerSpells {
 
     /**
      * Initializes the ialize.
- * @param {any} scene - The scene.
- * @param {any} playerInstance - The playerInstance.
- * @param {any} enemiesManager - The enemiesManager.
- * @param {any} fireballModel - The fireballModel.
- * @param {any} unlockedSpells - The unlockedSpells.
+     * @param {any} scene - The scene.
+     * @param {any} playerInstance - The playerInstance.
+     * @param {any} enemiesManager - The enemiesManager.
+     * @param {any} fireballModel - The fireballModel.
+     * @param {any} unlockedSpells - The unlockedSpells.
      */
     initialize(scene, playerInstance, enemiesManager, fireballModel, unlockedSpells = []) {
         this.allSpells = [
@@ -36,7 +36,7 @@ export class PlayerSpells {
 
     /**
      * Unlocks the spell.
- * @param {any} spellWord - The spellWord.
+     * @param {any} spellWord - The spellWord.
      */
     unlockSpell(spellWord) {
         if (!this.wordSpells.some(s => s.word === spellWord)) {
@@ -63,7 +63,7 @@ export class PlayerSpells {
 
     /**
      * Handles the key press event/action.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     handleKeyPress(key) {
         let keyProcessed = this.processCharacterKey(key);
@@ -78,7 +78,7 @@ export class PlayerSpells {
 
     /**
      * Process the character key.
- * @param {any} key - The key.
+     * @param {any} key - The key.
      */
     processCharacterKey(key) {
         if (key.length === 1 && key.match(/[a-z]/i)) {
@@ -101,8 +101,8 @@ export class PlayerSpells {
 
     /**
      * Resets the word.
- * @param {any} keyProcessed - The keyProcessed.
- * @param {boolean} isSuccess - The isSuccess.
+     * @param {any} keyProcessed - The keyProcessed.
+     * @param {any} isSuccess - The isSuccess.
      */
     resetWord(keyProcessed, isSuccess) {
         this.currentWord = "";
@@ -113,7 +113,7 @@ export class PlayerSpells {
 
     /**
      * Checks the complete spell.
- * @param {any} keyProcessed - The keyProcessed.
+     * @param {any} keyProcessed - The keyProcessed.
      */
     checkCompleteSpell(keyProcessed) {
         if (keyProcessed && this.statsManager) {
@@ -131,11 +131,11 @@ export class PlayerSpells {
     }
 
     /**
-     * Attacks.
- * @param {any} word - The word.
- * @param {any} closestEnemy - The closestEnemy.
- * @param {any} playerInstance - The playerInstance.
- * @param {any} scene - The scene.
+     * Triggers the attack action.
+     * @param {any} word - The word.
+     * @param {any} closestEnemy - The closestEnemy.
+     * @param {any} playerInstance - The playerInstance.
+     * @param {any} scene - The scene.
      */
     attack(word, closestEnemy, playerInstance, scene) {
         const spell = this.wordSpells.find(s => s.word === word);
@@ -144,8 +144,8 @@ export class PlayerSpells {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTimeMs - The deltaTimeMs.
+     * Updates the player spells state.
+     * @param {any} deltaTimeMs - The deltaTimeMs.
      */
     update(deltaTimeMs) {
         this.wordSpells.forEach(spell => {

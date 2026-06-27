@@ -41,8 +41,8 @@ class ProjectilePool {
     }
 
     /**
-     * Recycles.
- * @param {any} projectile - The projectile.
+     * Recycles instances back into the object pool.
+     * @param {any} projectile - The projectile.
      */
     recycle(projectile) {
         if (!projectile || this.inactive.includes(projectile)) return;
@@ -50,7 +50,7 @@ class ProjectilePool {
     }
 
     /**
-     * Clears.
+     * Clears the active instances or data.
      */
     clear() {
         for (const projectile of this.inactive) {

@@ -16,7 +16,7 @@ export default class GameView extends AbstractView {
     /**
      * Creates an instance of GameView.
      *
-     * @param {Object} params - The route parameters.
+     * @param {any} params - The params.
      */
     constructor(params) {
         super(params);

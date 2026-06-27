@@ -10,11 +10,12 @@ export default class Key extends GameObject {
 
   /**
    * Creates a new key object.
-   * @param {string} key - The string value of the key.
-   * @param {number} x - The x position on the grid.
-   * @param {number} y - The y position on the grid.
-   * @param {boolean} isPressed - Indicates if the key is pressed.
-   * @param {number} tileSize - The size of the tile.
+   * @param {any} key - The key.
+   * @param {any} x - The x.
+   * @param {any} y - The y.
+   * @param {any} isPressed - The isPressed.
+   * @param {any} tileSize - The tileSize.
+   * @param {any} isGround - The isGround.
    */
   constructor(key, x, y, isPressed, tileSize, isGround = false) {
     const spacing = 3.2;
@@ -38,7 +39,7 @@ export default class Key extends GameObject {
 
   /**
    * Sets the is pressed.
- * @param {any} isPressed - The is pressed value.
+   * @param {any} isPressed - The isPressed.
    */
   set isPressed(isPressed) {
     this.#isPressed = isPressed;
@@ -53,7 +54,7 @@ export default class Key extends GameObject {
 
   /**
    * Sets the is pressed.
- * @param {any} val - The is pressed value.
+   * @param {any} val - The val.
    */
   set isPressed(val) {
     this.#isPressed = val;

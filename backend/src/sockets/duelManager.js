@@ -11,7 +11,7 @@ const SPELL_CONFIGS = {
 class DuelManager {
     /**
      * Creates an instance of DuelManager.
-     * @param {Object} io - The socket.io server instance.
+     * @param {any} io - The io.
      */
     constructor(io) {
         this.io = io;
@@ -20,7 +20,7 @@ class DuelManager {
 
     /**
      * Retrieves a player's average WPM from the database statistics.
-     * @param {string} userId - The database ID of the user.
+     * @param {any} userId - The userId.
      * @returns {Promise<number>} The player's average WPM (defaults to 30).
      */
     async getPlayerAverageWpm(userId) {
@@ -38,8 +38,8 @@ class DuelManager {
 
     /**
      * Creates a new multiplayer duel room state and notifies both players.
-     * @param {Object} player1Socket - Socket of the first player.
-     * @param {Object} player2Socket - Socket of the second player.
+     * @param {any} player1Socket - The player1Socket.
+     * @param {any} player2Socket - The player2Socket.
      * @returns {Promise<void>}
      */
     async createDuel(player1Socket, player2Socket) {
@@ -71,7 +71,7 @@ class DuelManager {
 
     /**
      * Marks a player ready, and starts the countdown once both players are ready.
-     * @param {Object} socket - The socket instance of the ready player.
+     * @param {any} socket - The socket.
      * @returns {void}
      */
     handlePlayerReady(socket) {
@@ -95,8 +95,8 @@ class DuelManager {
 
     /**
      * Updates the player's dynamic WPM in the active duel session.
-     * @param {Object} socket - The player's socket instance.
-     * @param {Object} data - Payload containing the current dynamic WPM.
+     * @param {any} socket - The socket.
+     * @param {any} data - The data.
      * @returns {void}
      */
     handleUpdateWpm(socket, data) {
@@ -117,7 +117,7 @@ class DuelManager {
 
     /**
      * Clears all pending automatic spell damage timeout schedules.
-     * @param {Object} duel - The active duel session object.
+     * @param {any} duel - The duel.
      * @returns {void}
      */
     clearDuelTimeouts(duel) {
@@ -132,7 +132,7 @@ class DuelManager {
 
     /**
      * Handles user disconnection during an active duel, notifying the room and cleaning timeouts.
-     * @param {Object} socket - The socket instance of the disconnecting player.
+     * @param {any} socket - The socket.
      * @returns {void}
      */
     handleDisconnect(socket) {
@@ -149,8 +149,8 @@ class DuelManager {
     /**
      * Handles the casting of a spell by a player, calculating its speed multiplier
      * dynamically based on the attacker/target WPM ratio for rubberband difficulty balancing.
-     * @param {Object} socket - The attacker's socket instance.
-     * @param {Object} data - Payload containing the spell type.
+     * @param {any} socket - The socket.
+     * @param {any} data - The data.
      * @returns {void}
      */
     handleCastSpell(socket, data) {
@@ -207,8 +207,8 @@ class DuelManager {
 
     /**
      * Automatically applies damage for homing spells that fly for too long without being blocked.
-     * @param {string} roomId - The room ID of the active duel.
-     * @param {string} spellId - The ID of the in-flight spell.
+     * @param {any} roomId - The roomId.
+     * @param {any} spellId - The spellId.
      * @returns {void}
      */
     applyAutomaticSpellHit(roomId, spellId) {
@@ -238,8 +238,8 @@ class DuelManager {
 
     /**
      * Handles a player's request to block an incoming spell, with validation to prevent cheating.
-     * @param {Object} socket - The defender's socket instance.
-     * @param {Object} data - Payload containing the spell ID to block.
+     * @param {any} socket - The socket.
+     * @param {any} data - The data.
      * @returns {void}
      */
     handleBlockSpell(socket, data) {
@@ -265,8 +265,8 @@ class DuelManager {
 
     /**
      * Applies damage to a player when hit by a projectile, with distance flight validation.
-     * @param {Object} socket - The target player's socket instance.
-     * @param {Object} data - Payload containing the hitting spell ID.
+     * @param {any} socket - The socket.
+     * @param {any} data - The data.
      * @returns {void}
      */
     handleTakeDamage(socket, data) {
@@ -309,8 +309,8 @@ class DuelManager {
 
     /**
      * Ends a duel session, notifying all room participants, cleaning timeouts, and deleting the state.
-     * @param {string} roomId - The active room ID.
-     * @param {string} winnerId - The database ID of the winner.
+     * @param {any} roomId - The roomId.
+     * @param {any} winnerId - The winnerId.
      * @returns {void}
      */
     endDuel(roomId, winnerId) {

@@ -3,10 +3,10 @@ import * as THREE from "three";
 export class DefaultDecor {
 
     /**
-     * Builds.
- * @param {any} scene - The scene.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * Builds the decoration elements.
+     * @param {any} scene - The scene.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static build(scene, decorGroup, disposables) {
         scene.background = new THREE.Color(0x0a0c10);

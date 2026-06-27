@@ -3,10 +3,10 @@ import * as THREE from "three";
 export class CaveDecor {
 
     /**
-     * Builds.
- * @param {any} scene - The scene.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * Builds the decoration elements.
+     * @param {any} scene - The scene.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static build(scene, decorGroup, disposables) {
         scene.background = new THREE.Color(0x090a12);
@@ -36,7 +36,7 @@ export class CaveDecor {
 
     /**
      * _builds the lighting.
- * @param {any} decorGroup - The decorGroup.
+     * @param {any} decorGroup - The decorGroup.
      */
     static _buildLighting(decorGroup) {
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
@@ -52,8 +52,8 @@ export class CaveDecor {
 
     /**
      * _builds the dust particles.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static _buildDustParticles(decorGroup, disposables) {
         const particles = [];
@@ -82,8 +82,8 @@ export class CaveDecor {
 
     /**
      * _builds the cave floor.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static _buildCaveFloor(decorGroup, disposables) {
         const floorGeo = new THREE.PlaneGeometry(80, 80, 20, 20);
@@ -114,8 +114,8 @@ export class CaveDecor {
 
     /**
      * _builds the walls.
- * @param {any} decorGroup - The decorGroup.
- * @param {boolean} disposables - The disposables.
+     * @param {any} decorGroup - The decorGroup.
+     * @param {any} disposables - The disposables.
      */
     static _buildWalls(decorGroup, disposables) {
         const wallMat = new THREE.MeshStandardMaterial({
@@ -144,10 +144,10 @@ export class CaveDecor {
 
     /**
      * _creates the static wall.
- * @param {string} width - The width.
- * @param {any} height - The height.
- * @param {any} wallMat - The wallMat.
- * @param {boolean} disposables - The disposables.
+     * @param {any} width - The width.
+     * @param {any} height - The height.
+     * @param {any} wallMat - The wallMat.
+     * @param {any} disposables - The disposables.
      */
     static _createStaticWall(width, height, wallMat, disposables) {
         const segsX = Math.floor(width / 5);

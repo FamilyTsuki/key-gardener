@@ -14,7 +14,7 @@ export class VoidCreature {
     }
 
     /**
-     * Initializes the .
+     * Initializes the void creature.
      */
     async init() {
         try {
@@ -58,8 +58,8 @@ export class VoidCreature {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the void creature state and logic.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(deltaTime) {
         if (this.isDying) {
@@ -86,7 +86,7 @@ export class VoidCreature {
     }
 
     /**
-     * Dies.
+     * Handles the death logic of the entity.
      */
     die() {
         this.isDying = true;
@@ -94,7 +94,7 @@ export class VoidCreature {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the void creature resources.
      */
     cleanup() {
         if (this.mesh) {

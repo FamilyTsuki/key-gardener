@@ -16,8 +16,8 @@ export class PlayerState {
 
     /**
      * Handles the  event/action.
- * @param {Event} event - The event.
- * @param {Function} callback - The callback.
+     * @param {any} event - The event.
+     * @param {any} callback - The callback.
      */
     on(event, callback) {
         if (!this.listeners[event]) this.listeners[event] = [];
@@ -25,9 +25,9 @@ export class PlayerState {
     }
 
     /**
-     * Emits.
- * @param {Event} event - The event.
- * @param {any} data - The data.
+     * Emits an event to the socket or listeners.
+     * @param {any} event - The event.
+     * @param {any} data - The data.
      */
     emit(event, data) {
         if (this.listeners[event]) {
@@ -43,9 +43,9 @@ export class PlayerState {
     }
 
     /**
-     * Damages.
- * @param {any} amount - The amount.
- * @param {any} reason - The reason.
+     * Applies damage to the entity.
+     * @param {any} amount - The amount.
+     * @param {any} reason - The reason.
      */
     damage(amount, reason = null) {
         if (amount === Infinity) {
@@ -64,8 +64,8 @@ export class PlayerState {
     }
 
     /**
-     * Heals.
- * @param {any} amount - The amount.
+     * Restores health to the entity.
+     * @param {any} amount - The amount.
      */
     heal(amount) {
         if (this.hp >= this.hpMax) return 0;

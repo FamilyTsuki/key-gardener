@@ -58,7 +58,7 @@ export class DuelState {
 
     /**
      * Get the random word.
- * @param {any} length - The length.
+     * @param {any} length - The length.
      */
     getRandomWord(length) {
         let words = LanguageManager.t("game.jumpWords");
@@ -86,7 +86,7 @@ export class DuelState {
 
     /**
      * Updates the cooldowns.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateCooldowns(deltaTime) {
         this.availableSpells.forEach(s => {
@@ -98,7 +98,7 @@ export class DuelState {
 
     /**
      * Resets the spell.
- * @param {any} completedSpell - The completedSpell.
+     * @param {any} completedSpell - The completedSpell.
      */
     resetSpell(completedSpell) {
         const currentWpm = this.getCurrentWpm();

@@ -30,7 +30,7 @@ export default class EarthBoss extends Actor {
 
     /**
      * _builds the body.
- * @param {any} bossModel - The bossModel.
+     * @param {any} bossModel - The bossModel.
      */
     _buildBody(bossModel) {
         if (bossModel) {
@@ -106,12 +106,12 @@ export default class EarthBoss extends Actor {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTimeMs - The deltaTimeMs.
- * @param {any} playerPos - The playerPos.
- * @param {any} projectiles - The projectiles.
- * @param {any} bonks - The bonks.
- * @param {any} player - The player.
+     * Updates the Earth Boss state and animations.
+     * @param {any} deltaTimeMs - The deltaTimeMs.
+     * @param {any} playerPos - The playerPos.
+     * @param {any} projectiles - The projectiles.
+     * @param {any} bonks - The bonks.
+     * @param {any} player - The player.
      */
     update(deltaTimeMs, playerPos, projectiles, bonks, player) {
         if (this.hp < 0) return;
@@ -135,7 +135,7 @@ export default class EarthBoss extends Actor {
 
     /**
      * _updates the emerge animation.
- * @param {any} dt - The dt.
+     * @param {any} dt - The dt.
      */
     _updateEmergeAnimation(dt) {
         this.emergeProgress += dt * 0.5;
@@ -153,7 +153,7 @@ export default class EarthBoss extends Actor {
 
     /**
      * _updates the death animation.
- * @param {any} dt - The dt.
+     * @param {any} dt - The dt.
      */
     _updateDeathAnimation(dt) {
         this.deathProgress += dt;
@@ -172,7 +172,7 @@ export default class EarthBoss extends Actor {
 
     /**
      * _animates the body.
- * @param {any} dt - The dt.
+     * @param {any} dt - The dt.
      */
     _animateBody(dt) {
         this.mesh.updateMatrixWorld(true);
@@ -180,8 +180,8 @@ export default class EarthBoss extends Actor {
 
     /**
      * _updates the attack phases.
- * @param {any} dt - The dt.
- * @param {any} player - The player.
+     * @param {any} dt - The dt.
+     * @param {any} player - The player.
      */
     _updateAttackPhases(dt, player) {
         this.stateTimer += dt;
@@ -404,8 +404,8 @@ export default class EarthBoss extends Actor {
 
     /**
      * _applies the laser damage.
- * @param {any} dt - The dt.
- * @param {any} player - The player.
+     * @param {any} dt - The dt.
+     * @param {any} player - The player.
      */
     _applyLaserDamage(dt, player) {
         if (!player || !player.isAlive()) return;
@@ -422,7 +422,7 @@ export default class EarthBoss extends Actor {
 
     /**
      * Takes the damage.
- * @param {any} nb - The nb.
+     * @param {any} nb - The nb.
      */
     takeDamage(nb) {
         if (this.isDying || this.hp < 0) return;
@@ -456,7 +456,7 @@ export default class EarthBoss extends Actor {
     }
 
     /**
-     * Dies.
+     * Handles the death logic of the entity.
      */
     die() {
         const bossUI = document.getElementById("boss-ui");

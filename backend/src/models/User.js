@@ -105,7 +105,7 @@ class User {
 
     /**
      * Finds a user by their Google OAuth ID.
-     * @param {string} googleId - The Google sub ID.
+     * @param {any} googleId - The googleId.
      * @returns {Promise<Object|null>} The user object or undefined.
      */
     static async findByGoogleId(googleId) {
@@ -117,10 +117,10 @@ class User {
 
     /**
      * Creates a new user authenticated via Google OAuth.
-     * @param {string} username - Unique generated username.
-     * @param {string} email - The user's email.
-     * @param {string} googleId - Google sub ID.
-     * @param {string} pictureUrl - Google profile picture URL.
+     * @param {any} username - The username.
+     * @param {any} email - The email.
+     * @param {any} googleId - The googleId.
+     * @param {any} pictureUrl - The pictureUrl.
      * @returns {Promise<Object>} The created user.
      */
     static async createGoogleUser(username, email, googleId, pictureUrl) {
@@ -133,9 +133,9 @@ class User {
 
     /**
      * Links a Google OAuth account to an existing user by email.
-     * @param {number} id - User database ID.
-     * @param {string} googleId - Google sub ID.
-     * @param {string} pictureUrl - Google profile picture URL.
+     * @param {any} id - The id.
+     * @param {any} googleId - The googleId.
+     * @param {any} pictureUrl - The pictureUrl.
      * @returns {Promise<Object>} The updated user.
      */
     static async linkGoogleAccount(id, googleId, pictureUrl) {

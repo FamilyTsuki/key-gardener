@@ -14,7 +14,7 @@ export default class Undefined extends Spell {
 
   /**
    * Activates the spell's effect, instantly eliminating the enemy if within range.
-   * @param {Object} closestEnemy - The closest enemy data {instance: Enemy, dist: number}.
+   * @param {any} closestEnemy - The closestEnemy.
    */
   effect(closestEnemy) {
     if (closestEnemy) {

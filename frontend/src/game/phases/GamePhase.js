@@ -4,7 +4,7 @@
 export class GamePhase {
     /**
      * Creates an instance of GamePhase.
-     * @param {Object} gameEngine - The game engine instance.
+     * @param {any} gameEngine - The gameEngine.
      */
     constructor(gameEngine) {
         this.gameEngine = gameEngine;
@@ -23,13 +23,13 @@ export class GamePhase {
 
     /**
      * Handles keyboard events.
-     * @param {KeyboardEvent} _event - The keyboard event.
+     * @param {any} _event - The _event.
      */
     handleKeyDown(_event) {}
 
     /**
      * Updates the game phase logic.
-     * @param {number} _deltaTime - The time elapsed since the last update.
+     * @param {any} _deltaTime - The _deltaTime.
      */
     update(_deltaTime) {}
 

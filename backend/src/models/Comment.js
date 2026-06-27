@@ -3,9 +3,9 @@ const db = require("../config/database");
 class Comment {
     /**
      * Creates a new comment in the database.
-     * @param {number} postId - The ID of the post.
-     * @param {number} userId - The ID of the user creating the comment.
-     * @param {string} content - The text content of the comment.
+     * @param {any} postId - The postId.
+     * @param {any} userId - The userId.
+     * @param {any} content - The content.
      * @returns {Object} The created comment object.
      */
     static async create(postId, userId, content) {
@@ -20,7 +20,7 @@ class Comment {
 
     /**
      * Retrieves all comments for a specific post.
-     * @param {number} postId - The ID of the post.
+     * @param {any} postId - The postId.
      * @returns {Array} Array of comment objects.
      */
     static async getByPostId(postId) {
@@ -37,8 +37,8 @@ class Comment {
 
     /**
      * Deletes a comment by its ID and ensures the user owns it.
-     * @param {number} id - The comment ID.
-     * @param {number} userId - The ID of the user requesting deletion.
+     * @param {any} id - The id.
+     * @param {any} userId - The userId.
      * @returns {Object} The deleted comment (or undefined if not found/unauthorized).
      */
     static async delete(id, userId) {

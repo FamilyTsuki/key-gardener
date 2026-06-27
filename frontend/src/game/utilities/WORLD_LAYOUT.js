@@ -2,6 +2,8 @@
  * Creates and returns the layout of the world map.
  * Generates an array of tile objects with coordinates, letters, and properties.
  *
+ * @param {any} introType - The introType.
+ * @param {any} height - The height.
  * @returns {Array<Object>} An array of tile objects representing the world layout.
  */
 export function createWordlLayout(introType = "none", height = 30) {

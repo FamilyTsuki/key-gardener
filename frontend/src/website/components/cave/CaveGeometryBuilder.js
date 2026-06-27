@@ -74,7 +74,7 @@ export class CaveGeometryBuilder {
 
     /**
      * Applies the deformation and colors.
- * @param {any} geometry - The geometry.
+     * @param {any} geometry - The geometry.
      */
     applyDeformationAndColors(geometry) {
         const positionAttribute = geometry.attributes.position;
@@ -355,9 +355,9 @@ export class CaveGeometryBuilder {
 
     /**
      * Adds the instanced mesh from data.
- * @param {any} dataArray - The dataArray.
- * @param {any} geometry - The geometry.
- * @param {any} material - The material.
+     * @param {any} dataArray - The dataArray.
+     * @param {any} geometry - The geometry.
+     * @param {any} material - The material.
      */
     addInstancedMeshFromData(dataArray, geometry, material) {
         if (dataArray.length === 0) return;
@@ -378,7 +378,7 @@ export class CaveGeometryBuilder {
 
     /**
      * Calculates the pebble data.
- * @param {any} dummy - The dummy.
+     * @param {any} dummy - The dummy.
      */
     calculatePebbleData(dummy) {
         let y, normalizedY, isMineral;

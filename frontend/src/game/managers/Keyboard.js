@@ -11,10 +11,11 @@ export default class Keyboard {
 
     /**
      * Creates an instance of Keyboard.
-     * @param {Array<Key>} keyboardLayout - Array of instantiated Key objects.
-     * @param {number} tileSize - The size of each tile/key.
-     * @param {THREE.Scene} scene - The main three.js scene.
-     * @param {string} theme - The theme of the keyboard ('mine' or 'styx').
+     * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} tileSize - The tileSize.
+     * @param {any} scene - The scene.
+     * @param {any} theme - The theme.
+     * @param {any} options - The options.
      */
     constructor(keyboardLayout, tileSize, scene, theme = "mine", options = {}) {
         this.#keyboardLayout = keyboardLayout;
@@ -37,7 +38,7 @@ export default class Keyboard {
 
     /**
      * Creates instances for each key procedurally to match the visual theme.
-     * @param {THREE.Scene} scene - The main three.js scene.
+     * @param {any} scene - The scene.
      */
     loadAndCreateKeys(scene) {
         const isStyx = this.theme === "styx";
@@ -239,6 +240,7 @@ export default class Keyboard {
 
     /**
      * Updates the visuals of the keys based on their state (e.g., pressed).
+     * @param {any} enemiesManager - The enemiesManager.
      */
     update(enemiesManager = null) {
         const isStyx = this.theme === "styx";
@@ -272,7 +274,7 @@ export default class Keyboard {
 
     /**
      * Finds a key by its character or identifier.
-     * @param {string} keyToFind - The key identifier to find.
+     * @param {any} keyToFind - The keyToFind.
      * @returns {Key|undefined} The matched Key object, or undefined.
      */
     find(keyToFind) {
@@ -281,7 +283,8 @@ export default class Keyboard {
 
     /**
      * Rebuilds the keyboard layout dynamically (e.g. AZERTY to QWERTY).
-     * @param {Array<Object>} newLayoutRaw - The new raw layout array.
+     * @param {any} newLayoutRaw - The newLayoutRaw.
+     * @param {any} newOptions - The newOptions.
      */
     rebuild(newLayoutRaw, newOptions = null) {
         if (newOptions) {
@@ -309,9 +312,10 @@ export default class Keyboard {
 
     /**
      * Factory method to initialize the keyboard.
-     * @param {THREE.Scene} scene - The main three.js scene.
-     * @param {Array<Object>} keyboardLayout - The raw layout definition.
-     * @param {string} theme - The theme of the keyboard ('mine' or 'styx').
+     * @param {any} scene - The scene.
+     * @param {any} keyboardLayout - The keyboardLayout.
+     * @param {any} theme - The theme.
+     * @param {any} options - The options.
      * @returns {Keyboard} A new Keyboard instance.
      */
     static init(scene, keyboardLayout, theme = "mine", options = {}) {
@@ -333,10 +337,12 @@ export default class Keyboard {
 
 /**
  * Creates a canvas-based texture displaying text.
- * @param {string} text - The text to display.
- * @param {string} [color="black"] - The text color.
- * @param {string} [bgColor="rgba(0,0,0,0)"] - The background color.
- * @param {number} [fontSize=90] - The font size.
+ * @param {any} text - The text.
+ * @param {any} color - The color.
+ * @param {any} bgColor - The bgColor.
+ * @param {any} 0 - The 0.
+ * @param {any} 0 - The 0.
+ * @param {any} 0 - The 0.
  * @returns {THREE.CanvasTexture} The generated texture.
  */
 function createTextTexture(

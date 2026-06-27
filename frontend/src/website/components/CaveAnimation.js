@@ -51,7 +51,7 @@ export class CaveAnimation {
     }
 
     /**
-     * Initializes the .
+     * Initializes the cave animation.
      */
     async init() {
         if (window.incrementLoader) window.incrementLoader();
@@ -180,7 +180,7 @@ export class CaveAnimation {
     }
 
     /**
-     * Destroies.
+     * Destroys the cave animation and cleans up resources.
      */
     destroy() {
         if (this.animationFrameId) {

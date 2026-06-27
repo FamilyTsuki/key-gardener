@@ -18,9 +18,9 @@ export class FloatingTextManager {
 
     /**
      * Adds a new floating text instance.
-     * @param {THREE.Vector3} position3D - The starting 3D position in world space.
-     * @param {string|number} text - The text to display.
-     * @param {string} [type="damage"] - The CSS class suffix (e.g., 'damage', 'heal', 'critical').
+     * @param {any} position3D - The position3D.
+     * @param {any} text - The text.
+     * @param {any} type - The type.
      */
     add(position3D, text, type = "damage") {
         const textElement = document.createElement("div");
@@ -42,8 +42,8 @@ export class FloatingTextManager {
 
     /**
      * Updates the position and opacity of all active floating texts.
-     * @param {THREE.Camera} camera - The camera used to project 3D coordinates.
-     * @param {number} deltaTime - Time elapsed since the last frame.
+     * @param {any} camera - The camera.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(camera, deltaTime) {
         if (!camera) return;
@@ -68,8 +68,8 @@ export class FloatingTextManager {
 
     /**
      * Updates the 3D position of a text instance over time (drifting effect).
-     * @param {Object} textInstance - The floating text object.
-     * @param {number} deltaTime - Time elapsed since the last frame.
+     * @param {any} textInstance - The textInstance.
+     * @param {any} deltaTime - The deltaTime.
      */
     updateTextPosition(textInstance, deltaTime) {
         textInstance.pos3D.y += 2.0 * deltaTime;
@@ -78,10 +78,10 @@ export class FloatingTextManager {
 
     /**
      * Projects the 3D position to 2D and applies CSS transforms to render the text.
-     * @param {Object} textInstance - The floating text object.
-     * @param {THREE.Camera} camera - The camera used for projection.
-     * @param {number} halfWidth - Half of the window width.
-     * @param {number} halfHeight - Half of the window height.
+     * @param {any} textInstance - The textInstance.
+     * @param {any} camera - The camera.
+     * @param {any} halfWidth - The halfWidth.
+     * @param {any} halfHeight - The halfHeight.
      */
     renderTextElement(textInstance, camera, halfWidth, halfHeight) {
         const vector = textInstance.pos3D.clone();
@@ -104,7 +104,7 @@ export class FloatingTextManager {
 
     /**
      * Removes the HTML element of a text instance from the DOM.
-     * @param {Object} textInstance - The floating text object to remove.
+     * @param {any} textInstance - The textInstance.
      */
     removeTextElement(textInstance) {
         if (textInstance.el.parentNode) {

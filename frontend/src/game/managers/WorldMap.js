@@ -12,10 +12,11 @@ export default class WorldMap {
 
     /**
      * Creates a new world map instance.
-     * @param {Array} mapLayout - The layout configuration of the map.
-     * @param {number} tileSize - The size of each tile.
-     * @param {THREE.Scene} scene - The main 3D scene.
-     * @param {THREE.Texture} [stoneTexture] - The texture for the tiles.
+     * @param {any} mapLayout - The mapLayout.
+     * @param {any} tileSize - The tileSize.
+     * @param {any} scene - The scene.
+     * @param {any} stoneTexture - The stoneTexture.
+     * @param {any} buildEnv - The buildEnv.
      */
     constructor(mapLayout, tileSize, scene, stoneTexture, buildEnv = true) {
         this.#mapLayout = mapLayout;
@@ -43,7 +44,7 @@ export default class WorldMap {
 
     /**
      * Updates map tiles based on the player's position.
-     * @param {Object} playerPosition - The current position of the player.
+     * @param {any} playerPosition - The playerPosition.
      */
     update(playerPosition) {
         this.#mapLayout.forEach((tile) => {
@@ -80,8 +81,8 @@ export default class WorldMap {
 
     /**
      * Finds a specific tile by its associated letter.
-     * @param {string} letterToFind - The letter to search for.
-     * @param {number} position_y_player - The Y position of the player to filter tiles.
+     * @param {any} letterToFind - The letterToFind.
+     * @param {any} position_y_player - The position_y_player.
      * @returns {Object|null} The found tile object or null.
      */
     find(letterToFind, position_y_player) {
@@ -108,7 +109,7 @@ export default class WorldMap {
 
     /**
      * Adds new tiles dynamically to the map.
-     * @param {Array} newTilesRaw - Array of raw tile data to add.
+     * @param {any} newTilesRaw - The newTilesRaw.
      */
     addTiles(newTilesRaw) {
         const newTiles = newTilesRaw.map((tileRaw) => {
@@ -134,7 +135,7 @@ export default class WorldMap {
 
     /**
      * Removes tiles that match a certain condition to free memory.
-     * @param {Function} predicate - Condition function (returns true to remove).
+     * @param {any} predicate - The predicate.
      */
     removeTiles(predicate) {
         const remainingTiles = [];
@@ -164,8 +165,9 @@ export default class WorldMap {
 
     /**
      * Initializes the world map asynchronously.
-     * @param {THREE.Scene} scene - The main 3D scene.
-     * @param {Array} worldLayout - The initial layout data for the world.
+     * @param {any} scene - The scene.
+     * @param {any} worldLayout - The worldLayout.
+     * @param {any} buildEnv - The buildEnv.
      * @returns {Promise<WorldMap>} The instantiated world map.
      */
     static async init(scene, worldLayout, buildEnv = true) {

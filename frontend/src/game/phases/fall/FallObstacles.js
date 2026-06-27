@@ -13,10 +13,10 @@ export class FallObstacles {
     }
 
     /**
-     * Updates.
- * @param {any} deltaTime - The deltaTime.
- * @param {any} movementDelta - The movementDelta.
- * @param {boolean} isTransitioning - The isTransitioning.
+     * Updates the fall obstacles positions and state.
+     * @param {any} deltaTime - The deltaTime.
+     * @param {any} movementDelta - The movementDelta.
+     * @param {any} isTransitioning - The isTransitioning.
      */
     update(deltaTime, movementDelta, isTransitioning) {
         if (!isTransitioning) {
@@ -30,7 +30,7 @@ export class FallObstacles {
 
     /**
      * Handles the spawning event/action.
- * @param {any} deltaTime - The deltaTime.
+     * @param {any} deltaTime - The deltaTime.
      */
     handleSpawning(deltaTime) {
         this.obstacleSpawnTimer += deltaTime;
@@ -75,7 +75,7 @@ export class FallObstacles {
 
     /**
      * Spawns the obstacle.
- * @param {any} targetLane - The targetLane.
+     * @param {any} targetLane - The targetLane.
      */
     spawnObstacle(targetLane) {
         const obstacleMesh = new THREE.Mesh(this.obstacleGeometry, this.obstacleMaterial);
@@ -100,8 +100,8 @@ export class FallObstacles {
 
     /**
      * Handles the movement and collision event/action.
- * @param {any} movementDelta - The movementDelta.
- * @param {boolean} isTransitioning - The isTransitioning.
+     * @param {any} movementDelta - The movementDelta.
+     * @param {any} isTransitioning - The isTransitioning.
      */
     handleMovementAndCollision(movementDelta, isTransitioning) {
         for (let i = this.obstacles.length - 1; i >= 0; i--) {
@@ -144,7 +144,7 @@ export class FallObstacles {
     }
 
     /**
-     * Cleanups.
+     * Cleans up the fall obstacles resources.
      */
     cleanup() {
         if (this.obstacleGeometry) this.obstacleGeometry.dispose();

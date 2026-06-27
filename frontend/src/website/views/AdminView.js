@@ -23,7 +23,7 @@ export class AdminView {
     }
 
     /**
-     * Initializes the .
+     * Initializes the admin view.
      */
     async init() {
         clear(this.container);
@@ -65,7 +65,7 @@ export class AdminView {
 
     /**
      * Switches the view.
- * @param {any} view - The view.
+     * @param {any} view - The view.
      */
     switchView(view) {
         this.currentView = view;
@@ -73,14 +73,14 @@ export class AdminView {
     }
 
     /**
-     * Renders.
+     * Renders the admin view.
      */
     async render() {
         return this.container;
     }
 
     /**
-     * Destroies.
+     * Destroys the admin view and cleans up resources.
      */
     destroy() {
         if (this.levelManager && typeof this.levelManager.destroy === "function") {

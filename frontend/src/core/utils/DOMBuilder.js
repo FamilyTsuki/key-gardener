@@ -1,8 +1,8 @@
 /**
  * Creates an HTML or SVG element with given attributes and children.
- * @param {string} tag - The tag name of the element to create.
- * @param {Object} [attributes={}] - An object containing attributes and event listeners to apply.
- * @param {...(Node|string|number|Array)} children - Child elements, text nodes, or arrays of children.
+ * @param {any} tag - The tag.
+ * @param {any} attributes - The attributes.
+ * @param {any} children - The children.
  * @returns {Element} The created DOM element.
  */
 export function el(tag, attributes = {}, ...children) {
@@ -47,7 +47,7 @@ export function el(tag, attributes = {}, ...children) {
 
 /**
  * Removes all child nodes from a given element.
- * @param {Element} element - The element to clear.
+ * @param {any} element - The element.
  */
 export function clear(element) {
     if (!element) return;

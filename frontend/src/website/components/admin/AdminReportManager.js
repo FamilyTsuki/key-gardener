@@ -11,7 +11,7 @@ export class AdminReportManager {
     }
 
     /**
-     * Initializes the .
+     * Initializes the admin report manager.
      */
     async init() {
         await this.loadReportedPosts();
@@ -44,7 +44,7 @@ export class AdminReportManager {
 
     /**
      * Shows the error.
- * @param {any} message - The message.
+     * @param {any} message - The message.
      */
     showError(message) {
         clear(this.mainContainer);
@@ -71,7 +71,7 @@ export class AdminReportManager {
 
     /**
      * Populates the reports list.
- * @param {boolean} listContainer - The listContainer.
+     * @param {any} listContainer - The listContainer.
      */
     populateReportsList(listContainer) {
         if (this.reportedPosts.length === 0) {
@@ -121,7 +121,7 @@ export class AdminReportManager {
 
     /**
      * Renders the report detail.
- * @param {any} post - The post.
+     * @param {any} post - The post.
      */
     renderReportDetail(post) {
         const reportsList = el("ul", { className: "reports-list" });
@@ -153,7 +153,7 @@ export class AdminReportManager {
 
     /**
      * Handles the keep post event/action.
- * @param {string} postId - The postId.
+     * @param {any} postId - The postId.
      */
     async handleKeepPost(postId) {
         try {
@@ -177,7 +177,7 @@ export class AdminReportManager {
 
     /**
      * Handles the destroy post event/action.
- * @param {string} postId - The postId.
+     * @param {any} postId - The postId.
      */
     async handleDestroyPost(postId) {
         try {

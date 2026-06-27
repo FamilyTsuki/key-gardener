@@ -12,7 +12,7 @@ export class HubSocialComponent {
     }
 
     /**
-     * Renders.
+     * Renders the social component.
      */
     render() {
         this.addFriendSection = el("div", { className: "add-friend-section p-20 card-bg" },
@@ -40,7 +40,7 @@ export class HubSocialComponent {
     }
 
     /**
-     * Initializes the .
+     * Initializes the social component.
      */
     async init() {
         await this.loadFriends();
@@ -48,7 +48,7 @@ export class HubSocialComponent {
 
     /**
      * Handles the search event/action.
- * @param {any} query - The query.
+     * @param {any} query - The query.
      */
     async handleSearch(query) {
         const container = document.getElementById("search-results-container");
@@ -119,8 +119,8 @@ export class HubSocialComponent {
 
     /**
      * Adds the friend.
- * @param {any} username - The username.
- * @param {HTMLElement} btnElement - The btnElement.
+     * @param {any} username - The username.
+     * @param {any} btnElement - The btnElement.
      */
     async addFriend(username, btnElement) {
         if (btnElement) {
@@ -152,7 +152,7 @@ export class HubSocialComponent {
 
     /**
      * Accepts the friend.
- * @param {string} friendId - The friendId.
+     * @param {any} friendId - The friendId.
      */
     async acceptFriend(friendId) {
         try {
@@ -241,8 +241,8 @@ export class HubSocialComponent {
 
     /**
      * Invites the duel.
- * @param {string} targetUserId - The targetUserId.
- * @param {HTMLElement} btnElement - The btnElement.
+     * @param {any} targetUserId - The targetUserId.
+     * @param {any} btnElement - The btnElement.
      */
     inviteDuel(targetUserId, btnElement) {
         if (btnElement) {
@@ -261,7 +261,7 @@ export class HubSocialComponent {
 
     /**
      * Accepts the duel.
- * @param {string} fromId - The fromId.
+     * @param {any} fromId - The fromId.
      */
     acceptDuel(fromId) {
         window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
@@ -271,7 +271,7 @@ export class HubSocialComponent {
 
     /**
      * Declines the duel.
- * @param {string} fromId - The fromId.
+     * @param {any} fromId - The fromId.
      */
     declineDuel(fromId) {
         window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
@@ -281,7 +281,7 @@ export class HubSocialComponent {
 
     /**
      * Shows the profile.
- * @param {any} friendData - The friendData.
+     * @param {any} friendData - The friendData.
      */
     showProfile(friendData) {
         history.pushState(null, null, `/profile?id=${friendData.user_id}`);
@@ -290,7 +290,7 @@ export class HubSocialComponent {
 
     /**
      * Removes the friend.
- * @param {string} userId - The userId.
+     * @param {any} userId - The userId.
      */
     async removeFriend(userId) {
         try {

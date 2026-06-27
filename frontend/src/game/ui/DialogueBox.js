@@ -10,7 +10,7 @@ import { el } from "../../core/utils/DOMBuilder.js";
 export class DialogueBox {
     /**
      * Creates a new DialogueBox instance.
-     * @param {HTMLElement} parentElement - The DOM element to attach the dialogue container to.
+     * @param {any} parentElement - The parentElement.
      */
     constructor(parentElement = document.body) {
         this.parentElement = parentElement;
@@ -69,7 +69,7 @@ export class DialogueBox {
 
     /**
      * Handle key presses (e.g. Space or Enter) to advance dialogue.
-     * @param {KeyboardEvent} e - The keyboard event.
+     * @param {any} e - The e.
      */
     handleKeyDown(e) {
         if (e.repeat) return;
@@ -82,9 +82,10 @@ export class DialogueBox {
 
     /**
      * Shows the dialogue box with a set of dialogues and a speaker model/image.
-     * @param {string[]} dialogues - Array of strings to display sequentially.
-     * @param {string} speakerPath - Path to the image (.webp/.webp) or 3D model (.glb/.gltf).
-     * @param {Function} [onComplete] - Callback function executed when dialogue ends.
+     * @param {any} dialogues - The dialogues.
+     * @param {any} speakerPath - The speakerPath.
+     * @param {any} onComplete - The onComplete.
+     * @param {any} blackenModel - The blackenModel.
      */
     show(dialogues, speakerPath, onComplete = null, blackenModel = false) {
         this.dialogues = dialogues.map(d => LanguageManager.t(d));
@@ -102,7 +103,7 @@ export class DialogueBox {
 
     /**
      * Sets up the speaker container, loading either a 2D image or initializing a 3D scene.
-     * @param {string} path - Path to the speaker resource.
+     * @param {any} path - The path.
      */
     setupSpeaker(path) {
         this.cleanupSpeaker();
@@ -121,7 +122,7 @@ export class DialogueBox {
 
     /**
      * Initializes a secondary Three.js scene to render the speaker's 3D model.
-     * @param {string} modelPath - Path to the .glb/.gltf file.
+     * @param {any} modelPath - The modelPath.
      */
     init3DScene(modelPath) {
         this.scene = new THREE.Scene();

@@ -23,32 +23,33 @@
     letter-spacing: 0.04em;
     color: var(--text-color);
 }
-.register-container > div {
+.register-container > div {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.register-container form {
+.register-container form {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 18px;
-}.register-link {
+}
+.register-link {
     font-size: 1.1rem;
     color: var(--text-muted);
     margin-top: 10px;
 }
-.register-link a {
+.register-link a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s ease;
 }
-.register-link a:hover {
+.register-link a:hover {
     color: var(--primary-hover);
 }
-.login-separator {
+.login-separator {
     display: flex;
     align-items: center;
     text-align: center;
@@ -56,22 +57,86 @@
     font-size: 0.85rem;
     margin: 10px 0;
 }
-.login-separator::before,.login-separator::after {
+.login-separator::before,
+.login-separator::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
-.login-separator:not(:empty)::before {
+.login-separator:not(:empty)::before {
     margin-right: .75em;
 }
-.login-separator:not(:empty)::after {
+.login-separator:not(:empty)::after {
     margin-left: .75em;
 }
-.google-btn-container {
+.google-btn-container {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-top: 5px;
+}
+
+/* ============================================================
+   CONSENT CHECKBOX & LINKS
+   ============================================================ */
+.consent-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    margin: 8px 0 16px 0;
+    width: 100%;
+}
+.consent-container input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    background: var(--light-overlay);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+}
+.consent-container input[type="checkbox"]:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px var(--primary-translucent);
+}
+.consent-container input[type="checkbox"]:checked {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 12px var(--primary-translucent);
+}
+.consent-container input[type="checkbox"]:checked::after {
+    content: "✔";
+    position: absolute;
+    color: var(--bg-color);
+    font-size: 13px;
+    font-weight: 900;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.consent-container label {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+}
+.consent-container label a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.consent-container label a:hover {
+    color: var(--primary-hover);
+    text-shadow: 0 0 8px var(--primary-translucent);
+    text-decoration: underline;
 }
 
 /* ============================================================

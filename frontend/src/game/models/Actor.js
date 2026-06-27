@@ -12,13 +12,13 @@ export default class Actor extends GameObject {
 
   /**
    * Creates a new Actor.
-   * @param {string} name - The name of the actor.
-   * @param {number} hp - The current hit points.
-   * @param {number} hpMax - The maximum hit points.
-   * @param {{x: number, y: number}} rawPosition - The raw grid position.
-   * @param {{x: number, y: number}} position - The world position.
-   * @param {{width: number, height: number}} size - The size of the actor.
-   * @param {HTMLImageElement|string} model - The visual representation model.
+   * @param {any} name - The name.
+   * @param {any} hp - The hp.
+   * @param {any} hpMax - The hpMax.
+   * @param {any} rawPosition - The rawPosition.
+   * @param {any} position - The position.
+   * @param {any} size - The size.
+   * @param {any} model - The model.
    */
   constructor(name, hp, hpMax, rawPosition, position, size, model) {
     super(rawPosition, position);
@@ -54,7 +54,7 @@ export default class Actor extends GameObject {
 
   /**
    * Attacks another actor.
-   * @param {Actor} actor - The target actor to attack.
+   * @param {any} actor - The actor.
    */
   attack(actor) {
     console.log(`${this.name} attacking ${actor.name}`);
@@ -62,7 +62,7 @@ export default class Actor extends GameObject {
 
   /**
    * Draws the actor.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   * @param {any} ctx - The ctx.
    */
   draw(ctx) {
     if (!ctx) throw new Error("No ctx on draw !");
@@ -95,7 +95,7 @@ export default class Actor extends GameObject {
   move() {}
   /**
    * Checks if this actor collides with another object.
-   * @param {Object} other - The object to check collision against.
+   * @param {any} other - The other.
    * @returns {boolean} True if a collision occurs.
    */
   checkCollision(other) {

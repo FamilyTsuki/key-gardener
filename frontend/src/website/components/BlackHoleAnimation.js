@@ -12,7 +12,7 @@ export class BlackHoleAnimation {
     }
 
     /**
-     * Initializes the .
+     * Initializes the black hole animation.
      */
     async init() {
         this.setupEnvironment();
@@ -202,7 +202,7 @@ export class BlackHoleAnimation {
     }
 
     /**
-     * Destroies.
+     * Destroys the black hole animation and cleans up resources.
      */
     destroy() {
         if (this.animationFrameId) {

@@ -83,8 +83,8 @@ export function getKeyboardLayout() {
 
 /**
  * Returns the keyboard layout extended with ground tiles for enemies to spawn and walk on.
- * @param {number} paddingSides - Number of extra columns to the left and right.
- * @param {number} paddingTopBottom - Number of extra rows above and below.
+ * @param {any} paddingSides - The paddingSides.
+ * @param {any} paddingTopBottom - The paddingTopBottom.
  * @returns {Array<Object>} The extended map layout.
  */
 export function getExtendedMapLayout(paddingSides = 3, paddingTopBottom = 5) {

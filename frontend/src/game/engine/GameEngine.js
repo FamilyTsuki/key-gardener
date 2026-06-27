@@ -27,8 +27,8 @@ import ProjectilePool from "../models/ProjectilePool.js";
 export class GameEngine {
     /**
      * Creates an instance of GameEngine.
-     * @param {string} startMode - 'normal' or 'duel'
-     * @param {Object} startData - duel data if mode is 'duel'
+     * @param {any} startMode - The startMode.
+     * @param {any} startData - The startData.
      */
     constructor(startMode = "normal", startData = null) {
         this.startMode = startMode;
@@ -150,7 +150,7 @@ export class GameEngine {
 
     /**
      * Loads a specific level.
-     * @param {number} level - The level to load.
+     * @param {any} level - The level.
      * @returns {Promise<void>}
      */
     async loadLevel(level) {
@@ -217,7 +217,7 @@ export class GameEngine {
 
     /**
      * Sets a new game phase, cleaning up the current one if necessary.
-     * @param {Object} newPhase - The new phase to set.
+     * @param {any} newPhase - The newPhase.
      * @returns {Promise<void>}
      */
     async setPhase(newPhase) {
@@ -253,7 +253,7 @@ export class GameEngine {
 
     /**
      * Prefetchs the level.
- * @param {any} level - The level.
+     * @param {any} level - The level.
      */
     async prefetchLevel(level) {
         if (!PerformanceDetector.shouldPrefetch()) {
@@ -427,7 +427,7 @@ export class GameEngine {
 
     /**
      * Handles the key down.
- * @param {any} event - The event.
+     * @param {any} event - The event.
      */
     handleKeyDown(event) {
         if (!this.secretBuffer) this.secretBuffer = "";
@@ -527,7 +527,7 @@ export class GameEngine {
 
     /**
      * The main game loop.
-     * @param {number} currentTime - The current time in milliseconds.
+     * @param {any} currentTime - The currentTime.
      */
     loop(currentTime) {
         if (!this.isRunning) return;

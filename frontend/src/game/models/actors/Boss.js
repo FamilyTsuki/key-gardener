@@ -9,14 +9,14 @@ import * as THREE from "three";
 export default class Boss extends Actor {
   /**
    * Creates a new Boss instance.
-   * @param {string} name - The name of the boss.
-   * @param {number} hp - The boss's hit points.
-   * @param {{x: number, y: number}} rawPosition - The raw grid position.
-   * @param {{x: number, y: number}} position - The world position.
-   * @param {{width: number, height: number}} size - The size of the boss.
-   * @param {THREE.Scene} scene - The main 3D scene.
-   * @param {THREE.Object3D} fireballModel - The model used for fireball attacks.
-   * @param {Object} bossModel - The 3D model for the boss.
+   * @param {any} name - The name.
+   * @param {any} hp - The hp.
+   * @param {any} rawPosition - The rawPosition.
+   * @param {any} position - The position.
+   * @param {any} size - The size.
+   * @param {any} scene - The scene.
+   * @param {any} fireballModel - The fireballModel.
+   * @param {any} bossModel - The bossModel.
    */
   constructor(
     name,
@@ -99,10 +99,10 @@ export default class Boss extends Actor {
   }
   /**
    * Updates the boss's logic each frame.
-   * @param {number} deltaTime - Time since the last update.
-   * @param {Object} playerPos - The player's position {x, y}.
-   * @param {Array} projectiles - Array of active projectiles.
-   * @param {Array} bonks - Array of active bonk attacks.
+   * @param {any} deltaTime - The deltaTime.
+   * @param {any} playerPos - The playerPos.
+   * @param {any} projectiles - The projectiles.
+   * @param {any} bonks - The bonks.
    */
   update(deltaTime, playerPos, projectiles, bonks) {
     if (this.hp < 0) return;
@@ -201,7 +201,7 @@ export default class Boss extends Actor {
   }
   /**
    * Checks if the boss collides with another object.
-   * @param {Object} other - The other object to check.
+   * @param {any} other - The other.
    * @returns {boolean} True if they collide.
    */
   checkCollision(other) {
@@ -215,8 +215,8 @@ export default class Boss extends Actor {
 
   /**
    * Performs the Ink Rain attack.
-   * @param {Object} playerPos - The player's position.
-   * @param {Array} projectiles - The array to add new projectiles into.
+   * @param {any} playerPos - The playerPos.
+   * @param {any} projectiles - The projectiles.
    */
   attackInkRain(playerPos, projectiles) {
     const nbProjectiles = 5;
@@ -252,8 +252,8 @@ export default class Boss extends Actor {
   }
   /**
    * Performs the Tentacle (Bonk) attack.
-   * @param {Object} playerPos - The player's position.
-   * @param {Array} bonks - The array to add new bonk attacks into.
+   * @param {any} playerPos - The playerPos.
+   * @param {any} bonks - The bonks.
    */
   attackTentacle(playerPos, bonks) {
     this.targetX = playerPos.x;
@@ -285,7 +285,7 @@ export default class Boss extends Actor {
 
   /**
    * Reduces the boss's health by the specified damage.
-   * @param {number} nb - The amount of damage to take.
+   * @param {any} nb - The nb.
    */
   takeDamage(nb) {
       if (this.isDying || this.hp < 0) return;

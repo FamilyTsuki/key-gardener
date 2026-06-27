@@ -8,10 +8,10 @@ export class PostsService {
 
     /**
      * Handles API responses, parsing JSON or text, and throwing errors if not ok.
-     * @param {Response} response - The fetch response object.
-     * @param {string} defaultError - The default error message to use if none is provided by the server.
-     * @returns {Promise<any>} The parsed response data.
      * @throws {Error} If the response is not ok.
+     * @param {any} response - The response.
+     * @param {any} defaultError - The defaultError.
+     * @returns {Promise<any>} The parsed response data.
      */
     static async handleResponse(response, defaultError) {
         const contentType = response.headers.get("content-type");
@@ -37,7 +37,7 @@ export class PostsService {
 
     /**
      * Retrieves all posts from the server.
-     * @param {string} [sort="hot"] - The sorting criteria (e.g., hot, recent, upvotes, comments).
+     * @param {any} sort - The sort.
      * @returns {Promise<Array>} A promise resolving to a list of posts.
      */
     static async getAllPosts(sort = "hot") {
@@ -49,7 +49,7 @@ export class PostsService {
 
     /**
      * Retrieves a specific post by its ID.
-     * @param {string} id - The ID of the post.
+     * @param {any} id - The id.
      * @returns {Promise<Object>} A promise resolving to the post data.
      */
     static async getPostById(id) {
@@ -61,7 +61,7 @@ export class PostsService {
 
     /**
      * Retrieves all posts created by a specific user.
-     * @param {string} userId - The ID of the user.
+     * @param {any} userId - The userId.
      * @returns {Promise<Array>} A promise resolving to a list of the user's posts.
      */
     static async getUserPosts(userId) {
@@ -73,10 +73,10 @@ export class PostsService {
 
     /**
      * Creates a new post.
-     * @param {string} content - The content of the post.
-     * @param {File} [file=null] - An optional media file attached to the post.
-     * @returns {Promise<Object>} A promise resolving to the created post data.
      * @throws {Error} If the user is not authenticated.
+     * @param {any} content - The content.
+     * @param {any} file - The file.
+     * @returns {Promise<Object>} A promise resolving to the created post data.
      */
     static async createPost(content, file = null) {
         
@@ -103,10 +103,10 @@ export class PostsService {
 
     /**
      * Updates an existing post.
-     * @param {string} id - The ID of the post to update.
-     * @param {string} content - The new content of the post.
-     * @returns {Promise<Object>} A promise resolving to the updated post data.
      * @throws {Error} If the user is not authenticated.
+     * @param {any} id - The id.
+     * @param {any} content - The content.
+     * @returns {Promise<Object>} A promise resolving to the updated post data.
      */
     static async updatePost(id, content) {
         
@@ -128,9 +128,9 @@ export class PostsService {
 
     /**
      * Deletes an existing post.
-     * @param {string} id - The ID of the post to delete.
-     * @returns {Promise<Object>} A promise resolving to the deletion response data.
      * @throws {Error} If the user is not authenticated.
+     * @param {any} id - The id.
+     * @returns {Promise<Object>} A promise resolving to the deletion response data.
      */
     static async deletePost(id) {
         
@@ -150,9 +150,9 @@ export class PostsService {
 
     /**
      * Upvotes a specific post.
-     * @param {string} id - The ID of the post.
-     * @returns {Promise<Object>} A promise resolving to the response data.
      * @throws {Error} If the user is not authenticated.
+     * @param {any} id - The id.
+     * @returns {Promise<Object>} A promise resolving to the response data.
      */
     static async upvotePost(id) {
         
@@ -172,9 +172,9 @@ export class PostsService {
 
     /**
      * Downvotes a specific post.
-     * @param {string} id - The ID of the post.
-     * @returns {Promise<Object>} A promise resolving to the response data.
      * @throws {Error} If the user is not authenticated.
+     * @param {any} id - The id.
+     * @returns {Promise<Object>} A promise resolving to the response data.
      */
     static async downvotePost(id) {
         
@@ -194,7 +194,7 @@ export class PostsService {
 
     /**
      * Retrieves all comments for a post.
-     * @param {string} id - The ID of the post.
+     * @param {any} id - The id.
      * @returns {Promise<Object>} A promise resolving to the comments data.
      */
     static async getComments(id) {
@@ -206,8 +206,8 @@ export class PostsService {
 
     /**
      * Adds a comment to a post.
-     * @param {string} id - The ID of the post.
-     * @param {string} content - The comment content.
+     * @param {any} id - The id.
+     * @param {any} content - The content.
      * @returns {Promise<Object>} A promise resolving to the created comment data.
      */
     static async addComment(id, content) {
@@ -227,7 +227,7 @@ export class PostsService {
 
     /**
      * Deletes a comment.
-     * @param {string} commentId - The ID of the comment to delete.
+     * @param {any} commentId - The commentId.
      * @returns {Promise<Object>}
      */
     static async deleteComment(commentId) {

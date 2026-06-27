@@ -5,9 +5,9 @@ import { createCustomSelect } from "./CustomSelect.js";
 
 export class SettingsModal {
     /**
-     * @param {GameEngine} engine - The current game engine (to pause/resume).
-     * @param {Function} onClose - Callback when modal is closed.
-     * @param {Function} saveAndQuitCallback - Callback to trigger save and quit.
+     * @param {any} engine - The engine.
+     * @param {any} onClose - The onClose.
+     * @param {any} saveAndQuitCallback - The saveAndQuitCallback.
      */
     constructor(engine, onClose, saveAndQuitCallback) {
         this.engine = engine;
@@ -17,7 +17,7 @@ export class SettingsModal {
     }
 
     /**
-     * Renders.
+     * Renders the settings modal.
      */
     render() {
         const settings = SettingsManager.getSettings();
@@ -166,7 +166,7 @@ export class SettingsModal {
     }
 
     /**
-     * Opens.
+     * Opens the modal or component.
      */
     open() {
         if (this.engine) {
@@ -181,7 +181,7 @@ export class SettingsModal {
     }
 
     /**
-     * Closes.
+     * Closes the modal or component.
      */
     close() {
         if (this.escapeHandler) {

@@ -3,7 +3,7 @@ import * as THREE from "three";
 export class EasterEgg {
 
     /**
-     * Initializes the .
+     * Initializes the Easter Egg component.
      */
     static init() {
         const konamiCode = [

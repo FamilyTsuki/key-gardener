@@ -44,7 +44,7 @@ export class SettingsManager {
 
     /**
      * Save new settings to local storage.
-     * @param {Object} newSettings 
+     * @param {any} newSettings - The newSettings.
      */
     static saveSettings(newSettings) {
         const current = this.getSettings();
@@ -60,7 +60,7 @@ export class SettingsManager {
 
     /**
      * Get the final volume for a specific category, multiplied by global volume.
-     * @param {string} category - 'music', 'environment', 'enemy', 'player'
+     * @param {any} category - The category.
      * @returns {number} The calculated volume (0.0 to 1.0)
      */
     static getVolume(category) {

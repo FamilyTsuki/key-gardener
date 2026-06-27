@@ -123,7 +123,7 @@ export class SkillTreeModal {
 
     /**
      * Checks whether is unlocked.
- * @param {string} spellId - The spellId.
+     * @param {any} spellId - The spellId.
      */
     isUnlocked(spellId) {
         return (this.engine.unlockedSpells || []).includes(spellId);
@@ -131,7 +131,7 @@ export class SkillTreeModal {
 
     /**
      * Checks whether can unlock.
- * @param {any} spell - The spell.
+     * @param {any} spell - The spell.
      */
     canUnlock(spell) {
         if (spell.storyOnly) return false;
@@ -142,7 +142,7 @@ export class SkillTreeModal {
 
     /**
      * Checks whether is accessible.
- * @param {any} spell - The spell.
+     * @param {any} spell - The spell.
      */
     isAccessible(spell) {
         if (spell.storyOnly) return true;
@@ -152,10 +152,10 @@ export class SkillTreeModal {
 
     /**
      * Builds the node.
- * @param {any} spell - The spell.
- * @param {any} branchKey - The branchKey.
- * @param {any} branchDef - The branchDef.
- * @param {number} nodeIndex - The nodeIndex.
+     * @param {any} spell - The spell.
+     * @param {any} branchKey - The branchKey.
+     * @param {any} branchDef - The branchDef.
+     * @param {any} nodeIndex - The nodeIndex.
      */
     buildNode(spell, branchKey, branchDef, nodeIndex) {
         const positions = BRANCH_POSITIONS[branchKey];
@@ -204,9 +204,9 @@ export class SkillTreeModal {
 
     /**
      * Opens the detail popup.
- * @param {any} spell - The spell.
- * @param {any} branchKey - The branchKey.
- * @param {any} branchDef - The branchDef.
+     * @param {any} spell - The spell.
+     * @param {any} branchKey - The branchKey.
+     * @param {any} branchDef - The branchDef.
      */
     openDetailPopup(spell, branchKey, branchDef) {
         const unlocked = this.isUnlocked(spell.id);
@@ -273,7 +273,7 @@ export class SkillTreeModal {
     }
 
     /**
-     * Renders.
+     * Renders the skill tree modal.
      */
     render() {
         const skillPoints = this.getSkillPoints();
@@ -353,14 +353,14 @@ export class SkillTreeModal {
 
     /**
      * Counts the unlocked.
- * @param {any} branchKey - The branchKey.
+     * @param {any} branchKey - The branchKey.
      */
     countUnlocked(branchKey) {
         return TREE_DEFINITION[branchKey].spells.filter(s => this.isUnlocked(s.id)).length;
     }
 
     /**
-     * Refreshes.
+     * Refreshes the component state and UI.
      */
     refresh() {
         if (this.modalEl && this.modalEl.parentNode) {
@@ -371,7 +371,7 @@ export class SkillTreeModal {
     }
 
     /**
-     * Opens.
+     * Opens the modal or component.
      */
     open() {
         if (this.engine) this.engine.isPaused = true;
@@ -380,7 +380,7 @@ export class SkillTreeModal {
     }
 
     /**
-     * Closes.
+     * Closes the modal or component.
      */
     close() {
         if (this.escapeHandler) {

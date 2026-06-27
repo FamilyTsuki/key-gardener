@@ -53,7 +53,7 @@ export class BridgeWordEvent extends WorldEvent {
 
     /**
      * Modifies the layout.
- * @param {any} mapLayout - The mapLayout.
+     * @param {any} mapLayout - The mapLayout.
      */
     modifyLayout(mapLayout) {
         const d = this.tileDistance;
@@ -69,18 +69,18 @@ export class BridgeWordEvent extends WorldEvent {
     }
 
     /**
-     * Inits.
- * @param {any} worldPhase - The worldPhase.
- * @param {any} scene - The scene.
+     * Initializes the event or component.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} scene - The scene.
      */
     async init(worldPhase, scene) {
         this.currentWorldPhase = worldPhase;
     }
 
     /**
-     * Updates.
- * @param {any} worldPhase - The worldPhase.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the bridge word event state.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(worldPhase, deltaTime) {
         if (!worldPhase.player || !worldPhase.worldMap) return;
@@ -117,7 +117,7 @@ export class BridgeWordEvent extends WorldEvent {
 
     /**
      * Checks the bridge trigger.
- * @param {any} worldPhase - The worldPhase.
+     * @param {any} worldPhase - The worldPhase.
      */
     checkBridgeTrigger(worldPhase) {
         if (!this.triggerTileIds || this.triggerTileIds.size === 0) return;
@@ -155,8 +155,8 @@ export class BridgeWordEvent extends WorldEvent {
 
     /**
      * Handles the key down.
- * @param {any} worldPhase - The worldPhase.
- * @param {any} event - The event.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} event - The event.
      */
     handleKeyDown(worldPhase, event) {
         if (!this.isActive) {
@@ -177,8 +177,8 @@ export class BridgeWordEvent extends WorldEvent {
     }
 
     /**
-     * Cleanups.
- * @param {any} worldPhase - The worldPhase.
+     * Cleans up the bridge word event resources.
+     * @param {any} worldPhase - The worldPhase.
      */
     cleanup(worldPhase) {
         this.ui.cleanup();

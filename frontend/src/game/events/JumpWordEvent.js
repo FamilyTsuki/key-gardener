@@ -52,7 +52,7 @@ export class JumpWordEvent extends WorldEvent {
 
     /**
      * Modifies the layout.
- * @param {any} mapLayout - The mapLayout.
+     * @param {any} mapLayout - The mapLayout.
      */
     modifyLayout(mapLayout) {
         const d = this.tileDistance;
@@ -68,18 +68,18 @@ export class JumpWordEvent extends WorldEvent {
     }
 
     /**
-     * Initializes the .
- * @param {boolean} worldPhase - The worldPhase.
- * @param {any} scene - The scene.
+     * Initializes the jump word event.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} scene - The scene.
      */
     async init(worldPhase, scene) {
         this.currentWorldPhase = worldPhase;
     }
 
     /**
-     * Updates.
- * @param {boolean} worldPhase - The worldPhase.
- * @param {any} deltaTime - The deltaTime.
+     * Updates the jump word event state.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} deltaTime - The deltaTime.
      */
     update(worldPhase, deltaTime) {
         if (!worldPhase.player || !worldPhase.worldMap || this.isCompleted) return;
@@ -129,7 +129,7 @@ export class JumpWordEvent extends WorldEvent {
 
     /**
      * Checks the jump trigger.
- * @param {boolean} worldPhase - The worldPhase.
+     * @param {any} worldPhase - The worldPhase.
      */
     checkJumpTrigger(worldPhase) {
         if (!this.triggerTileIds || this.triggerTileIds.size === 0) return;
@@ -153,8 +153,8 @@ export class JumpWordEvent extends WorldEvent {
 
     /**
      * Handles the key down event/action.
- * @param {boolean} worldPhase - The worldPhase.
- * @param {Event} event - The event.
+     * @param {any} worldPhase - The worldPhase.
+     * @param {any} event - The event.
      */
     handleKeyDown(worldPhase, event) {
         if (!this.isActive) {
@@ -175,8 +175,8 @@ export class JumpWordEvent extends WorldEvent {
     }
 
     /**
-     * Cleanups.
- * @param {boolean} worldPhase - The worldPhase.
+     * Cleans up the jump word event resources.
+     * @param {any} worldPhase - The worldPhase.
      */
     cleanup(worldPhase) {
         this.ui.cleanup();
