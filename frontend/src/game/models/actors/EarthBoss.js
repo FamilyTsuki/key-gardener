@@ -1,6 +1,7 @@
 import Actor from "../Actor.js";
 import * as THREE from "three";
 import { AudioManager } from "../../managers/AudioManager.js";
+import { LanguageManager } from "../../../core/utils/LanguageManager.js";
 
 export default class EarthBoss extends Actor {
     constructor(name, hp, rawPosition, position, size, scene, fireballModel, bossModel) {
@@ -431,7 +432,7 @@ export default class EarthBoss extends Actor {
                 AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.4);
             }
         } else {
-            player.damage(dt * 60.0, "Désintégré par le rayon tellurique");
+            player.damage(dt * 60.0, LanguageManager.t("death.laser"));
         }
     }
 

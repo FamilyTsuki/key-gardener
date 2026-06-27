@@ -6,6 +6,7 @@ import { PlayerSpells } from "./player/PlayerSpells.js";
 import { PlayerRenderer3D } from "./player/PlayerRenderer3D.js";
 import { PlayerUI } from "./player/PlayerUI.js";
 import { AudioManager } from "../../managers/AudioManager.js";
+import { LanguageManager } from "../../../core/utils/LanguageManager.js";
 
 export default class Player extends Actor {
     constructor(
@@ -362,7 +363,7 @@ export default class Player extends Actor {
      * @param {any} keyboardLayout - The keyboardLayout.
      */
     executeIdleRepel(worm, repelKey, keyboardLayout) {
-        if (worm.type === "hazard_worm") this.damage(20, "Brûlé par un ver informatique");
+        if (worm.type === "hazard_worm") this.damage(20, LanguageManager.t("death.worm"));
         else AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.3);
 
         this.move({ x: repelKey.rawPosition.x, y: repelKey.rawPosition.y, offsetY: this.movement.getTileSurfaceHeight(repelKey) }, keyboardLayout);
@@ -378,7 +379,7 @@ export default class Player extends Actor {
         const worm = this.movement.pendingWormRepel.worm;
         
         if (worm.type === "hazard_worm") {
-            this.damage(20, "Brûlé par un ver informatique");
+            this.damage(20, LanguageManager.t("death.worm"));
         } else {
             AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.3);
         }
@@ -413,18 +414,30 @@ export default class Player extends Actor {
     damage(amount, reason = null) {
         if (this.state.isInvulnerable && amount !== Infinity) return;
 
-        const hasEarthBoss = this.enemiesManager && this.enemiesManager.boss && this.enemiesManager.boss.name === "EarthCore";
-        if (hasEarthBoss && this.state.hp - amount <= 0) {
-            if (!this.savingCinematicTriggered) {
-                this.savingCinematicTriggered = true;
-                this.state.hp = 1;
-                this.state.isInvulnerable = true;
-                window.dispatchEvent(new CustomEvent("earth_boss_sempai_rescue"));
-                return;
+        if (this.shieldEnergy > 0 && amount !== Infinity) {
+            if (this.shieldEnergy >= amount) {
+                this.shieldEnergy -= amount;
+                amount = 0;
+            } else {
+                amount -= this.shieldEnergy;
+                this.shieldEnergy = 0;
             }
         }
 
-        this.state.damage(amount, reason);
+        if (amount > 0) {
+            const hasEarthBoss = this.enemiesManager && this.enemiesManager.boss && this.enemiesManager.boss.name === "EarthCore";
+            if (hasEarthBoss && this.state.hp - amount <= 0) {
+                if (!this.savingCinematicTriggered) {
+                    this.savingCinematicTriggered = true;
+                    this.state.hp = 1;
+                    this.state.isInvulnerable = true;
+                    window.dispatchEvent(new CustomEvent("earth_boss_sempai_rescue"));
+                    return;
+                }
+            }
+
+            this.state.damage(amount, reason);
+        }
     }
 
     /**
@@ -449,6 +462,9 @@ export default class Player extends Actor {
      * @param {any} amount - The amount.
      */
     activateShield(amount) {
+        if (this.shieldEnergy === undefined || isNaN(this.shieldEnergy)) {
+            this.shieldEnergy = 0;
+        }
         this.shieldEnergy = Math.min(300, this.shieldEnergy + amount);
         if (!this.shieldGroup) {
             const rawModel = this.playerModel && this.playerModel.children[0] ? this.playerModel.children[0] : null;

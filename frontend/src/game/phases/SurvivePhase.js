@@ -10,6 +10,7 @@ import { SurviveSpawner } from "./survive/SurviveSpawner.js";
 import { SurviveInput } from "./survive/SurviveInput.js";
 import { SurviveRenderer } from "./survive/SurviveRenderer.js";
 import { SurviveState } from "./survive/SurviveState.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 export class SurvivePhase extends GamePhase {
     constructor(gameEngine, options = {}) {
@@ -340,7 +341,7 @@ export class SurvivePhase extends GamePhase {
                     }
                 }
             } else if (p.team !== "player" && this.player && this.player.isAlive() && p.checkCollision(this.player)) {
-                this.player.damage(p.damage || 10, "Touché par une boule de feu du boss");
+                this.player.damage(p.damage || 10, LanguageManager.t("death.fireball"));
                 p.die();
             }
             

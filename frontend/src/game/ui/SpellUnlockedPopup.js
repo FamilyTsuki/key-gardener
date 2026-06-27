@@ -72,17 +72,28 @@ export class SpellUnlockedPopup {
                 el("button", { 
                     className: "btn-primary spell-unlock-close",
                     onclick: () => {
-                        popup.classList.remove("fade-in");
-                        popup.classList.add("fade-out");
-                        setTimeout(() => {
-                            popup.remove();
-                            if (onClose) onClose();
-                        }, 500);
                     }
                 }, LanguageManager.t("common.confirm"))
             )
         );
 
         document.body.appendChild(popup);
+        window.dispatchEvent(new CustomEvent("pause_game_for_dialogue"));
+
+        const originalOnClose = onClose;
+        const newOnClose = () => {
+            window.dispatchEvent(new CustomEvent("resume_game_after_dialogue"));
+            if (originalOnClose) originalOnClose();
+        };
+
+        const btn = popup.querySelector('.spell-unlock-close');
+        btn.onclick = () => {
+            popup.classList.remove("fade-in");
+            popup.classList.add("fade-out");
+            setTimeout(() => {
+                popup.remove();
+                newOnClose();
+            }, 500);
+        };
     }
 }

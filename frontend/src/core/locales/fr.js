@@ -451,6 +451,7 @@ export const fr = {
         volumeEnvironment: "Environnement",
         volumeEnemy: "Ennemis",
         volumePlayer: "Joueur (Effets)",
+        advancedAudio: "Détails Audio",
         language: "Langue",
         keyboardLayout: "Disposition du clavier",
         fullscreen: "Plein Écran au lancement",
@@ -596,6 +597,17 @@ export const fr = {
     },
 
     /* ============================================================
+       DEATH REASONS SECTION
+       ============================================================ */
+    death: {
+        obstacle: "Percuté par un obstacle en chute libre",
+        fireball: "Touché par une boule de feu du boss",
+        aoe: "Touché par une attaque de zone",
+        worm: "Brûlé par un ver informatique",
+        laser: "Désintégré par le rayon tellurique"
+    },
+
+    /* ============================================================
        MODERATION SECTION
        ============================================================ */
     moderation: {
@@ -684,6 +696,23 @@ export const fr = {
     story: {
         firstCombat1: "C'est dangereux ici ! Tu n'as pas d'arme !",
         firstCombat2: "Laisse-moi t'apprendre ton premier sort. Tape le mot 'spark' !",
-        firstCombat3: "Tu peux maintenant lancer une Étincelle. Bonne chance !"
+        firstCombat3: "Tu peux maintenant lancer une Étincelle. Bonne chance !",
+        introLevel1: "Le système est complètement corrompu...",
+        introLevel2: "Prépare-toi à te défendre. Les anomalies arrivent !",
+        hubWelcome1: "Te voilà dans le Hub. C'est un secteur partiellement sécurisé.",
+        hubWelcome2: "Trouve la porte et tape les mots pour accéder à la zone suivante.",
+        skillTreePrompt1: "N'oublie pas : en combattant, tu accumules des points de compétence.",
+        skillTreePrompt2: "Ouvre ton Arbre de Compétences pour acheter de nouveaux sorts. C'est vital !",
+        bugBossWarn1: "Attention ! Une anomalie majeure en approche !",
+        bugBossWarn2: "C'est un sous-programme viral. Ne le laisse pas t'écraser !",
+        flameWallWarn1: "Le pare-feu est devenu fou ! S'il te touche, c'est la fin.",
+        flameWallWarn2: "Construis un pont de mots rapidement pour passer au-dessus !",
+        skyfallWarn1: "La mémoire système est instable ! Tout s'écroule !",
+        skyfallWarn2: "Regarde au sol et esquive les blocs qui tombent !",
+        midGameEncourage: "Tu te débrouilles bien, mais le Virus mute. Ne baisse pas ta garde.",
+        earthBossWarn: "Le Protecteur de la Base de Données a été corrompu !",
+        postEarthBoss: "C'était moins une... Reprends ton souffle ici.",
+        finalBossWarn1: "Nous avons atteint le Cœur du Virus.",
+        finalBossWarn2: "C'est maintenant ou jamais. Détruis-le pour libérer le système !"
     }
 };

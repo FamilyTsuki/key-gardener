@@ -511,7 +511,7 @@ export class GameEngine {
             unlockedSpells: this.unlockedSpells,
         };
 
-        if (token) {
+        if (AuthService.isAuthenticated()) {
             try {
                 await SaveService.saveGame(activeSlot, currentGameState);
             } catch (err) {

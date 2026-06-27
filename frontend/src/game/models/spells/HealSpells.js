@@ -20,7 +20,7 @@ export default class HealSpell extends Spell {
      */
     effect(closestEnemy, player, scene) {
         if (player) {
-            if (player.hp < player.hpMax) {
+            if (player.state.hp < player.state.hpMax) {
                 player.heal(this.damage);
             }
             

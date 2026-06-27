@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { AudioManager } from "../../managers/AudioManager.js";
+import { LanguageManager } from "../../../core/utils/LanguageManager.js";
 
 export class FallObstacles {
     constructor(phase) {
@@ -115,7 +116,7 @@ export class FallObstacles {
                 const collisionThresholdX = (6 * player.spacingX) * 0.4;
 
                 if (distanceY < 3.5 && distanceX < collisionThresholdX && !obstacleMesh.userData.isHit) {
-                    player.damage(20, "Percuté par un obstacle en chute libre");
+                    player.damage(20, LanguageManager.t("death.obstacle"));
                     obstacleMesh.userData.isHit = true;
                     obstacleMesh.visible = false;
                 }

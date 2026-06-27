@@ -427,6 +427,7 @@ export const en = {
         volumeEnvironment: "Environment",
         volumeEnemy: "Enemies",
         volumePlayer: "Player (Effects)",
+        advancedAudio: "Advanced Audio",
         language: "Language",
         keyboardLayout: "Keyboard Layout",
         fullscreen: "Fullscreen on launch",
@@ -572,6 +573,17 @@ export const en = {
     },
 
     /* ============================================================
+       DEATH REASONS SECTION
+       ============================================================ */
+    death: {
+        obstacle: "Hit by a falling obstacle",
+        fireball: "Hit by the boss's fireball",
+        aoe: "Hit by an area attack",
+        worm: "Burned by a cyber worm",
+        laser: "Disintegrated by the telluric ray"
+    },
+
+    /* ============================================================
        MODERATION SECTION
        ============================================================ */
     moderation: {
@@ -654,7 +666,24 @@ export const en = {
     story: {
         firstCombat1: "It's dangerous here! You have no weapon!",
         firstCombat2: "Let me teach you your first spell. Type the word 'spark'!",
-        firstCombat3: "You can now cast a Spark. Good luck!"
+        firstCombat3: "You can now cast a Spark. Good luck!",
+        introLevel1: "The system is completely corrupted...",
+        introLevel2: "Prepare to defend yourself. Anomalies are approaching!",
+        hubWelcome1: "Here you are in the Hub. It's a partially secured sector.",
+        hubWelcome2: "Find the door and type the words to access the next zone.",
+        skillTreePrompt1: "Don't forget: as you fight, you earn skill points.",
+        skillTreePrompt2: "Open your Skill Tree to buy new spells. It's vital!",
+        bugBossWarn1: "Warning! A major anomaly is approaching!",
+        bugBossWarn2: "It's a viral subprogram. Don't let it crush you!",
+        flameWallWarn1: "The firewall has gone rogue! If it touches you, it's over.",
+        flameWallWarn2: "Build a word bridge quickly to pass over it!",
+        skyfallWarn1: "The system memory is unstable! Everything is collapsing!",
+        skyfallWarn2: "Look at the ground and dodge the falling blocks!",
+        midGameEncourage: "You're doing well, but the Virus is mutating. Keep your guard up.",
+        earthBossWarn: "The Database Protector has been corrupted!",
+        postEarthBoss: "That was close... Catch your breath here.",
+        finalBossWarn1: "We have reached the Core of the Virus.",
+        finalBossWarn2: "It's now or never. Destroy it to free the system!"
     }
 };
 

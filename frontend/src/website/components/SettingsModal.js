@@ -52,6 +52,26 @@ export class SettingsModal {
         const enemySlider = createSlider(LanguageManager.t("settings.volumeEnemy"), "enemy");
         const playerSlider = createSlider(LanguageManager.t("settings.volumePlayer"), "player");
 
+        const advancedAudioContent = el("div", { className: "advanced-audio-content", style: "display: none; padding-left: 15px; border-left: 2px solid #444; margin-left: 5px; margin-bottom: 15px;" },
+            musicSlider,
+            envSlider,
+            enemySlider,
+            playerSlider
+        );
+
+        const advancedAudioToggle = el("div", { 
+            className: "advanced-audio-toggle", 
+            style: "cursor: pointer; user-select: none; margin-bottom: 15px; font-size: 0.9em; color: #aaa;",
+            onclick: (e) => {
+                const isHidden = advancedAudioContent.style.display === "none";
+                advancedAudioContent.style.display = isHidden ? "block" : "none";
+                e.currentTarget.querySelector(".arrow").textContent = isHidden ? "▼" : "▶";
+            }
+        }, 
+            el("span", { className: "arrow", style: "display: inline-block; width: 15px;" }, "▶"),
+            el("span", {}, " " + (LanguageManager.t("settings.advancedAudio") || "Détails Audio"))
+        );
+
         const currentLang = LanguageManager.getLanguage();
         const langSelect = createCustomSelect([
             { value: "en", label: "English" },
@@ -124,10 +144,8 @@ export class SettingsModal {
             el("div", { className: "settings-modal-content" },
                 el("h2", {}, LanguageManager.t("settings.title")),
                 globalSlider,
-                musicSlider,
-                envSlider,
-                enemySlider,
-                playerSlider,
+                advancedAudioToggle,
+                advancedAudioContent,
                 langRow,
                 layoutRow,
                 fullscreenRow,

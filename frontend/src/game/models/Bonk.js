@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import DamageObject from "./DamageObject.js";
 import { AudioManager } from "../managers/AudioManager.js";
+import { LanguageManager } from "../../core/utils/LanguageManager.js";
 
 /**
  * Represents a Bonk attack in the game.
@@ -70,7 +71,7 @@ export default class Bonk extends DamageObject {
                     window.startShake(4.5);
                 }
                 if (this.checkCollision(player)) {
-                    player.damage(this.damage, "Touché par une attaque de zone.");
+                    player.damage(this.damage, LanguageManager.t("death.aoe"));
                 }
             }
             this.material.opacity = 0.8;

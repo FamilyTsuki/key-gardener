@@ -27,11 +27,7 @@ export class SurviveState {
      */
     update(deltaTime, gameEngine) {
         if (!this.firstSpellCinematicTriggered && gameEngine.unlockedSpells && gameEngine.unlockedSpells.length === 0) {
-            const hasActiveAttacks = (this.phase.projectiles && this.phase.projectiles.length > 0) || 
-                                     (this.phase.bonks && this.phase.bonks.length > 0);
-            
-            if (hasActiveAttacks) {
-                this.firstEnemyAttackFired = true;
+            if (this.survivalTime >= 1.5) {
                 this.firstSpellCinematicTriggered = true;
                 this.triggerFirstSpellCinematic(gameEngine);
                 return false;
@@ -88,7 +84,6 @@ export class SurviveState {
                     this.phase.input.setupSpellListUI();
                 }
                 gameEngine.autoSave();
-                gameEngine.isPaused = false;
             });
         }, true);
     }

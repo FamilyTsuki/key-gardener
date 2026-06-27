@@ -24,7 +24,7 @@ export class PlayerSpells {
             new Undefined(),
             new FireCircle("firecircle", 1, 2.3, 9000, scene, playerInstance, enemiesManager),
             new ProjectileLuncher("fireball", 100, 10000, fireballModel),
-            new ProjectileLuncher("spark", 35, 10000, fireballModel),
+            new ProjectileLuncher("spark", 50, 10000, fireballModel),
             new HealSpell("heal", 30),
             new ShieldSpell("shield", 0, Infinity)
         ];

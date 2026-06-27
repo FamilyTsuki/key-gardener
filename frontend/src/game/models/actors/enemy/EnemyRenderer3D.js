@@ -51,10 +51,9 @@ export class EnemyRenderer3D {
             
             this.model.traverse((child) => {
                 if (child.isMesh || child.isSkinnedMesh) {
-                    child.material = new THREE.MeshLambertMaterial({
-                        color: this.color,
-                        skinning: child.isSkinnedMesh,
-                    });
+                    const matParams = { color: this.color };
+                    if (child.isSkinnedMesh) matParams.skinning = true;
+                    child.material = new THREE.MeshLambertMaterial(matParams);
                     child.castShadow = true;
                     child.material.needsUpdate = true;
                 }

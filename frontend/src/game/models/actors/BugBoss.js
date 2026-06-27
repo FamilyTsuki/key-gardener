@@ -75,11 +75,11 @@ export default class BugBoss extends Actor {
             }
             if (child.isMesh || child.isSkinnedMesh) {
                 child.visible = true;
-                child.material = new THREE.MeshLambertMaterial({
-                    color: bugColor,
-                    skinning: child.isSkinnedMesh
-                });
+                const matParams = { color: bugColor };
+                if (child.isSkinnedMesh) matParams.skinning = true;
+                child.material = new THREE.MeshLambertMaterial(matParams);
                 child.material.needsUpdate = true;
+                child.castShadow = true;
                 if (child.isSkinnedMesh) {
                     child.frustumCulled = false;
                 }

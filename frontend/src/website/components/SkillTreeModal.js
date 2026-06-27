@@ -28,7 +28,7 @@ const TREE_DEFINITION = {
                 descKey: "spells.fireball.desc",
                 defaultName: "Boule de feu",
                 defaultDesc: "Une boule de feu lente mais très puissante.",
-                cost: 2,
+                cost: 1,
                 requires: "spark",
             },
         ],
@@ -46,7 +46,7 @@ const TREE_DEFINITION = {
                 descKey: "spells.shield.desc",
                 defaultName: "Bouclier",
                 defaultDesc: "Bloque la prochaine attaque entrante.",
-                cost: 2,
+                cost: 1,
             },
             {
                 id: "firecircle",
@@ -73,7 +73,7 @@ const TREE_DEFINITION = {
                 descKey: "spells.heal.desc",
                 defaultName: "Soin",
                 defaultDesc: "Restaure vos points de vie.",
-                cost: 2,
+                cost: 1,
                 comingSoon: false,
             },
         ],
@@ -233,20 +233,23 @@ export class SkillTreeModal {
             onclick: () => {
                 if (!unlocked && !storyOnly && accessible && affordable) {
                     this.engine.skillPoints -= spell.cost;
+                    this.engine.unlockedSpells.push(spell.id);
+
+                    if (this.engine.gamePhase?.player?.spells) {
+                        this.engine.gamePhase.player.spells.unlockSpell(spell.id);
+                    }
+                    if (this.engine.gamePhase?.input?.setupSpellListUI) {
+                        this.engine.gamePhase.input.setupSpellListUI();
+                    }
+
+                    this.engine.autoSave();
+                    this.refresh();
+
                     popup.remove();
-
                     SpellUnlockedPopup.show(spell.id, () => {
-                        this.engine.unlockedSpells.push(spell.id);
-
-                        if (this.engine.gamePhase?.player?.spells) {
-                            this.engine.gamePhase.player.spells.unlockSpell(spell.id);
+                        if (this.modalEl && this.modalEl.parentNode) {
+                            window.dispatchEvent(new CustomEvent("pause_game_for_dialogue"));
                         }
-                        if (this.engine.gamePhase?.input?.setupSpellListUI) {
-                            this.engine.gamePhase.input.setupSpellListUI();
-                        }
-
-                        this.engine.autoSave();
-                        this.refresh();
                     });
                 }
             },
@@ -336,7 +339,20 @@ export class SkillTreeModal {
         this.escapeHandler = (e) => {
             if (e.key === "Escape") {
                 e.preventDefault();
-                this.goBackToSettings();
+                
+                const unlockPopup = document.querySelector(".spell-unlock-overlay");
+                if (unlockPopup) {
+                    const btn = unlockPopup.querySelector('.spell-unlock-close');
+                    if (btn) btn.click();
+                    return;
+                }
+
+                const openPopup = document.querySelector(".st-detail-popup");
+                if (openPopup) {
+                    openPopup.remove();
+                } else {
+                    this.goBackToSettings();
+                }
             }
         };
         window.addEventListener("keydown", this.escapeHandler);

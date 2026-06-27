@@ -99,10 +99,10 @@ export function createWordlLayout(introType = "none", height = 30) {
         let actualWidth = island_widths[i];
 
         let minOffset = -Math.floor(actualWidth / 2);
-        let totalOffset = lastCenterIndex - Math.floor(actualWidth / 2);
+        let hexOffset = (y % 2 === 1) ? 0.5 : 0;
 
         for (let x = 0; x < actualWidth; x++) {
-            let posX = x + minOffset + offsetAdjustment + totalOffset;
+            let posX = x + minOffset + hexOffset + offsetAdjustment + lastCenterIndex;
 
             let letterValue = null;
             if (x === Math.floor(actualWidth / 2) && i <= 4) {
@@ -115,7 +115,8 @@ export function createWordlLayout(introType = "none", height = 30) {
                 y: -y,
                 letter: letterValue,
                 isPressed: false,
-                isIsland: true 
+                isIsland: true,
+                isDoorRow: i === 3
             });
         }
     }
