@@ -105,8 +105,8 @@ export default class Navbar {
                 FlashMessageManager.show(LanguageManager.t("auth.rateLimit"), "error");
                 return;
             }
-            AuthService.logout();
-            Navbar.render();
+            await AuthService.logout();
+            await Navbar.render();
             history.pushState(null, null, "/");
             window.dispatchEvent(new Event("popstate"));
         }

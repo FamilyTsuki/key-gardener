@@ -61,9 +61,9 @@ export default class AccountView extends AbstractView {
         
         const logoutTxt = el("button", { 
                 className: "btn-logout", 
-                onclick: () => {
-                    AuthService.logout();
-                    Navbar.render();
+                onclick: async () => {
+                    await AuthService.logout();
+                    await Navbar.render();
                     history.pushState(null, null, "/");
                     window.dispatchEvent(new Event("popstate"));
                 } 
@@ -212,8 +212,10 @@ export default class AccountView extends AbstractView {
             
         } catch (error) {
             console.error("AccountView failed to load user data", error);
-            AuthService.logout();
-            Router.navigate("/");
+            await AuthService.logout();
+            await Navbar.render();
+            history.pushState(null, null, "/");
+            window.dispatchEvent(new Event("popstate"));
         }
     }
 
