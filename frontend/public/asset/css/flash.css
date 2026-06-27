@@ -1,3 +1,7 @@
+/* ============================================================
+   FLASH STYLES
+   ============================================================ */
+
 #flash-container {
     position: fixed;
     top: 20px;
@@ -8,8 +12,7 @@
     z-index: 9999;
     pointer-events: none;
 }
-
-.flash-message {
+.flash-message {
     pointer-events: auto;
     display: flex;
     align-items: center;
@@ -27,29 +30,24 @@
     will-change: transform, opacity;
     animation: flashSlideIn 0.3s ease-out forwards;
 }
-
-.flash-success {
+.flash-success {
     background: var(--success-translucent);
     border-left: 4px solid var(--success-border);
 }
-
-.flash-error {
+.flash-error {
     background: var(--danger-translucent-toast);
     border-left: 4px solid var(--danger-hover);
 }
-
-.flash-warning {
+.flash-warning {
     background: var(--warning-translucent);
     color: var(--bg-color);
     border-left: 4px solid var(--warning-border);
 }
-
-.flash-text {
+.flash-text {
     flex-grow: 1;
     margin-right: 12px;
 }
-
-.flash-close {
+.flash-close {
     background: transparent;
     border: none;
     color: inherit;
@@ -61,21 +59,21 @@
     opacity: 0.7;
     transition: opacity 0.2s;
 }
-
-.flash-close:hover {
+.flash-close:hover {
     opacity: 1;
 }
-
-.flash-close-icon {
+.flash-close-icon {
     width: 16px;
     height: 16px;
     fill: currentColor;
 }
-
-.flash-hiding {
+.flash-hiding {
     animation: flashSlideOut 0.4s ease-in forwards !important;
 }
 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes flashSlideIn {
     0% {
         opacity: 0;
@@ -86,8 +84,7 @@
         transform: translateX(0);
     }
 }
-
-@keyframes flashSlideOut {
+@keyframes flashSlideOut {
     0% {
         opacity: 1;
         transform: translateX(0);
@@ -97,12 +94,10 @@
         transform: translateX(100%);
     }
 }
-
-.flash-clickable {
+.flash-clickable {
     cursor: pointer;
 }
-
-.flash-confirm {
+.flash-confirm {
     background: rgba(20, 23, 31, 0.9);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -115,63 +110,53 @@
     padding: 16px;
     gap: 12px;
 }
-
-.flash-confirm-wrapper {
+.flash-confirm-wrapper {
     display: flex;
     flex-direction: column;
     gap: 12px;
     width: 100%;
 }
-
-.flash-confirm .flash-text {
+.flash-confirm .flash-text {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.4;
     color: var(--text-color);
 }
-
-.flash-buttons {
+.flash-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     width: 100%;
 }
-
-.flash-btn {
+.flash-btn {
     padding: 6px 16px;
     border-radius: 6px;
     font-size: 13px;
     font-weight: 600;
-    font-family: var(--font-main);
+
     cursor: pointer;
     border: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.flash-btn:active {
+.flash-btn:active {
     transform: scale(0.95);
 }
-
-.flash-btn-confirm {
+.flash-btn-confirm {
     background: var(--secondary-color);
     color: #0a0c10;
     box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
 }
-
-.flash-btn-confirm:hover {
+.flash-btn-confirm:hover {
     background: var(--secondary-hover);
     box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
     transform: translateY(-1px);
 }
-
-.flash-btn-cancel {
+.flash-btn-cancel {
     background: transparent;
     color: var(--text-color);
     border: 1px solid var(--card-border);
 }
-
-.flash-btn-cancel:hover {
+.flash-btn-cancel:hover {
     background: rgba(255, 255, 255, 0.05);
     border-color: var(--text-muted);
 }
-

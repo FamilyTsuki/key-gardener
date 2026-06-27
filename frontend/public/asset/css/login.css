@@ -1,3 +1,6 @@
+/* ============================================================
+   MAIN APP CONTAINER
+   ============================================================ */
 #app {
     display: flex;
     justify-content: center;
@@ -5,8 +8,7 @@
     min-height: calc(100vh - 80px);
     height: auto;
 }
-
-.login-container {
+.login-container {
     width: min(420px, 95vw);
     padding: clamp(20px, 3vw, 40px);
     display: flex;
@@ -14,8 +16,7 @@
     align-items: center;
     gap: clamp(18px, 2.5vw, 32px);
 }
-
-.login-container h2 {
+.login-container h2 {
     font-size: clamp(2rem, 3.5vw, 3.5rem);
     margin: 0;
     letter-spacing: 0.04em;
@@ -23,85 +24,74 @@
     text-align: center;
     padding-bottom: 10px;
 }
-
-.login-container > div {
+.login-container > div {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
-.login-container form {
+.login-container form {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
+/* ============================================================
+   FORMS & INPUTS
+   ============================================================ */
 .input-wrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
-
-
-
 .register-link {
     font-size: 1.1rem;
     color: var(--text-muted);
     margin-top: 10px;
 }
-
-.register-link a {
+.register-link a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s ease;
 }
-
-.register-link a:hover {
+.register-link a:hover {
     color: var(--primary-hover);
 }
-
-#login-message {
+#login-message {
     min-height: 24px;
 }
-
-.auth-error {
+.auth-error {
     color: var(--danger-color);
     font-size: 1rem;
     text-align: center;
     margin: 0;
 }
-
-.auth-success {
+.auth-success {
     color: var(--success-color);
     font-size: 1rem;
     text-align: center;
     margin: 0;
 }
-
-.reset-info-text {
+.reset-info-text {
     color: var(--text-color);
     margin-bottom: 1rem;
     text-align: center;
     font-size: 1.1rem;
 }
-
-.forgot-link {
+.forgot-link {
     color: var(--text-muted);
     margin: 0;
     align-self: flex-end;
     cursor: pointer;
     transition: color 0.2s ease;
 }
-
-.forgot-link:hover {
+.forgot-link:hover {
     color: var(--primary-hover);
 }
-
-.login-separator {
+.login-separator {
     display: flex;
     align-items: center;
     text-align: center;
@@ -109,36 +99,32 @@
     font-size: 0.85rem;
     margin: 10px 0;
 }
-
-.login-separator::before,
-.login-separator::after {
+.login-separator::before,.login-separator::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
-
-.login-separator:not(:empty)::before {
+.login-separator:not(:empty)::before {
     margin-right: .75em;
 }
-
-.login-separator:not(:empty)::after {
+.login-separator:not(:empty)::after {
     margin-left: .75em;
 }
-
-.google-btn-container {
+.google-btn-container {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-top: 5px;
 }
 
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
 @media (max-width: 600px) {
     .login-container {
         padding: 28px 20px;
         gap: 18px;
     }
-
-
 
     .register-link,
     .reset-info-text {

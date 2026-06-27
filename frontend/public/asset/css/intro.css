@@ -1,3 +1,7 @@
+/* ============================================================
+   INTRO STYLES
+   ============================================================ */
+
 .intro-cinematic-container {
     position: fixed;
     top: 0;
@@ -9,8 +13,7 @@
     z-index: 1000;
     transition: all 1s ease-in-out;
 }
-
-.background-canvas-persistent {
+.background-canvas-persistent {
     position: fixed;
     top: 0;
     left: 0;
@@ -20,14 +23,12 @@
     pointer-events: none;
     mix-blend-mode: screen;
 }
-
-.intro-cinematic-container.transitioning {
+.intro-cinematic-container.transitioning {
     filter: brightness(3) contrast(5);
     opacity: 0;
     transform: scale(1.1);
 }
-
-.intro-video {
+.intro-video {
     position: fixed;
     top: 0;
     left: 0;
@@ -39,12 +40,10 @@
     pointer-events: none;
     user-select: none;
 }
-
-.intro-video.glitching {
+.intro-video.glitching {
     animation: glitchVideo 0.5s infinite;
 }
-
-.glitch-canvas-overlay {
+.glitch-canvas-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -53,8 +52,7 @@
     z-index: 3;
     pointer-events: none;
 }
-
-.intro-cinematic-container:has(.intro-video.glitching)::after {
+.intro-cinematic-container:has(.intro-video.glitching)::after {
     content: "";
     position: absolute;
     top: 0;
@@ -68,8 +66,7 @@
     animation: strobeDifference 0.3s infinite;
     pointer-events: none;
 }
-
-.virus-element {
+.virus-element {
     position: fixed;
     font-family: "Courier New", Courier, monospace;
     font-size: 11px;
@@ -85,29 +82,24 @@
     white-space: nowrap;
     animation: virusFadeIn 0.25s ease-out forwards;
 }
-
-.virus-element.danger {
+.virus-element.danger {
     color: var(--danger-color);
     text-shadow: 0 0 8px var(--danger-translucent-toast);
     border-color: var(--danger-hover);
 }
-
-.virus-element.warn {
+.virus-element.warn {
     color: var(--warning-color);
     text-shadow: 0 0 8px var(--warning-translucent);
     border-color: var(--warning-border);
 }
-
-.intro-video.static-broken {
+.intro-video.static-broken {
     filter: grayscale(1) contrast(4) brightness(0.8);
 }
-
-.fake-hud.static-broken {
+.fake-hud.static-broken {
     opacity: 0.15;
     filter: blur(1.5px);
 }
-
-.fake-start-button.stolen {
+.fake-start-button.stolen {
     top: 65%;
     transform: translate(-50%, -50%) rotate(-12deg) scale(0.9);
     animation: none;
@@ -115,13 +107,15 @@
     color: var(--primary-color);
     box-shadow: 0 0 25px var(--matrix-glow);
 }
-
-.fake-start-button.retracted {
+.fake-start-button.retracted {
     top: 50%;
     transform: translate(-50%, -50%) scale(0) rotate(180deg);
     opacity: 0;
 }
 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes glitchVideo {
     0%,
     100% {
@@ -153,8 +147,7 @@
         filter: hue-rotate(95deg) saturate(3) brightness(1.1) contrast(1.1);
     }
 }
-
-@keyframes virusFadeIn {
+@keyframes virusFadeIn {
     from {
         opacity: 0;
         transform: translateY(-6px);
@@ -164,8 +157,7 @@
         transform: translateY(0);
     }
 }
-
-@keyframes staticFlicker {
+@keyframes staticFlicker {
     0% {
         opacity: 0.95;
         filter: brightness(0.1) contrast(8) grayscale(1) invert(0);
@@ -191,8 +183,7 @@
         filter: brightness(1.5) contrast(6) grayscale(1) invert(1);
     }
 }
-
-@keyframes strobeDifference {
+@keyframes strobeDifference {
     0%,
     100% {
         opacity: 0;
@@ -201,8 +192,7 @@
         opacity: 0.15;
     }
 }
-
-@keyframes blinkPrompt {
+@keyframes blinkPrompt {
     0%,
     100% {
         opacity: 0.4;
@@ -211,16 +201,13 @@
         opacity: 1;
     }
 }
-
-.intro-video.glitch-paused {
+.intro-video.glitch-paused {
     animation-play-state: paused !important;
 }
-
-.intro-cinematic-container.glitch-paused::after {
+.intro-cinematic-container.glitch-paused::after {
     display: none !important;
 }
-
-.cinematic-rift {
+.cinematic-rift {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -237,22 +224,17 @@
     -moz-user-select: none;
     -webkit-user-drag: none;
 }
-
-.cinematic-rift.visible {
+.cinematic-rift.visible {
     transform: translate(-50%, -50%) scale(1);
 }
-
-.cinematic-rift.clickable {
+.cinematic-rift.clickable {
     pointer-events: auto;
     cursor: pointer;
 }
-
-.cinematic-rift.clickable:hover,
-.cinematic-rift:hover {
+.cinematic-rift.clickable:hover,.cinematic-rift:hover {
     transform: translate(-50%, -50%) scale(1.02);
 }
-
-.intro-dialogue-container {
+.intro-dialogue-container {
     position: absolute;
     bottom: 7%;
     left: 50%;
@@ -262,12 +244,10 @@
     pointer-events: none;
     transition: opacity 0.3s ease-in-out;
 }
-
-.intro-dialogue-container.visible {
+.intro-dialogue-container.visible {
     opacity: 1;
 }
-
-.intro-dialogue-bubble {
+.intro-dialogue-bubble {
     position: relative;
     background: white;
     color: black;
@@ -281,14 +261,12 @@
     height: 100px;
     z-index: 2;
 }
-
-.intro-dialogue-text {
+.intro-dialogue-text {
     position: relative;
     z-index: 10;
     display: inline-block;
 }
-
-.intro-dialogue-tail {
+.intro-dialogue-tail {
     position: absolute;
     top: 10%;
     left: 40%;
@@ -301,8 +279,7 @@
     background-position: center bottom;
     z-index: 1;
 }
-
-.intro-prologue-container {
+.intro-prologue-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -316,12 +293,10 @@
     opacity: 1;
     transition: opacity 2s ease-in-out;
 }
-
-.intro-prologue-container.hidden {
+.intro-prologue-container.hidden {
     opacity: 0;
 }
-
-.intro-prologue-text {
+.intro-prologue-text {
     color: white;
     font-family: "Courier New", Courier, monospace;
     font-size: 2rem;
@@ -330,7 +305,6 @@
     opacity: 0;
     transition: opacity 2s ease-in-out;
 }
-
-.intro-prologue-text.visible {
+.intro-prologue-text.visible {
     opacity: 1;
 }

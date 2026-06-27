@@ -1,36 +1,35 @@
+/* ============================================================
+   FAQ STYLES
+   ============================================================ */
+
 .faq-container {
     padding: 60px 20px;
     max-width: 900px;
     margin: 0 auto;
     color: var(--text-color);
 }
-
-.faq-header {
+.faq-header {
     text-align: center;
     margin-bottom: 40px;
     padding: 30px;
     border-radius: 15px;
 }
-
-.faq-main-title {
+.faq-main-title {
     font-size: clamp(30px, 5vw, 48px);
     color: var(--primary-color);
     margin-bottom: 15px;
 }
-
-.faq-intro {
+.faq-intro {
     font-size: 18px;
     line-height: 1.6;
     opacity: 0.9;
 }
-
-.faq-questions {
+.faq-questions {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
-
-.faq-item {
+.faq-item {
     padding: 25px;
     border-radius: 10px;
     border: 1px solid var(--card-border);
@@ -38,24 +37,23 @@
     background: var(--card-bg);
     transition: transform 0.2s ease;
 }
-
-.faq-item:hover {
+.faq-item:hover {
     transform: translateX(10px);
 }
-
-.faq-question {
+.faq-question {
     font-size: 22px;
     margin-bottom: 10px;
     color: var(--primary-color);
 }
-
-.faq-answer {
+.faq-answer {
     font-size: 16px;
     line-height: 1.6;
     color: var(--text-muted);
 }
 
-/* =============== RESPONSIVE =============== */
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
 @media (max-width: 768px) {
     .faq-container {
         padding: 20px 10px;

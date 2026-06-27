@@ -1,3 +1,6 @@
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes scary-fade-in {
     from {
         opacity: 0;
@@ -9,8 +12,6 @@
         transform: scale(1);
     }
 }
-
-
 .scary-overlay {
     position: fixed;
     top: 0;
@@ -24,7 +25,6 @@
     align-items: center;
     justify-content: center;
 }
-
 .scary-modal {
     background: #0f1219;
     border: 1px solid #ff003c;
@@ -34,15 +34,13 @@
     width: 90%;
     text-align: center;
     box-sizing: border-box;
-    font-family: "Outfit", "Inter", sans-serif;
-}
 
+}
 .scary-icon {
     font-size: 3rem;
     margin-bottom: 15px;
     display: inline-block;
 }
-
 .scary-title {
     color: #ffffff;
     font-size: 1.8rem;
@@ -52,14 +50,12 @@
     letter-spacing: 1px;
     text-transform: uppercase;
 }
-
 .scary-text {
     color: #94a3b8;
     font-size: 1.05rem;
     line-height: 1.6;
     margin-bottom: 20px;
 }
-
 .scary-reason-box {
     background: rgba(255, 0, 60, 0.05);
     border: 1px solid rgba(255, 0, 60, 0.25);
@@ -68,7 +64,6 @@
     margin-bottom: 25px;
     text-align: left;
 }
-
 .scary-reason-title {
     color: #ff003c;
     font-weight: bold;
@@ -77,19 +72,16 @@
     margin-bottom: 4px;
     letter-spacing: 0.5px;
 }
-
 .scary-reason-desc {
     color: #ffffff;
     font-size: 1rem;
     font-weight: 600;
 }
-
 .scary-btn-container {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-
 .scary-btn {
     border-radius: 12px;
     padding: 14px 24px;
@@ -102,33 +94,27 @@
     width: 100%;
     box-sizing: border-box;
 }
-
 .scary-btn-primary {
     background: #ff003c;
     color: #ffffff;
     border: none;
 }
-
 .scary-btn-primary:hover {
     background: #e60035;
     transform: translateY(-2px);
 }
-
 .scary-btn-secondary {
     background: transparent;
     color: #ff003c;
     border: 1px solid #ff003c;
 }
-
 .scary-btn-secondary:hover {
     background: rgba(255, 0, 60, 0.08);
     transform: translateY(-2px);
 }
-
 .scary-btn:active {
     transform: translateY(0);
 }
-
 .scary-success-message {
     color: #10b981;
     font-weight: 600;

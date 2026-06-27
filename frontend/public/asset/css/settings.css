@@ -1,3 +1,7 @@
+/* ============================================================
+   SETTINGS STYLES
+   ============================================================ */
+
 .settings-btn-container {
     position: fixed;
     top: 20px;
@@ -7,17 +11,15 @@
     align-items: center;
     gap: 10px;
 }
-
-.settings-btn-text {
+.settings-btn-text {
     color: var(--text-color);
-    font-family: var(--font-main);
+
     font-weight: bold;
     font-size: 16px;
     text-shadow: 1px 1px 2px black;
     pointer-events: none;
 }
-
-.settings-btn {
+.settings-btn {
     background: var(--dark-overlay-dense);
     border: 1px solid var(--card-border);
     color: var(--text-color);
@@ -32,13 +34,11 @@
     width: 60px;
     height: 60px;
 }
-
-.settings-btn:hover {
+.settings-btn:hover {
     background: var(--light-overlay-hover);
     transform: scale(1.05);
 }
-
-.settings-icon {
+.settings-icon {
     width: 40px;
     height: 40px;
     object-fit: contain;
@@ -47,8 +47,7 @@
             drop-shadow(-2px 0 0 white) 
             drop-shadow(0 -2px 0 white);
 }
-
-.settings-modal-overlay {
+.settings-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -64,8 +63,7 @@
     padding: 20px 0;
     box-sizing: border-box;
 }
-
-.settings-modal-content {
+.settings-modal-content {
     background: var(--bg-color);
     border: 1px solid var(--card-border);
     padding: 30px;
@@ -74,35 +72,29 @@
     max-width: 500px;
     overflow: visible;
     color: var(--text-color);
-    font-family: var(--font-main);
+
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     margin: auto;
 }
-
-.settings-modal-content::-webkit-scrollbar {
+.settings-modal-content::-webkit-scrollbar {
     width: 12px;
-}
-.settings-modal-content::-webkit-scrollbar-track {
+}.settings-modal-content::-webkit-scrollbar-track {
     background: var(--dark-overlay-dense);
     border-radius: 6px;
     margin: 4px 0;
-}
-.settings-modal-content::-webkit-scrollbar-thumb {
+}.settings-modal-content::-webkit-scrollbar-thumb {
     background: var(--card-border);
     border-radius: 6px;
-}
-.settings-modal-content::-webkit-scrollbar-thumb:hover {
+}.settings-modal-content::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
-
-.settings-modal-content h2 {
+.settings-modal-content h2 {
     margin-top: 0;
     margin-bottom: 20px;
     color: var(--primary-color);
     text-align: center;
 }
-
-.settings-row {
+.settings-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -111,27 +103,22 @@
     padding: 10px 15px;
     border-radius: 8px;
 }
-
-.settings-row label {
+.settings-row label {
     flex: 1;
     font-weight: bold;
 }
-
-.settings-row input[type="range"] {
+.settings-row input[type="range"] {
     flex: 2;
     margin: 0 15px;
     cursor: pointer;
 }
-
-
 .settings-val {
     width: 40px;
     text-align: right;
     font-family: monospace;
     font-size: 1.1em;
 }
-
-.settings-close-btn {
+.settings-close-btn {
     margin-top: 20px;
     width: 100%;
     padding: 12px;
@@ -143,12 +130,10 @@
     cursor: pointer;
     transition: background 0.2s ease;
 }
-
-.settings-close-btn:hover {
+.settings-close-btn:hover {
     background: var(--primary-hover);
 }
-
-.settings-save-quit-btn {
+.settings-save-quit-btn {
     margin-top: 10px;
     width: 100%;
     padding: 12px;
@@ -160,30 +145,27 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
-.settings-save-quit-btn:hover {
+.settings-save-quit-btn:hover {
     background: var(--danger-color);
     color: var(--bg-color);
 }
 
+/* ============================================================
+   BASE LAYOUT & HTML
+   ============================================================ */
 body[data-theme="light"] .settings-btn-text {
     text-shadow: none !important;
 }
-
-
-
 .settings-compact-select {
     flex: 2;
     margin: 0 15px;
 }
-
-.settings-compact-select .custom-select-trigger {
+.settings-compact-select .custom-select-trigger {
     padding: 8px 12px;
     font-size: 13px;
     border-radius: 8px;
 }
-
-.settings-compact-select .custom-option {
+.settings-compact-select .custom-option {
     padding: 10px 12px;
     font-size: 13px;
 }

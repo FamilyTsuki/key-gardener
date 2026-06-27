@@ -1,40 +1,42 @@
+/* ============================================================
+   HUB STYLES
+   ============================================================ */
+
 .community-hub-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
 }
-
-.community-hub-container h1 {
+.community-hub-container h1 {
     font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 5px;
     color: var(--primary-color);
 }
-
-.community-hub-container p.welcome-text {
+.community-hub-container p.welcome-text {
     color: var(--text-muted);
     margin-bottom: 30px;
     font-size: 1.1rem;
 }
-
-.add-post-form {
+.add-post-form {
     padding: 25px;
     margin-bottom: 40px;
 }
-
-.add-post-form h3 {
+.add-post-form h3 {
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--primary-color);
 }
-
-.add-post-form textarea {
+.add-post-form textarea {
     min-height: 100px;
     resize: vertical;
 }
 
+/* ============================================================
+   FORMS & INPUTS
+   ============================================================ */
 .form-actions {
     display: flex;
     justify-content: space-between;
@@ -42,8 +44,7 @@
     margin-top: 15px;
     gap: 40px;
 }
-
-.add-media-btn {
+.add-media-btn {
     background: var(--light-overlay);
     border: 1px dashed var(--card-border);
     color: var(--text-color);
@@ -57,14 +58,12 @@
     gap: 8px;
     transition: all 0.2s ease;
 }
-
-.add-media-btn:hover {
+.add-media-btn:hover {
     background: var(--primary-translucent-hover);
     border-color: var(--primary-color);
     color: var(--primary-color);
 }
-
-.add-post-toggle-btn {
+.add-post-toggle-btn {
     position: fixed;
     bottom: 40px;
     right: 40px;
@@ -80,17 +79,14 @@
     transition: transform 0.2s ease, background-color 0.2s ease;
     padding: 0;
 }
-
-.add-post-toggle-btn:hover {
+.add-post-toggle-btn:hover {
     transform: scale(1.05);
 }
-
-.add-post-toggle-btn svg {
+.add-post-toggle-btn svg {
     width: 38px;
     height: 38px;
 }
-
-.add-post-form-inner {
+.add-post-form-inner {
     position: relative;
     padding: 20px;
     margin-bottom: 25px;
@@ -98,8 +94,7 @@
     width: 100%;
     box-sizing: border-box;
 }
-
-.add-post-form-inner h3 {
+.add-post-form-inner h3 {
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.3rem;
@@ -107,25 +102,22 @@
     color: var(--primary-color);
     padding-right: 30px;
 }
-
-.form-actions-right {
+.form-actions-right {
     display: flex;
     gap: 10px;
     flex-wrap: nowrap;
 }
-
-.add-media-btn,
-.cancel-btn,
+.add-media-btn,.cancel-btn,
+/* ============================================================
+   BUTTONS
+   ============================================================ */
 .form-actions-right .btn-primary {
     white-space: nowrap;
 }
-
-.cancel-btn,
-.form-actions-right .btn-primary {
+.cancel-btn,.form-actions-right .btn-primary {
     padding: 8px 16px;
 }
-
-.form-close-btn {
+.form-close-btn {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -139,24 +131,18 @@
     justify-content: center;
     padding: 4px;
 }
-
-.form-close-btn:hover {
+.form-close-btn:hover {
     color: var(--text-color);
     transform: scale(1.1);
 }
-
-.form-close-btn svg {
+.form-close-btn svg {
     width: 28px;
     height: 28px;
 }
-
-
-
 #media-preview {
     margin-top: 15px;
 }
-
-.preview-wrapper {
+.preview-wrapper {
     position: relative;
     display: inline-block;
     background: var(--dark-overlay-dense);
@@ -164,15 +150,13 @@
     border-radius: 12px;
     padding: 8px;
 }
-
-.preview-media {
+.preview-media {
     max-width: 100%;
     max-height: 200px;
     border-radius: 8px;
     display: block;
 }
-
-.remove-preview-btn {
+.remove-preview-btn {
     position: absolute;
     top: -8px;
     right: -8px;
@@ -189,13 +173,11 @@
     align-items: center;
     justify-content: center;
 }
-
-.remove-preview-btn:hover {
+.remove-preview-btn:hover {
     background: var(--danger-hover);
     transform: scale(1.1);
 }
-
-.login-prompt {
+.login-prompt {
     background: var(--light-overlay);
     border: 1px dashed var(--card-border);
     border-radius: 12px;
@@ -203,14 +185,12 @@
     text-align: center;
     margin-bottom: 40px;
 }
-
-.login-prompt p {
+.login-prompt p {
     margin: 0 0 12px 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
-
-.login-prompt a {
+.login-prompt a {
     background: var(--light-overlay);
     border: 1px solid var(--card-border);
     color: var(--primary-color);
@@ -222,13 +202,11 @@
     display: inline-block;
     transition: all 0.2s ease;
 }
-
-.login-prompt a:hover {
+.login-prompt a:hover {
     background: var(--primary-translucent-hover);
     border-color: var(--primary-color);
 }
-
-.hub-controls-container {
+.hub-controls-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -236,14 +214,12 @@
     margin-bottom: 25px;
     gap: 15px;
 }
-
-.sort-container {
+.sort-container {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
 }
-
-.sort-btn {
+.sort-btn {
     background: var(--light-overlay);
     border: 1px solid var(--card-border);
     color: var(--text-color);
@@ -254,79 +230,68 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
-.sort-btn:hover {
+.sort-btn:hover {
     background: var(--primary-translucent-hover);
     border-color: var(--primary-color);
     color: var(--primary-color);
     transform: translateY(-2px);
 }
-
-.sort-btn.active {
+.sort-btn.active {
     background: var(--primary-color);
     border-color: var(--primary-color);
     color: var(--bg-color);
 }
-
-.sort-btn:disabled {
+.sort-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 }
 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
-
-.refresh-btn:disabled .refresh-icon {
+.refresh-btn:disabled .refresh-icon {
     animation: spin 1s linear infinite;
 }
-
-
 #posts-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
-
-
-
 .hub-post {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 0 12px 12px 0;
     padding: 20px;
 }
-
-.self-post {
+.self-post {
     border-left: 4px solid var(--primary-color);
 }
-
-.hub-post strong {
+.hub-post strong {
     font-size: 1.05rem;
     color: var(--primary-color);
     display: block;
     margin-bottom: 8px;
     font-weight: 700;
 }
-
-.post-content {
+.post-content {
     font-size: 1.02rem;
     line-height: 1.5;
     color: var(--text-color);
     margin: 0 0 15px 0;
 }
-
-.post-media {
+.post-media {
     max-width: 100%;
     max-height: 350px;
     border-radius: 8px;
     display: block;
     margin-top: 15px;
 }
-
-.post-footer {
+.post-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -334,13 +299,11 @@
     border-top: 1px solid var(--card-border);
     padding-top: 15px;
 }
-
-.post-votes {
+.post-votes {
     display: flex;
     gap: 12px;
 }
-
-.vote-btn {
+.vote-btn {
     background: var(--light-overlay);
     border: 1px solid var(--card-border);
     color: var(--text-muted);
@@ -354,39 +317,33 @@
     gap: 6px;
     transition: all 0.2s ease;
 }
-
-.upvote-btn:hover {
+.upvote-btn:hover {
     background: var(--primary-translucent-hover);
     border-color: var(--primary-color);
     color: var(--primary-color);
     transform: translateY(-1px);
 }
-
-.upvote-btn.active {
+.upvote-btn.active {
     background: var(--primary-translucent);
     border-color: var(--primary-color);
     color: var(--primary-color);
 }
-
-.downvote-btn:hover {
+.downvote-btn:hover {
     background: var(--danger-translucent-hover);
     border-color: var(--danger-color);
     color: var(--danger-color);
     transform: translateY(-1px);
 }
-
-.downvote-btn.active {
+.downvote-btn.active {
     background: var(--danger-translucent);
     border-color: var(--danger-color);
     color: var(--danger-color);
 }
-
-.post-actions-container {
+.post-actions-container {
     display: flex;
     gap: 10px;
 }
-
-.action-btn {
+.action-btn {
     background: transparent;
     border: 1px solid var(--card-border);
     border-radius: 6px;
@@ -396,91 +353,74 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
-.action-btn:hover {
+.action-btn:hover {
     transform: translateY(-1px);
 }
-
-.edit-btn {
+.edit-btn {
     color: var(--secondary-color);
     border-color: var(--card-border);
 }
-
-.edit-btn:hover {
+.edit-btn:hover {
     background: var(--secondary-translucent);
     border-color: var(--secondary-color);
 }
-
-.delete-btn {
+.delete-btn {
     color: var(--danger-color);
     border-color: var(--card-border);
 }
-
-.delete-btn:hover {
+.delete-btn:hover {
     background: var(--danger-translucent);
     border-color: var(--danger-color);
 }
-
-.report-btn {
+.report-btn {
     color: var(--danger-color);
     border-color: var(--card-border);
 }
-
-.report-btn:hover:not(:disabled) {
+.report-btn:hover:not(:disabled) {
     background: var(--danger-translucent);
     border-color: var(--danger-color);
 }
-
-.report-btn:disabled {
+.report-btn:disabled {
     color: var(--text-muted);
     cursor: not-allowed;
     opacity: 0.5;
 }
-
-.save-btn {
+.save-btn {
     color: var(--primary-color);
     border-color: var(--primary-color);
     background: var(--primary-translucent);
 }
-
-.save-btn:hover {
+.save-btn:hover {
     background: var(--primary-color);
     color: var(--bg-color);
 }
-
-.cancel-btn {
+.cancel-btn {
     color: var(--text-muted);
 }
-
-.cancel-btn:hover {
+.cancel-btn:hover {
     color: var(--text-color);
     border-color: var(--text-muted);
 }
-
-.edit-post-textarea {
+.edit-post-textarea {
     width: 100%;
     min-height: 80px;
     margin-bottom: 10px;
 }
-
-.comments-section {
+.comments-section {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px dashed var(--card-border);
 }
-
-.hidden {
+.hidden {
     display: none !important;
 }
-
-.comments-list {
+.comments-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 15px;
 }
-
-.comment-bubble {
+.comment-bubble {
     background: var(--dark-overlay-dense);
     padding: 10px 15px;
     border-radius: 8px;
@@ -488,17 +428,14 @@
     border: 1px solid var(--card-border);
     font-size: 0.95rem;
 }
-
-.comment-bubble.self-comment {
+.comment-bubble.self-comment {
     border-left: 3px solid var(--primary-color);
 }
-
-.comment-bubble strong {
+.comment-bubble strong {
     color: var(--primary-color);
     font-weight: 600;
 }
-
-.comment-delete-btn {
+.comment-delete-btn {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -511,33 +448,27 @@
     padding: 2px 6px;
     border-radius: 4px;
 }
-
-.comment-delete-btn:hover {
+.comment-delete-btn:hover {
     color: var(--danger-color);
     background: var(--danger-translucent-hover);
 }
-
-.add-comment-form {
+.add-comment-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
-
-.comment-input {
+.comment-input {
     min-height: 60px;
     font-size: 0.95rem;
 }
-
-.post-comment-btn {
+.post-comment-btn {
     align-self: flex-end;
 }
+.comment-emoji {
 
-.comment-emoji {
-    font-family: 'Noto Color Emoji', sans-serif;
 }
 
-/* =============== MODAL REPORT =============== */
-.report-modal-overlay {
+.report-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -550,8 +481,7 @@
     align-items: center;
     justify-content: center;
 }
-
-.report-modal-content {
+.report-modal-content {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 12px;
@@ -563,14 +493,12 @@
     flex-direction: column;
     gap: 15px;
 }
-
-.report-modal-title {
+.report-modal-title {
     margin: 0;
     color: var(--text-color);
     font-size: 1.25rem;
 }
-
-.report-modal-textarea {
+.report-modal-textarea {
     width: 100%;
     box-sizing: border-box;
     background: var(--dark-overlay-dense);
@@ -582,33 +510,28 @@
     resize: vertical;
     min-height: 100px;
 }
-
-.report-modal-actions {
+.report-modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
     margin-top: 10px;
 }
-
-.report-modal-btn {
+.report-modal-btn {
     padding: 10px 20px;
     flex: 0 1 auto;
     width: auto;
 }
-
-.report-modal-submit {
+.report-modal-submit {
     background: var(--danger-color);
     border-color: var(--danger-color);
     color: var(--text-color);
 }
-
-.report-modal-submit:hover {
+.report-modal-submit:hover {
     background: var(--danger-hover);
     border-color: var(--danger-hover);
 }
 
-/* =============== RESPONSIVE =============== */
-@media (max-width: 768px) {
+@media (max-width: 768px) {
     .community-hub-container {
         padding: 10px;
     }
@@ -663,28 +586,24 @@
         max-height: 250px;
     }
 }
-
-.refresh-btn {
+.refresh-btn {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-
-.hub-right-controls {
+.hub-right-controls {
     display: flex;
     align-items: center;
     gap: 10px;
 }
-
-.hub-tabs-bar {
+.hub-tabs-bar {
     display: flex;
     gap: 10px;
     margin-bottom: 25px;
     border-bottom: 1px solid var(--card-border);
     padding-bottom: 10px;
 }
-
-.hub-tab-btn {
+.hub-tab-btn {
     background: transparent;
     border: none;
     color: var(--text-muted);
@@ -695,12 +614,10 @@
     transition: color 0.2s ease;
     border-bottom: 3px solid transparent;
 }
-
-.hub-tab-btn:hover {
+.hub-tab-btn:hover {
     color: var(--primary-color);
 }
-
-.hub-tab-btn.active {
+.hub-tab-btn.active {
     color: var(--primary-color);
     border-bottom-color: var(--primary-color);
 }

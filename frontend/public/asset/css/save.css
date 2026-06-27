@@ -1,3 +1,7 @@
+/* ============================================================
+   SAVE STYLES
+   ============================================================ */
+
 .save-container {
     width: 80vw;
     max-width: 800px;
@@ -6,22 +10,19 @@
     padding: 20px;
     color: var(--text-color);
 }
-
-.save-title {
+.save-title {
     font-size: 2.5rem;
     font-weight: 800;
     text-align: left;
     margin-bottom: 30px;
     color: var(--primary-color);
 }
-
-.save-slots {
+.save-slots {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
-
-.save-card {
+.save-card {
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -33,53 +34,44 @@
     transition: border-color 0.2s ease, transform 0.2s ease;
     z-index: 1;
 }
-
-.save-card:hover {
+.save-card:hover {
     border-color: var(--primary-color);
     transform: translateY(-2px);
     z-index: 10;
 }
-
-.save-card.menu-open {
+.save-card.menu-open {
     z-index: 50;
     border-color: var(--primary-color);
 }
-
-.save-info {
+.save-info {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-
-.save-slot-title {
+.save-slot-title {
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--primary-color);
 }
-
-.save-name {
+.save-name {
     font-size: 1rem;
     color: var(--text-color);
 }
-
-.save-date {
+.save-date {
     font-size: 0.85rem;
     color: var(--text-muted);
 }
-
-.save-empty {
+.save-empty {
     font-size: 0.95rem;
     color: var(--text-muted);
     font-style: italic;
 }
-
-.save-actions {
+.save-actions {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-
-.play-btn {
+.play-btn {
     background: var(--primary-color);
     color: var(--bg-color);
     border: none;
@@ -90,17 +82,14 @@
     cursor: pointer;
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
-
-.play-btn:hover {
+.play-btn:hover {
     transform: translateY(-2px);
     background-color: var(--primary-hover);
 }
-
-.play-btn:active {
+.play-btn:active {
     transform: translateY(0);
 }
-
-.menu-btn {
+.menu-btn {
     background: none;
     border: none;
     color: var(--text-muted);
@@ -109,13 +98,11 @@
     padding: 4px 8px;
     border-radius: 4px;
 }
-
-.menu-btn:hover {
+.menu-btn:hover {
     color: var(--primary-color);
     background: var(--primary-translucent-hover);
 }
-
-.context-menu {
+.context-menu {
     position: absolute;
     right: 20px;
     top: 60px;
@@ -128,12 +115,10 @@
     flex-direction: column;
     overflow: hidden;
 }
-
-.context-menu.active {
+.context-menu.active {
     display: flex;
 }
-
-.context-item {
+.context-item {
     background: none;
     border: none;
     color: var(--text-color);
@@ -144,21 +129,21 @@
     font-family: inherit;
     transition: background 0.2s ease, color 0.2s ease;
 }
-
-.context-item:hover {
+.context-item:hover {
     background: var(--primary-translucent);
     color: var(--primary-color);
 }
-
-.context-item.delete {
+.context-item.delete {
     color: var(--danger-color);
 }
-
-.context-item.delete:hover {
+.context-item.delete:hover {
     background: var(--danger-translucent);
     color: var(--white);
 }
 
+/* ============================================================
+   MODALS & OVERLAYS
+   ============================================================ */
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -171,8 +156,7 @@
     align-items: center;
     z-index: 200;
 }
-
-.modal-content {
+.modal-content {
     background: var(--card-bg);
     border: 1px solid var(--primary-color);
     border-radius: 12px;
@@ -182,14 +166,12 @@
     flex-direction: column;
     gap: 16px;
 }
-
-.modal-title {
+.modal-title {
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--primary-color);
 }
-
-.modal-input {
+.modal-input {
     background: var(--black);
     border: 1px solid var(--card-border);
     border-radius: 8px;
@@ -200,18 +182,15 @@
     outline: none;
     transition: border-color 0.2s ease;
 }
-
-.modal-input:focus {
+.modal-input:focus {
     border-color: var(--primary-color);
 }
-
-.modal-actions {
+.modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
 }
-
-.modal-btn {
+.modal-btn {
     padding: 10px 20px;
     border-radius: 8px;
     border: none;
@@ -221,53 +200,46 @@
     font-family: inherit;
     transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
-
-.modal-btn.cancel {
+.modal-btn.cancel {
     background: transparent;
     color: var(--text-muted);
     border: 1px solid var(--card-border);
 }
-
-.modal-btn.cancel:hover {
+.modal-btn.cancel:hover {
     color: var(--text-color);
     border-color: var(--primary-color);
 }
-
-.modal-btn.confirm {
+.modal-btn.confirm {
     background: var(--primary-color);
     color: var(--bg-color);
 }
-
-.modal-btn.confirm:hover {
+.modal-btn.confirm:hover {
     background: var(--primary-hover);
     transform: translateY(-2px);
 }
-
-.modal-btn.confirm:active {
+.modal-btn.confirm:active {
     transform: translateY(0);
 }
-
-.save-login-container {
+.save-login-container {
     text-align: center;
     margin-top: 20px;
 }
-
-.save-login-text {
+.save-login-text {
     color: var(--text-muted);
     font-size: 16px;
     margin-bottom: 20px;
 }
-
-.modal-btn.confirm.delete-confirm {
+.modal-btn.confirm.delete-confirm {
     background-color: var(--danger-color);
 }
-
-.modal-delete-text {
+.modal-delete-text {
     color: var(--text-muted);
     font-size: 14px;
 }
 
-/* =============== RESPONSIVE =============== */
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
 @media (max-width: 600px) {
     .save-card {
         flex-direction: column;
@@ -297,11 +269,9 @@
         width: 100%;
     }
 }
-
-.save-level-phase {
+.save-level-phase {
     font-size: 0.9em;
     color: var(--text-color);
     margin-bottom: 5px;
     opacity: 0.8;
 }
-

@@ -1,3 +1,6 @@
+/* ============================================================
+   MODALS & OVERLAYS
+   ============================================================ */
 .dialogue-box-container {
     position: absolute;
     bottom: 0;
@@ -12,14 +15,12 @@
     width: 90%;
     max-width: 850px;
 }
-
-.dialogue-box-container.visible {
+.dialogue-box-container.visible {
     opacity: 1;
     transform: translate(-50%, 0);
     pointer-events: auto;
 }
-
-.dialogue-box-bubble {
+.dialogue-box-bubble {
     position: relative;
     background: white;
     color: black;
@@ -38,18 +39,15 @@
     transform: scale(0.9);
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-.dialogue-box-container.visible .dialogue-box-bubble {
+.dialogue-box-container.visible .dialogue-box-bubble {
     transform: scale(1);
 }
-
-.dialogue-box-text {
+.dialogue-box-text {
     position: relative;
     z-index: 10;
     display: inline-block;
 }
-
-.dialogue-box-speaker {
+.dialogue-box-speaker {
     width: 45%;
     max-width: 600px;
     aspect-ratio: 4 / 5;
@@ -63,27 +61,23 @@
     opacity: 0;
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out;
 }
-
-.dialogue-box-container.visible .dialogue-box-speaker {
+.dialogue-box-container.visible .dialogue-box-speaker {
     transform: translateY(0);
     opacity: 1;
 }
-
-.dialogue-box-speaker img {
+.dialogue-box-speaker img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
     filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
 }
-
-.dialogue-box-speaker canvas {
+.dialogue-box-speaker canvas {
     width: 100% !important;
     height: 100% !important;
     outline: none;
     filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
 }
-
-.dialogue-skip-indicator {
+.dialogue-skip-indicator {
     position: absolute;
     bottom: 10px;
     right: 20px;
@@ -95,4 +89,3 @@
     pointer-events: none;
     z-index: 20;
 }
-

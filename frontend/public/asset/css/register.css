@@ -1,3 +1,6 @@
+/* ============================================================
+   MAIN APP CONTAINER
+   ============================================================ */
 #app {
     display: flex;
     justify-content: center;
@@ -5,8 +8,7 @@
     min-height: calc(100vh - 80px);
     height: auto;
 }
-
-.register-container {
+.register-container {
     width: min(420px, 95vw);
     padding: clamp(24px, 4vw, 48px) clamp(20px, 3vw, 40px);
     display: flex;
@@ -14,45 +16,38 @@
     align-items: center;
     gap: clamp(18px, 2.5vw, 32px);
 }
-
-.register-container h2 {
+.register-container h2 {
     font-size: clamp(2rem, 3.5vw, 3.5rem);
     margin: 0;
     letter-spacing: 0.04em;
     color: var(--text-color);
 }
-
-.register-container > div {
+.register-container > div {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
-.register-container form {
+.register-container form {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 18px;
-}
-.register-link {
+}.register-link {
     font-size: 1.1rem;
     color: var(--text-muted);
     margin-top: 10px;
 }
-
-.register-link a {
+.register-link a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s ease;
 }
-
-.register-link a:hover {
+.register-link a:hover {
     color: var(--primary-hover);
 }
-
-.login-separator {
+.login-separator {
     display: flex;
     align-items: center;
     text-align: center;
@@ -60,30 +55,27 @@
     font-size: 0.85rem;
     margin: 10px 0;
 }
-
-.login-separator::before,
-.login-separator::after {
+.login-separator::before,.login-separator::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
-
-.login-separator:not(:empty)::before {
+.login-separator:not(:empty)::before {
     margin-right: .75em;
 }
-
-.login-separator:not(:empty)::after {
+.login-separator:not(:empty)::after {
     margin-left: .75em;
 }
-
-.google-btn-container {
+.google-btn-container {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-top: 5px;
 }
 
-/* =============== RESPONSIVE =============== */
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
 @media (max-width: 600px) {
     .register-container {
         padding: 28px 20px;

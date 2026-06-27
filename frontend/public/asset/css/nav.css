@@ -1,3 +1,7 @@
+/* ============================================================
+   NAV STYLES
+   ============================================================ */
+
 nav {
     position: sticky;
     top: 0;
@@ -13,12 +17,11 @@ nav {
     justify-content: center;
     padding: 10px clamp(15px, 4vw, 40px);
     font-size: clamp(16px, 2.5vw, 25px);
-    font-family: var(--font-main, sans-serif);
+
     box-sizing: border-box;
     gap: 15px clamp(20px, 6vw, 80px);
 }
-
-nav a {
+nav a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: bold;
@@ -27,17 +30,18 @@ nav a {
     white-space: nowrap;
     transition: border-color 0.2s ease, color 0.2s ease;
 }
-
-nav a:hover {
+nav a:hover {
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 4px;
+}
+nav a.active {
     border-bottom: 3px solid var(--primary-color);
     padding-bottom: 4px;
 }
 
-nav a.active {
-    border-bottom: 3px solid var(--primary-color);
-    padding-bottom: 4px;
-}
-
+/* ============================================================
+   NAVIGATION & STRUCTURE
+   ============================================================ */
 .nav-page {
     display: flex;
     flex-wrap: wrap;
@@ -45,8 +49,7 @@ nav a.active {
     justify-content: center;
     gap: 8px clamp(10px, 2vw, 25px);
 }
-
-.login {
+.login {
     padding: 8px 24px;
     background-color: var(--primary-color);
     color: var(--bg-color);
@@ -55,25 +58,21 @@ nav a.active {
     font-weight: bold;
     transition: background-color 0.2s ease;
 }
-
-.login:hover {
+.login:hover {
     background-color: var(--primary-hover);
 }
-
-.nav-user {
+.nav-user {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-
-.nav-user-avatar-container {
+.nav-user-avatar-container {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
 }
-
-.nav-user-avatar {
+.nav-user-avatar {
     width: 46px;
     height: 46px;
     border-radius: 50%;
@@ -83,20 +82,16 @@ nav a.active {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 0 10px var(--primary-color);
 }
-
-.nav-user-avatar:hover {
+.nav-user-avatar:hover {
     transform: scale(1.08);
 }
-
-.nav-separator {
+.nav-separator {
     color: var(--text-muted);
 }
-
-nav a.admin-link {
+nav a.admin-link {
     color: var(--warning-color);
 }
-
-@media (max-width: 768px) {
+@media (max-width: 768px) {
     nav {
         justify-content: center;
         gap: 12px;

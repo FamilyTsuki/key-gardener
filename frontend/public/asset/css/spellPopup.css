@@ -1,3 +1,7 @@
+/* ============================================================
+   SPELLPOPUP STYLES
+   ============================================================ */
+
 .spell-unlock-overlay {
     position: fixed;
     top: 0;
@@ -10,7 +14,6 @@
     align-items: center;
     z-index: 9999;
 }
-
 .spell-unlock-box {
     text-align: center;
     padding: 40px;
@@ -18,26 +21,22 @@
     width: 90%;
     animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .spell-unlock-title {
     color: #ffd700;
     font-size: 2rem;
     margin-bottom: 20px;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
-
 .spell-unlock-icon {
     font-size: 5rem;
     margin: 20px 0;
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
 }
-
 .spell-unlock-name {
     font-size: 1.8rem;
     color: #fff;
     margin-bottom: 20px;
 }
-
 .spell-unlock-cast-box {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -45,13 +44,11 @@
     padding: 15px;
     margin-bottom: 20px;
 }
-
 .spell-unlock-howto {
     color: #aaa;
     font-size: 0.9rem;
     margin-bottom: 10px;
 }
-
 .spell-unlock-word {
     font-family: monospace;
     font-size: 2.5rem;
@@ -60,14 +57,12 @@
     font-weight: bold;
     text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 }
-
 .spell-unlock-desc {
     color: #e0e0e0;
     font-size: 1.1rem;
     line-height: 1.5;
     margin-bottom: 30px;
 }
-
 .spell-unlock-close {
     width: 100%;
     padding: 15px;
@@ -75,12 +70,11 @@
     background: linear-gradient(135deg, #3b82f6, #2563eb);
 }
 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes popIn {
     0% { transform: scale(0.5); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
-
-.fade-in { animation: fadeIn 0.3s forwards; }
-.fade-out { animation: fadeOut 0.5s forwards; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+.fade-in { animation: fadeIn 0.3s forwards; }.fade-out { animation: fadeOut 0.5s forwards; }@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }

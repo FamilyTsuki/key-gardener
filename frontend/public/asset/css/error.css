@@ -1,3 +1,7 @@
+/* ============================================================
+   ERROR STYLES
+   ============================================================ */
+
 .error-page-wrapper {
     position: fixed;
     top: 0;
@@ -9,14 +13,13 @@
     align-items: center;
     overflow: hidden;
     background: #000000;
-    font-family: 'Inter', 'Roboto', sans-serif;
+
     color: #ffffff;
     z-index: 10;
     padding-top: 60px;
     box-sizing: border-box;
 }
-
-.error-glow-blob {
+.error-glow-blob {
     position: absolute;
     border-radius: 50%;
     filter: blur(120px);
@@ -24,16 +27,14 @@
     opacity: 0.6;
     animation: drift 20s infinite alternate ease-in-out;
 }
-
-.blob-1 {
+.blob-1 {
     width: 500px;
     height: 500px;
     background: #ff2a5f;
     top: -10%;
     left: -10%;
 }
-
-.blob-2 {
+.blob-2 {
     width: 600px;
     height: 600px;
     background: #4a00e0;
@@ -41,8 +42,7 @@
     right: -10%;
     animation-delay: -10s;
 }
-
-.error-particles {
+.error-particles {
     position: absolute;
     top: 0;
     left: 0;
@@ -51,8 +51,7 @@
     z-index: 2;
     pointer-events: none;
 }
-
-.error-particle {
+.error-particle {
     position: absolute;
     background: rgba(255, 255, 255, 0.4);
     border-radius: 50%;
@@ -61,18 +60,23 @@
     opacity: 0;
 }
 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes float-up {
     0% { transform: translateY(0) scale(0.5); opacity: 0; }
     20% { opacity: 0.8; }
     80% { opacity: 0.8; }
     100% { transform: translateY(-400px) scale(1.2); opacity: 0; }
 }
-
-@keyframes drift {
+@keyframes drift {
     0% { transform: translate(0, 0) scale(1); }
     100% { transform: translate(50px, 50px) scale(1.1); }
 }
 
+/* ============================================================
+   CARDS & PANELS
+   ============================================================ */
 .glass-card {
     position: relative;
     z-index: 10;
@@ -90,13 +94,11 @@
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.02);
     animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
-@keyframes slide-up-fade {
+@keyframes slide-up-fade {
     0% { opacity: 0; transform: translateY(40px); }
     100% { opacity: 1; transform: translateY(0); }
 }
-
-.error-code-modern {
+.error-code-modern {
     font-size: 8rem;
     font-weight: 700;
     margin: 0;
@@ -104,8 +106,7 @@
     color: #ffffff;
     text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
-
-.error-title {
+.error-title {
     font-size: 1.8rem;
     margin: 1rem 0 0.5rem 0;
     text-transform: uppercase;
@@ -113,8 +114,7 @@
     font-weight: 600;
     color: #e0e0e0;
 }
-
-.error-desc {
+.error-desc {
     font-size: 1.25rem;
     color: #aeb0c0;
     max-width: 450px;
@@ -123,8 +123,7 @@
     margin: 0 0 3rem 0;
     font-weight: 300;
 }
-
-.error-btn-glow {
+.error-btn-glow {
     display: inline-block;
     padding: 0.8rem 2rem;
     color: #ffffff;
@@ -138,18 +137,15 @@
     border-radius: 8px;
     transition: all 0.3s ease;
 }
-
-.error-btn-glow:hover {
+.error-btn-glow:hover {
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.6);
     transform: translateY(-2px);
 }
-
-.error-btn-glow:active {
+.error-btn-glow:active {
     transform: translateY(0);
 }
-
-@media (max-width: 768px) {
+@media (max-width: 768px) {
     .error-page-wrapper {
         padding-top: 100px;
     }
@@ -174,8 +170,7 @@
         margin-bottom: 2rem;
     }
 }
-
-@media (max-width: 480px) {
+@media (max-width: 480px) {
     .error-page-wrapper {
         padding-top: 150px;
     }

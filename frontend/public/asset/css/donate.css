@@ -1,3 +1,6 @@
+/* ============================================================
+   DONATE STYLES
+   ============================================================ */
 
 .donate-container {
     --bg-grad-1: #3E2723;
@@ -22,13 +25,15 @@
     padding: 60px 20px;
     background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
     color: var(--text-primary); 
-    font-family: var(--font-main);
+
     min-height: calc(100vh - 80px);
     position: relative;
     overflow: hidden;
 }
 
-
+/* ============================================================
+   BASE LAYOUT & HTML
+   ============================================================ */
 body[data-theme="light"] .donate-container {
     --bg-grad-1: #FFF9F0;
     --bg-grad-2: #FFE8D6;
@@ -46,14 +51,9 @@ body[data-theme="light"] .donate-container {
     
     --particle-color: rgba(216, 67, 21, 0.3);
 }
-
-.donate-container h1,
-.donate-container h2,
-.donate-container p {
+.donate-container h1,.donate-container h2,.donate-container p {
     color: var(--text-primary) !important; 
 }
-
-
 .particles-container {
     position: absolute;
     top: 0;
@@ -63,8 +63,7 @@ body[data-theme="light"] .donate-container {
     z-index: 0;
     pointer-events: none;
 }
-
-.warm-particle {
+.warm-particle {
     position: absolute;
     background: var(--particle-color);
     border-radius: 50%;
@@ -73,14 +72,15 @@ body[data-theme="light"] .donate-container {
     box-shadow: 0 0 10px var(--particle-color);
 }
 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes floatUp {
     0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0; }
     20% { opacity: 1; }
     80% { opacity: 1; }
     100% { transform: translateY(-300px) scale(0.5) rotate(360deg); opacity: 0; }
 }
-
-
 .organic-shape {
     position: absolute;
     z-index: 0;
@@ -88,16 +88,14 @@ body[data-theme="light"] .donate-container {
     animation: morph 15s ease-in-out infinite alternate;
     pointer-events: none;
 }
-
-.shape-1 {
+.shape-1 {
     width: 500px; height: 500px;
     background: var(--blob-1);
     top: -100px; left: -150px;
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
     filter: blur(40px);
 }
-
-.shape-2 {
+.shape-2 {
     width: 450px; height: 450px;
     background: var(--blob-2);
     bottom: -50px; right: -100px;
@@ -106,8 +104,7 @@ body[data-theme="light"] .donate-container {
     animation-duration: 20s;
     filter: blur(50px);
 }
-
-.shape-3 {
+.shape-3 {
     width: 350px; height: 350px;
     background: var(--blob-3);
     top: 40%; left: 50%;
@@ -116,8 +113,7 @@ body[data-theme="light"] .donate-container {
     animation-delay: -10s;
     filter: blur(60px);
 }
-
-.shape-4 {
+.shape-4 {
     width: 250px; height: 250px;
     background: var(--blob-4);
     top: 20%; right: 10%;
@@ -125,8 +121,7 @@ body[data-theme="light"] .donate-container {
     animation-delay: -2s;
     filter: blur(40px);
 }
-
-.shape-5 {
+.shape-5 {
     width: 300px; height: 300px;
     background: var(--blob-5);
     bottom: 20%; left: 10%;
@@ -134,36 +129,27 @@ body[data-theme="light"] .donate-container {
     animation-delay: -7s;
     filter: blur(45px);
 }
-
-@keyframes morph {
+@keyframes morph {
     0% { border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%; transform: rotate(0deg) scale(1); }
     100% { border-radius: 40% 60%; transform: rotate(20deg) scale(1.05); }
 }
-
-
-.support-header,
-.support-letter,
-.support-grid,
-.cta-container {
+.support-header,.support-letter,.support-grid,.cta-container {
     z-index: 1;
     position: relative;
 }
-
-.support-header {
+.support-header {
     text-align: center;
     max-width: 800px;
     margin-bottom: 30px;
 }
-
-.support-title {
+.support-title {
     font-size: 3.2rem;
     font-weight: 800;
     margin-bottom: 10px;
     color: var(--text-primary) !important;
     text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
-
-.support-letter {
+.support-letter {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 40px; 
@@ -175,14 +161,12 @@ body[data-theme="light"] .donate-container {
     backdrop-filter: blur(15px);
     text-align: center;
 }
-
-.letter-avatar-container {
+.letter-avatar-container {
     display: flex;
     justify-content: center;
     margin-bottom: 25px;
 }
-
-.letter-avatar {
+.letter-avatar {
     width: 120px;
     height: 120px;
     border-radius: 50%; 
@@ -190,19 +174,16 @@ body[data-theme="light"] .donate-container {
     border: 5px solid var(--card-border);
     box-shadow: 0 10px 25px var(--card-shadow);
 }
-
-.support-letter p {
+.support-letter p {
     font-size: 1.2rem;
     color: var(--text-secondary) !important;
     line-height: 1.8;
     margin-bottom: 20px;
 }
-
-.support-letter p:last-child {
+.support-letter p:last-child {
     margin-bottom: 0;
 }
-
-.support-grid {
+.support-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
@@ -210,8 +191,7 @@ body[data-theme="light"] .donate-container {
     max-width: 800px;
     margin-bottom: 50px;
 }
-
-.support-card {
+.support-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 35px; 
@@ -224,39 +204,36 @@ body[data-theme="light"] .donate-container {
     align-items: center;
     text-align: center;
 }
-
-.support-card:hover {
+.support-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 25px 45px var(--card-shadow);
 }
 
+/* ============================================================
+   CARDS & PANELS
+   ============================================================ */
 .card-icon {
     font-size: 3rem;
     margin-bottom: 15px;
 }
-
-.support-card.expenses {
+.support-card.expenses {
     border-top: 8px solid #FF8A65; 
 }
-
-.support-card.improvements {
+.support-card.improvements {
     border-top: 8px solid #FFD54F; 
 }
-
-.support-card-title {
+.support-card-title {
     font-size: 1.5rem;
     font-weight: 800;
     margin-bottom: 15px;
     color: var(--text-primary) !important;
 }
-
-.support-card-desc {
+.support-card-desc {
     color: var(--text-secondary) !important;
     font-size: 1.1rem;
     line-height: 1.6;
 }
-
-.cta-container {
+.cta-container {
     background: var(--card-bg); 
     border: 3px dashed var(--card-border); 
     border-radius: 40px; 
@@ -267,21 +244,18 @@ body[data-theme="light"] .donate-container {
     box-shadow: 0 15px 40px var(--card-shadow);
     backdrop-filter: blur(15px);
 }
-
-.cta-title {
+.cta-title {
     font-size: 2.2rem;
     font-weight: 800;
     margin-bottom: 15px;
     color: var(--text-primary) !important;
 }
-
-.cta-desc {
+.cta-desc {
     font-size: 1.15rem;
     color: var(--text-secondary) !important;
     margin-bottom: 35px;
 }
-
-.kofi-btn {
+.kofi-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -299,22 +273,19 @@ body[data-theme="light"] .donate-container {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
 }
-
-.kofi-btn:hover {
+.kofi-btn:hover {
     background: rgba(255, 255, 255, 0.15);
     border-color: #FFD54F;
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 }
-
-body[data-theme="light"] .kofi-btn {
+body[data-theme="light"] .kofi-btn {
     background: rgba(255, 255, 255, 0.95);
     color: #D84315 !important;
     border-color: #FFB74D;
     box-shadow: 0 8px 25px rgba(216, 67, 21, 0.15);
 }
-
-body[data-theme="light"] .kofi-btn:hover {
+body[data-theme="light"] .kofi-btn:hover {
     background: #FFFFFF;
     box-shadow: 0 15px 35px rgba(216, 67, 21, 0.25);
     border-color: #FF8A65;

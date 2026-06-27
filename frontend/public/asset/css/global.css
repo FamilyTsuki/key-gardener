@@ -1,3 +1,7 @@
+
+/* ============================================================
+   VARIABLES & THEMING
+   ============================================================ */
 :root {
     --primary-color: #00ff66;
     --primary-hover: #00cc52;
@@ -38,21 +42,22 @@
     --pink-threat: var(--danger-color);
     --primary-glow-heavy: none;
 
-
 }
 
+/* ============================================================
+   BASE LAYOUT & HTML
+   ============================================================ */
 html {
     overflow: hidden;
     height: 100vh;
 }
-
-body {
+body {
     margin: 0;
     padding: 0;
     overflow: hidden;
     height: 100vh;
     max-width: 100vw;
-    font-family: var(--font-main);
+
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow-wrap: break-word;
@@ -60,6 +65,9 @@ body {
     flex-direction: column;
 }
 
+/* ============================================================
+   MAIN APP CONTAINER
+   ============================================================ */
 #app {
     position: relative;
     z-index: 1;
@@ -69,8 +77,7 @@ body {
     display: flex;
     flex-direction: column;
 }
-
-#bg-canvas {
+#bg-canvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -85,8 +92,7 @@ body {
     --warning-translucent: #f59e0b;
     --matrix-glow: none;
 }
-
-#bg-canvas {
+#bg-canvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -94,12 +100,10 @@ body {
     height: 100vh;
     z-index: -1;
 }
-
-.hidden {
+.hidden {
     display: none !important;
 }
-
-.tunnel-canvas {
+.tunnel-canvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -110,8 +114,7 @@ body {
     opacity: 0;
     transition: opacity 2s ease;
 }
-
-#easter-egg-canvas {
+#easter-egg-canvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -120,21 +123,17 @@ body {
     pointer-events: none;
     z-index: 9999;
 }
-
-body.in-game #nav-container {
+body.in-game #nav-container {
     display: none !important;
 }
-
-body.in-game #app {
+body.in-game #app {
     margin-top: 0 !important;
     overflow: hidden !important;
 }
-
-html:has(body.in-game), body.in-game {
+html:has(body.in-game), body.in-game {
     overflow: hidden !important;
 }
-
-#page-transition {
+#page-transition {
     position: fixed;
     top: 0;
     left: 0;
@@ -148,12 +147,10 @@ html:has(body.in-game), body.in-game {
     z-index: 9999;
     transition: opacity 0.8s ease;
 }
-
-#page-transition.fade-in {
+#page-transition.fade-in {
     opacity: 1;
     pointer-events: all;
-}
-.hidden {
+}.hidden {
     display: none !important;
 }
 
@@ -174,27 +171,24 @@ html:has(body.in-game), body.in-game {
     align-items: center;
     font-size: 1.5rem;
     font-weight: bold;
-    font-family: var(--font-main);
+
     text-transform: uppercase;
     letter-spacing: 4px;
     opacity: 1;
     transition: opacity 0.5s ease, visibility 0.5s ease;
 }
-
-#global-loader.hidden {
+#global-loader.hidden {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 }
-
-.loader-content {
+.loader-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2rem;
 }
-
-.cyber-spinner {
+.cyber-spinner {
     width: 80px;
     height: 80px;
     border: 4px solid transparent;
@@ -204,8 +198,7 @@ html:has(body.in-game), body.in-game {
     animation: spin 1s linear infinite;
     position: relative;
 }
-
-.cyber-spinner::before {
+.cyber-spinner::before {
     content: "";
     position: absolute;
     top: 8px;
@@ -218,8 +211,7 @@ html:has(body.in-game), body.in-game {
     border-radius: 50%;
     animation: spin 2s linear infinite reverse;
 }
-
-.cyber-spinner::after {
+.cyber-spinner::after {
     content: "";
     position: absolute;
     top: 18px;
@@ -231,97 +223,23 @@ html:has(body.in-game), body.in-game {
     border-radius: 50%;
     animation: spin 1.5s linear infinite;
 }
-
-.loader-text {
+.loader-text {
     animation: loader-pulse-glow 2s ease-in-out infinite;
 }
 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
-@keyframes loader-pulse-glow {
+@keyframes loader-pulse-glow {
     0%, 100% { opacity: 0.7; }
     50% { opacity: 1; }
 }
 
-/* =============== GLOBAL UTILITY CLASSES =============== */
-
-.glass-panel {
-    background: var(--dark-overlay-dense);
-    border: 1px solid var(--card-border);
-    border-radius: 28px;
-    box-shadow: var(--shadow-glow);
-}
-
-.form-input {
-    width: 100%;
-    padding: 16px 20px;
-    border-radius: 16px;
-    border: 1px solid var(--card-border);
-    background: var(--light-overlay);
-    color: var(--text-color);
-    font-size: 1.1rem;
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
-}
-
-.form-input::placeholder {
-    color: var(--text-muted);
-}
-
-.form-input:focus {
-    border-color: var(--primary-color);
-    background: var(--light-overlay-hover);
-    box-shadow: var(--focus-ring);
-}
-
-.form-input:-webkit-autofill,
-.form-input:-webkit-autofill:hover, 
-.form-input:-webkit-autofill:focus, 
-.form-input:-webkit-autofill:active {
-    transition: background-color 5000s ease-in-out 0s;
-    -webkit-text-fill-color: var(--text-color) !important;
-}
-
-.btn-primary {
-    width: 100%;
-    padding: 16px 20px;
-    border: none;
-    border-radius: 16px;
-    background-color: var(--primary-color);
-    color: var(--bg-color);
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-sizing: border-box;
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    background-color: var(--primary-hover);
-    box-shadow: var(--shadow-glow);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
-}
-
-.btn-primary:disabled,
-.btn-primary:disabled:hover,
-.btn-primary:disabled:active {
-    background-color: var(--card-border);
-    color: var(--text-muted);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-/* =============== LIGHT MODE CONFIGURATION =============== */
-body[data-theme="light"] {
+body[data-theme="light"] {
     --primary-color: #00ff66;
     --primary-hover: #00cc52;
     --secondary-color: #0ea5e9;
@@ -343,31 +261,24 @@ body[data-theme="light"] {
     --shadow-glow: 0 4px 15px rgba(0, 0, 0, 0.05);
     --focus-ring: 0 0 0 3px rgba(0, 255, 102, 0.3);
 }
-
-body[data-theme="light"] #page-transition {
+body[data-theme="light"] #page-transition {
     background-color: rgba(248, 250, 252, 0.95);
 }
-
-body[data-theme="light"] #global-loader {
+body[data-theme="light"] #global-loader {
     background-color: rgba(248, 250, 252, 0.85);
     color: var(--primary-color);
 }
-
-body[data-theme="light"] #bg-canvas,
-body[data-theme="light"] .tunnel-canvas,
-body[data-theme="light"] #easter-egg-canvas {
+body[data-theme="light"] #bg-canvas,body[data-theme="light"] .tunnel-canvas,body[data-theme="light"] #easter-egg-canvas {
     background-color: #0a0c10 !important;
 }
 
-/* =============== CUSTOM SELECT =============== */
-.custom-select-container {
+.custom-select-container {
     position: relative;
     width: 100%;
     user-select: none;
-    font-family: var(--font-main);
-}
 
-.custom-select-trigger {
+}
+.custom-select-trigger {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -380,34 +291,28 @@ body[data-theme="light"] #easter-egg-canvas {
     cursor: pointer;
     transition: all 0.22s ease;
 }
-
-.custom-select-trigger:hover {
+.custom-select-trigger:hover {
     border-color: var(--primary-color);
     background: var(--light-overlay-hover);
 }
-
-.custom-select-container.open {
+.custom-select-container.open {
     z-index: 1000 !important;
 }
-
-.custom-select-container.open .custom-select-trigger {
+.custom-select-container.open .custom-select-trigger {
     border-color: var(--primary-color);
     box-shadow: var(--focus-ring);
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
 }
-
-.custom-select-arrow {
+.custom-select-arrow {
     font-size: 0.8rem;
     transition: transform 0.3s ease;
     color: var(--text-muted);
 }
-
-.custom-select-container.open .custom-select-arrow {
+.custom-select-container.open .custom-select-arrow {
     transform: rotate(180deg);
 }
-
-.custom-select-options {
+.custom-select-options {
     position: absolute;
     top: 100%;
     left: 0;
@@ -426,65 +331,59 @@ body[data-theme="light"] #easter-egg-canvas {
     transform: translateY(-10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.custom-select-container.open .custom-select-options {
+.custom-select-container.open .custom-select-options {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
-
-.custom-option {
+.custom-option {
     padding: 14px 20px;
     color: var(--text-color);
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease;
     font-size: 1.05rem;
 }
-
-.custom-option:hover {
+.custom-option:hover {
     background: var(--light-overlay-hover);
     color: var(--primary-color);
 }
 
+/* ============================================================
+   FORMS & INPUTS
+   ============================================================ */
 .custom-option.selected {
     background: rgba(0, 179, 71, 0.1);
     color: var(--primary-color);
     font-weight: 700;
     position: relative;
 }
-
-.custom-option.selected::after {
+.custom-option.selected::after {
     content: "✓";
     position: absolute;
     right: 20px;
     color: var(--primary-color);
 }
-
-.custom-select-options::-webkit-scrollbar {
+.custom-select-options
+::-webkit-scrollbar {
     width: 6px;
 }
 
-/* =============== CUSTOM SCROLLBAR =============== */
-::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 14px;
     height: 14px;
 }
-
-::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     background: var(--bg-color);
 }
-
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background-color: var(--card-border);
     border-radius: 7px;
     border: 3px solid var(--bg-color);
 }
-
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
     background-color: var(--primary-color);
 }
-
-.custom-select-options::-webkit-scrollbar-thumb {
+.custom-select-options::-webkit-scrollbar-thumb {
     background: var(--card-border);
     border-radius: 10px;
 }

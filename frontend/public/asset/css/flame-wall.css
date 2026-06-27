@@ -1,3 +1,7 @@
+/* ============================================================
+   FLAME-WALL STYLES
+   ============================================================ */
+
 .flame-wall-overlay {
     position: absolute;
     inset: 0;
@@ -15,9 +19,8 @@
     pointer-events: all;
     animation: flame-overlay-in 0.8s ease-out forwards;
 }
+.flame-wall-title {
 
-.flame-wall-title {
-    font-family: var(--font-main), 'Impact', Arial, sans-serif;
     font-size: clamp(40px, 7vw, 90px);
     font-weight: 900;
     color: #fff8e1;
@@ -29,9 +32,8 @@
         3px 3px 0 #800;
     margin: 0;
 }
+.flame-wall-subtitle {
 
-.flame-wall-subtitle {
-    font-family: var(--font-main), Arial, sans-serif;
     font-size: clamp(14px, 2vw, 22px);
     color: rgba(255, 230, 180, 0.85);
     letter-spacing: 4px;
@@ -39,6 +41,9 @@
     margin: 0;
 }
 
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes flame-overlay-in {
     from { opacity: 0; }
     to   { opacity: 1; }
