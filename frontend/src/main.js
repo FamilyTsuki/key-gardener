@@ -42,7 +42,7 @@ console.log("Website UI initialized");
 (async () => {
     await AuthService.init();
 
-    Navbar.render();
+    await Navbar.render();
     EasterEgg.init();
     SocketService.connect();
 

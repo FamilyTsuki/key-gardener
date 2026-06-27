@@ -83,11 +83,15 @@ export default class Navbar {
             const user = await AuthService.getCurrentUser();
             this.usernameSpan.textContent = user.username;
             const avatar = (user.personalPicture && user.personalPicture !== "null") ? user.personalPicture : "default.webp";
-            if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
-                this.personalPictureImg.src = avatar;
-            } else {
-                this.personalPictureImg.src = "/asset/img/users/" + avatar;
-            }
+            await new Promise((resolve) => {
+                this.personalPictureImg.onload = () => resolve();
+                this.personalPictureImg.onerror = () => resolve();
+                if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
+                    this.personalPictureImg.src = avatar;
+                } else {
+                    this.personalPictureImg.src = "/asset/img/users/" + avatar;
+                }
+            });
 
             if (user.is_admin && !this.adminLink) {
                 this.adminSep = el("span", { className: "nav-separator" }, "|");
@@ -108,4 +112,4 @@ export default class Navbar {
         }
     }
 }
-
+

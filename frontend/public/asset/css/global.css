@@ -173,8 +173,6 @@ html:has(body.in-game), body.in-game {
     width: 100vw;
     height: 100vh;
     background-color: rgba(10, 12, 16, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     color: var(--primary-color);
     z-index: 10000;
     display: flex;
