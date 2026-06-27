@@ -27,6 +27,9 @@ export class DuelPhase extends GamePhase {
         this.remoteJailCage = null;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         const scene = this.gameEngine.scene;
         await this.renderer.init(scene, this.gameEngine.camera, this.state.localData, this.state.remoteData);
@@ -48,6 +51,9 @@ export class DuelPhase extends GamePhase {
         window.addEventListener("settings_updated", this.settingsListener);
     }
 
+    /**
+     * Activates the jail local.
+     */
     activateJailLocal() {
         if (this.localPlayer.isJailed) return;
         this.localPlayer.isJailed = true;
@@ -60,6 +66,9 @@ export class DuelPhase extends GamePhase {
         this.localJailCage = this.renderer.createJailVisual(this.localPlayer);
     }
 
+    /**
+     * Escapes the jail.
+     */
     escapeJail() {
         this.localPlayer.isJailed = false;
         this.ui.removeJailUI();
@@ -69,10 +78,18 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         this.input.handleKeyDown(event);
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (this.renderer.decor) this.renderer.decor.update(deltaTime);
         this.renderer.updateCamera(this.gameEngine.camera);
@@ -94,6 +111,10 @@ export class DuelPhase extends GamePhase {
         this.updateProjectilesAndZones(deltaTime);
     }
 
+    /**
+     * Updates the stun states.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateStunStates(deltaTime) {
         if (this.localPlayer && this.localPlayer.stunTimer > 0) {
             this.localPlayer.stunTimer = Math.max(0, this.localPlayer.stunTimer - deltaTime);
@@ -120,11 +141,19 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Updates the player states.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updatePlayerStates(deltaTime) {
         if (this.localPlayer) this.localPlayer.update(deltaTime);
         if (this.remotePlayer) this.remotePlayer.update(deltaTime);
     }
 
+    /**
+     * Updates the jail visuals.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateJailVisuals(deltaTime) {
         if (this.localJailCage) this.renderer.updateJailVisual(this.localJailCage, deltaTime);
 
@@ -139,6 +168,10 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Updates the projectiles and zones.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateProjectilesAndZones(deltaTime) {
         for (let i = this.state.slowZones.length - 1; i >= 0; i--) {
             const sz = this.state.slowZones[i];
@@ -179,10 +212,16 @@ export class DuelPhase extends GamePhase {
         }
     }
 
+    /**
+     * Draws.
+     */
     draw() {
         this.renderer.draw(this.localPlayer, this.remotePlayer);
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         this.ui.cleanup();
         this.socketManager.unregister();

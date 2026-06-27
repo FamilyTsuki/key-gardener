@@ -370,4 +370,4 @@ export default class AccountView extends AbstractView {
         }
     }
 }
-
+

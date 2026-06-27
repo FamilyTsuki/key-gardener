@@ -31,6 +31,10 @@ export class DuelSpell {
         this.scene.add(this.mesh);
     }
 
+    /**
+     * Initializes the visuals.
+ * @param {any} fireballGltf - The fireballGltf.
+     */
     initVisuals(fireballGltf) {
         if (fireballGltf) {
             const model = fireballGltf.scene.clone();
@@ -59,6 +63,10 @@ export class DuelSpell {
         this.trailTime = 0;
     }
 
+    /**
+     * Resets the visuals.
+ * @param {any} fireballGltf - The fireballGltf.
+     */
     resetVisuals(fireballGltf) {
         while (this.visualGroup.children.length > 0) {
             this.visualGroup.remove(this.visualGroup.children[0]);
@@ -70,6 +78,9 @@ export class DuelSpell {
         this.initTextSprite();
     }
 
+    /**
+     * Initializes the text sprite.
+     */
     initTextSprite() {
         const canvas = document.createElement("canvas");
         canvas.width = 512;
@@ -111,6 +122,11 @@ export class DuelSpell {
         this.mesh.add(this.textSprite);
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} targetModel - The targetModel.
+     */
     update(deltaTime, targetModel) {
         if (this.isDestroyed) return;
 
@@ -154,10 +170,17 @@ export class DuelSpell {
         }
     }
 
+    /**
+     * Handles the hit event/action.
+ * @param {any} targetModel - The targetModel.
+     */
     onHit(targetModel) {
         this.destroy();
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         this.isDestroyed = true;
         this.scene.remove(this.mesh);
@@ -175,6 +198,10 @@ export class LightSpell extends DuelSpell {
         this.resetVisuals(args[9]);
     }
 
+    /**
+     * Initializes the visuals.
+ * @param {any} fireballGltf - The fireballGltf.
+     */
     initVisuals(fireballGltf) {
         const geo = new THREE.SphereGeometry(0.3, 16, 16);
         const mat = new THREE.MeshBasicMaterial({ color: this.color });
@@ -221,6 +248,10 @@ export class StunSpell extends DuelSpell {
         this.resetVisuals(args[9]);
     }
 
+    /**
+     * Initializes the visuals.
+ * @param {any} fireballGltf - The fireballGltf.
+     */
     initVisuals(fireballGltf) {
         const geo = new THREE.OctahedronGeometry(0.4);
         const mat = new THREE.MeshBasicMaterial({ color: this.color });
@@ -243,6 +274,10 @@ export class StunSpell extends DuelSpell {
         this.trailTime = 0;
     }
 
+    /**
+     * Handles the hit event/action.
+ * @param {any} targetModel - The targetModel.
+     */
     onHit(targetModel) {
         super.onHit(targetModel);
         if (targetModel) {
@@ -262,6 +297,10 @@ export class HealSpell extends DuelSpell {
         this.resetVisuals(args[9]);
     }
 
+    /**
+     * Initializes the visuals.
+ * @param {any} fireballGltf - The fireballGltf.
+     */
     initVisuals(fireballGltf) {
         const group = new THREE.Group();
         const mat = new THREE.MeshBasicMaterial({ color: this.color });
@@ -299,6 +338,10 @@ export class JailSpell extends DuelSpell {
         this.resetVisuals(args[9]);
     }
 
+    /**
+     * Initializes the visuals.
+ * @param {any} fireballGltf - The fireballGltf.
+     */
     initVisuals(fireballGltf) {
         const geo = new THREE.CylinderGeometry(0.35, 0.35, 0.7, 8, 1);
         const mat = new THREE.MeshBasicMaterial({ color: this.color, wireframe: true });
@@ -322,6 +365,10 @@ export class JailSpell extends DuelSpell {
         this.trailTime = 0;
     }
 
+    /**
+     * Handles the hit event/action.
+ * @param {any} targetModel - The targetModel.
+     */
     onHit(targetModel) {
         super.onHit(targetModel);
         if (targetModel) {
@@ -351,6 +398,11 @@ export class SlowZone {
         this.player.mesh.add(this.mesh);
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} enemyProjectiles - The enemyProjectiles.
+     */
     update(deltaTime, enemyProjectiles) {
         if (this.isExpired) return;
 
@@ -373,6 +425,9 @@ export class SlowZone {
         });
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         this.isExpired = true;
         if (this.mesh && this.mesh.parent) {

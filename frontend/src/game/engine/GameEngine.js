@@ -251,6 +251,10 @@ export class GameEngine {
         }
     }
 
+    /**
+     * Prefetchs the level.
+ * @param {any} level - The level.
+     */
     async prefetchLevel(level) {
         if (!PerformanceDetector.shouldPrefetch()) {
             return;
@@ -421,6 +425,10 @@ export class GameEngine {
         }
     }
 
+    /**
+     * Handles the key down.
+ * @param {any} event - The event.
+     */
     handleKeyDown(event) {
         if (!this.secretBuffer) this.secretBuffer = "";
         if (event.key.length === 1 && event.key.match(/[a-z]/i)) {
@@ -440,10 +448,16 @@ export class GameEngine {
         }
     }
 
+    /**
+     * Teleports to training.
+     */
     async teleportToTraining() {
         await this.setPhase(new TrainingPhase(this));
     }
 
+    /**
+     * Returns the from training.
+     */
     async returnFromTraining() {
         if (this.currentLevel) {
             await this.loadLevel(this.currentLevel);
@@ -452,6 +466,9 @@ export class GameEngine {
         }
     }
 
+    /**
+     * Saves the stats.
+     */
     async saveStats() {
         try {
             const data = this.stats.getStatsData();
@@ -464,6 +481,9 @@ export class GameEngine {
         }
     }
 
+    /**
+     * Autos the save.
+     */
     async autoSave() {
         const activeSlot = localStorage.getItem("activeSaveSlot") || "1";
 

@@ -34,12 +34,19 @@ export class SurvivePhase extends GamePhase {
         this.pathUpdateTimer = 0;
     }
 
+    /**
+     * Parses the string options.
+ * @param {any} str - The str.
+     */
     parseStringOptions(str) {
         return {
             decorType: str, duration: 60, spawnInterval: 3, maxEnemies: Infinity, storyEvents: []
         };
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         const scene = this.gameEngine.scene;
         this.renderer.init(scene, this.gameEngine.camera, this.decorType);
@@ -141,6 +148,9 @@ export class SurvivePhase extends GamePhase {
         });
     }
 
+    /**
+     * Applies the keyboard finger colors.
+     */
     applyKeyboardFingerColors() {
         if (!this.keyboard) return;
         const layout = getKeyboardLayout();
@@ -180,6 +190,9 @@ export class SurvivePhase extends GamePhase {
         });
     }
 
+    /**
+     * Waits for loader.
+     */
     waitForLoader() {
         return new Promise(resolve => {
             const loader = document.getElementById("global-loader");
@@ -197,6 +210,11 @@ export class SurvivePhase extends GamePhase {
         });
     }
 
+    /**
+     * Updates the layout.
+ * @param {string} padSides - The padSides.
+ * @param {any} padTB - The padTB.
+     */
     updateLayout(padSides, padTB) {
         if (!this.keyboard || !this.keyboard.rebuild) return;
         this.keyboard.rebuild(getExtendedMapLayout(padSides, padTB), { paddingSides: padSides, paddingTopBottom: padTB });
@@ -228,6 +246,10 @@ export class SurvivePhase extends GamePhase {
         }
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (!this.state.update(deltaTime, this.gameEngine)) return;
 
@@ -262,6 +284,10 @@ export class SurvivePhase extends GamePhase {
         this.renderer.updateDecor(deltaTime);
     }
 
+    /**
+     * Updates the pathing.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updatePathing(deltaTime) {
         this.pathUpdateTimer += deltaTime;
         if (this.pathUpdateTimer >= 0.5) {
@@ -270,6 +296,10 @@ export class SurvivePhase extends GamePhase {
         }
     }
 
+    /**
+     * Updates the projectiles and bonks.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateProjectilesAndBonks(deltaTime) {
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
             const p = this.projectiles[i];
@@ -308,14 +338,24 @@ export class SurvivePhase extends GamePhase {
         }
     }
 
+    /**
+     * Draws.
+     */
     draw() {
         this.renderer.draw(this.keyboard, this.player, this.enemies);
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         if (this.input) this.input.handleKeyDown(event);
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         this.renderer.cleanup(this.gameEngine.scene);
         

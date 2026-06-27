@@ -1,6 +1,12 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+/**
+ * Requires the admin.
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The Express next middleware function.
+ */
 const requireAdmin = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;

@@ -18,12 +18,23 @@ export default class Spell {
     this.range = range;
   }
 
+  /**
+   * Retrieves the word.
+   */
   get word() {
     return this.word;
   }
+
+  /**
+   * Retrieves the damage.
+   */
   get damage() {
     return this.damage;
   }
+
+  /**
+   * Retrieves the range.
+   */
   get range() {
     return this.range;
   }

@@ -1,6 +1,10 @@
 import * as THREE from "three";
 
 export class EasterEgg {
+
+    /**
+     * Initializes the .
+     */
     static init() {
         const konamiCode = [
             "arrowup", "arrowup", "arrowdown", "arrowdown", 
@@ -23,6 +27,9 @@ export class EasterEgg {
         });
     }
 
+    /**
+     * Triggers the rock animation.
+     */
     static triggerRockAnimation() {
         if (document.getElementById("easter-egg-canvas")) return;
 

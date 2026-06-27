@@ -15,10 +15,16 @@ export class AdminView {
         this.reportManager = new AdminReportManager(this.sidebarContent, this.detailContainer);
     }
 
+    /**
+     * Get the css.
+     */
     getCss() {
         return ["/asset/css/admin.css"];
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         clear(this.container);
 
@@ -41,6 +47,9 @@ export class AdminView {
         }
     }
 
+    /**
+     * Renders the sidebar toggles.
+     */
     renderSidebarToggles() {
         return el("div", { className: "sidebar-toggle-group" },
             el("button", { 
@@ -54,15 +63,25 @@ export class AdminView {
         );
     }
 
+    /**
+     * Switches the view.
+ * @param {any} view - The view.
+     */
     switchView(view) {
         this.currentView = view;
         this.init();
     }
 
+    /**
+     * Renders.
+     */
     async render() {
         return this.container;
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.levelManager && typeof this.levelManager.destroy === "function") {
             this.levelManager.destroy();

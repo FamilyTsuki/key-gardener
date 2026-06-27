@@ -645,4 +645,4 @@ export const en = {
         firstCombat3: "You can now cast a Spark. Good luck!"
     }
 };
-
+

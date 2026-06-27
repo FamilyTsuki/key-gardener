@@ -3,6 +3,10 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * Retrieves the filesfromdir.
+ * @param {any} dirPath - The dirPath.
+ */
 const getFilesFromDir = (dirPath) => {
     try {
         const absolutePath = path.join(__dirname, '../../../frontend/src/game', dirPath);

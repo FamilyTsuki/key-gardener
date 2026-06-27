@@ -23,6 +23,9 @@ export class FallPhase extends GamePhase {
         this.player = null;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         const scene = this.gameEngine.scene;
         this.ui.init();
@@ -61,6 +64,9 @@ export class FallPhase extends GamePhase {
         });
     }
 
+    /**
+     * Waits for loader.
+     */
     waitForLoader() {
         return new Promise(resolve => {
             const loader = document.getElementById("global-loader");
@@ -78,6 +84,9 @@ export class FallPhase extends GamePhase {
         });
     }
 
+    /**
+     * Resizes.
+     */
     resize() {
         const camera = this.gameEngine.camera;
         if (camera) {
@@ -87,6 +96,9 @@ export class FallPhase extends GamePhase {
         this.updateLanePositions();
     }
 
+    /**
+     * Updates the lane positions.
+     */
     updateLanePositions() {
         const camera = this.gameEngine.camera;
         if (!camera) return;
@@ -105,6 +117,10 @@ export class FallPhase extends GamePhase {
         this.obstacles.updateLanePositions();
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (this.player && !this.player.isAlive()) return;
 
@@ -123,12 +139,22 @@ export class FallPhase extends GamePhase {
         this.renderer.updateDecor(deltaTime);
     }
 
+    /**
+     * Draws.
+     */
     draw() {}
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         this.input.handleKeyDown(event);
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         if (this.windAmbiance) {
             this.windAmbiance.stop();

@@ -12,6 +12,9 @@ export default class FaqView extends AbstractView {
         this.setMetaDescription(LanguageManager.t("faq.description"));
     }
 
+    /**
+     * Renders.
+     */
     async render() {
         const container = el("main", { className: "content faq-container", role: "main" },
             el("section", { className: "faq-header glass-panel" },
@@ -29,6 +32,11 @@ export default class FaqView extends AbstractView {
         return container;
     }
 
+    /**
+     * Creates the faq item.
+ * @param {any} questionKey - The questionKey.
+ * @param {any} answerKey - The answerKey.
+     */
     createFaqItem(questionKey, answerKey) {
         return el("article", { className: "faq-item glass-panel" },
             el("h2", { className: "faq-question" }, LanguageManager.t(questionKey)),
@@ -36,6 +44,9 @@ export default class FaqView extends AbstractView {
         );
     }
 
+    /**
+     * Get the css.
+     */
     getCss() {
         return ["/asset/css/faq.css"];
     }

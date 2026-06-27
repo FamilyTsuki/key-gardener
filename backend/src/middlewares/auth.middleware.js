@@ -1,6 +1,12 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+/**
+ * Verifies the token.
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The Express next middleware function.
+ */
 const verifyToken = async (req, res, next) => {
     const token = req.cookies.jwt;
 
@@ -38,6 +44,12 @@ const verifyToken = async (req, res, next) => {
     );
 };
 
+/**
+ * Optionals the verify token.
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The Express next middleware function.
+ */
 const optionalVerifyToken = async (req, res, next) => {
     const token = req.cookies.jwt;
 

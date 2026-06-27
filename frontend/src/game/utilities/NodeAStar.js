@@ -67,6 +67,11 @@ export default class NodeAStar {
   get neighbours() {
     return this.#neighbours;
   }
+
+  /**
+   * Sets the neighbours.
+ * @param {any} newNeighbours - The neighbours value.
+   */
   set neighbours(newNeighbours) {
     this.#neighbours = newNeighbours;
   }

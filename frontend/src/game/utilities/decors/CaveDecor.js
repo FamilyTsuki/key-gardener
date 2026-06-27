@@ -1,6 +1,13 @@
 import * as THREE from "three";
 
 export class CaveDecor {
+
+    /**
+     * Builds.
+ * @param {any} scene - The scene.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static build(scene, decorGroup, disposables) {
         scene.background = new THREE.Color(0x090a12);
         scene.fog = new THREE.FogExp2(0x090a12, 0.015);
@@ -27,6 +34,10 @@ export class CaveDecor {
         };
     }
 
+    /**
+     * _builds the lighting.
+ * @param {any} decorGroup - The decorGroup.
+     */
     static _buildLighting(decorGroup) {
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
         decorGroup.add(ambientLight);
@@ -39,6 +50,11 @@ export class CaveDecor {
         decorGroup.add(topLight);
     }
 
+    /**
+     * _builds the dust particles.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static _buildDustParticles(decorGroup, disposables) {
         const particles = [];
         const geo = new THREE.DodecahedronGeometry(0.12, 0);
@@ -64,6 +80,11 @@ export class CaveDecor {
         return particles;
     }
 
+    /**
+     * _builds the cave floor.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static _buildCaveFloor(decorGroup, disposables) {
         const floorGeo = new THREE.PlaneGeometry(80, 80, 20, 20);
         
@@ -91,6 +112,11 @@ export class CaveDecor {
         disposables.push(floorGeo, floorMat);
     }
 
+    /**
+     * _builds the walls.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static _buildWalls(decorGroup, disposables) {
         const wallMat = new THREE.MeshStandardMaterial({
             color: 0x443a35,
@@ -116,6 +142,13 @@ export class CaveDecor {
         disposables.push(wallMat);
     }
 
+    /**
+     * _creates the static wall.
+ * @param {string} width - The width.
+ * @param {any} height - The height.
+ * @param {any} wallMat - The wallMat.
+ * @param {boolean} disposables - The disposables.
+     */
     static _createStaticWall(width, height, wallMat, disposables) {
         const segsX = Math.floor(width / 5);
         const segsY = Math.floor(height / 5);

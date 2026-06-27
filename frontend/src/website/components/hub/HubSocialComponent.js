@@ -11,6 +11,9 @@ export class HubSocialComponent {
         this.friendsListContainer = null;
     }
 
+    /**
+     * Renders.
+     */
     render() {
         this.addFriendSection = el("div", { className: "add-friend-section p-20 card-bg" },
             el("h3", {}, LanguageManager.t("social.addFriendTitle")),
@@ -36,10 +39,17 @@ export class HubSocialComponent {
         return this.container;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         await this.loadFriends();
     }
 
+    /**
+     * Handles the search event/action.
+ * @param {any} query - The query.
+     */
     async handleSearch(query) {
         const container = document.getElementById("search-results-container");
         if (!container) return;
@@ -64,6 +74,9 @@ export class HubSocialComponent {
         }
     }
 
+    /**
+     * Renders the search results.
+     */
     renderSearchResults() {
         const container = document.getElementById("search-results-container");
         if (!container) return;
@@ -85,6 +98,9 @@ export class HubSocialComponent {
         });
     }
 
+    /**
+     * Loads the friends.
+     */
     async loadFriends() {
         try {
             const token = localStorage.getItem("authToken");
@@ -101,6 +117,11 @@ export class HubSocialComponent {
         }
     }
 
+    /**
+     * Adds the friend.
+ * @param {any} username - The username.
+ * @param {HTMLElement} btnElement - The btnElement.
+     */
     async addFriend(username, btnElement) {
         if (btnElement) {
             btnElement.disabled = true;
@@ -129,6 +150,10 @@ export class HubSocialComponent {
         }
     }
 
+    /**
+     * Accepts the friend.
+ * @param {string} friendId - The friendId.
+     */
     async acceptFriend(friendId) {
         try {
             const token = localStorage.getItem("authToken");
@@ -147,6 +172,9 @@ export class HubSocialComponent {
         }
     }
 
+    /**
+     * Renders the friends list.
+     */
     renderFriendsList() {
         if (!this.friendsListContainer) return;
         this.friendsListContainer.innerHTML = "";
@@ -211,6 +239,11 @@ export class HubSocialComponent {
         }
     }
 
+    /**
+     * Invites the duel.
+ * @param {string} targetUserId - The targetUserId.
+ * @param {HTMLElement} btnElement - The btnElement.
+     */
     inviteDuel(targetUserId, btnElement) {
         if (btnElement) {
             btnElement.disabled = true;
@@ -226,23 +259,39 @@ export class HubSocialComponent {
         SocketService.emit("invite_duel", { targetUserId });
     }
 
+    /**
+     * Accepts the duel.
+ * @param {string} fromId - The fromId.
+     */
     acceptDuel(fromId) {
         window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
         SocketService.emit("accept_duel", { fromId });
         this.loadFriends();
     }
 
+    /**
+     * Declines the duel.
+ * @param {string} fromId - The fromId.
+     */
     declineDuel(fromId) {
         window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
         SocketService.emit("decline_duel", { fromId });
         this.loadFriends();
     }
 
+    /**
+     * Shows the profile.
+ * @param {any} friendData - The friendData.
+     */
     showProfile(friendData) {
         history.pushState(null, null, `/profile?id=${friendData.user_id}`);
         window.dispatchEvent(new Event("popstate"));
     }
 
+    /**
+     * Removes the friend.
+ * @param {string} userId - The userId.
+     */
     async removeFriend(userId) {
         try {
             const token = localStorage.getItem("authToken");

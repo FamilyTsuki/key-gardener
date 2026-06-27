@@ -9,6 +9,9 @@ export class SurviveInput {
         this.setupSpellListUI();
     }
 
+    /**
+     * Initializes the spell list u i.
+     */
     setupSpellListUI() {
         const spellListContainer = document.getElementById("spell-list-container");
         if (!spellListContainer || !this.phase.player) return;
@@ -39,6 +42,10 @@ export class SurviveInput {
         this.updateWordDisplay();
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         if (!this.phase.player || !this.phase.player.isAlive() || this.phase.state.isTransitioningToNextLevel || !this.phase.state.isReady) return;
 
@@ -50,6 +57,11 @@ export class SurviveInput {
         this.processMovement(target, event.key);
     }
 
+    /**
+     * Process the movement.
+ * @param {any} target - The target.
+ * @param {any} originalKey - The originalKey.
+     */
     processMovement(target, originalKey) {
         let moveResult = { blocked: false };
         if (this.phase.player && this.phase.enemies) {
@@ -73,6 +85,10 @@ export class SurviveInput {
         }
     }
 
+    /**
+     * Process the spell.
+ * @param {any} key - The key.
+     */
     processSpell(key) {
         let word = this.phase.player.handleKeyPress(key);
         if (word) {
@@ -81,6 +97,10 @@ export class SurviveInput {
         this.updateWordDisplay();
     }
 
+    /**
+     * Applies the pending spell.
+ * @param {any} projectiles - The projectiles.
+     */
     applyPendingSpell(projectiles) {
         if (!this.pendingSpell || this.phase.player.isMoving) return;
 
@@ -101,6 +121,9 @@ export class SurviveInput {
         this.pendingSpell = null;
     }
 
+    /**
+     * Updates the word display.
+     */
     updateWordDisplay() {
         if (!this.elCurrentWord || !this.phase || !this.phase.player) return;
         const text = this.pendingSpell || this.phase.player.currentWord;
@@ -112,6 +135,9 @@ export class SurviveInput {
         }
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         const spellListContainer = document.getElementById("spell-list-container");
         if (spellListContainer) {

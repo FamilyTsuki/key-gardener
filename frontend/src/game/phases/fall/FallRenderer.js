@@ -17,6 +17,12 @@ export class FallRenderer {
         this.currentRoll = 0;
     }
 
+    /**
+     * Initializes the .
+ * @param {any} scene - The scene.
+ * @param {any} camera - The camera.
+ * @param {any} decorType - The decorType.
+     */
     init(scene, camera, decorType) {
         this.worldGroupPivot.position.set(16, 0, 3.2);
         scene.add(this.worldGroupPivot);
@@ -32,6 +38,10 @@ export class FallRenderer {
         camera.lookAt(0, -10, 0);
     }
 
+    /**
+     * Builds the mine walls.
+ * @param {any} scene - The scene.
+     */
     buildMineWalls(scene) {
         this.wallContainer = new THREE.Group();
         scene.add(this.wallContainer);
@@ -65,6 +75,13 @@ export class FallRenderer {
         this.disposables.push(wallMaterial, wallEdgesMaterial);
     }
 
+    /**
+     * Creates the chaotic wall.
+ * @param {string} width - The width.
+ * @param {any} height - The height.
+ * @param {any} wallMaterial - The wallMaterial.
+ * @param {any} wallEdgesMaterial - The wallEdgesMaterial.
+     */
     createChaoticWall(width, height, wallMaterial, wallEdgesMaterial) {
         const segmentsX = Math.floor(width / 10);
         const segmentsY = Math.floor(height / 10);
@@ -96,6 +113,10 @@ export class FallRenderer {
         return mesh;
     }
 
+    /**
+     * Builds the mine particles.
+ * @param {any} scene - The scene.
+     */
     buildMineParticles(scene) {
         this.particleContainer = new THREE.Group();
         scene.add(this.particleContainer);
@@ -112,6 +133,10 @@ export class FallRenderer {
         }
     }
 
+    /**
+     * Updates the decor.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateDecor(deltaTime) {
         if (!this.decor) return;
         const waveData = this.decor.update(deltaTime) || { y: 0, rotationX: 0, rotationZ: 0 };
@@ -125,6 +150,10 @@ export class FallRenderer {
         }
     }
 
+    /**
+     * Updates the scrolling visuals.
+ * @param {any} movementDelta - The movementDelta.
+     */
     updateScrollingVisuals(movementDelta) {
         this.scrollingWalls.forEach(wallGroup => {
             wallGroup.position.y += movementDelta;
@@ -137,6 +166,11 @@ export class FallRenderer {
         });
     }
 
+    /**
+     * Updates the player visuals.
+ * @param {any} player - The player.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updatePlayerVisuals(player, deltaTime) {
         if (!player || !player.playerModel) return;
 
@@ -162,6 +196,10 @@ export class FallRenderer {
         player.playerModel.rotation.set(-Math.PI + rShakeX, 0, -this.currentRoll + rShakeZ);
     }
 
+    /**
+     * Cleanups.
+ * @param {any} scene - The scene.
+     */
     cleanup(scene) {
         if (this.worldGroupPivot) scene.remove(this.worldGroupPivot);
         if (this.wallContainer) scene.remove(this.wallContainer);

@@ -11,6 +11,9 @@ export class BlackHoleAnimation {
         this.blackHoleObject = null;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         this.setupEnvironment();
         this.setupLights();
@@ -28,12 +31,18 @@ export class BlackHoleAnimation {
         }
     }
 
+    /**
+     * Initializes the environment.
+     */
     setupEnvironment() {
         this.scene.fog = new THREE.FogExp2(0x0a0a14, 0.0025);
         this.scene.add(this.camera);
         this.camera.position.set(0, 0, 0);
     }
 
+    /**
+     * Initializes the lights.
+     */
     setupLights() {
         const ambientLight = new THREE.AmbientLight(0x505055, 12.0);
         this.scene.add(ambientLight);
@@ -43,6 +52,9 @@ export class BlackHoleAnimation {
         this.camera.add(flashLight);
     }
 
+    /**
+     * Creates the space.
+     */
     createSpace() {
         const starsGeometry = new THREE.BufferGeometry();
         const count = 500;
@@ -99,6 +111,9 @@ export class BlackHoleAnimation {
         this.scene.add(starField);
     }
 
+    /**
+     * Loads the black hole.
+     */
     loadBlackHole() {
         return new Promise((resolve) => {
             ModelLoader.load('/asset/game_assets/models/black_hole.glb', (gltf) => {
@@ -124,6 +139,9 @@ export class BlackHoleAnimation {
         });
     }
 
+    /**
+     * Initializes the renderer.
+     */
     setupRenderer() {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -146,17 +164,26 @@ export class BlackHoleAnimation {
         }
     }
 
+    /**
+     * Attaches the events.
+     */
     attachEvents() {
         this.resizeHandler = this.handleResize.bind(this);
         window.addEventListener("resize", this.resizeHandler);
     }
 
+    /**
+     * Handles the resize event/action.
+     */
     handleResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    /**
+     * Starts the rendering.
+     */
     startRendering() {
         const renderLoop = () => {
             this.animationFrameId = requestAnimationFrame(renderLoop);
@@ -174,6 +201,9 @@ export class BlackHoleAnimation {
         renderLoop();
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);

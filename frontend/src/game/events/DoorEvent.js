@@ -181,8 +181,6 @@ export class DoorEvent extends WorldEvent {
             tunnelTexture.repeat.set(1, 2);
         }
 
-
-
         const caveMat = new THREE.MeshStandardMaterial({
             map: wallTexture,
             color: 0x555566,

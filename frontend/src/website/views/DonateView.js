@@ -95,6 +95,9 @@ export default class DonateView {
         return this.container;
     }
 
+    /**
+     * Get the css.
+     */
     getCss() {
         return ["/asset/css/donate.css"];
     }

@@ -19,6 +19,10 @@ export class EnemyRenderer3D {
         this.spawnZoneMaterial = null;
     }
 
+    /**
+     * Creates the spawn zone.
+ * @param {any} position - The position.
+     */
     createSpawnZone(position) {
         const geoWidth = 1.0 * this.spacing * 0.9;
         const geoHeight = 1.0 * this.spacing * 0.9;
@@ -35,6 +39,10 @@ export class EnemyRenderer3D {
         this.scene.add(this.spawnZoneMesh);
     }
 
+    /**
+     * Loads the model.
+ * @param {any} modelArg - The modelArg.
+     */
     loadModel(modelArg) {
         const resolveModel = (gltfOrScene) => {
             this.model = gltfOrScene.scene ? gltfOrScene.scene : gltfOrScene;
@@ -71,12 +79,21 @@ export class EnemyRenderer3D {
         }
     }
 
+    /**
+     * Updates the animations.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateAnimations(deltaTime) {
         if (this.animationMixer) {
             this.animationMixer.update(deltaTime);
         }
     }
 
+    /**
+     * Renders the spawn animation.
+ * @param {any} movementState - The movementState.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     renderSpawnAnimation(movementState, keyboardLayout) {
         if (this.isWorm) {
             this.renderWormSpawn(movementState, keyboardLayout);
@@ -85,6 +102,11 @@ export class EnemyRenderer3D {
         }
     }
 
+    /**
+     * Renders the worm spawn.
+ * @param {any} movementState - The movementState.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     renderWormSpawn(movementState, keyboardLayout) {
         const currentKey = keyboardLayout ? keyboardLayout.find(k => k.key === movementState.actualKey) : null;
         
@@ -111,6 +133,11 @@ export class EnemyRenderer3D {
         this.mesh.position.set(movementState.position.x * this.spacing, 0, movementState.position.y * this.spacing);
     }
 
+    /**
+     * Renders the bug spawn.
+ * @param {any} movementState - The movementState.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     renderBugSpawn(movementState, keyboardLayout) {
         const currentX = movementState.spawnSource.x + (movementState.position.x - movementState.spawnSource.x) * movementState.spawnProgress;
         const currentY = movementState.spawnSource.y + (movementState.position.y - movementState.spawnSource.y) * movementState.spawnProgress;
@@ -127,6 +154,11 @@ export class EnemyRenderer3D {
         }
     }
 
+    /**
+     * Finalizes the spawn.
+ * @param {any} movementState - The movementState.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     finalizeSpawn(movementState, keyboardLayout) {
         this.mesh.position.set(movementState.position.x * this.spacing, 0, movementState.position.y * this.spacing);
         
@@ -141,6 +173,12 @@ export class EnemyRenderer3D {
         this.removeSpawnZone();
     }
 
+    /**
+     * Renders the movement.
+ * @param {any} movementState - The movementState.
+ * @param {any} progression - The progression.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     renderMovement(movementState, progression, keyboardLayout) {
         this.mesh.position.set(movementState.position.x * this.spacing, 0, movementState.position.y * this.spacing);
 
@@ -163,6 +201,11 @@ export class EnemyRenderer3D {
         }
     }
 
+    /**
+     * Looks at target.
+ * @param {any} targetX - The targetX.
+ * @param {any} targetY - The targetY.
+     */
     lookAtTarget(targetX, targetY) {
         const targetPos = new THREE.Vector3(targetX * this.spacing, 0, targetY * this.spacing);
         if (this.mesh.parent) {
@@ -176,6 +219,10 @@ export class EnemyRenderer3D {
         this.mesh.quaternion.slerp(targetQ, 0.15);
     }
 
+    /**
+     * Get the tile surface height.
+ * @param {any} keyObj - The keyObj.
+     */
     getTileSurfaceHeight(keyObj) {
         if (!keyObj || !keyObj.mesh) return 0.225;
         if (keyObj.isGround === undefined) return 2.0 + (keyObj.baseY || 0);
@@ -193,6 +240,9 @@ export class EnemyRenderer3D {
         return height + 0.48 * this.baseScale;
     }
 
+    /**
+     * Removes the spawn zone.
+     */
     removeSpawnZone() {
         if (this.spawnZoneMesh) {
             this.scene.remove(this.spawnZoneMesh);
@@ -202,6 +252,9 @@ export class EnemyRenderer3D {
         }
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.animationMixer) {
             this.animationMixer.stopAllAction();

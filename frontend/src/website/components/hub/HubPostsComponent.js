@@ -14,6 +14,9 @@ export class HubPostsComponent {
         this.posts = [];
     }
 
+    /**
+     * Renders.
+     */
     render() {
         this.postsContainer = el("div", { id: "posts-container" },
             el("p", {}, LanguageManager.t("hub.loadingPosts"))
@@ -48,6 +51,12 @@ export class HubPostsComponent {
         };
     }
 
+    /**
+     * Creates the sort button.
+ * @param {any} value - The value.
+ * @param {any} label - The label.
+ * @param {boolean} isActive - The isActive.
+     */
     createSortButton(value, label, isActive = false) {
         return el("button", {
             className: `sort-btn${isActive ? " active" : ""}`,
@@ -56,6 +65,11 @@ export class HubPostsComponent {
         }, label);
     }
 
+    /**
+     * Handles the sort change event/action.
+ * @param {Event} e - The e.
+ * @param {any} value - The value.
+     */
     async handleSortChange(e, value) {
         if (this.currentSort === value) return;
 
@@ -69,6 +83,9 @@ export class HubPostsComponent {
         await this.init();
     }
 
+    /**
+     * Handles the refresh event/action.
+     */
     async handleRefresh() {
         this.refreshBtn.disabled = true;
         this.postsContainer.innerHTML = "";
@@ -77,6 +94,9 @@ export class HubPostsComponent {
         this.refreshBtn.disabled = false;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         if (!this.postsContainer) return;
 
@@ -109,6 +129,9 @@ export class HubPostsComponent {
         }
     }
 
+    /**
+     * Renders the posts.
+     */
     renderPosts() {
         clear(this.postsContainer);
         if (this.posts.length === 0) {
@@ -120,6 +143,10 @@ export class HubPostsComponent {
         });
     }
 
+    /**
+     * Prepends the post.
+ * @param {any} post - The post.
+     */
     prependPost(post) {
         const noPostsText = this.postsContainer.querySelector("p");
         if (noPostsText && noPostsText.textContent === LanguageManager.t("hub.noPostsYet")) {
@@ -130,6 +157,10 @@ export class HubPostsComponent {
         this.posts.unshift(post);
     }
 
+    /**
+     * Creates the post element.
+ * @param {any} post - The post.
+     */
     createPostElement(post) {
         let mediaElement = null;
         if (post.image_url) {
@@ -225,12 +256,21 @@ export class HubPostsComponent {
         );
     }
 
+    /**
+     * Checks whether is video.
+ * @param {any} url - The url.
+     */
     isVideo(url) {
         if (!url) return false;
         const extension = url.split(".").pop().toLowerCase();
         return ["mp4", "webm", "ogg", "mov"].includes(extension);
     }
 
+    /**
+     * Handles the vote event/action.
+ * @param {string} postId - The postId.
+ * @param {any} type - The type.
+     */
     async handleVote(postId, type) {
         if (!AuthService.isAuthenticated()) {
             FlashMessageManager.show(LanguageManager.t("hub.loginToVote"), "error");
@@ -274,6 +314,10 @@ export class HubPostsComponent {
         }
     }
 
+    /**
+     * Handles the edit event/action.
+ * @param {any} post - The post.
+     */
     handleEdit(post) {
         const postElement = document.getElementById(`post-${post.id}`);
         if (!postElement) return;
@@ -307,6 +351,12 @@ export class HubPostsComponent {
         actionsContainer.appendChild(cancelBtn);
     }
 
+    /**
+     * Handles the save edit event/action.
+ * @param {string} postId - The postId.
+ * @param {any} newContent - The newContent.
+ * @param {any} btn - The btn.
+     */
     async handleSaveEdit(postId, newContent, btn = null) {
         if (!newContent || newContent.trim().length === 0) return;
         
@@ -350,6 +400,10 @@ export class HubPostsComponent {
         }
     }
 
+    /**
+     * Handles the delete event/action.
+ * @param {string} postId - The postId.
+     */
     async handleDelete(postId) {
         const confirmed = await FlashMessageManager.confirm(LanguageManager.t("hub.deleteConfirm"));
         if (!confirmed) return;
@@ -368,6 +422,10 @@ export class HubPostsComponent {
         }
     }
 
+    /**
+     * Handles the report event/action.
+ * @param {string} postId - The postId.
+     */
     async handleReport(postId) {
         const existingModal = document.getElementById("report-modal");
         if (existingModal) existingModal.remove();
@@ -421,6 +479,10 @@ export class HubPostsComponent {
         textarea.focus();
     }
 
+    /**
+     * Toggles the comments.
+ * @param {string} postId - The postId.
+     */
     async toggleComments(postId) {
         const section = document.getElementById(`comments-${postId}`);
         if (!section) return;
@@ -433,6 +495,10 @@ export class HubPostsComponent {
         }
     }
 
+    /**
+     * Loads the comments.
+ * @param {string} postId - The postId.
+     */
     async loadComments(postId) {
         const list = document.getElementById(`comments-list-${postId}`);
         if (!list) return;
@@ -468,6 +534,11 @@ export class HubPostsComponent {
         }
     }
 
+    /**
+     * Submits the comment.
+ * @param {string} postId - The postId.
+ * @param {any} btn - The btn.
+     */
     async submitComment(postId, btn = null) {
         const input = document.getElementById(`comment-input-${postId}`);
         if (!input) return;
@@ -506,6 +577,11 @@ export class HubPostsComponent {
         }
     }
 
+    /**
+     * Deletes the comment.
+ * @param {string} commentId - The commentId.
+ * @param {string} postId - The postId.
+     */
     async deleteComment(commentId, postId) {
         const confirmed = await FlashMessageManager.confirm(LanguageManager.t("hub.deleteConfirm"));
         if (!confirmed) return;

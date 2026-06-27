@@ -41,6 +41,9 @@ export class DuelState {
         this.availableSpells = [];
     }
 
+    /**
+     * Initializes the spells.
+     */
     initSpells() {
         const baseLightLen = Math.max(3, Math.floor(this.baseWpm / 15));
         const baseRandomLen = Math.max(4, Math.floor(this.baseWpm / 12));
@@ -53,6 +56,10 @@ export class DuelState {
         ];
     }
 
+    /**
+     * Get the random word.
+ * @param {any} length - The length.
+     */
     getRandomWord(length) {
         let words = LanguageManager.t("game.jumpWords");
         if (!Array.isArray(words)) {
@@ -63,6 +70,9 @@ export class DuelState {
         return words[Math.floor(Math.random() * words.length)];
     }
 
+    /**
+     * Get the current wpm.
+     */
     getCurrentWpm() {
         if (!this.duelStartTime) return this.baseWpm;
         const now = Date.now();
@@ -74,6 +84,10 @@ export class DuelState {
         return Math.max(15, Math.min(120, Math.round(wpm)));
     }
 
+    /**
+     * Updates the cooldowns.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateCooldowns(deltaTime) {
         this.availableSpells.forEach(s => {
             if (s.cooldownRemaining > 0) {
@@ -82,6 +96,10 @@ export class DuelState {
         });
     }
 
+    /**
+     * Resets the spell.
+ * @param {any} completedSpell - The completedSpell.
+     */
     resetSpell(completedSpell) {
         const currentWpm = this.getCurrentWpm();
         let newLength = 5;

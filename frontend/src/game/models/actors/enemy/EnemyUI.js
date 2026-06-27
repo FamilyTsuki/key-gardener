@@ -17,6 +17,11 @@ export class EnemyUI {
         this.hpSprite.renderOrder = 999;
     }
 
+    /**
+     * Updates the hp bar.
+ * @param {any} hp - The hp.
+ * @param {any} hpMax - The hpMax.
+     */
     updateHpBar(hp, hpMax) {
         const ctx = this.hpContext;
         const width = this.hpCanvas.width;
@@ -41,6 +46,11 @@ export class EnemyUI {
         this.hpSprite.material.map.needsUpdate = true;
     }
 
+    /**
+     * Shows the floating damage.
+ * @param {any} position - The position.
+ * @param {any} amount - The amount.
+     */
     showFloatingDamage(position, amount) {
         if (!position) return;
         window.dispatchEvent(new CustomEvent("spawn_floating_text", {
@@ -52,10 +62,18 @@ export class EnemyUI {
         }));
     }
 
+    /**
+     * Set the visible.
+ * @param {boolean} isVisible - The isVisible.
+     */
     setVisible(isVisible) {
         this.hpSprite.visible = isVisible;
     }
 
+    /**
+     * Attaches to model.
+ * @param {any} model - The model.
+     */
     attachToModel(model) {
         model.add(this.hpSprite);
     }

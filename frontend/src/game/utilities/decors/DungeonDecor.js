@@ -1,6 +1,13 @@
 import * as THREE from "three";
 
 export class DungeonDecor {
+
+    /**
+     * Builds.
+ * @param {any} scene - The scene.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static build(scene, decorGroup, disposables) {
         scene.background = new THREE.Color(0x0a0a0f);
         scene.fog = new THREE.FogExp2(0x0a0a0f, 0.007);

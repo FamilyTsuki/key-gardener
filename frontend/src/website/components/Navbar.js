@@ -22,7 +22,6 @@ export default class Navbar {
 
         if (AuthService.isAuthenticated()) {
             
-            
             this.usernameSpan = el("a", { href: "/account", dataset: { link: true }, id: "nav-username", "aria-label": "View your account profile" });
             this.personalPictureImg = el("img", { 
                 className: "nav-user-avatar",
@@ -109,4 +108,4 @@ export default class Navbar {
         }
     }
 }
-
+

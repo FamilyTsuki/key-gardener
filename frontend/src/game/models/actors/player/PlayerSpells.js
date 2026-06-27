@@ -11,6 +11,14 @@ export class PlayerSpells {
         this.currentWord = "";
     }
 
+    /**
+     * Initializes the ialize.
+ * @param {any} scene - The scene.
+ * @param {any} playerInstance - The playerInstance.
+ * @param {any} enemiesManager - The enemiesManager.
+ * @param {any} fireballModel - The fireballModel.
+ * @param {any} unlockedSpells - The unlockedSpells.
+     */
     initialize(scene, playerInstance, enemiesManager, fireballModel, unlockedSpells = []) {
         this.allSpells = [
             new Undefined(),
@@ -26,6 +34,10 @@ export class PlayerSpells {
         );
     }
 
+    /**
+     * Unlocks the spell.
+ * @param {any} spellWord - The spellWord.
+     */
     unlockSpell(spellWord) {
         if (!this.wordSpells.some(s => s.word === spellWord)) {
             const spell = this.allSpells.find(s => s.word === spellWord);
@@ -35,14 +47,24 @@ export class PlayerSpells {
         }
     }
 
+    /**
+     * Get the word spells.
+     */
     getWordSpells() {
         return this.wordSpells.map(spell => spell.word);
     }
 
+    /**
+     * Get the word spells instances.
+     */
     getWordSpellsInstances() {
         return this.wordSpells;
     }
 
+    /**
+     * Handles the key press event/action.
+ * @param {any} key - The key.
+     */
     handleKeyPress(key) {
         let keyProcessed = this.processCharacterKey(key);
         
@@ -54,6 +76,10 @@ export class PlayerSpells {
         return this.checkCompleteSpell(keyProcessed);
     }
 
+    /**
+     * Process the character key.
+ * @param {any} key - The key.
+     */
     processCharacterKey(key) {
         if (key.length === 1 && key.match(/[a-z]/i)) {
             this.currentWord += key.toLowerCase();
@@ -66,10 +92,18 @@ export class PlayerSpells {
         return false;
     }
 
+    /**
+     * Checks whether is valid spell prefix.
+     */
     isValidSpellPrefix() {
         return this.wordSpells.some(spell => spell.word.startsWith(this.currentWord));
     }
 
+    /**
+     * Resets the word.
+ * @param {any} keyProcessed - The keyProcessed.
+ * @param {boolean} isSuccess - The isSuccess.
+     */
     resetWord(keyProcessed, isSuccess) {
         this.currentWord = "";
         if (keyProcessed && this.statsManager) {
@@ -77,6 +111,10 @@ export class PlayerSpells {
         }
     }
 
+    /**
+     * Checks the complete spell.
+ * @param {any} keyProcessed - The keyProcessed.
+     */
     checkCompleteSpell(keyProcessed) {
         if (keyProcessed && this.statsManager) {
             this.statsManager.recordKeystroke(true);
@@ -92,12 +130,23 @@ export class PlayerSpells {
         return completeSpell.word;
     }
 
+    /**
+     * Attacks.
+ * @param {any} word - The word.
+ * @param {any} closestEnemy - The closestEnemy.
+ * @param {any} playerInstance - The playerInstance.
+ * @param {any} scene - The scene.
+     */
     attack(word, closestEnemy, playerInstance, scene) {
         const spell = this.wordSpells.find(s => s.word === word);
         if (!spell) throw new Error("There is no spell related to that word.");
         return spell.effect(closestEnemy, playerInstance, scene);
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTimeMs - The deltaTimeMs.
+     */
     update(deltaTimeMs) {
         this.wordSpells.forEach(spell => {
             if (spell.update) spell.update(deltaTimeMs);

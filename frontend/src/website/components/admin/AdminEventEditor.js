@@ -13,6 +13,10 @@ export class AdminEventEditor {
         this.container = el("div", { className: `story-event-block block-${this.definition.type}` });
     }
 
+    /**
+     * Renders.
+ * @param {Event} availableEvents - The availableEvents.
+     */
     render(availableEvents) {
         this.container.innerHTML = "";
         this.renderRemoveButton();
@@ -26,12 +30,19 @@ export class AdminEventEditor {
         return this.container;
     }
 
+    /**
+     * Renders the remove button.
+     */
     renderRemoveButton() {
         const removeBtn = el("button", { className: "remove-evt-btn" }, "X");
         removeBtn.addEventListener('click', this.onRemove);
         this.container.appendChild(removeBtn);
     }
 
+    /**
+     * Renders the header.
+ * @param {Event} availableEvents - The availableEvents.
+     */
     renderHeader(availableEvents) {
         const options = availableEvents.map(e => ({ 
             value: e.type, 
@@ -48,6 +59,9 @@ export class AdminEventEditor {
         );
     }
 
+    /**
+     * Renders the trigger.
+     */
     renderTrigger() {
         const triggerOptions = [
             { value: "time", label: LanguageManager.t("admin.afterTime") },
@@ -71,6 +85,9 @@ export class AdminEventEditor {
         );
     }
 
+    /**
+     * Renders the fields.
+     */
     renderFields() {
         const row = el("div", { className: "block-row" });
         this.definition.fields.forEach(field => {
@@ -79,6 +96,10 @@ export class AdminEventEditor {
         return row;
     }
 
+    /**
+     * Renders the field.
+ * @param {any} field - The field.
+     */
     renderField(field) {
         const group = el("div", { className: "form-group compact-group" });
         const labelText = field.labelKey ? LanguageManager.t(field.labelKey) : field.label;
@@ -90,6 +111,10 @@ export class AdminEventEditor {
         return group;
     }
 
+    /**
+     * Get the field value.
+ * @param {any} field - The field.
+     */
     getFieldValue(field) {
         if (this.data[field.id] !== undefined) {
             return this.data[field.id];
@@ -97,6 +122,12 @@ export class AdminEventEditor {
         return field.defaultValue;
     }
 
+    /**
+     * Creates the input for field.
+ * @param {any} field - The field.
+ * @param {any} group - The group.
+ * @param {any} value - The value.
+     */
     createInputForField(field, group, value) {
         if (field.type === "select") {
             this.createSelectField(field, group, value);
@@ -109,6 +140,12 @@ export class AdminEventEditor {
         }
     }
 
+    /**
+     * Creates the select field.
+ * @param {any} field - The field.
+ * @param {any} group - The group.
+ * @param {any} value - The value.
+     */
     createSelectField(field, group, value) {
         const options = field.options.map(opt => ({
             value: opt.value,
@@ -120,6 +157,12 @@ export class AdminEventEditor {
         group.appendChild(select);
     }
 
+    /**
+     * Creates the number field.
+ * @param {any} field - The field.
+ * @param {any} group - The group.
+ * @param {any} value - The value.
+     */
     createNumberField(field, group, value) {
         const input = el("input", { 
             type: "number", 
@@ -131,6 +174,12 @@ export class AdminEventEditor {
         group.appendChild(input);
     }
 
+    /**
+     * Creates the text field.
+ * @param {any} field - The field.
+ * @param {any} group - The group.
+ * @param {any} value - The value.
+     */
     createTextField(field, group, value) {
         const isTextarea = field.type === "textarea";
         const input = el(isTextarea ? "textarea" : "input", { 
@@ -152,6 +201,11 @@ export class AdminEventEditor {
         group.appendChild(input);
     }
 
+    /**
+     * Creates the weights field.
+ * @param {any} field - The field.
+ * @param {any} group - The group.
+     */
     createWeightsField(field, group) {
         const weightsContainer = el("div", { className: "spawner-weights-container" });
         const weightInputs = {};
@@ -172,6 +226,10 @@ export class AdminEventEditor {
         group.appendChild(weightsContainer);
     }
 
+    /**
+     * Get the weight value.
+ * @param {any} typeKey - The typeKey.
+     */
     getWeightValue(typeKey) {
         if (this.data.enemyWeights && this.data.enemyWeights[typeKey] !== undefined) {
             return this.data.enemyWeights[typeKey];
@@ -179,6 +237,10 @@ export class AdminEventEditor {
         return 0;
     }
 
+    /**
+     * Collects the weights.
+ * @param {any} weightInputs - The weightInputs.
+     */
     collectWeights(weightInputs) {
         const weights = {};
         for (const [key, getVal] of Object.entries(weightInputs)) {
@@ -187,6 +249,9 @@ export class AdminEventEditor {
         return weights;
     }
 
+    /**
+     * Get the values.
+     */
     getValues() {
         const values = { isTriggered: false };
         for (const [key, getter] of Object.entries(this.inputs)) {

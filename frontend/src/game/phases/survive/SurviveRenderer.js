@@ -9,6 +9,12 @@ export class SurviveRenderer {
         this.decor = null;
     }
 
+    /**
+     * Initializes the .
+ * @param {any} scene - The scene.
+ * @param {any} camera - The camera.
+ * @param {any} decorType - The decorType.
+     */
     init(scene, camera, decorType) {
         camera.position.set(15, 18, 7);
         camera.lookAt(15, 0, 3);
@@ -22,6 +28,11 @@ export class SurviveRenderer {
         this.decor = SurviveDecorBuilder.buildDecor(decorType, scene);
     }
 
+    /**
+     * Updates the camera.
+ * @param {any} camera - The camera.
+ * @param {any} enemies - The enemies.
+     */
     updateCamera(camera, enemies) {
         const hasBugBoss = enemies && enemies.boss && enemies.boss.name === "GiantBug" && !enemies.boss.isDead;
         const hasEarthBoss = enemies && enemies.boss && enemies.boss.name === "EarthCore" && !enemies.boss.isDead;
@@ -53,6 +64,10 @@ export class SurviveRenderer {
         camera.lookAt(15, targetLookY, targetLookZ);
     }
 
+    /**
+     * Updates the decor.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateDecor(deltaTime) {
         if (!this.decor) return;
         
@@ -68,6 +83,12 @@ export class SurviveRenderer {
         }
     }
 
+    /**
+     * Draws.
+ * @param {any} keyboard - The keyboard.
+ * @param {any} player - The player.
+ * @param {any} enemies - The enemies.
+     */
     draw(keyboard, player, enemies) {
         if (keyboard && player) {
             keyboard.keyboardLayout.forEach((tile) => {
@@ -81,6 +102,10 @@ export class SurviveRenderer {
         }
     }
 
+    /**
+     * Cleanups.
+ * @param {any} scene - The scene.
+     */
     cleanup(scene) {
         if (this.worldGroupPivot) {
             scene.remove(this.worldGroupPivot);

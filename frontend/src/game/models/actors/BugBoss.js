@@ -52,6 +52,9 @@ export default class BugBoss extends Actor {
         this.updateHpBar();
     }
 
+    /**
+     * Loads the model.
+     */
     async loadModel() {
         const gltf = await ModelLoader.loadAsync("/asset/game_assets/models/bug_3.glb");
         this.bugModel = gltf.scene;
@@ -92,10 +95,16 @@ export default class BugBoss extends Actor {
         this.mesh.add(this.bugModel);
     }
 
+    /**
+     * Retrieves the is dead.
+     */
     get isDead() {
         return this.hp < 0;
     }
 
+    /**
+     * Updates the hp bar.
+     */
     updateHpBar() {
         const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
         const fill = document.getElementById("boss-hp-fill");
@@ -107,6 +116,13 @@ export default class BugBoss extends Actor {
         if (maxTxt) maxTxt.innerText = this.hpMax;
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} playerPos - The playerPos.
+ * @param {any} projectiles - The projectiles.
+ * @param {any} bonks - The bonks.
+     */
     update(deltaTime, playerPos, projectiles, bonks) {
         if (this.hp < 0) return;
 
@@ -123,6 +139,10 @@ export default class BugBoss extends Actor {
         this.updateAttackTimers(deltaTime, playerPos, projectiles, bonks);
     }
 
+    /**
+     * Updates the death animation.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateDeathAnimation(deltaTime) {
         this.deathProgress += deltaTime / 1500;
         const t = Math.min(1, this.deathProgress);
@@ -146,6 +166,10 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Splaies the legs.
+ * @param {any} t - The t.
+     */
     splayLegs(t) {
         const legs = [
             { side: "left", type: "front" },
@@ -159,6 +183,12 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Splaies the leg.
+ * @param {string} side - The side.
+ * @param {any} type - The type.
+ * @param {any} t - The t.
+     */
     splayLeg(side, type, t) {
         const prefix = side === "left" ? "" : "R_";
         const name = type === "front" ? "frontleg" : "backleg";
@@ -199,12 +229,21 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Get the leg target direction.
+ * @param {string} side - The side.
+ * @param {any} type - The type.
+     */
     getLegTargetDirection(side, type) {
         const xSign = side === "left" ? 1 : -1;
         const zSign = type === "front" ? 0.2 : -0.4;
         return new THREE.Vector3(xSign, 0.1, zSign).normalize();
     }
 
+    /**
+     * Updates the emerge animation.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateEmergeAnimation(deltaTime) {
         this.emergeProgress += deltaTime * 0.0018;
 
@@ -241,6 +280,10 @@ export default class BugBoss extends Actor {
         return false;
     }
 
+    /**
+     * Updates the mesh position.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateMeshPosition(deltaTime) {
         this.totalTime += deltaTime * 0.001;
 
@@ -267,6 +310,9 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Updates the idle animations.
+     */
     updateIdleAnimations() {
         if (this.bones && this.bones["chest"]) {
             const breathe = Math.sin(this.totalTime * 3) * 0.05;
@@ -288,6 +334,9 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Resets the all bones.
+     */
     resetAllBones() {
         for (const name of Object.keys(this.bones)) {
             const bone = this.bones[name];
@@ -305,6 +354,10 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Resets the inactive claw bones.
+ * @param {string} activeSide - The activeSide.
+     */
     resetInactiveClawBones(activeSide) {
         const inactiveSide = activeSide === "left" ? "right" : "left";
         const prefix = inactiveSide === "left" ? "" : "R_";
@@ -330,6 +383,10 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Get the claw bones.
+ * @param {string} side - The side.
+     */
     getClawBones(side) {
         const prefix = side === "left" ? "" : "R_";
         return {
@@ -340,6 +397,10 @@ export default class BugBoss extends Actor {
         };
     }
 
+    /**
+     * Get the claw initial transforms.
+ * @param {string} side - The side.
+     */
     getClawInitialTransforms(side) {
         const prefix = side === "left" ? "" : "R_";
         const rootQuat = this.initialBoneQuaternions[`${prefix}frontleg`].clone();
@@ -365,6 +426,11 @@ export default class BugBoss extends Actor {
         };
     }
 
+    /**
+     * Applies the claw tip counter rotation.
+ * @param {any} bones - The bones.
+ * @param {any} transforms - The transforms.
+     */
     applyClawTipCounterRotation(bones, transforms) {
         if (!bones.tip || !transforms.tipInParentInitial) {
             return;
@@ -376,6 +442,12 @@ export default class BugBoss extends Actor {
         bones.tip.quaternion.copy(combined.invert()).multiply(transforms.tipInParentInitial);
     }
 
+    /**
+     * Applies the claw translations.
+ * @param {any} bones - The bones.
+ * @param {any} transforms - The transforms.
+ * @param {any} stretch - The stretch.
+     */
     applyClawTranslations(bones, transforms, stretch) {
         if (bones.joint0 && transforms.joint0Pos) {
             bones.joint0.position.copy(transforms.joint0Pos).multiplyScalar(stretch);
@@ -388,6 +460,12 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Solves the i k.
+ * @param {any} bones - The bones.
+ * @param {any} targetWorldPos - The targetWorldPos.
+ * @param {any} iterations - The iterations.
+     */
     solveIK(bones, targetWorldPos, iterations = 8) {
         const tipWorldPos = new THREE.Vector3();
         const tipLocal = new THREE.Vector3();
@@ -443,6 +521,9 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Updates the claw animation.
+     */
     updateClawAnimation() {
         const elapsed = this.totalTime - this.attackStartTime;
         this.resetInactiveClawBones(this.clawSide);
@@ -511,6 +592,14 @@ export default class BugBoss extends Actor {
         this.applyClawTipCounterRotation(bones, transforms);
     }
 
+    /**
+     * Calculates the claw target and stretch.
+ * @param {any} elapsed - The elapsed.
+ * @param {any} initialTipWorldPos - The initialTipWorldPos.
+ * @param {any} targetWorldPos - The targetWorldPos.
+ * @param {any} targetWorldPosAbove - The targetWorldPosAbove.
+ * @param {any} targetStretch - The targetStretch.
+     */
     calculateClawTargetAndStretch(elapsed, initialTipWorldPos, targetWorldPos, targetWorldPosAbove, targetStretch) {
         const warning = this.currentWarningDuration || 0.5;
         const impactTime = Math.max(0.2, warning - 0.05);
@@ -551,6 +640,13 @@ export default class BugBoss extends Actor {
         return { targetIK: null, stretch: 1.0, isFinished: true };
     }
 
+    /**
+     * Updates the attack timers.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} playerPos - The playerPos.
+ * @param {any} projectiles - The projectiles.
+ * @param {any} bonks - The bonks.
+     */
     updateAttackTimers(deltaTime, playerPos, projectiles, bonks) {
         this.stateTimer += deltaTime;
         this.clawTimer += deltaTime;
@@ -580,6 +676,11 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Attacks the fireball.
+ * @param {any} playerPos - The playerPos.
+ * @param {any} projectiles - The projectiles.
+     */
     attackFireball(playerPos, projectiles) {
         const isEnraged = this.hp < this.hpMax / 2;
         const fireballCount = isEnraged ? 5 : 4;
@@ -623,6 +724,11 @@ export default class BugBoss extends Actor {
         }
     }
 
+    /**
+     * Attacks the claw.
+ * @param {any} playerPos - The playerPos.
+ * @param {any} bonks - The bonks.
+     */
     attackClaw(playerPos, bonks) {
         console.log("Claw target coordinates:", playerPos.x, playerPos.y);
         
@@ -652,6 +758,10 @@ export default class BugBoss extends Actor {
         );
     }
 
+    /**
+     * Checks the collision.
+ * @param {any} other - The other.
+     */
     checkCollision(other) {
         return (
             this.rawPosition.x < other.position.x + other.size.width &&
@@ -661,11 +771,18 @@ export default class BugBoss extends Actor {
         );
     }
 
+    /**
+     * Dies.
+     */
     die() {
         const bossUI = document.getElementById("boss-ui");
         if (bossUI) bossUI.classList.add("hidden");
     }
 
+    /**
+     * Takes the damage.
+ * @param {any} nb - The nb.
+     */
     takeDamage(nb) {
         if (this.isDying || this.hp < 0) return;
         this.hp -= nb;
@@ -694,6 +811,5 @@ export default class BugBoss extends Actor {
         }
         this.updateHpBar();
     }
-
 
 }

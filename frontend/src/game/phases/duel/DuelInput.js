@@ -5,6 +5,10 @@ export class DuelInput {
         this.phase = phase;
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         const state = this.phase.state;
         if (state.isDuelOver || state.isCountdownActive) return;
@@ -36,6 +40,10 @@ export class DuelInput {
         }
     }
 
+    /**
+     * Handles the jail typing event/action.
+ * @param {any} key - The key.
+     */
     handleJailTyping(key) {
         if (key.length === 1 && key.match(/[a-zA-Z]/)) {
             const char = key.toLowerCase();
@@ -60,6 +68,10 @@ export class DuelInput {
         }
     }
 
+    /**
+     * Handles the player movement event/action.
+ * @param {any} keyName - The keyName.
+     */
     handlePlayerMovement(keyName) {
         const keyObj = this.phase.renderer.localKeyboard.find(keyName);
         if (keyObj && this.phase.localPlayer) {
@@ -68,6 +80,10 @@ export class DuelInput {
         }
     }
 
+    /**
+     * Handles the defense typing event/action.
+ * @param {any} char - The char.
+     */
     handleDefenseTyping(char) {
         const state = this.phase.state;
         const incoming = state.projectiles.filter(p => p.targetId == state.localData.id);
@@ -99,6 +115,10 @@ export class DuelInput {
         this.handleSpellTyping(char);
     }
 
+    /**
+     * Handles the spell typing event/action.
+ * @param {any} char - The char.
+     */
     handleSpellTyping(char) {
         const state = this.phase.state;
         if (state.availableSpells.some(s => s.cooldownRemaining === 0 && s.word.toLowerCase().startsWith(state.currentTypedSpell + char))) {

@@ -14,6 +14,9 @@ export class HubCreatePostComponent {
         this.addPostToggleBtn = null;
     }
 
+    /**
+     * Renders.
+     */
     render() {
         const fileInput = el("input", {
             type: "file",
@@ -77,6 +80,9 @@ export class HubCreatePostComponent {
         };
     }
 
+    /**
+     * Shows the form.
+     */
     showForm() {
         this.addPostFormContainer.classList.remove("hidden");
         this.addPostToggleBtn.classList.add("hidden");
@@ -87,6 +93,9 @@ export class HubCreatePostComponent {
         }, 300);
     }
 
+    /**
+     * Hides the form.
+     */
     hideForm() {
         this.addPostFormContainer.classList.add("hidden");
         this.addPostToggleBtn.classList.remove("hidden");
@@ -95,6 +104,10 @@ export class HubCreatePostComponent {
         this.clearSelectedMedia();
     }
 
+    /**
+     * Handles the media selection event/action.
+ * @param {Event} e - The e.
+     */
     handleMediaSelection(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -103,6 +116,10 @@ export class HubCreatePostComponent {
         this.showMediaPreview(file);
     }
 
+    /**
+     * Handles the paste event/action.
+ * @param {Event} e - The e.
+     */
     handlePaste(e) {
         const clipboardItems = e.clipboardData?.items;
         if (!clipboardItems) return;
@@ -119,6 +136,10 @@ export class HubCreatePostComponent {
         }
     }
 
+    /**
+     * Shows the media preview.
+ * @param {any} file - The file.
+     */
     showMediaPreview(file) {
         clear(this.previewContainer);
 
@@ -148,6 +169,9 @@ export class HubCreatePostComponent {
         this.previewContainer.appendChild(previewWrapper);
     }
 
+    /**
+     * Clears the selected media.
+     */
     clearSelectedMedia() {
         this.selectedMediaFile = null;
         if (this.previewContainer) clear(this.previewContainer);
@@ -155,6 +179,10 @@ export class HubCreatePostComponent {
         if (fileInput) fileInput.value = "";
     }
 
+    /**
+     * Adds the post.
+ * @param {Event} e - The e.
+     */
     async addPost(e) {
         const postTextarea = document.getElementById("post-content");
         if (!postTextarea) return;

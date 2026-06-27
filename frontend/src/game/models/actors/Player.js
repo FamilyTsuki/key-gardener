@@ -73,19 +73,67 @@ export default class Player extends Actor {
         this.shieldMesh = null;
     }
 
+    /**
+     * Retrieves the hp.
+     */
     get hp() { return this.state.hp; }
+
+    /**
+     * Sets the hp.
+ * @param {any} val - The hp value.
+     */
     set hp(val) { this.state.hp = val; }
+
+    /**
+     * Retrieves the hp max.
+     */
     get hpMax() { return this.state.hpMax; }
+
+    /**
+     * Retrieves the word spells.
+     */
     get wordSpells() { return this.spells.getWordSpells(); }
+
+    /**
+     * Retrieves the word spells instances.
+     */
     get wordSpellsInstances() { return this.spells.getWordSpellsInstances(); }
+
+    /**
+     * Retrieves the current word.
+     */
     get currentWord() { return this.spells.currentWord; }
+
+    /**
+     * Retrieves the is moving.
+     */
     get isMoving() { return this.movement.isMoving; }
     
+    /**
+     * Retrieves the x.
+     */
     get x() { return this.movement.x; }
+
+    /**
+     * Retrieves the y.
+     */
     get y() { return this.movement.y; }
+
+    /**
+     * Sets the x.
+ * @param {any} val - The x value.
+     */
     set x(val) { this.movement.x = val; }
+
+    /**
+     * Sets the y.
+ * @param {any} val - The y value.
+     */
     set y(val) { this.movement.y = val; }
     
+    /**
+     * Retrieves the position.
+     */
     get position() {
         return {
             x: this.movement.x,
@@ -94,33 +142,118 @@ export default class Player extends Actor {
         };
     }
     
+    /**
+     * Retrieves the target position.
+     */
     get targetPosition() { return this.movement.targetPosition; }
+
+    /**
+     * Retrieves the start position.
+     */
     get startPosition() { return this.movement.startPosition; }
+
+    /**
+     * Retrieves the raw position.
+     */
     get rawPosition() { return { x: this.movement.x, y: this.movement.y }; }
     
+    /**
+     * Retrieves the offset y.
+     */
     get offsetY() { return this.movement.offsetY; }
+
+    /**
+     * Sets the offset y.
+ * @param {any} val - The offset y value.
+     */
     set offsetY(val) { this.movement.offsetY = val; }
     
+    /**
+     * Retrieves the mesh.
+     */
     get mesh() { return this.renderer.mesh; }
+
+    /**
+     * Retrieves the player model.
+     */
     get playerModel() { return this.renderer.playerModel; }
+
+    /**
+     * Sets the allow speed up.
+ * @param {any} val - The allow speed up value.
+     */
     set allowSpeedUp(val) { this.movement.allowSpeedUp = val; }
+
+    /**
+     * Retrieves the movement duration.
+     */
     get movementDuration() { return this.movement.movementDuration; }
+
+    /**
+     * Sets the movement duration.
+ * @param {any} val - The movement duration value.
+     */
     set movementDuration(val) { this.movement.movementDuration = val; }
+
+    /**
+     * Retrieves the pending worm repel.
+     */
     get pendingWormRepel() { return this.movement.pendingWormRepel; }
 
+    /**
+     * Retrieves the spacing x.
+     */
     get spacingX() { return this.renderer.spacingX; }
+
+    /**
+     * Sets the spacing x.
+ * @param {any} val - The spacing x value.
+     */
     set spacingX(val) { this.renderer.spacingX = val; }
+
+    /**
+     * Retrieves the spacing z.
+     */
     get spacingZ() { return this.renderer.spacingZ; }
+
+    /**
+     * Sets the spacing z.
+ * @param {any} val - The spacing z value.
+     */
     set spacingZ(val) { this.renderer.spacingZ = val; }
+
+    /**
+     * Retrieves the offset x.
+     */
     get offsetX() { return this.renderer.offsetX; }
+
+    /**
+     * Sets the offset x.
+ * @param {any} val - The offset x value.
+     */
     set offsetX(val) { this.renderer.offsetX = val; }
+
+    /**
+     * Retrieves the offset z.
+     */
     get offsetZ() { return this.renderer.offsetZ; }
+
+    /**
+     * Sets the offset z.
+ * @param {any} val - The offset z value.
+     */
     set offsetZ(val) { this.renderer.offsetZ = val; }
 
+    /**
+     * Checks whether is alive.
+     */
     isAlive() {
         return this.state.isAlive();
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.shieldGroup) {
             if (this.shieldParent) {
@@ -142,10 +275,20 @@ export default class Player extends Actor {
         if (typeof super.destroy === "function") super.destroy();
     }
 
+    /**
+     * Attacks.
+ * @param {any} word - The word.
+ * @param {any} closestEnemy - The closestEnemy.
+     */
     attack(word, closestEnemy = null) {
         return this.spells.attack(word, closestEnemy, this, this.scene);
     }
 
+    /**
+     * Moves.
+ * @param {any} newPosition - The newPosition.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     move(newPosition, keyboardLayout = null) {
         this.movement.checkForWormBlockade(newPosition, keyboardLayout, this.enemiesManager);
         const result = this.movement.startMovement(newPosition, keyboardLayout);
@@ -155,6 +298,11 @@ export default class Player extends Actor {
         return result;
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     update(deltaTime = 0.0166, keyboardLayout = null) {
         if (!this.handleDeathState()) return;
 
@@ -175,6 +323,9 @@ export default class Player extends Actor {
         }
     }
 
+    /**
+     * Handles the death state event/action.
+     */
     handleDeathState() {
         if (!this.state.isAlive()) {
             if (!this.state.deathAnimationPlayed) {
@@ -188,6 +339,10 @@ export default class Player extends Actor {
         return true;
     }
 
+    /**
+     * Handles the hp changed event/action.
+ * @param {any} data - The data.
+     */
     handleHpChanged(data) {
         this.ui.updateHpBar(data.hp, data.hpMax);
         if (data.damage) {
@@ -200,6 +355,12 @@ export default class Player extends Actor {
         }
     }
 
+    /**
+     * Executes the idle repel.
+ * @param {any} worm - The worm.
+ * @param {any} repelKey - The repelKey.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     executeIdleRepel(worm, repelKey, keyboardLayout) {
         if (worm.type === "hazard_worm") this.damage(20, "Brûlé par un ver informatique");
         else AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.3);
@@ -207,6 +368,9 @@ export default class Player extends Actor {
         this.move({ x: repelKey.rawPosition.x, y: repelKey.rawPosition.y, offsetY: this.movement.getTileSurfaceHeight(repelKey) }, keyboardLayout);
     }
 
+    /**
+     * Applies the worm damage during movement.
+     */
     applyWormDamageDuringMovement() {
         if (!this.movement.isMoving || !this.movement.pendingWormRepel || this.movement.movementProgress < 0.5 || this.movement.pendingWormRepel.applied) return;
         
@@ -220,6 +384,10 @@ export default class Player extends Actor {
         }
     }
 
+    /**
+     * Handles the idle tile height event/action.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     handleIdleTileHeight(keyboardLayout) {
         if (this.movement.isMoving || !keyboardLayout) return;
         
@@ -229,10 +397,19 @@ export default class Player extends Actor {
         }
     }
 
+    /**
+     * Applies the crouch.
+ * @param {any} percentage - The percentage.
+     */
     applyCrouch(percentage) {
         this.renderer.applyCrouch(percentage);
     }
 
+    /**
+     * Damages.
+ * @param {any} amount - The amount.
+ * @param {any} reason - The reason.
+     */
     damage(amount, reason = null) {
         if (this.state.isInvulnerable && amount !== Infinity) return;
 
@@ -250,14 +427,27 @@ export default class Player extends Actor {
         this.state.damage(amount, reason);
     }
 
+    /**
+     * Heals.
+ * @param {any} amount - The amount.
+     */
     heal(amount) {
         this.state.heal(amount);
     }
 
+    /**
+     * Handles the key press event/action.
+ * @param {any} key - The key.
+ * @param {any} findClosestEnemy - The findClosestEnemy.
+     */
     handleKeyPress(key, findClosestEnemy) {
         return this.spells.handleKeyPress(key);
     }
 
+    /**
+     * Activates the shield.
+ * @param {any} amount - The amount.
+     */
     activateShield(amount) {
         this.shieldEnergy = Math.min(300, this.shieldEnergy + amount);
         if (!this.shieldGroup) {
@@ -300,6 +490,10 @@ export default class Player extends Actor {
         AudioManager.playSFX("/asset/game_assets/sounds/heal.wav", "player", 0.3);
     }
 
+    /**
+     * Updates the shield.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateShield(deltaTime) {
         if (this.shieldEnergy <= 0) {
             this.shieldEnergy = 0;

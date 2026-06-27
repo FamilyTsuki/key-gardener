@@ -17,6 +17,10 @@ export class FallState {
         this.textScramblersStopped = false;
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (!this.isReady) return 0;
         
@@ -45,6 +49,9 @@ export class FallState {
         return movementDelta;
     }
 
+    /**
+     * Triggers the phase transition.
+     */
     triggerPhaseTransition() {
         this.isTransitioningToNextLevel = true;
 

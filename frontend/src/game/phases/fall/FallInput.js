@@ -4,6 +4,10 @@ export class FallInput {
         this.currentTypedWord = "";
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         if (!this.phase.state.isReady || !this.phase.player || this.phase.player.isMoving || 
             this.phase.state.isPhaseEnded || this.phase.state.isTransitioningToNextLevel) {
@@ -43,6 +47,10 @@ export class FallInput {
         }
     }
 
+    /**
+     * Moves the player to lane.
+ * @param {any} laneX - The laneX.
+     */
     movePlayerToLane(laneX) {
         this.phase.player.move({ 
             x: laneX * 6, 

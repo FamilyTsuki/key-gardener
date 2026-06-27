@@ -250,7 +250,6 @@ export default class Keyboard {
         const unpressedColor = isStyx ? 0x1d2432 : isGrotte ? 0x5c5043 : isDungeon ? 0xaaaaaa : isTraining ? 0x222222 : 0x111111;
         const pressedY = isStyx ? 0.0 : isDungeon ? -0.1 : isTraining ? 0.0 : 0.05;
 
-
         this.#keyboardLayout.forEach((keyObj) => {
             if (keyObj.isGround) return;
             

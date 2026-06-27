@@ -14,21 +14,39 @@ export class PlayerState {
         this.listeners = {};
     }
 
+    /**
+     * Handles the  event/action.
+ * @param {Event} event - The event.
+ * @param {Function} callback - The callback.
+     */
     on(event, callback) {
         if (!this.listeners[event]) this.listeners[event] = [];
         this.listeners[event].push(callback);
     }
 
+    /**
+     * Emits.
+ * @param {Event} event - The event.
+ * @param {any} data - The data.
+     */
     emit(event, data) {
         if (this.listeners[event]) {
             this.listeners[event].forEach(cb => cb(data));
         }
     }
 
+    /**
+     * Checks whether is alive.
+     */
     isAlive() {
         return this.hp > 0;
     }
 
+    /**
+     * Damages.
+ * @param {any} amount - The amount.
+ * @param {any} reason - The reason.
+     */
     damage(amount, reason = null) {
         if (amount === Infinity) {
             this.hp = 0;
@@ -45,6 +63,10 @@ export class PlayerState {
         this.emit("hp_changed", { hp: this.hp, hpMax: this.hpMax, damage: amount === Infinity ? 9999 : amount });
     }
 
+    /**
+     * Heals.
+ * @param {any} amount - The amount.
+     */
     heal(amount) {
         if (this.hp >= this.hpMax) return 0;
         

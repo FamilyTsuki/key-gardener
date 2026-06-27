@@ -22,6 +22,12 @@ export const Icons = {
         );
     },
 
+    /**
+     * Closes the line.
+ * @param {any} className - The className.
+ * @param {any} width - The width.
+ * @param {any} height - The height.
+     */
     closeLine(className = "", width = "20", height = "20") {
         return el("svg", {
             xmlns: "http://www.w3.org/2000/svg",
@@ -40,6 +46,12 @@ export const Icons = {
         );
     },
 
+    /**
+     * Plus.
+ * @param {any} className - The className.
+ * @param {any} width - The width.
+ * @param {any} height - The height.
+     */
     plus(className = "", width = "24", height = "24") {
         return el("svg", {
             xmlns: "http://www.w3.org/2000/svg",
@@ -58,6 +70,12 @@ export const Icons = {
         );
     },
 
+    /**
+     * Refreshs.
+ * @param {any} className - The className.
+ * @param {any} width - The width.
+ * @param {any} height - The height.
+     */
     refresh(className = "", width = "16", height = "16") {
         return el("svg", {
             xmlns: "http://www.w3.org/2000/svg",
@@ -77,6 +95,12 @@ export const Icons = {
         );
     },
 
+    /**
+     * Enters.
+ * @param {any} className - The className.
+ * @param {any} width - The width.
+ * @param {any} height - The height.
+     */
     enter(className = "", width = "40", height = "30") {
         return el("svg", {
             xmlns: "http://www.w3.org/2000/svg",
@@ -95,6 +119,12 @@ export const Icons = {
         );
     },
 
+    /**
+     * Skills the tree lines.
+ * @param {any} containerW - The containerW.
+ * @param {any} containerH - The containerH.
+ * @param {any} isUnlockedFn - The isUnlockedFn.
+     */
     skillTreeLines(containerW, containerH, isUnlockedFn) {
         const px = (pctX) => (pctX / 100) * containerW;
         const py = (pctY) => (pctY / 100) * containerH;

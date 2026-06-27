@@ -29,16 +29,32 @@ export default class Key extends GameObject {
     this.lightUpTimer = 0;
   }
 
+  /**
+   * Retrieves the key.
+   */
   get key() {
     return this.#key;
   }
+
+  /**
+   * Sets the is pressed.
+ * @param {any} isPressed - The is pressed value.
+   */
   set isPressed(isPressed) {
     this.#isPressed = isPressed;
   }
 
+  /**
+   * Retrieves the is pressed.
+   */
   get isPressed() {
     return this.#isPressed;
   }
+
+  /**
+   * Sets the is pressed.
+ * @param {any} val - The is pressed value.
+   */
   set isPressed(val) {
     this.#isPressed = val;
   }

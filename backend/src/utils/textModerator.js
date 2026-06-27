@@ -22,6 +22,10 @@ class TextModerator {
         this.selfHarmRegex = new RegExp(squashedSelfHarm.join('|'), 'i');
     }
 
+    /**
+     * Squashs the text.
+ * @param {any} text - The text.
+     */
     squashText(text) {
         if (!text) return "";
 
@@ -36,6 +40,11 @@ class TextModerator {
             .replace(/(.)\1+/g, "$1");
     }
 
+    /**
+     * Checks the local self harm.
+ * @param {any} squashedText - The squashedText.
+ * @param {any} originalText - The originalText.
+     */
     checkLocalSelfHarm(squashedText, originalText) {
         const lower = originalText.toLowerCase();
         if (lower.includes("corde") && (lower.includes("gravit") || lower.includes("pendre"))) {
@@ -44,6 +53,10 @@ class TextModerator {
         return this.selfHarmRegex.test(squashedText);
     }
 
+    /**
+     * Has the inappropriate content.
+ * @param {any} text - The text.
+     */
     async hasInappropriateContent(text) {
         if (!text) return false;
 
@@ -61,7 +74,10 @@ class TextModerator {
         return false;
     }
 
-    
+    /**
+     * Checks the with open a i l l m.
+ * @param {any} text - The text.
+     */
     async checkWithOpenAILLM(text) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);

@@ -13,6 +13,11 @@ export class DuelUI {
         this.endOverlay = null;
     }
 
+    /**
+     * Builds the u i.
+ * @param {any} localData - The localData.
+ * @param {any} remoteData - The remoteData.
+     */
     buildUI(localData, remoteData) {
         const hud = document.getElementById("player-hud");
         if (hud) hud.classList.remove("hidden");
@@ -54,6 +59,11 @@ export class DuelUI {
         document.body.appendChild(el("div", { id: "duel-announcer-container" }));
     }
 
+    /**
+     * Updates the spells u i.
+ * @param {any} availableSpells - The availableSpells.
+ * @param {any} currentTypedSpell - The currentTypedSpell.
+     */
     updateSpellsUI(availableSpells, currentTypedSpell) {
         if (!this.spellsUI) return;
         clear(this.spellsUI);
@@ -93,6 +103,12 @@ export class DuelUI {
         this.spellsUI.appendChild(ul);
     }
 
+    /**
+     * Updates the defenses u i.
+ * @param {any} projectiles - The projectiles.
+ * @param {any} localData - The localData.
+ * @param {any} currentTypedDefense - The currentTypedDefense.
+     */
     updateDefensesUI(projectiles, localData, currentTypedDefense) {
         if (!this.defensesUI) return;
         clear(this.defensesUI);
@@ -126,6 +142,9 @@ export class DuelUI {
         });
     }
 
+    /**
+     * Activates the jail u i.
+     */
     activateJailUI() {
         this.jailUI = el("div", { id: "jail-ui", className: "jail-ui" },
             el("div", { className: "status-overlay-jail" }),
@@ -137,6 +156,11 @@ export class DuelUI {
         document.body.appendChild(this.jailUI);
     }
 
+    /**
+     * Updates the jail u i.
+ * @param {any} jailEscapeWord - The jailEscapeWord.
+ * @param {any} currentTypedJail - The currentTypedJail.
+     */
     updateJailUI(jailEscapeWord, currentTypedJail) {
         const contentBox = document.getElementById("jail-content-box");
         if (!contentBox) return;
@@ -159,6 +183,9 @@ export class DuelUI {
         contentBox.appendChild(wordSpan);
     }
 
+    /**
+     * Removes the jail u i.
+     */
     removeJailUI() {
         if (this.jailUI) {
             this.jailUI.remove();
@@ -166,6 +193,10 @@ export class DuelUI {
         }
     }
 
+    /**
+     * Updates the stun u i.
+ * @param {boolean} isStunned - The isStunned.
+     */
     updateStunUI(isStunned) {
         if (isStunned) {
             if (!this.stunUI) {
@@ -186,6 +217,13 @@ export class DuelUI {
         }
     }
 
+    /**
+     * Shows the end overlay.
+ * @param {any} won - The won.
+ * @param {any} wpm - The wpm.
+ * @param {any} durationSecs - The durationSecs.
+ * @param {number} successfulStrokesCount - The successfulStrokesCount.
+     */
     showEndOverlay(won, wpm, durationSecs, successfulStrokesCount) {
         const overlayClass = won ? "duel-end-victory" : "duel-end-defeat";
         const titleText = won ? (LanguageManager.t("duel.victoryTitle")) : (LanguageManager.t("duel.defeatTitle"));
@@ -216,6 +254,11 @@ export class DuelUI {
         document.body.appendChild(this.endOverlay);
     }
 
+    /**
+     * Announces the spell.
+ * @param {any} attackerName - The attackerName.
+ * @param {any} spellType - The spellType.
+     */
     announceSpell(attackerName, spellType) {
         const spellNames = {
             light: LanguageManager.t("duel.spellLight"), heavy: LanguageManager.t("duel.spellHeavy"),
@@ -234,6 +277,10 @@ export class DuelUI {
         gsap.to(announcement, { opacity: 0, y: -30, duration: 0.5, delay: 1.8, onComplete: () => announcement.remove() });
     }
 
+    /**
+     * Starts the countdown.
+ * @param {Function} onCompleteCallback - The onCompleteCallback.
+     */
     startCountdown(onCompleteCallback) {
         const countdownOverlay = el("div", { id: "duel-countdown-overlay", className: "duel-countdown-overlay" });
         const countdownText = el("div", { className: "duel-countdown-text" });
@@ -257,6 +304,9 @@ export class DuelUI {
         timeline.to(countdownOverlay, { opacity: 0, duration: 0.3 }, "-=0.3");
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         const announcerContainer = document.getElementById("duel-announcer-container");
         if (announcerContainer) announcerContainer.remove();

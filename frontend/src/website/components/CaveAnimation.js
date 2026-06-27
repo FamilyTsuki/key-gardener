@@ -22,6 +22,9 @@ export class CaveAnimation {
         window.exportCave = () => this.exportToGLTF();
     }
 
+    /**
+     * Initializes the ialize configuration.
+     */
     initializeConfiguration() {
         return {
             fogDensity: 0.0025,
@@ -47,6 +50,9 @@ export class CaveAnimation {
         };
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         if (window.incrementLoader) window.incrementLoader();
         this.setupEnvironment();
@@ -69,12 +75,18 @@ export class CaveAnimation {
         if (window.decrementLoader) window.decrementLoader();
     }
 
+    /**
+     * Initializes the environment.
+     */
     setupEnvironment() {
         this.scene.fog = new THREE.FogExp2(this.config.fogColor, this.config.fogDensity);
         this.scene.add(this.camera);
         this.camera.position.set(0, 100, 0);
     }
 
+    /**
+     * Initializes the lights.
+     */
     setupLights() {
         const ambientLight = new THREE.AmbientLight(this.config.ambientLightColor, this.config.ambientLightIntensity);
         this.scene.add(ambientLight);
@@ -88,6 +100,9 @@ export class CaveAnimation {
         this.scene.add(midLight);
     }
 
+    /**
+     * Initializes the renderer.
+     */
     setupRenderer() {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -102,10 +117,16 @@ export class CaveAnimation {
         }
     }
 
+    /**
+     * Attaches the events.
+     */
     attachEvents() {
         window.addEventListener("resize", this.boundHandleResize);
     }
 
+    /**
+     * Handles the resize event/action.
+     */
     handleResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
@@ -113,6 +134,9 @@ export class CaveAnimation {
         this.scrollController.setupScrollTrigger();
     }
 
+    /**
+     * Starts the rendering.
+     */
     startRendering() {
         const renderLoop = () => {
             this.animationFrameId = requestAnimationFrame(renderLoop);
@@ -130,6 +154,9 @@ export class CaveAnimation {
         renderLoop();
     }
 
+    /**
+     * Exports to g l t f.
+     */
     exportToGLTF() {
         if (!this.geometryBuilder.caveMesh) {
             console.error("Cave mesh not found!");
@@ -152,6 +179,9 @@ export class CaveAnimation {
         });
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);

@@ -11,6 +11,9 @@ export default class ErrorView extends AbstractView {
         this.setTitle(LanguageManager.t("error.title")?.replace("{code}", this.errorCode) || `${this.errorCode} - Error`);
     }
 
+    /**
+     * Renders.
+     */
     async render() {
         this.tunnelContainer = el("div", { 
             id: "error-tunnel-container", 
@@ -34,6 +37,9 @@ export default class ErrorView extends AbstractView {
         return container;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         if (this.tunnelContainer) {
             this.animation = new BlackHoleAnimation(this.tunnelContainer);
@@ -41,12 +47,18 @@ export default class ErrorView extends AbstractView {
         }
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.animation && typeof this.animation.destroy === 'function') {
             this.animation.destroy();
         }
     }
 
+    /**
+     * Get the css.
+     */
     getCss() {
         return ["/asset/css/error.css"];
     }

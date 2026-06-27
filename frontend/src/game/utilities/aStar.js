@@ -1,3 +1,9 @@
+/**
+ * Finds the best path.
+ * @param {any} startKey - The startKey.
+ * @param {any} goalKey - The goalKey.
+ * @param {string} gridRaw - The gridRaw.
+ */
 export default function findBestPath(startKey, goalKey, gridRaw) {
     if (startKey === goalKey) {
         return [startKey];

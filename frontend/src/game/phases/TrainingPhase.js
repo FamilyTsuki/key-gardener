@@ -29,6 +29,9 @@ export class TrainingPhase extends GamePhase {
         this.totalKeystrokes = 0;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         AudioManager.init();
         const scene = this.gameEngine.scene;
@@ -107,6 +110,9 @@ export class TrainingPhase extends GamePhase {
         window.addEventListener("settings_updated", this.settingsListener);
     }
 
+    /**
+     * Prompts the exercise.
+     */
     promptExercise() {
         if (!this.dBox) this.dBox = new DialogueBox();
         
@@ -136,6 +142,10 @@ export class TrainingPhase extends GamePhase {
         );
     }
 
+    /**
+     * Starts the exercise.
+ * @param {any} type - The type.
+     */
     startExercise(type) {
         this.trainingState = "EXERCISE";
         this.currentExerciseType = type;
@@ -187,6 +197,9 @@ export class TrainingPhase extends GamePhase {
         this.ui.showExercise(this.exerciseWords[0], "", `Syllabe 1 / ${wordCount}`);
     }
 
+    /**
+     * Starts the simon round.
+     */
     startSimonRound() {
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         this.simonTargetKey = letters[Math.floor(Math.random() * letters.length)];
@@ -201,6 +214,9 @@ export class TrainingPhase extends GamePhase {
         this.ui.showExercise(this.simonTargetKey, "", `Réflexes ${this.exerciseIndex + 1} / ${this.simonTotalRounds}`);
     }
 
+    /**
+     * Finishes the exercise.
+     */
     finishExercise() {
         this.trainingState = "RESULT";
         this.ui.hide();
@@ -234,6 +250,9 @@ export class TrainingPhase extends GamePhase {
         );
     }
 
+    /**
+     * Checks whether cancel exercise.
+     */
     cancelExercise() {
         this.trainingState = "IDLE";
         this.ui.hide();
@@ -260,6 +279,9 @@ export class TrainingPhase extends GamePhase {
         );
     }
 
+    /**
+     * Applies the keyboard finger colors.
+     */
     applyKeyboardFingerColors() {
         const settingsStr = localStorage.getItem("game_settings");
         let layoutType = "AZERTY";
@@ -308,10 +330,17 @@ export class TrainingPhase extends GamePhase {
         });
     }
 
+    /**
+     * Draws.
+     */
     draw() {
         this.renderer.draw(this.keyboard, this.player, null);
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         if (!this.player || !this.isReady || this.gameEngine.isPaused) return;
 
@@ -336,6 +365,10 @@ export class TrainingPhase extends GamePhase {
         }
     }
 
+    /**
+     * Handles the waiting answer key event/action.
+ * @param {any} key - The key.
+     */
     handleWaitingAnswerKey(key) {
         if (key === "Backspace") {
             if (this.errorTimeout) {
@@ -397,6 +430,10 @@ export class TrainingPhase extends GamePhase {
         this.ui.showPrompt(LanguageManager.t(promptKey), ["SIMON", "ALPHABET", "SYLLABES", "PHRASES", "REFUSER"], this.currentTyped);
     }
 
+    /**
+     * Handles the exercise key event/action.
+ * @param {any} key - The key.
+     */
     handleExerciseKey(key) {
         if (this.currentExerciseType === "SIMON") {
             if (key.length === 1 && key.match(/[a-z]/i)) {
@@ -470,6 +507,10 @@ export class TrainingPhase extends GamePhase {
         }
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (!this.isReady || this.gameEngine.isPaused) return;
 
@@ -478,6 +519,9 @@ export class TrainingPhase extends GamePhase {
         this.renderer.updateDecor(deltaTime);
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         this.renderer.cleanup(this.gameEngine.scene);
         if (this.keyboard && this.renderer.worldGroup) {

@@ -51,6 +51,9 @@ export class WorldPhase extends GamePhase {
         AudioManager.setCaveEcho(true);
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         const scene = this.gameEngine.scene;
         this.activeIntroType = this.introType === "random" ? (Math.random() > 0.5 ? "skyfall" : "staircase") : this.introType;
@@ -141,6 +144,10 @@ export class WorldPhase extends GamePhase {
         await AudioManager.preloadSound("/asset/game_assets/sounds/long-fall.wav");
     }
 
+    /**
+     * Executes the event action.
+ * @param {Event} eventToTrigger - The eventToTrigger.
+     */
     executeEventAction(eventToTrigger) {
         if (eventToTrigger.actionType === "heal") {
             if (this.player) {
@@ -152,6 +159,10 @@ export class WorldPhase extends GamePhase {
     
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (!this.player || !this.player.isAlive()) {
             return;
@@ -185,7 +196,6 @@ export class WorldPhase extends GamePhase {
                     }
                     this.player.offsetY = this.targetY;
                     this.camera.lookAt(this.arrivalX, this.targetY, this.arrivalZ);
-                    
                     
                     AudioManager.playSFX("/asset/game_assets/sounds/impact.wav", "player", 0.5);
                 const loader = new THREE.TextureLoader();
@@ -298,6 +308,9 @@ export class WorldPhase extends GamePhase {
         }
     }
 
+    /**
+     * Draws.
+     */
     draw() {
         if (this.player && this.player.mesh && this.playerLight) {
             const pos = this.player.mesh.position;
@@ -328,6 +341,9 @@ export class WorldPhase extends GamePhase {
         }
     }
 
+    /**
+     * Draw_bgs.
+     */
     draw_bg() {
         this.gameEngine.scene.background = new THREE.Color(0x0a0c10);
         this.gameEngine.scene.fog = new THREE.Fog(0x0a0c10, 40, 100);
@@ -340,6 +356,9 @@ export class WorldPhase extends GamePhase {
         this.gameEngine.scene.add(this.playerLight);
     }
 
+    /**
+     * Starts the intro dialogue.
+     */
     startIntroDialogue() {
         if (this.dialogue && this.dialogue.length > 0) {
             this.gameEngine.isPaused = true;
@@ -358,6 +377,9 @@ export class WorldPhase extends GamePhase {
         }
     }
 
+    /**
+     * Waits for loader.
+     */
     waitForLoader() {
         return new Promise(resolve => {
             const loader = document.getElementById("global-loader");
@@ -375,6 +397,11 @@ export class WorldPhase extends GamePhase {
         });
     }
 
+    /**
+     * Runs the intro animation.
+ * @param {any} introType - The introType.
+ * @param {any} spawnTile - The spawnTile.
+     */
     async runIntroAnimation(introType, spawnTile) {
         this.isPlayingIntro = true;
         this.isTransitioning = true;
@@ -453,6 +480,10 @@ export class WorldPhase extends GamePhase {
         }
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         if (this.isPlayingIntro) return;
 
@@ -487,6 +518,9 @@ export class WorldPhase extends GamePhase {
         }
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         if (this.dialogueTimeout) {
             clearTimeout(this.dialogueTimeout);

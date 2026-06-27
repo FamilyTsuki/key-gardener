@@ -9,8 +9,6 @@ import findBestPath from "../utilities/aStar.js";
 import { ENEMY_TYPES } from "../constants/EnemyTypes.js";
 import { generateUUID } from "../utilities/UUID.js";
 
-
-
 /**
  * Manages the collection of enemies, their pathfinding, and behavior.
  */
@@ -348,6 +346,11 @@ export default class Enemies {
         this.isSpawningBoss = false;
     }
 
+    /**
+     * Spawns the bug boss.
+ * @param {any} scene - The scene.
+ * @param {any} level - The level.
+     */
     async spawnBugBoss(scene, level = 1) {
         this.isSpawningBoss = true;
         const bossRawPosition = { x: 5, y: -4.2 };
@@ -371,6 +374,10 @@ export default class Enemies {
         this.isSpawningBoss = false;
     }
 
+    /**
+     * Spawns the earth boss.
+ * @param {any} scene - The scene.
+     */
     async spawnEarthBoss(scene) {
         this.isSpawningBoss = true;
         const bossRawPosition = { x: 5, y: -4.0 };

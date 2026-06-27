@@ -34,6 +34,9 @@ export default class WorldMap {
         );
     }
 
+    /**
+     * Retrieves the map layout.
+     */
     get mapLayout() {
         return this.#mapLayout;
     }

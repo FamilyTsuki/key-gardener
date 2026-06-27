@@ -13,6 +13,9 @@ export class SocialView extends AbstractView {
         this.searchResults = [];
     }
 
+    /**
+     * Renders.
+     */
     async render() {
         this.container.innerHTML = "";
         
@@ -43,6 +46,10 @@ export class SocialView extends AbstractView {
         return this.container;
     }
 
+    /**
+     * Handles the search event/action.
+ * @param {any} query - The query.
+     */
     async handleSearch(query) {
         const container = document.getElementById("search-results-container");
         if (!container) return;
@@ -67,6 +74,9 @@ export class SocialView extends AbstractView {
         }
     }
 
+    /**
+     * Renders the search results.
+     */
     renderSearchResults() {
         const container = document.getElementById("search-results-container");
         if (!container) return;
@@ -88,6 +98,9 @@ export class SocialView extends AbstractView {
         });
     }
 
+    /**
+     * Loads the friends.
+     */
     async loadFriends() {
         try {
             const token = localStorage.getItem('authToken');
@@ -104,6 +117,11 @@ export class SocialView extends AbstractView {
         }
     }
 
+    /**
+     * Adds the friend.
+ * @param {any} username - The username.
+ * @param {HTMLElement} btnElement - The btnElement.
+     */
     async addFriend(username, btnElement) {
         if (btnElement) {
             btnElement.disabled = true;
@@ -132,6 +150,10 @@ export class SocialView extends AbstractView {
         }
     }
 
+    /**
+     * Accepts the friend.
+ * @param {string} friendId - The friendId.
+     */
     async acceptFriend(friendId) {
         try {
             const token = localStorage.getItem('authToken');
@@ -150,6 +172,9 @@ export class SocialView extends AbstractView {
         }
     }
 
+    /**
+     * Renders the friends list.
+     */
     renderFriendsList() {
         this.friendsListContainer.innerHTML = "";
         
@@ -213,6 +238,11 @@ export class SocialView extends AbstractView {
         }
     }
 
+    /**
+     * Invites the duel.
+ * @param {string} targetUserId - The targetUserId.
+ * @param {HTMLElement} btnElement - The btnElement.
+     */
     inviteDuel(targetUserId, btnElement) {
         if (btnElement) {
             btnElement.disabled = true;
@@ -228,23 +258,39 @@ export class SocialView extends AbstractView {
         SocketService.emit('invite_duel', { targetUserId });
     }
 
+    /**
+     * Accepts the duel.
+ * @param {string} fromId - The fromId.
+     */
     acceptDuel(fromId) {
         window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
         SocketService.emit('accept_duel', { fromId });
         this.loadFriends();
     }
 
+    /**
+     * Declines the duel.
+ * @param {string} fromId - The fromId.
+     */
     declineDuel(fromId) {
         window.pendingDuelInvitations = window.pendingDuelInvitations.filter(inv => inv.fromId !== fromId);
         SocketService.emit('decline_duel', { fromId });
         this.loadFriends();
     }
 
+    /**
+     * Shows the profile.
+ * @param {any} friendData - The friendData.
+     */
     showProfile(friendData) {
         history.pushState(null, null, `/profile?id=${friendData.user_id}`);
         window.dispatchEvent(new Event("popstate"));
     }
 
+    /**
+     * Removes the friend.
+ * @param {string} userId - The userId.
+     */
     async removeFriend(userId) {
         try {
             const token = localStorage.getItem('authToken');
@@ -264,9 +310,15 @@ export class SocialView extends AbstractView {
         }
     }
 
+    /**
+     * Cleanups.
+     */
     async cleanup() {
     }
 
+    /**
+     * Get the css.
+     */
     getCss() {
         return ["/asset/css/social.css"];
     }

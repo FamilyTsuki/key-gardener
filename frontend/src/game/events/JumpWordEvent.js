@@ -23,10 +23,16 @@ export class JumpWordEvent extends WorldEvent {
         this.setupListeners();
     }
 
+    /**
+     * Css the files.
+     */
     get cssFiles() {
         return ["/asset/css/bridgeEvent.css"];
     }
 
+    /**
+     * Initializes the listeners.
+     */
     setupListeners() {
         this.state.on("gauge_updated", (percentage) => {
             this.ui.updateGaugeUI(percentage);
@@ -44,6 +50,10 @@ export class JumpWordEvent extends WorldEvent {
         });
     }
 
+    /**
+     * Modifies the layout.
+ * @param {any} mapLayout - The mapLayout.
+     */
     modifyLayout(mapLayout) {
         const d = this.tileDistance;
         mapLayout.forEach(tile => {
@@ -57,10 +67,20 @@ export class JumpWordEvent extends WorldEvent {
         });
     }
 
+    /**
+     * Initializes the .
+ * @param {boolean} worldPhase - The worldPhase.
+ * @param {any} scene - The scene.
+     */
     async init(worldPhase, scene) {
         this.currentWorldPhase = worldPhase;
     }
 
+    /**
+     * Updates.
+ * @param {boolean} worldPhase - The worldPhase.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(worldPhase, deltaTime) {
         if (!worldPhase.player || !worldPhase.worldMap || this.isCompleted) return;
 
@@ -107,6 +127,10 @@ export class JumpWordEvent extends WorldEvent {
         this.checkJumpTrigger(worldPhase);
     }
 
+    /**
+     * Checks the jump trigger.
+ * @param {boolean} worldPhase - The worldPhase.
+     */
     checkJumpTrigger(worldPhase) {
         if (!this.triggerTileIds || this.triggerTileIds.size === 0) return;
 
@@ -127,6 +151,11 @@ export class JumpWordEvent extends WorldEvent {
         }
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {boolean} worldPhase - The worldPhase.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(worldPhase, event) {
         if (!this.isActive) {
             if (this.animation.transitioningToEvent || this.animation.transitioningToWorld) return true;
@@ -145,6 +174,10 @@ export class JumpWordEvent extends WorldEvent {
         return true;
     }
 
+    /**
+     * Cleanups.
+ * @param {boolean} worldPhase - The worldPhase.
+     */
     cleanup(worldPhase) {
         this.ui.cleanup();
     }

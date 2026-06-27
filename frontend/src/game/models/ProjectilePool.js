@@ -40,11 +40,18 @@ class ProjectilePool {
         );
     }
 
+    /**
+     * Recycles.
+ * @param {any} projectile - The projectile.
+     */
     recycle(projectile) {
         if (!projectile || this.inactive.includes(projectile)) return;
         this.inactive.push(projectile);
     }
 
+    /**
+     * Clears.
+     */
     clear() {
         for (const projectile of this.inactive) {
             projectile.destroy();

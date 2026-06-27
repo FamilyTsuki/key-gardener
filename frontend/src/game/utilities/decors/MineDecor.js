@@ -1,6 +1,13 @@
 import * as THREE from "three";
 
 export class MineDecor {
+
+    /**
+     * Builds.
+ * @param {any} scene - The scene.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static build(scene, decorGroup, disposables) {
         scene.background = new THREE.Color(0x222222);
         scene.fog = new THREE.FogExp2(0x222222, 0.0035);
@@ -34,6 +41,11 @@ export class MineDecor {
         };
     }
 
+    /**
+     * _builds the mine clutter.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static _buildMineClutter(decorGroup, disposables) {
         const woodMat = new THREE.MeshStandardMaterial({ 
             color: 0x3d2314,
@@ -129,6 +141,11 @@ export class MineDecor {
         decorGroup.add(controlGroup);
     }
 
+    /**
+     * _builds the mine elevator.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static _buildMineElevator(decorGroup, disposables) {
         const brassMat = new THREE.MeshStandardMaterial({ 
             color: 0xc5a059,
@@ -193,6 +210,14 @@ export class MineDecor {
         disposables.push(floorGeo, floorMat);
     }
 
+    /**
+     * _builds the mine grates.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+ * @param {any} brassMat - The brassMat.
+ * @param {any} beamHGeo - The beamHGeo.
+ * @param {any} beamDGeo - The beamDGeo.
+     */
     static _buildMineGrates(decorGroup, disposables, brassMat, beamHGeo, beamDGeo) {
         const grateMat = new THREE.MeshStandardMaterial({
             color: 0x333333,
@@ -262,6 +287,10 @@ export class MineDecor {
         decorGroup.add(trimRight);
     }
 
+    /**
+     * _builds the mine lighting.
+ * @param {any} decorGroup - The decorGroup.
+     */
     static _buildMineLighting(decorGroup) {
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.2); 
         decorGroup.add(ambientLight);
@@ -276,6 +305,11 @@ export class MineDecor {
         return topLight;
     }
 
+    /**
+     * _builds the mine particles.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static _buildMineParticles(decorGroup, disposables) {
         const particleCount = 40;
         const lineGeo = new THREE.CylinderGeometry(0.04, 0.04, 8, 4);
@@ -296,6 +330,11 @@ export class MineDecor {
         return lines;
     }
 
+    /**
+     * _builds the mine walls.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static _buildMineWalls(decorGroup, disposables) {
         const wallMat = new THREE.MeshStandardMaterial({ 
             color: 0x3a3a3a,
@@ -333,6 +372,14 @@ export class MineDecor {
         return scrollingWalls;
     }
 
+    /**
+     * _creates the chaotic wall.
+ * @param {string} width - The width.
+ * @param {any} height - The height.
+ * @param {any} wallMat - The wallMat.
+ * @param {any} wallEdgesMat - The wallEdgesMat.
+ * @param {boolean} disposables - The disposables.
+     */
     static _createChaoticWall(width, height, wallMat, wallEdgesMat, disposables) {
         const segsX = Math.floor(width / 10);
         const segsY = Math.floor(height / 10);

@@ -21,6 +21,10 @@ class ImageModerator {
         }
     }
 
+    /**
+     * Analyzes the image.
+ * @param {any} imagePath - The imagePath.
+     */
     async analyzeImage(imagePath) {
         const apiKey = process.env.OPENAI_API_KEY;
         if (apiKey) {
@@ -81,6 +85,10 @@ class ImageModerator {
         return false;
     }
 
+    /**
+     * Is the image inappropriate.
+ * @param {any} safeSearchData - The safeSearchData.
+     */
     isImageInappropriate(safeSearchData) {
         if (typeof safeSearchData === "boolean") {
             return safeSearchData;

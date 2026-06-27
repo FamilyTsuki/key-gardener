@@ -9,6 +9,9 @@ export class AdminPhaseEditor {
         this.inputs = {};
     }
 
+    /**
+     * Renders.
+     */
     render() {
         const row = el("div", { className: "block-row" });
         this.definition.fields.forEach(field => {
@@ -22,11 +25,18 @@ export class AdminPhaseEditor {
         );
     }
 
+    /**
+     * Renders the description.
+     */
     renderDescription() {
         if (!this.definition.descriptionKey) return null;
         return el("p", { className: "admin-desc" }, LanguageManager.t(this.definition.descriptionKey));
     }
 
+    /**
+     * Renders the field.
+ * @param {any} field - The field.
+     */
     renderField(field) {
         const group = el("div", { className: "form-group compact-group" });
         const labelText = field.labelKey ? LanguageManager.t(field.labelKey) : field.label;
@@ -38,6 +48,10 @@ export class AdminPhaseEditor {
         return group;
     }
 
+    /**
+     * Get the field value.
+ * @param {any} field - The field.
+     */
     getFieldValue(field) {
         if (this.options[field.id] !== undefined) {
             return this.options[field.id];
@@ -45,6 +59,12 @@ export class AdminPhaseEditor {
         return field.defaultValue;
     }
 
+    /**
+     * Creates the input for field.
+ * @param {any} field - The field.
+ * @param {any} group - The group.
+ * @param {any} value - The value.
+     */
     createInputForField(field, group, value) {
         if (field.type === "select") {
             this.createSelectField(field, group, value);
@@ -53,6 +73,12 @@ export class AdminPhaseEditor {
         }
     }
 
+    /**
+     * Creates the select field.
+ * @param {any} field - The field.
+ * @param {any} group - The group.
+ * @param {any} value - The value.
+     */
     createSelectField(field, group, value) {
         const options = field.options.map(opt => ({
             value: opt.value,
@@ -64,6 +90,12 @@ export class AdminPhaseEditor {
         group.appendChild(select);
     }
 
+    /**
+     * Creates the number field.
+ * @param {any} field - The field.
+ * @param {any} group - The group.
+ * @param {any} value - The value.
+     */
     createNumberField(field, group, value) {
         const input = el("input", { type: "number", className: "block-input", value: value !== null ? value : '' });
         
@@ -77,6 +109,9 @@ export class AdminPhaseEditor {
         group.appendChild(input);
     }
 
+    /**
+     * Get the values.
+     */
     getValues() {
         const values = {};
         for (const [key, getter] of Object.entries(this.inputs)) {

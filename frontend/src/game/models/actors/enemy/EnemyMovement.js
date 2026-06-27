@@ -20,6 +20,11 @@ export class EnemyMovement {
         this.spawnDistance = 0;
     }
 
+    /**
+     * Initializes the spawn.
+ * @param {boolean} isWorm - The isWorm.
+ * @param {any} position - The position.
+     */
     setupSpawn(isWorm, position) {
         if (isWorm) {
             this.spawnDuration = 1.3;
@@ -51,6 +56,10 @@ export class EnemyMovement {
         this.spawnDuration = Math.max(0.7, Math.min(1.3, this.spawnDistance * 0.05));
     }
 
+    /**
+     * Updates the spawn.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateSpawn(deltaTime) {
         if (!this.isSpawning) return false;
         
@@ -65,14 +74,24 @@ export class EnemyMovement {
         return false;
     }
 
+    /**
+     * Retrieves the is blocking.
+     */
     get isBlocking() {
         return !this.isSpawning || (this.spawnProgress * this.spawnDuration >= 1.0);
     }
 
+    /**
+     * Set the path.
+ * @param {any} newPath - The newPath.
+     */
     setPath(newPath) {
         this.path = newPath;
     }
 
+    /**
+     * Starts the jump.
+     */
     startJump() {
         if (this.isSpawning || this.isJumping || this.jumpDelayTimer > 0) return;
         if (!this.path || this.path.length === 0) return;
@@ -91,6 +110,10 @@ export class EnemyMovement {
         AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "enemy", 0.2);
     }
 
+    /**
+     * Updates the jump.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateJump(deltaTime) {
         if (this.jumpDelayTimer > 0) {
             this.jumpDelayTimer -= deltaTime;
@@ -131,6 +154,9 @@ export class EnemyMovement {
         return progression;
     }
 
+    /**
+     * Finishes the jump.
+     */
     finishJump() {
         this.isJumping = false;
         this.position.x = this.targetedPosition.x;

@@ -26,6 +26,11 @@ export class BridgeWordAnimation {
         this.sharedLineMaterial = null;
     }
 
+    /**
+     * Starts the event transition.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} triggerY - The triggerY.
+     */
     startEventTransition(worldPhase, triggerY) {
         worldPhase.isTransitioning = true; 
         this.transitioningToEvent = true;
@@ -108,6 +113,13 @@ export class BridgeWordAnimation {
         });
     }
 
+    /**
+     * Handles the camera transition.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} intoEvent - The intoEvent.
+ * @param {any} onComplete - The onComplete.
+     */
     handleCameraTransition(worldPhase, deltaTime, intoEvent, onComplete) {
         this.transitionProgress += deltaTime * 0.5;
         
@@ -135,6 +147,10 @@ export class BridgeWordAnimation {
         worldPhase.camera.lookAt(currentLookAt);
     }
 
+    /**
+     * Finishs the event.
+ * @param {any} worldPhase - The worldPhase.
+     */
     finishEvent(worldPhase) {
         this.transitioningToWorld = true;
         this.transitionProgress = 0;
@@ -153,6 +169,10 @@ export class BridgeWordAnimation {
         );
     }
 
+    /**
+     * Ensures the shared materials.
+ * @param {any} worldPhase - The worldPhase.
+     */
     ensureSharedMaterials(worldPhase) {
         if (!this.sharedSideMaterial) {
             this.sharedSideMaterial = new THREE.MeshStandardMaterial({
@@ -176,6 +196,11 @@ export class BridgeWordAnimation {
         }
     }
 
+    /**
+     * Creates the bridge tile group.
+ * @param {Object} data - The data payload.
+ * @param {any} worldPhase - The worldPhase.
+     */
     createBridgeTileGroup(data, worldPhase) {
         const tile = data.tile;
         const archHeight = data.archHeight;
@@ -249,6 +274,12 @@ export class BridgeWordAnimation {
         return group;
     }
 
+    /**
+     * Adds the bridge piece.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} targetCompletedCount - The targetCompletedCount.
+ * @param {any} completedCount - The completedCount.
+     */
     addBridgePiece(worldPhase, targetCompletedCount, completedCount) {
         const batchesLeft = targetCompletedCount - completedCount + 1;
         if (batchesLeft <= 0 || !this.tilesToBuild || this.tilesToBuild.length === 0) return;
@@ -292,6 +323,10 @@ export class BridgeWordAnimation {
         }
     }
 
+    /**
+     * Updates the tile animations.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateTileAnimations(deltaTime) {
         if (this.animatingTiles.length === 0) return;
         
@@ -335,6 +370,10 @@ export class BridgeWordAnimation {
         }
     }
 
+    /**
+     * Cleanups.
+ * @param {any} worldPhase - The worldPhase.
+     */
     cleanup(worldPhase) {
         for (const group of this.bridgeMeshes) {
             worldPhase.gameEngine.scene.remove(group);

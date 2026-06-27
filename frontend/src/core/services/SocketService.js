@@ -6,6 +6,9 @@ class SocketService {
         this.listeners = new Map();
     }
 
+    /**
+     * Connects.
+     */
     connect() {
         if (this.socket) return;
         
@@ -30,6 +33,11 @@ class SocketService {
         }
     }
 
+    /**
+     * Ons.
+ * @param {any} event - The event.
+ * @param {any} callback - The callback.
+     */
     on(event, callback) {
         if (!this.listeners.has(event)) {
             this.listeners.set(event, []);
@@ -41,6 +49,11 @@ class SocketService {
         }
     }
 
+    /**
+     * Offs.
+ * @param {any} event - The event.
+ * @param {any} callback - The callback.
+     */
     off(event, callback) {
         if (this.listeners.has(event)) {
             const callbacks = this.listeners.get(event);
@@ -54,12 +67,20 @@ class SocketService {
         }
     }
 
+    /**
+     * Emits.
+ * @param {any} event - The event.
+ * @param {Object} data - The data payload.
+     */
     emit(event, data) {
         if (this.socket) {
             this.socket.emit(event, data);
         }
     }
 
+    /**
+     * Disconnects.
+     */
     disconnect() {
         if (this.socket) {
             this.socket.disconnect();
@@ -67,6 +88,9 @@ class SocketService {
         }
     }
 
+    /**
+     * Registers the user.
+     */
     registerUser() {
         this.disconnect();
         this.connect();

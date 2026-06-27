@@ -28,6 +28,10 @@ export default class EarthBoss extends Actor {
         this.updateHpBar();
     }
 
+    /**
+     * _builds the body.
+ * @param {any} bossModel - The bossModel.
+     */
     _buildBody(bossModel) {
         if (bossModel) {
             this.bossMesh = bossModel.scene.clone();
@@ -80,10 +84,16 @@ export default class EarthBoss extends Actor {
         }
     }
 
+    /**
+     * Retrieves the is dead.
+     */
     get isDead() {
         return this.hp < 0;
     }
 
+    /**
+     * Updates the hp bar.
+     */
     updateHpBar() {
         const ratio = Math.max(0, (this.hp / this.hpMax) * 100);
         const fill = document.getElementById("boss-hp-fill");
@@ -95,6 +105,14 @@ export default class EarthBoss extends Actor {
         if (maxTxt) maxTxt.innerText = this.hpMax;
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTimeMs - The deltaTimeMs.
+ * @param {any} playerPos - The playerPos.
+ * @param {any} projectiles - The projectiles.
+ * @param {any} bonks - The bonks.
+ * @param {any} player - The player.
+     */
     update(deltaTimeMs, playerPos, projectiles, bonks, player) {
         if (this.hp < 0) return;
 
@@ -115,6 +133,10 @@ export default class EarthBoss extends Actor {
         this._updateAttackPhases(dt, player);
     }
 
+    /**
+     * _updates the emerge animation.
+ * @param {any} dt - The dt.
+     */
     _updateEmergeAnimation(dt) {
         this.emergeProgress += dt * 0.5;
         if (this.emergeProgress >= 1) {
@@ -129,6 +151,10 @@ export default class EarthBoss extends Actor {
         this.mesh.updateMatrixWorld(true);
     }
 
+    /**
+     * _updates the death animation.
+ * @param {any} dt - The dt.
+     */
     _updateDeathAnimation(dt) {
         this.deathProgress += dt;
         if (this.deathProgress >= 1.5) {
@@ -144,10 +170,19 @@ export default class EarthBoss extends Actor {
         this.mesh.updateMatrixWorld(true);
     }
 
+    /**
+     * _animates the body.
+ * @param {any} dt - The dt.
+     */
     _animateBody(dt) {
         this.mesh.updateMatrixWorld(true);
     }
 
+    /**
+     * _updates the attack phases.
+ * @param {any} dt - The dt.
+ * @param {any} player - The player.
+     */
     _updateAttackPhases(dt, player) {
         this.stateTimer += dt;
 
@@ -282,6 +317,9 @@ export default class EarthBoss extends Actor {
         }
     }
 
+    /**
+     * _creates the guide mesh.
+     */
     _createGuideMesh() {
         const geo = new THREE.CylinderGeometry(1.5, 1.5, 120, 8);
         geo.rotateX(Math.PI / 2);
@@ -299,6 +337,9 @@ export default class EarthBoss extends Actor {
         this.disposables.push(geo, mat);
     }
 
+    /**
+     * _removes the guide mesh.
+     */
     _removeGuideMesh() {
         if (this.guideMesh) {
             this.scene.remove(this.guideMesh);
@@ -308,6 +349,9 @@ export default class EarthBoss extends Actor {
         }
     }
 
+    /**
+     * _creates the laser mesh.
+     */
     _createLaserMesh() {
         const geoLaser = new THREE.CylinderGeometry(24.0, 24.0, 120, 32);
         geoLaser.rotateX(Math.PI / 2);
@@ -340,6 +384,9 @@ export default class EarthBoss extends Actor {
         this.disposables.push(geoLaser, matLaser, geoCore, matCore);
     }
 
+    /**
+     * _removes the laser mesh.
+     */
     _removeLaserMesh() {
         if (this.laserMesh) {
             this.scene.remove(this.laserMesh);
@@ -355,6 +402,11 @@ export default class EarthBoss extends Actor {
         }
     }
 
+    /**
+     * _applies the laser damage.
+ * @param {any} dt - The dt.
+ * @param {any} player - The player.
+     */
     _applyLaserDamage(dt, player) {
         if (!player || !player.isAlive()) return;
 
@@ -368,6 +420,10 @@ export default class EarthBoss extends Actor {
         }
     }
 
+    /**
+     * Takes the damage.
+ * @param {any} nb - The nb.
+     */
     takeDamage(nb) {
         if (this.isDying || this.hp < 0) return;
         this.hp -= nb;
@@ -399,6 +455,9 @@ export default class EarthBoss extends Actor {
         this.updateHpBar();
     }
 
+    /**
+     * Dies.
+     */
     die() {
         const bossUI = document.getElementById("boss-ui");
         if (bossUI) bossUI.classList.add("hidden");
@@ -415,6 +474,9 @@ export default class EarthBoss extends Actor {
         this.disposables = [];
     }
 
+    /**
+     * _creates the charge sphere.
+     */
     _createChargeSphere() {
         this.chargeGroup = new THREE.Group();
         this.chargeGroup.position.set(0, 2.0, 3.0);
@@ -442,6 +504,9 @@ export default class EarthBoss extends Actor {
         this.disposables.push(geoOut, matOut, geoIn, matIn);
     }
 
+    /**
+     * _removes the charge sphere.
+     */
     _removeChargeSphere() {
         if (this.chargeGroup) {
             this.mesh.remove(this.chargeGroup);

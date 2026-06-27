@@ -9,6 +9,9 @@ export class JumpWordUI {
         this.gaugeTextEl = null;
     }
 
+    /**
+     * Builds the u i.
+     */
     buildUI() {
         this.uiOverlay = document.createElement("div");
         this.uiOverlay.classList.add("mission-overlay");
@@ -51,6 +54,10 @@ export class JumpWordUI {
         this.updateGaugeUI(0);
     }
 
+    /**
+     * Updates the gauge u i.
+ * @param {any} percentageRaw - The percentageRaw.
+     */
     updateGaugeUI(percentageRaw) {
         if (!this.gaugeFillEl || !this.gaugeTextEl) return;
         
@@ -67,6 +74,12 @@ export class JumpWordUI {
         }
     }
 
+    /**
+     * Updates the word display.
+ * @param {any} activeWords - The activeWords.
+ * @param {any} currentWordId - The currentWordId.
+ * @param {any} currentTyped - The currentTyped.
+     */
     updateWordDisplay(activeWords, currentWordId, currentTyped) {
         if (!this.wordDisplay) return;
 
@@ -95,6 +108,13 @@ export class JumpWordUI {
         });
     }
 
+    /**
+     * Renders the word spans.
+ * @param {any} ws - The ws.
+ * @param {any} wordEl - The wordEl.
+ * @param {any} currentWordId - The currentWordId.
+ * @param {any} currentTyped - The currentTyped.
+     */
     renderWordSpans(ws, wordEl, currentWordId, currentTyped) {
         if (ws.phase === "completed") {
             const typedSpan = document.createElement("span");
@@ -135,6 +155,9 @@ export class JumpWordUI {
         }
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         if (this.uiOverlay) {
             this.uiOverlay.remove();

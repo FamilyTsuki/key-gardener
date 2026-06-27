@@ -10,6 +10,9 @@ export class AudioManager {
     static reverbNode = null;
     static useCaveEcho = false;
 
+    /**
+     * Initializes the .
+     */
     static init() {
         if (this.isUnlocked) return;
 
@@ -36,6 +39,9 @@ export class AudioManager {
         document.addEventListener("keydown", unlock, true);
     }
 
+    /**
+     * Initializes the cave reverb.
+     */
     static setupCaveReverb() {
         if (!this.audioContext) return;
         
@@ -65,6 +71,10 @@ export class AudioManager {
         effectGain.connect(this.audioContext.destination);
     }
 
+    /**
+     * Set the cave echo.
+ * @param {any} active - The active.
+     */
     static setCaveEcho(active) {
         this.useCaveEcho = active;
     }
@@ -133,6 +143,12 @@ export class AudioManager {
         await Promise.all(promises);
     }
 
+    /**
+     * Plaies the s f x.
+ * @param {any} path - The path.
+ * @param {any} category - The category.
+ * @param {any} baseVolume - The baseVolume.
+     */
     static playSFX(path, category, baseVolume = 1.0) {
         if (!this.isUnlocked || !this.audioContext) {
             return null;
@@ -168,6 +184,12 @@ export class AudioManager {
         return sourceNode;
     }
 
+    /**
+     * Creates the looping s f x.
+ * @param {any} path - The path.
+ * @param {any} category - The category.
+ * @param {any} baseVolume - The baseVolume.
+     */
     static createLoopingSFX(path, category, baseVolume = 1.0) {
         if (!this.isUnlocked || !this.audioContext || !this.audioBuffers.has(path)) {
             return null;
@@ -213,6 +235,11 @@ export class AudioManager {
         };
     }
 
+    /**
+     * Plaies the music.
+ * @param {any} path - The path.
+ * @param {any} baseVolume - The baseVolume.
+     */
     static playMusic(path, baseVolume = 1.0) {
         const audio = new Audio(path);
         audio.loop = true;
@@ -243,6 +270,11 @@ export class AudioManager {
         return audio;
     }
 
+    /**
+     * Plaies the ambiance.
+ * @param {any} path - The path.
+ * @param {any} baseVolume - The baseVolume.
+     */
     static playAmbiance(path, baseVolume = 1.0) {
         const audio = new Audio(path);
         audio.loop = true;

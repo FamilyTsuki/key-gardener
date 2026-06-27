@@ -30,9 +30,16 @@ export default class Actor extends GameObject {
     this.model = model;
   }
 
+  /**
+   * Retrieves the name.
+   */
   get name() {
     return this.name;
   }
+
+  /**
+   * Retrieves the hp.
+   */
   get hp() {
     return this.hp;
   }

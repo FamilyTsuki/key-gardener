@@ -13,6 +13,9 @@ export default class LegalView extends AbstractView {
         this.currentTab = "notice";
     }
 
+    /**
+     * Renders.
+     */
     async render() {
 
         const tabsContainer = el("div", { className: "legal-tabs" });
@@ -64,6 +67,9 @@ export default class LegalView extends AbstractView {
         return container;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
 
         const hash = window.location.hash.replace("#", "");
@@ -73,6 +79,9 @@ export default class LegalView extends AbstractView {
         }
     }
 
+    /**
+     * Get the css.
+     */
     getCss() {
         return ["/asset/css/legal.css"];
     }

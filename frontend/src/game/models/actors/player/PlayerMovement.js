@@ -23,6 +23,10 @@ export class PlayerMovement {
         this.pendingWormRepel = null;
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (!this.isMoving) {
             this.clearStaleWormRepel();
@@ -40,6 +44,9 @@ export class PlayerMovement {
         this.interpolatePosition();
     }
 
+    /**
+     * Clears the stale worm repel.
+     */
     clearStaleWormRepel() {
         if (!this.pendingWormRepel) return;
         const worm = this.pendingWormRepel.worm;
@@ -48,6 +55,9 @@ export class PlayerMovement {
         }
     }
 
+    /**
+     * Finishes the movement.
+     */
     finishMovement() {
         this.movementProgress = 1;
         this.isMoving = false;
@@ -60,6 +70,9 @@ export class PlayerMovement {
         AudioManager.playSFX("/asset/game_assets/sounds/fall.wav", "player", 1.0);
     }
 
+    /**
+     * Interpolates the position.
+     */
     interpolatePosition() {
         if (this.pendingWormRepel) {
             this.interpolateRepelMovement();
@@ -68,12 +81,18 @@ export class PlayerMovement {
         }
     }
 
+    /**
+     * Interpolates the normal movement.
+     */
     interpolateNormalMovement() {
         this.x = this.startPosition.x + (this.targetPosition.x - this.startPosition.x) * this.movementProgress;
         this.y = this.startPosition.y + (this.targetPosition.y - this.startPosition.y) * this.movementProgress;
         this.offsetY = this.startOffsetY + (this.targetOffsetY - this.startOffsetY) * this.movementProgress;
     }
 
+    /**
+     * Interpolates the repel movement.
+     */
     interpolateRepelMovement() {
         if (this.movementProgress < 0.5) {
             const progress = this.movementProgress * 2;
@@ -94,6 +113,11 @@ export class PlayerMovement {
         }
     }
 
+    /**
+     * Starts the movement.
+ * @param {any} newPosition - The newPosition.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     startMovement(newPosition, keyboardLayout) {
         if (this.pendingWormRepel) {
             const worm = this.pendingWormRepel.worm;
@@ -129,6 +153,11 @@ export class PlayerMovement {
         return { blocked: false };
     }
 
+    /**
+     * Begins the repel movement.
+ * @param {any} newPosition - The newPosition.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     beginRepelMovement(newPosition, keyboardLayout) {
         this.startPosition = { x: this.x, y: this.y };
         this.targetPosition = { ...newPosition };
@@ -150,6 +179,9 @@ export class PlayerMovement {
         AudioManager.playSFX("/asset/game_assets/sounds/jump.wav", "player", 0.9);
     }
 
+    /**
+     * Updates the movement duration.
+     */
     updateMovementDuration() {
         const now = Date.now();
         const timeSinceLastPress = now - (this.lastKeyPressTime || 0);
@@ -162,6 +194,10 @@ export class PlayerMovement {
         }
     }
 
+    /**
+     * Updates the facing direction.
+ * @param {any} newPosition - The newPosition.
+     */
     updateFacingDirection(newPosition) {
         const dx = newPosition.x - this.targetPosition.x;
         const dy = newPosition.y - this.targetPosition.y;
@@ -172,6 +208,11 @@ export class PlayerMovement {
         }
     }
 
+    /**
+     * Calculates the target offset y.
+ * @param {any} newPosition - The newPosition.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     calculateTargetOffsetY(newPosition, keyboardLayout) {
         if (newPosition.offsetY !== undefined) return newPosition.offsetY;
         if (!keyboardLayout) return this.offsetY;
@@ -185,6 +226,10 @@ export class PlayerMovement {
         return this.getTileSurfaceHeight(targetKey);
     }
 
+    /**
+     * Get the tile surface height.
+ * @param {any} keyObj - The keyObj.
+     */
     getTileSurfaceHeight(keyObj) {
         if (!keyObj || !keyObj.mesh) return 0.225;
         if (keyObj.isGround === undefined) return 2.0 + (keyObj.baseY || 0);
@@ -204,6 +249,12 @@ export class PlayerMovement {
         return height + 0.05;
     }
 
+    /**
+     * Checks for worm blockade.
+ * @param {any} newPosition - The newPosition.
+ * @param {any} keyboardLayout - The keyboardLayout.
+ * @param {any} enemiesManager - The enemiesManager.
+     */
     checkForWormBlockade(newPosition, keyboardLayout, enemiesManager) {
         if (!keyboardLayout || !enemiesManager || this.pendingWormRepel) return;
         
@@ -234,6 +285,12 @@ export class PlayerMovement {
         }
     }
 
+    /**
+     * Get the keys on segment.
+ * @param {any} start - The start.
+ * @param {any} end - The end.
+ * @param {any} keyboardLayout - The keyboardLayout.
+     */
     getKeysOnSegment(start, end, keyboardLayout) {
         const keys = keyboardLayout.filter(key => {
             if (key.isGround) return false;
@@ -246,6 +303,12 @@ export class PlayerMovement {
         });
     }
 
+    /**
+     * Distances to segment.
+ * @param {any} p - The p.
+ * @param {any} a - The a.
+ * @param {any} b - The b.
+     */
     distanceToSegment(p, a, b) {
         const abX = b.x - a.x, abY = b.y - a.y;
         const apX = p.x - a.x, apY = p.y - a.y;
@@ -256,6 +319,12 @@ export class PlayerMovement {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    /**
+     * Checks the repel when idle.
+ * @param {any} keyboardLayout - The keyboardLayout.
+ * @param {any} enemiesManager - The enemiesManager.
+ * @param {any} onRepelExecute - The onRepelExecute.
+     */
     checkRepelWhenIdle(keyboardLayout, enemiesManager, onRepelExecute) {
         if (this.isMoving || !keyboardLayout || !enemiesManager) return;
         

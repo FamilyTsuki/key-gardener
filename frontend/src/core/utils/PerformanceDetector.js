@@ -1,4 +1,8 @@
 export class PerformanceDetector {
+
+    /**
+     * Shoulds the prefetch.
+     */
     static shouldPrefetch() {
         const minLogicalCores = 6;
         const minMemoryGigabytes = 8;

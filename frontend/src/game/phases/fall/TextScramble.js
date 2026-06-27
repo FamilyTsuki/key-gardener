@@ -38,6 +38,10 @@ export class TextScramble {
         this.update = this.update.bind(this);
     }
 
+    /**
+     * Updates the intensity.
+ * @param {any} deep - The deep.
+     */
     updateIntensity(deep) {
         const startThreshold = 1500;
         const maxDepth = 20000;
@@ -54,6 +58,10 @@ export class TextScramble {
         this.revealSpeed = 5; 
     }
 
+    /**
+     * Set the char set.
+ * @param {any} setName - The setName.
+     */
     setCharSet(setName) {
         if (this.charSets[setName]) {
             this.chars = this.charSets[setName];
@@ -62,6 +70,10 @@ export class TextScramble {
         return false;
     }
 
+    /**
+     * Set the text.
+ * @param {any} newText - The newText.
+     */
     setText(newText) {
         const oldText = this.el.innerText;
         const length = Math.max(oldText.length, newText.length);
@@ -82,6 +94,9 @@ export class TextScramble {
         return promise;
     }
 
+    /**
+     * Updates.
+     */
     update() {
         let output = '';
         const matched = this.matchedCount || 0;
@@ -120,6 +135,9 @@ export class TextScramble {
         this.frame++;
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         cancelAnimationFrame(this.frameRequest);
         if (this.el) {

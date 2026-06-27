@@ -17,6 +17,10 @@ export class SurviveSpawner {
         this.killTarget = phase.options.spawnerKillTarget || null;
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (!this.active) return;
         
@@ -39,6 +43,9 @@ export class SurviveSpawner {
         }
     }
 
+    /**
+     * Checks the end conditions.
+     */
     checkEndConditions() {
         if (this.endCondition === "time" && this.duration) {
             return this.time >= this.duration;
@@ -52,6 +59,11 @@ export class SurviveSpawner {
         return false;
     }
 
+    /**
+     * Spawns the enemy.
+ * @param {any} type - The type.
+ * @param {any} options - The options.
+     */
     spawnEnemy(type = null, options = {}) {
         if (!this.phase.keyboard || !this.phase.enemies) return;
 
@@ -69,6 +81,9 @@ export class SurviveSpawner {
         }
     }
 
+    /**
+     * Get the max map distance.
+     */
     getMaxMapDistance() {
         let maxMapDist = 0;
         if (!this.phase.player) return 0;
@@ -81,6 +96,11 @@ export class SurviveSpawner {
         return maxMapDist;
     }
 
+    /**
+     * Get the spawn distances.
+ * @param {any} options - The options.
+ * @param {boolean} maxMapDist - The maxMapDist.
+     */
     getSpawnDistances(options, maxMapDist) {
         let minDist = options.minSpawnDistance ?? this.phase.options.minSpawnDistance ?? this.phase.options.spawnDistance ?? 5;
         let maxDist = options.maxSpawnDistance ?? this.phase.options.maxSpawnDistance ?? 999;
@@ -91,6 +111,9 @@ export class SurviveSpawner {
         return { minSpawnDist: minDist, maxSpawnDist: maxDist };
     }
 
+    /**
+     * Get the random enemy type.
+     */
     getRandomEnemyType() {
         const keys = this.phase.keyboard.keyboardLayout;
         const hasGround = keys.some(k => k.isGround);
@@ -120,6 +143,12 @@ export class SurviveSpawner {
         return "basic";
     }
 
+    /**
+     * Get the valid spawn keys.
+ * @param {any} type - The type.
+ * @param {boolean} minSpawnDist - The minSpawnDist.
+ * @param {boolean} maxSpawnDist - The maxSpawnDist.
+     */
     getValidSpawnKeys(type, minSpawnDist, maxSpawnDist) {
         const keys = this.phase.keyboard.keyboardLayout;
         const allowedKeys = keys.filter(key => {
@@ -131,6 +160,13 @@ export class SurviveSpawner {
         return allowedKeys.filter(key => this.isKeyAvailable(key, type, minSpawnDist, maxSpawnDist));
     }
 
+    /**
+     * Checks whether is key available.
+ * @param {any} key - The key.
+ * @param {any} type - The type.
+ * @param {boolean} minSpawnDist - The minSpawnDist.
+ * @param {boolean} maxSpawnDist - The maxSpawnDist.
+     */
     isKeyAvailable(key, type, minSpawnDist, maxSpawnDist) {
         if (this.isOccupiedByEnemy(key) || this.isOccupiedByPlayer(key)) return false;
 
@@ -143,6 +179,10 @@ export class SurviveSpawner {
         return true;
     }
 
+    /**
+     * Checks whether is occupied by enemy.
+ * @param {any} key - The key.
+     */
     isOccupiedByEnemy(key) {
         return this.phase.enemies.container.some(e => 
             e.actualKey === key.key || 
@@ -151,6 +191,10 @@ export class SurviveSpawner {
         );
     }
 
+    /**
+     * Checks whether is occupied by player.
+ * @param {any} key - The key.
+     */
     isOccupiedByPlayer(key) {
         if (!this.phase.player) return false;
         return key.key === this.phase.lastPlayerKey ||

@@ -10,10 +10,16 @@ export class AdminReportManager {
         this.activeReportedPostId = null;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         await this.loadReportedPosts();
     }
 
+    /**
+     * Loads the reported posts.
+     */
     async loadReportedPosts() {
         try {
             const token = localStorage.getItem("authToken");
@@ -36,11 +42,18 @@ export class AdminReportManager {
         }
     }
 
+    /**
+     * Shows the error.
+ * @param {any} message - The message.
+     */
     showError(message) {
         clear(this.mainContainer);
         this.mainContainer.appendChild(el("div", { className: "admin-error-msg" }, message));
     }
 
+    /**
+     * Renders the sidebar.
+     */
     renderSidebar() {
         clear(this.sidebarContainer);
 
@@ -56,6 +69,10 @@ export class AdminReportManager {
         this.populateReportsList(listContainer);
     }
 
+    /**
+     * Populates the reports list.
+ * @param {boolean} listContainer - The listContainer.
+     */
     populateReportsList(listContainer) {
         if (this.reportedPosts.length === 0) {
             listContainer.appendChild(el("p", { className: "admin-no-reports" }, LanguageManager.t("admin.noReportedPosts")));
@@ -83,6 +100,9 @@ export class AdminReportManager {
         });
     }
 
+    /**
+     * Renders the main content.
+     */
     renderMainContent() {
         clear(this.mainContainer);
 
@@ -99,6 +119,10 @@ export class AdminReportManager {
         }
     }
 
+    /**
+     * Renders the report detail.
+ * @param {any} post - The post.
+     */
     renderReportDetail(post) {
         const reportsList = el("ul", { className: "reports-list" });
         if (post.reports && Array.isArray(post.reports)) {
@@ -127,6 +151,10 @@ export class AdminReportManager {
         );
     }
 
+    /**
+     * Handles the keep post event/action.
+ * @param {string} postId - The postId.
+     */
     async handleKeepPost(postId) {
         try {
             const token = localStorage.getItem("authToken");
@@ -147,6 +175,10 @@ export class AdminReportManager {
         }
     }
 
+    /**
+     * Handles the destroy post event/action.
+ * @param {string} postId - The postId.
+     */
     async handleDestroyPost(postId) {
         try {
             const token = localStorage.getItem("authToken");

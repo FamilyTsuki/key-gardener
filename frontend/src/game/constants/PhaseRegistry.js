@@ -53,6 +53,10 @@ export const PHASE_REGISTRY = [
     }
 ];
 
+/**
+ * Retrieves the phasedefinition.
+ * @param {any} phaseType - The phaseType.
+ */
 export const getPhaseDefinition = (phaseType) => {
     return PHASE_REGISTRY.find(p => p.type === phaseType) || {
         type: phaseType,
@@ -61,6 +65,10 @@ export const getPhaseDefinition = (phaseType) => {
     };
 };
 
+/**
+ * Injects the dynamic phases.
+ * @param {any} dynamicPhases - The dynamicPhases.
+ */
 export const injectDynamicPhases = (dynamicPhases) => {
     dynamicPhases.forEach(fileName => {
         let type = fileName.replace('Phase', '').toLowerCase();

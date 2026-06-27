@@ -1,6 +1,13 @@
 import * as THREE from "three";
 
 export class TrainingDecor {
+
+    /**
+     * Builds.
+ * @param {any} scene - The scene.
+ * @param {any} decorGroup - The decorGroup.
+ * @param {boolean} disposables - The disposables.
+     */
     static build(scene, decorGroup, disposables) {
         scene.background = new THREE.Color(0xdce0e5);
         scene.fog = new THREE.Fog(0xdce0e5, 30, 80);

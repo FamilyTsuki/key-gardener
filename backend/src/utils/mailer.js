@@ -3,6 +3,9 @@ const nodemailer = require('nodemailer');
 let testAccount = null;
 let transporter = null;
 
+/**
+ * Inits the mailer.
+ */
 async function initMailer() {
     if (!transporter) {
         if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
@@ -32,6 +35,11 @@ async function initMailer() {
     }
 }
 
+/**
+ * Sends the reset code email.
+ * @param {any} toEmail - The toEmail.
+ * @param {any} resetCode - The resetCode.
+ */
 async function sendResetCodeEmail(toEmail, resetCode) {
     await initMailer();
 

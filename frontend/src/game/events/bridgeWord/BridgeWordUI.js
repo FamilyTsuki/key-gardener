@@ -6,6 +6,9 @@ export class BridgeWordUI {
         this.wordDisplay = null;
     }
 
+    /**
+     * Builds the u i.
+     */
     buildUI() {
         this.uiOverlay = document.createElement("div");
         this.uiOverlay.classList.add("mission-overlay");
@@ -22,6 +25,12 @@ export class BridgeWordUI {
         document.body.appendChild(this.uiOverlay);
     }
 
+    /**
+     * Updates the word display.
+ * @param {any} activeWords - The activeWords.
+ * @param {any} currentWordId - The currentWordId.
+ * @param {any} currentTyped - The currentTyped.
+     */
     updateWordDisplay(activeWords, currentWordId, currentTyped) {
         if (!this.wordDisplay) return;
         
@@ -50,6 +59,13 @@ export class BridgeWordUI {
         });
     }
 
+    /**
+     * Renders the word spans.
+ * @param {any} ws - The ws.
+ * @param {any} wordEl - The wordEl.
+ * @param {any} currentWordId - The currentWordId.
+ * @param {any} currentTyped - The currentTyped.
+     */
     renderWordSpans(ws, wordEl, currentWordId, currentTyped) {
         if (ws.phase === "completed") {
             const typedSpan = document.createElement("span");
@@ -90,6 +106,9 @@ export class BridgeWordUI {
         }
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         if (this.uiOverlay) {
             this.uiOverlay.remove();

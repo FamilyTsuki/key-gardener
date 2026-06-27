@@ -114,14 +114,25 @@ export class SkillTreeModal {
         this.modalEl = null;
     }
 
+    /**
+     * Get the skill points.
+     */
     getSkillPoints() {
         return this.engine.skillPoints || 0;
     }
 
+    /**
+     * Checks whether is unlocked.
+ * @param {string} spellId - The spellId.
+     */
     isUnlocked(spellId) {
         return (this.engine.unlockedSpells || []).includes(spellId);
     }
 
+    /**
+     * Checks whether can unlock.
+ * @param {any} spell - The spell.
+     */
     canUnlock(spell) {
         if (spell.storyOnly) return false;
         if (this.isUnlocked(spell.id)) return false;
@@ -129,12 +140,23 @@ export class SkillTreeModal {
         return this.getSkillPoints() >= spell.cost;
     }
 
+    /**
+     * Checks whether is accessible.
+ * @param {any} spell - The spell.
+     */
     isAccessible(spell) {
         if (spell.storyOnly) return true;
         if (spell.requires && !this.isUnlocked(spell.requires)) return false;
         return true;
     }
 
+    /**
+     * Builds the node.
+ * @param {any} spell - The spell.
+ * @param {any} branchKey - The branchKey.
+ * @param {any} branchDef - The branchDef.
+ * @param {number} nodeIndex - The nodeIndex.
+     */
     buildNode(spell, branchKey, branchDef, nodeIndex) {
         const positions = BRANCH_POSITIONS[branchKey];
         const nodePos = positions.nodes[nodeIndex];
@@ -180,6 +202,12 @@ export class SkillTreeModal {
         return node;
     }
 
+    /**
+     * Opens the detail popup.
+ * @param {any} spell - The spell.
+ * @param {any} branchKey - The branchKey.
+ * @param {any} branchDef - The branchDef.
+     */
     openDetailPopup(spell, branchKey, branchDef) {
         const unlocked = this.isUnlocked(spell.id);
         const accessible = this.isAccessible(spell);
@@ -244,6 +272,9 @@ export class SkillTreeModal {
         document.body.appendChild(popup);
     }
 
+    /**
+     * Renders.
+     */
     render() {
         const skillPoints = this.getSkillPoints();
         const containerW = window.innerWidth;
@@ -313,14 +344,24 @@ export class SkillTreeModal {
         return this.modalEl;
     }
 
+    /**
+     * Goes the back to settings.
+     */
     goBackToSettings() {
         this.close();
     }
 
+    /**
+     * Counts the unlocked.
+ * @param {any} branchKey - The branchKey.
+     */
     countUnlocked(branchKey) {
         return TREE_DEFINITION[branchKey].spells.filter(s => this.isUnlocked(s.id)).length;
     }
 
+    /**
+     * Refreshes.
+     */
     refresh() {
         if (this.modalEl && this.modalEl.parentNode) {
             const parent = this.modalEl.parentNode;
@@ -329,12 +370,18 @@ export class SkillTreeModal {
         }
     }
 
+    /**
+     * Opens.
+     */
     open() {
         if (this.engine) this.engine.isPaused = true;
         document.body.appendChild(this.render());
         this.modalEl.focus();
     }
 
+    /**
+     * Closes.
+     */
     close() {
         if (this.escapeHandler) {
             window.removeEventListener("keydown", this.escapeHandler);

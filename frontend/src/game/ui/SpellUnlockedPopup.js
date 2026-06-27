@@ -40,6 +40,11 @@ export class SpellUnlockedPopup {
         }
     };
 
+    /**
+     * Shows.
+ * @param {string} spellId - The spellId.
+ * @param {any} onClose - The onClose.
+     */
     static show(spellId, onClose) {
         const info = this.SPELL_INFO[spellId] || {
             icon: "✨",

@@ -145,4 +145,4 @@ export default class RegisterView extends AbstractView {
         return ["/asset/css/register.css"];
     }
 }
-
+

@@ -15,6 +15,9 @@ export default class ProfileView extends AbstractView {
         this.userId = new URLSearchParams(window.location.search).get("id");
     }
 
+    /**
+     * Renders.
+     */
     async render() {
         this.container = el("div", { className: "account-container" });
         
@@ -31,6 +34,9 @@ export default class ProfileView extends AbstractView {
         return this.container;
     }
 
+    /**
+     * Loads the profile.
+     */
     async loadProfile() {
         try {
             const token = localStorage.getItem('authToken');
@@ -106,6 +112,12 @@ export default class ProfileView extends AbstractView {
         }
     }
 
+    /**
+     * Creates the stat item.
+ * @param {any} label - The label.
+ * @param {any} value - The value.
+ * @param {any} valueClass - The valueClass.
+     */
     createStatItem(label, value, valueClass = "") {
         return el("div", { className: "stat-item" },
             el("div", { className: "stat-label" }, label),
@@ -113,6 +125,9 @@ export default class ProfileView extends AbstractView {
         );
     }
 
+    /**
+     * Shows the remove confirm modal.
+     */
     showRemoveConfirmModal() {
         const modalId = "remove-friend-modal";
         const existingModal = document.getElementById(modalId);
@@ -143,6 +158,10 @@ export default class ProfileView extends AbstractView {
         document.body.appendChild(overlay);
     }
 
+    /**
+     * Removes the friend.
+ * @param {string} userId - The userId.
+     */
     async removeFriend(userId) {
         try {
             const token = localStorage.getItem('authToken');
@@ -163,6 +182,9 @@ export default class ProfileView extends AbstractView {
         }
     }
 
+    /**
+     * Get the css.
+     */
     getCss() {
         return ["/asset/css/account.css", "/asset/css/social.css"];
     }

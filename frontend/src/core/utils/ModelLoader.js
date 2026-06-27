@@ -9,6 +9,10 @@ class ModelLoader {
         this.pending = new Map();
     }
 
+    /**
+     * Loads the async.
+ * @param {any} url - The url.
+     */
     async loadAsync(url) {
         if (this.cache.has(url)) {
             const cachedGltf = this.cache.get(url);
@@ -35,6 +39,10 @@ class ModelLoader {
         return { ...gltf, scene: clonedScene };
     }
 
+    /**
+     * _clones the scene.
+ * @param {any} scene - The scene.
+     */
     _cloneScene(scene) {
         let hasBones = false;
         scene.traverse((child) => {
@@ -45,6 +53,13 @@ class ModelLoader {
         return hasBones ? SkeletonUtils.clone(scene) : scene.clone(true);
     }
 
+    /**
+     * Loads.
+ * @param {any} url - The url.
+ * @param {any} onLoad - The onLoad.
+ * @param {any} onProgress - The onProgress.
+ * @param {any} onError - The onError.
+     */
     load(url, onLoad, onProgress, onError) {
         this.loadAsync(url).then(onLoad).catch(onError);
     }

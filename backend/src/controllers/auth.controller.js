@@ -5,6 +5,10 @@ const User = require("../models/User");
 const { sendResetCodeEmail } = require("../utils/mailer");
 const { validatePassword } = require("../utils/validation");
 
+/**
+ * Generates the token.
+ * @param {any} userId - The userId.
+ */
 const generateToken = (userId) => {
     return jwt.sign(
         { id: userId },
@@ -13,6 +17,11 @@ const generateToken = (userId) => {
     );
 };
 
+/**
+ * Set the token cookie.
+ * @param {Object} res - The Express response object.
+ * @param {any} token - The token.
+ */
 const setTokenCookie = (res, token) => {
     res.cookie("jwt", token, {
         httpOnly: true,
@@ -21,7 +30,6 @@ const setTokenCookie = (res, token) => {
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
 };
-
 
 exports.register = async (req, res, next) => {
     try {

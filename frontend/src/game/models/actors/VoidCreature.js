@@ -13,6 +13,9 @@ export class VoidCreature {
         this.isDying = false;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         try {
             const gltf = await ModelLoader.loadAsync("/asset/game_assets/models/bug.glb");
@@ -54,6 +57,10 @@ export class VoidCreature {
         }
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (this.isDying) {
             this.mesh.scale.multiplyScalar(0.95);
@@ -78,11 +85,17 @@ export class VoidCreature {
         });
     }
 
+    /**
+     * Dies.
+     */
     die() {
         this.isDying = true;
 
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         if (this.mesh) {
             this.scene.remove(this.mesh);

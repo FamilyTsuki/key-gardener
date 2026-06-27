@@ -27,25 +27,45 @@ export class JumpWordState {
         this.listeners = {};
     }
 
+    /**
+     * Ons.
+ * @param {any} event - The event.
+ * @param {any} callback - The callback.
+     */
     on(event, callback) {
         if (!this.listeners[event]) this.listeners[event] = [];
         this.listeners[event].push(callback);
     }
 
+    /**
+     * Emits.
+ * @param {any} event - The event.
+ * @param {Object} data - The data payload.
+     */
     emit(event, data) {
         if (this.listeners[event]) {
             this.listeners[event].forEach(cb => cb(data));
         }
     }
 
+    /**
+     * Is the ready to jump.
+     */
     get isReadyToJump() {
         return this.completedCount >= this.targetCompletedCount;
     }
 
+    /**
+     * Percentages.
+     */
     get percentage() {
         return Math.min(1.0, this.completedCount / this.targetCompletedCount);
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         let needsUIUpdate = false;
         this.wordSpawnTimer -= deltaTime;
@@ -90,6 +110,9 @@ export class JumpWordState {
         if (needsUIUpdate || this.activeWords.length > 0) this.emit("words_updated", this.activeWords);
     }
 
+    /**
+     * Spawns the word.
+     */
     spawnWord() {
         const wordStr = this.wordDictionary[Math.floor(Math.random() * this.wordDictionary.length)];
         let x, y;
@@ -124,6 +147,9 @@ export class JumpWordState {
         });
     }
 
+    /**
+     * Handles the backspace.
+     */
     handleBackspace() {
         if (this.errorKey) {
             this.clearError();
@@ -136,6 +162,10 @@ export class JumpWordState {
         this.emit("words_updated", this.activeWords);
     }
 
+    /**
+     * Handles the character.
+ * @param {any} key - The key.
+     */
     handleCharacter(key) {
         if (this.errorKey) this.clearError();
 
@@ -184,6 +214,10 @@ export class JumpWordState {
         this.emit("words_updated", this.activeWords);
     }
 
+    /**
+     * Triggers the error.
+ * @param {any} key - The key.
+     */
     triggerError(key) {
         this.errorKey = key;
         this.baseSpawnDelay = Math.min(5.0, this.baseSpawnDelay + 0.1);
@@ -199,6 +233,9 @@ export class JumpWordState {
         }, 300);
     }
 
+    /**
+     * Clears the error.
+     */
     clearError() {
         if (this.errorTimeout) {
             clearTimeout(this.errorTimeout);

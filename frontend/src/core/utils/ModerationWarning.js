@@ -4,6 +4,13 @@ import { FlashMessageManager } from "./FlashMessageManager.js";
 import { LanguageManager } from "./LanguageManager.js";
 
 class ModerationWarning {
+
+    /**
+     * Shows.
+ * @param {any} content - The content.
+ * @param {any} flaggedType - The flaggedType.
+ * @param {any} warningCount - The warningCount.
+     */
     show(content, flaggedType, warningCount = 1) {
         const flagTypeLabel = flaggedType === "image"
             ? LanguageManager.t("moderation.typeImage")

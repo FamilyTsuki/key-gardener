@@ -9,7 +9,6 @@ import { SettingsModal } from "../components/SettingsModal.js";
 import { SettingsManager } from "../../core/utils/SettingsManager.js";
 import { SkillTreeModal } from "../components/SkillTreeModal.js";
 
-
 /**
  * View for the main game interface.
  */
@@ -159,7 +158,6 @@ export default class GameView extends AbstractView {
                     el("span", { className: "deep-number glitch-text" }, "1")
                 )
 
-
         );
         
     }
@@ -216,6 +214,9 @@ export default class GameView extends AbstractView {
         }
     }
 
+    /**
+     * Opens the skill tree.
+     */
     openSkillTree() {
         if (!this.skillTreeModal) {
             this.skillTreeModal = new SkillTreeModal(this.engine, () => {

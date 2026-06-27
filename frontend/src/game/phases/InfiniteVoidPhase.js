@@ -32,6 +32,9 @@ export class InfiniteVoidPhase extends GamePhase {
         this.isReady = false;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         const scene = this.gameEngine.scene;
         const worldLayout = [];
@@ -88,6 +91,9 @@ export class InfiniteVoidPhase extends GamePhase {
         });
     }
 
+    /**
+     * Waits for loader.
+     */
     waitForLoader() {
         return new Promise(resolve => {
             const loader = document.getElementById("global-loader");
@@ -105,6 +111,11 @@ export class InfiniteVoidPhase extends GamePhase {
         });
     }
 
+    /**
+     * Generates the row.
+ * @param {any} layoutArray - The layoutArray.
+ * @param {number} yIndex - The yIndex.
+     */
     generateRow(layoutArray, yIndex) {
         let test = Math.abs(yIndex) % 2 === 0 ? 1 : 0;
         let width = Math.random() < 0.1 ? 2 : (Math.random() < 0.2 ? 4 : 3);
@@ -134,6 +145,10 @@ export class InfiniteVoidPhase extends GamePhase {
         }
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+     */
     update(deltaTime) {
         if (!this.player || !this.isReady) return;
         this.elapsedTime += deltaTime;
@@ -273,6 +288,11 @@ export class InfiniteVoidPhase extends GamePhase {
         }
     }
 
+    /**
+     * Get the grid x index.
+ * @param {any} posX - The posX.
+ * @param {any} yVal - The yVal.
+     */
     getGridXIndex(posX, yVal) {
         const absY = Math.abs(yVal);
         const minDecal = absY % 2 === 1 ? 0.5 : 0;
@@ -280,6 +300,11 @@ export class InfiniteVoidPhase extends GamePhase {
         return Math.round(posX - minDecal - testVal);
     }
 
+    /**
+     * Get the pos x.
+ * @param {string} xIdx - The xIdx.
+ * @param {any} yVal - The yVal.
+     */
     getPosX(xIdx, yVal) {
         const absY = Math.abs(yVal);
         const minDecal = absY % 2 === 1 ? 0.5 : 0;
@@ -287,6 +312,9 @@ export class InfiniteVoidPhase extends GamePhase {
         return xIdx + minDecal + testVal;
     }
 
+    /**
+     * Generates the victory island.
+     */
     generateVictoryIsland() {
         this.worldMap.removeTiles((tile) => tile.rawPosition.y <= this.player.y - 1);
 
@@ -351,6 +379,9 @@ export class InfiniteVoidPhase extends GamePhase {
         this.cameraReturnTime = 2.0;
     }
 
+    /**
+     * Shows the enter prompt.
+     */
     showEnterPrompt() {
         if (this.enterPromptOverlay) return;
 
@@ -374,6 +405,9 @@ export class InfiniteVoidPhase extends GamePhase {
         document.body.appendChild(this.enterPromptOverlay);
     }
 
+    /**
+     * Hides the enter prompt.
+     */
     hideEnterPrompt() {
         if (this.enterPromptOverlay) {
             this.enterPromptOverlay.remove();
@@ -381,6 +415,11 @@ export class InfiniteVoidPhase extends GamePhase {
         }
     }
 
+    /**
+     * Animates the fall.
+ * @param {any} player - The player.
+ * @param {any} holeTile - The holeTile.
+     */
     animateFall(player, holeTile) {
         return new Promise((resolve) => {
             if (!player || !player.mesh) {
@@ -419,12 +458,18 @@ export class InfiniteVoidPhase extends GamePhase {
         });
     }
 
+    /**
+     * Triggers the void encounter.
+     */
     async triggerVoidEncounter() {
         this.isEncounterTriggered = true;
         this.setupTypingUI();
         this.typingMinigameActive = true;
     }
 
+    /**
+     * Initializes the typing u i.
+     */
     setupTypingUI() {
         this.typingContainer = document.createElement("div");
         this.typingContainer.className = "typing-minigame glass-panel";
@@ -438,6 +483,9 @@ export class InfiniteVoidPhase extends GamePhase {
         this.updateTypingUI();
     }
 
+    /**
+     * Updates the typing u i.
+     */
     updateTypingUI() {
         if (!this.typingContainer) return;
         const html = this.targetWord.split("").map((char, index) => {
@@ -448,6 +496,9 @@ export class InfiniteVoidPhase extends GamePhase {
         this.typingContainer.querySelector(".typing-minigame-word").innerHTML = html;
     }
 
+    /**
+     * Resolves the minigame.
+     */
     resolveMinigame() {
         this.typingMinigameActive = false;
         if (this.typingContainer) {
@@ -470,6 +521,10 @@ export class InfiniteVoidPhase extends GamePhase {
         this.fireballTarget.y += 2;
     }
 
+    /**
+     * Handles the key down event/action.
+ * @param {Event} event - The event.
+     */
     handleKeyDown(event) {
         if (this.isPlayingIntro || !this.isReady) return;
 
@@ -530,6 +585,9 @@ export class InfiniteVoidPhase extends GamePhase {
         }
     }
 
+    /**
+     * Draws.
+     */
     draw() {
         if (this.player && this.player.mesh && this.playerLight) {
             const pos = this.player.mesh.position;
@@ -537,6 +595,9 @@ export class InfiniteVoidPhase extends GamePhase {
         }
     }
 
+    /**
+     * Draw_bgs.
+     */
     draw_bg() {
         this.gameEngine.scene.background = new THREE.Color(0x05050a);
         this.gameEngine.scene.fog = new THREE.Fog(0x05050a, 20, 80);
@@ -549,6 +610,9 @@ export class InfiniteVoidPhase extends GamePhase {
         this.gameEngine.scene.add(this.playerLight);
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         if (this.typingContainer) {
             this.typingContainer.remove();

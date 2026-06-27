@@ -73,7 +73,6 @@ export class IntroPhase extends GamePhase {
         this.video.volume = 0;
         this.video.muted = false;
 
-
         if (this.audioInterval) clearInterval(this.audioInterval);
         this.audioInterval = setInterval(() => {
             if (!this.video) {

@@ -37,18 +37,31 @@ export default class HexTile extends GameObject {
     this.mesh = null;
   }
 
+  /**
+   * Retrieves the id.
+   */
   get id() {
     return this.#id;
   }
 
+  /**
+   * Retrieves the is pressed.
+   */
   get isPressed() {
     return this.#isPressed;
   }
 
+  /**
+   * Sets the is pressed.
+ * @param {any} val - The is pressed value.
+   */
   set isPressed(val) {
     this.#isPressed = val;
   }
 
+  /**
+   * Retrieves the letter.
+   */
   get letter() {
     return this.#letter;
   }

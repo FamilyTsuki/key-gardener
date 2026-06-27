@@ -16,6 +16,9 @@ export class SettingsModal {
         this.modalEl = null;
     }
 
+    /**
+     * Renders.
+     */
     render() {
         const settings = SettingsManager.getSettings();
 
@@ -162,6 +165,9 @@ export class SettingsModal {
         return this.modalEl;
     }
 
+    /**
+     * Opens.
+     */
     open() {
         if (this.engine) {
             this.engine.isPaused = true;
@@ -174,6 +180,9 @@ export class SettingsModal {
         }
     }
 
+    /**
+     * Closes.
+     */
     close() {
         if (this.escapeHandler) {
             window.removeEventListener("keydown", this.escapeHandler);

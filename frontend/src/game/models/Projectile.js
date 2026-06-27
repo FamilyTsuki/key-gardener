@@ -94,7 +94,6 @@ export default class Projectile extends DamageObject {
 
         AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", this.team === "player" ? "player" : "enemy", 0.5);
 
-
     }
 
     /**
@@ -219,6 +218,9 @@ export default class Projectile extends DamageObject {
         AudioManager.playSFX("/asset/game_assets/sounds/fire.wav", this.team === "player" ? "player" : "enemy", 0.5);
     }
 
+    /**
+     * Dies.
+     */
     die() {
         this.isDead = true;
         if (this.mesh) {
@@ -235,6 +237,9 @@ export default class Projectile extends DamageObject {
         }
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         this.die();
         if (this.mesh) {

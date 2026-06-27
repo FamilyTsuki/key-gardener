@@ -29,6 +29,9 @@ export class AdminPreview3D {
         this.setupResizeObserver();
     }
 
+    /**
+     * Initializes the scene.
+     */
     setupScene() {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x0a0c10);
@@ -49,6 +52,9 @@ export class AdminPreview3D {
         this.scene.add(directionalLight);
     }
 
+    /**
+     * Loads the player model.
+     */
     loadPlayerModel() {
         ModelLoader.load("/asset/game_assets/models/player.glb", (gltf) => {
             this.playerMesh = gltf.scene;
@@ -59,6 +65,9 @@ export class AdminPreview3D {
         });
     }
 
+    /**
+     * Starts the animation loop.
+     */
     startAnimationLoop() {
         const animate = () => {
             requestAnimationFrame(animate);
@@ -72,6 +81,9 @@ export class AdminPreview3D {
         animate();
     }
 
+    /**
+     * Initializes the resize observer.
+     */
     setupResizeObserver() {
         const resizeObserver = new ResizeObserver(() => {
             const w = this.container.clientWidth;
@@ -88,6 +100,9 @@ export class AdminPreview3D {
         resizeObserver.observe(this.container);
     }
 
+    /**
+     * Clears the scene.
+     */
     clearScene() {
         if (this.currentDecor) {
             this.scene.remove(this.currentDecor);
@@ -100,6 +115,12 @@ export class AdminPreview3D {
         this.eventMeshes = [];
     }
 
+    /**
+     * Renders the preview.
+ * @param {boolean} phaseType - The phaseType.
+ * @param {any} options - The options.
+ * @param {Event} events - The events.
+     */
     renderPreview(phaseType, options, events) {
         this.clearScene();
 
@@ -114,6 +135,11 @@ export class AdminPreview3D {
         this.renderEventsPreviews(phaseType, events);
     }
 
+    /**
+     * Renders the survive preview.
+ * @param {any} options - The options.
+ * @param {boolean} phaseType - The phaseType.
+     */
     renderSurvivePreview(options, phaseType) {
         this.camera.position.set(15, 18, 7);
         this.camera.lookAt(15, 0, 3);
@@ -152,6 +178,9 @@ export class AdminPreview3D {
         }
     }
 
+    /**
+     * Renders the void or fall preview.
+     */
     renderVoidOrFallPreview() {
         this.camera.position.set(20, 20, 10);
         this.camera.lookAt(0, 0, 0);
@@ -168,6 +197,10 @@ export class AdminPreview3D {
         }
     }
 
+    /**
+     * Renders the world preview.
+ * @param {any} options - The options.
+     */
     renderWorldPreview(options) {
         this.camera.position.set(12, 110, 15);
         this.camera.lookAt(12, 0, -38);
@@ -208,6 +241,10 @@ export class AdminPreview3D {
         });
     }
 
+    /**
+     * Initializes the world player pos.
+ * @param {any} wMap - The wMap.
+     */
     setupWorldPlayerPos(wMap) {
         const spawnTile = wMap.mapLayout.find(t => t.isSpawn) || wMap.mapLayout[1] || wMap.mapLayout[0];
         const spawnPos = spawnTile.mesh.position;
@@ -219,6 +256,11 @@ export class AdminPreview3D {
         }
     }
 
+    /**
+     * Initializes the world outro.
+ * @param {any} wMap - The wMap.
+ * @param {any} outroType - The outroType.
+     */
     setupWorldOutro(wMap, outroType) {
         const doorRow = wMap.mapLayout.filter((t) => t.isDoorRow);
         if (doorRow.length === 0) return;
@@ -235,6 +277,11 @@ export class AdminPreview3D {
         }
     }
 
+    /**
+     * Builds the door event.
+ * @param {any} wMap - The wMap.
+ * @param {any} exitTile - The exitTile.
+     */
     buildDoorEvent(wMap, exitTile) {
         const doorGroup = new THREE.Group();
         const pillarMat = new THREE.MeshStandardMaterial({
@@ -262,6 +309,10 @@ export class AdminPreview3D {
         exitTile.mesh.add(doorGroup);
     }
 
+    /**
+     * Builds the hole event.
+ * @param {any} exitTile - The exitTile.
+     */
     buildHoleEvent(exitTile) {
         const holeGeo = new THREE.CylinderGeometry(1.3, 1.3, 15, 32);
         const holeMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
@@ -270,6 +321,11 @@ export class AdminPreview3D {
         this.currentDecor.add(holeMesh);
     }
 
+    /**
+     * Renders the events previews.
+ * @param {boolean} phaseType - The phaseType.
+ * @param {Event} events - The events.
+     */
     renderEventsPreviews(phaseType, events) {
         if (!events) return;
 
@@ -298,6 +354,9 @@ export class AdminPreview3D {
         });
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.renderer) {
             this.renderer.dispose();

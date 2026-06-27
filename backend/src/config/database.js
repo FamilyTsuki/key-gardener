@@ -8,6 +8,9 @@ const pool = new Pool({
     port: parseInt(process.env.DB_PORT, 10),
 });
 
+/**
+ * Tests the connection.
+ */
 const testConnection = async () => {
     const client = await pool.connect();
     try {

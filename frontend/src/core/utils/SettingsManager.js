@@ -1,4 +1,8 @@
 export class SettingsManager {
+
+    /**
+     * Ds the e f a u l t_ s e t t i n g s.
+     */
     static get DEFAULT_SETTINGS() {
         const lang = (navigator.language || navigator.userLanguage || "en").toLowerCase();
         const isFrench = lang.startsWith('fr');

@@ -8,6 +8,9 @@ export class CaveGeometryBuilder {
         this.caveMesh = null;
     }
 
+    /**
+     * Builds the cave environment.
+     */
     async buildCaveEnvironment() {
         this.caveMesh = this.createCaveMesh();
         this.scene.add(this.caveMesh);
@@ -17,6 +20,9 @@ export class CaveGeometryBuilder {
         return this.caveMesh;
     }
 
+    /**
+     * Creates the cave mesh.
+     */
     createCaveMesh() {
         const geometry = new THREE.CylinderGeometry(
             this.config.caveRadius,
@@ -61,6 +67,10 @@ export class CaveGeometryBuilder {
         return mesh;
     }
 
+    /**
+     * Applies the deformation and colors.
+ * @param {any} geometry - The geometry.
+     */
     applyDeformationAndColors(geometry) {
         const positionAttribute = geometry.attributes.position;
         const vertexColors = [];
@@ -170,6 +180,9 @@ export class CaveGeometryBuilder {
         geometry.setAttribute('color', new THREE.Float32BufferAttribute(vertexColors, 3));
     }
 
+    /**
+     * Creates the space.
+     */
     createSpace() {
         const starsGeometry = new THREE.BufferGeometry();
         const count = 500;
@@ -226,6 +239,9 @@ export class CaveGeometryBuilder {
         this.scene.add(starField);
     }
 
+    /**
+     * Creates the stalactites.
+     */
     createStalactites() {
         const count = 35;
         const geometry = new THREE.CylinderGeometry(8, 2.0, 60, 10);
@@ -299,6 +315,9 @@ export class CaveGeometryBuilder {
         this.scene.add(instancedMesh);
     }
 
+    /**
+     * Generates the details progressively.
+     */
     async generateDetailsProgressively() {
         const geometry = new THREE.IcosahedronGeometry(1.5, 0);
         const material = new THREE.MeshStandardMaterial({
@@ -329,6 +348,12 @@ export class CaveGeometryBuilder {
         this.addInstancedMeshFromData(mineralsData, geometry, material);
     }
 
+    /**
+     * Adds the instanced mesh from data.
+ * @param {any} dataArray - The dataArray.
+ * @param {any} geometry - The geometry.
+ * @param {any} material - The material.
+     */
     addInstancedMeshFromData(dataArray, geometry, material) {
         if (dataArray.length === 0) return;
         const instancedMesh = new THREE.InstancedMesh(geometry, material, dataArray.length);
@@ -346,6 +371,10 @@ export class CaveGeometryBuilder {
         this.scene.add(instancedMesh);
     }
 
+    /**
+     * Calculates the pebble data.
+ * @param {any} dummy - The dummy.
+     */
     calculatePebbleData(dummy) {
         let y, normalizedY, isMineral;
         let color = new THREE.Color();

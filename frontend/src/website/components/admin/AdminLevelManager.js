@@ -21,11 +21,17 @@ export class AdminLevelManager {
         this.preview3D = null;
     }
 
+    /**
+     * Initializes the .
+     */
     async init() {
         await this.loadDynamicEntities();
         await this.loadLevels();
     }
 
+    /**
+     * Loads the dynamic entities.
+     */
     async loadDynamicEntities() {
         try {
             const token = localStorage.getItem("authToken");
@@ -41,6 +47,9 @@ export class AdminLevelManager {
         }
     }
 
+    /**
+     * Loads the levels.
+     */
     async loadLevels() {
         try {
             const response = await fetch("/api/levels");
@@ -60,11 +69,18 @@ export class AdminLevelManager {
         }
     }
 
+    /**
+     * Shows the error.
+ * @param {any} message - The message.
+     */
     showError(message) {
         clear(this.mainContainer);
         this.mainContainer.appendChild(el("div", { className: "admin-error-msg" }, message));
     }
 
+    /**
+     * Renders the sidebar.
+     */
     renderSidebar() {
         this.sidebarContainer.querySelectorAll(".custom-select-container").forEach(el => {
             if (typeof el.destroy === "function") {
@@ -89,6 +105,10 @@ export class AdminLevelManager {
         this.populateLevelsList(listContainer);
     }
 
+    /**
+     * Populates the levels list.
+ * @param {boolean} listContainer - The listContainer.
+     */
     populateLevelsList(listContainer) {
         const maxLevel = this.levels.reduce((max, l) => Math.max(max, l.level_number), 0);
         const newLevel = this.createNewLevelObject(maxLevel + 1);
@@ -114,6 +134,10 @@ export class AdminLevelManager {
         });
     }
 
+    /**
+     * Creates the new level object.
+ * @param {any} levelNumber - The levelNumber.
+     */
     createNewLevelObject(levelNumber) {
         return {
             level_number: levelNumber,
@@ -123,12 +147,19 @@ export class AdminLevelManager {
         };
     }
 
+    /**
+     * Selects the level.
+ * @param {any} levelNumber - The levelNumber.
+     */
     selectLevel(levelNumber) {
         this.activeLevelNumber = levelNumber;
         this.renderSidebar();
         this.renderMainContent();
     }
 
+    /**
+     * Renders the main content.
+     */
     renderMainContent() {
         this.mainContainer.querySelectorAll(".custom-select-container").forEach(el => {
             if (typeof el.destroy === "function") {
@@ -153,6 +184,9 @@ export class AdminLevelManager {
         this.renderLevelEditor();
     }
 
+    /**
+     * Renders the level editor.
+     */
     renderLevelEditor() {
         this.currentEventEditors = [];
 
@@ -185,6 +219,9 @@ export class AdminLevelManager {
         this.updatePreview();
     }
 
+    /**
+     * Renders the level header.
+     */
     renderLevelHeader() {
         const levelTitleText = `${LanguageManager.t("admin.level")} ${this.currentLevel.level_number} `;
         const newLevelSpan = this.currentLevel.isNew ? el("span", { className: "admin-new-level" }, LanguageManager.t("admin.new")) : null;
@@ -203,6 +240,9 @@ export class AdminLevelManager {
         );
     }
 
+    /**
+     * Renders the phase selector.
+     */
     renderPhaseSelector() {
         const phaseOptions = PHASE_REGISTRY.map(p => ({
             value: p.type,
@@ -218,6 +258,10 @@ export class AdminLevelManager {
         );
     }
 
+    /**
+     * Handles the phase change event/action.
+ * @param {boolean} newPhaseType - The newPhaseType.
+     */
     handlePhaseChange(newPhaseType) {
         this.currentLevel.phase_type = newPhaseType;
         this.currentLevel.options = {}; 
@@ -227,6 +271,9 @@ export class AdminLevelManager {
         this.updatePreview();
     }
 
+    /**
+     * Renders the phase editor.
+     */
     renderPhaseEditor() {
         this.phaseContainer.querySelectorAll(".custom-select-container").forEach(el => {
             if (typeof el.destroy === "function") {
@@ -244,6 +291,9 @@ export class AdminLevelManager {
         this.phaseContainer.appendChild(editorElement);
     }
 
+    /**
+     * Renders the event editors.
+     */
     renderEventEditors() {
         this.eventsContainer.querySelectorAll(".custom-select-container").forEach(el => {
             if (typeof el.destroy === "function") {
@@ -262,6 +312,9 @@ export class AdminLevelManager {
         this.eventsContainer.appendChild(list);
     }
 
+    /**
+     * Get the initial events.
+     */
     getInitialEvents() {
         const options = this.currentLevel.options || {};
         const events = [];
@@ -290,6 +343,11 @@ export class AdminLevelManager {
         return events;
     }
 
+    /**
+     * Adds the event editor.
+ * @param {any} evt - The evt.
+ * @param {any} container - The container.
+     */
     addEventEditor(evt, container) {
         const availableEvents = getEventsForPhase(this.currentLevel.phase_type || "survive");
         if (availableEvents.length === 0) return;
@@ -333,6 +391,14 @@ export class AdminLevelManager {
         container.appendChild(editorElement);
     }
 
+    /**
+     * Creates the configured event editor.
+ * @param {any} newDef - The newDef.
+ * @param {any} newData - The newData.
+ * @param {any} oldEditor - The oldEditor.
+ * @param {Event} availableEvents - The availableEvents.
+ * @param {any} container - The container.
+     */
     createConfiguredEventEditor(newDef, newData, oldEditor, availableEvents, container) {
          const newEditor = new AdminEventEditor(newDef, newData, {
              onRemove: oldEditor.onRemove,
@@ -347,6 +413,9 @@ export class AdminLevelManager {
          return newEditor;
     }
 
+    /**
+     * Renders the action buttons.
+     */
     renderActionButtons() {
         const addBtn = el("button", { className: "add-story-event-btn btn-secondary" }, LanguageManager.t("admin.addEvent"));
         addBtn.addEventListener('click', () => {
@@ -361,6 +430,9 @@ export class AdminLevelManager {
         return el("div", { className: "editor-actions-row" }, addBtn, saveBtn);
     }
 
+    /**
+     * Updates the preview.
+     */
     updatePreview() {
         if (!this.preview3D) return;
         const phaseOptions = this.currentPhaseEditor ? this.currentPhaseEditor.getValues() : {};
@@ -368,6 +440,9 @@ export class AdminLevelManager {
         this.preview3D.renderPreview(this.currentLevel.phase_type, phaseOptions, storyEvents);
     }
 
+    /**
+     * Handles the save level event/action.
+     */
     async handleSaveLevel() {
         const phaseOptions = this.currentPhaseEditor.getValues();
         const rawEvents = this.currentEventEditors.map(editor => editor.getValues());
@@ -420,6 +495,9 @@ export class AdminLevelManager {
         }
     }
 
+    /**
+     * Handles the delete level event/action.
+     */
     async handleDeleteLevel() {
         const confirmed = await FlashMessageManager.confirm(`${LanguageManager.t("admin.confirmDelete")} ${this.currentLevel.level_number} ?`);
         if (!confirmed) return;
@@ -451,6 +529,9 @@ export class AdminLevelManager {
         }
     }
 
+    /**
+     * Exports the levels.
+     */
     exportLevels() {
         if (!this.levels || this.levels.length === 0) return;
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.levels, null, 2));
@@ -460,6 +541,9 @@ export class AdminLevelManager {
         downloadAnchorNode.remove();
     }
 
+    /**
+     * Imports the levels.
+     */
     importLevels() {
         const input = el('input', { type: 'file', accept: 'application/json' });
         input.onchange = e => {
@@ -474,6 +558,10 @@ export class AdminLevelManager {
         input.click();
     }
 
+    /**
+     * Process the imported file.
+ * @param {any} content - The content.
+     */
     async processImportedFile(content) {
         try {
             const importedLevels = JSON.parse(content);
@@ -515,6 +603,9 @@ export class AdminLevelManager {
         }
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.preview3D) {
             this.preview3D.destroy();

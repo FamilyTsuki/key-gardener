@@ -80,7 +80,6 @@ export class PostsService {
      */
     static async createPost(content, file = null) {
         
-
         if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
@@ -111,7 +110,6 @@ export class PostsService {
      */
     static async updatePost(id, content) {
         
-
         if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
@@ -136,7 +134,6 @@ export class PostsService {
      */
     static async deletePost(id) {
         
-
         if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
@@ -159,7 +156,6 @@ export class PostsService {
      */
     static async upvotePost(id) {
         
-
         if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
@@ -182,7 +178,6 @@ export class PostsService {
      */
     static async downvotePost(id) {
         
-
         if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }

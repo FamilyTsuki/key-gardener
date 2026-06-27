@@ -189,9 +189,6 @@ export class HoleEvent extends WorldEvent {
         }
     }
 
-
-
-
     /**
      * Shows a prompt indicating the player can enter the portal.
      * @param {WorldPhase} worldPhase - The world phase instance.

@@ -1,6 +1,9 @@
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { ENEMY_TYPES } from "./EnemyTypes.js";
 
+/**
+ * Builds the enemy options.
+ */
 const buildEnemyOptions = () => {
     return [
         { value: "basic", labelKey: "admin.basic" },
@@ -126,10 +129,18 @@ export const EVENT_REGISTRY = [
     }
 ];
 
+/**
+ * Retrieves the eventdefinition.
+ * @param {any} eventType - The eventType.
+ */
 export const getEventDefinition = (eventType) => {
     return EVENT_REGISTRY.find(e => e.type === eventType);
 };
 
+/**
+ * Retrieves the eventsforphase.
+ * @param {any} phaseType - The phaseType.
+ */
 export const getEventsForPhase = (phaseType) => {
     return EVENT_REGISTRY.filter(e => e.availableIn.includes(phaseType));
 };

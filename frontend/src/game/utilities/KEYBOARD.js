@@ -60,6 +60,9 @@ export const QWERTY_LAYOUT = [
   { key: "M", x: 7, y: 2, isPressed: false },
 ];
 
+/**
+ * Get the keyboard layout.
+ */
 export function getKeyboardLayout() {
   const settingsStr = localStorage.getItem("game_settings");
   let layoutType = "AZERTY";

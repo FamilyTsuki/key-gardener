@@ -16,6 +16,13 @@ export class DuelRenderer {
         this.fireballGltf = null;
     }
 
+    /**
+     * Initializes the .
+ * @param {any} scene - The scene.
+ * @param {any} camera - The camera.
+ * @param {any} localData - The localData.
+ * @param {any} remoteData - The remoteData.
+     */
     async init(scene, camera, localData, remoteData) {
         this.decor = DuelDecorBuilder.buildArena(scene);
 
@@ -59,11 +66,19 @@ export class DuelRenderer {
         if (this.phase.remotePlayer.loadPromise) await this.phase.remotePlayer.loadPromise;
     }
 
+    /**
+     * Updates the camera.
+ * @param {any} camera - The camera.
+     */
     updateCamera(camera) {
         camera.position.set(0, 11, 13.0);
         camera.lookAt(0, 0, 6.5);
     }
 
+    /**
+     * Creates the stun visual.
+ * @param {any} playerModel - The playerModel.
+     */
     createStunVisual(playerModel) {
         const group = new THREE.Group();
         const mat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, wireframe: true });
@@ -81,6 +96,11 @@ export class DuelRenderer {
         return group;
     }
 
+    /**
+     * Updates the stun visual.
+ * @param {boolean} visual - The visual.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateStunVisual(visual, deltaTime) {
         if (!visual) return;
         visual.rotation.x += deltaTime * 10;
@@ -89,6 +109,10 @@ export class DuelRenderer {
         visual.scale.set(pulse, pulse, pulse);
     }
 
+    /**
+     * Creates the jail visual.
+ * @param {any} playerModel - The playerModel.
+     */
     createJailVisual(playerModel) {
         const cageGeo = new THREE.CylinderGeometry(1.2, 1.2, 2.5, 8, 1, true);
         const cageMat = new THREE.MeshBasicMaterial({ color: 0xff8800, wireframe: true });
@@ -98,6 +122,11 @@ export class DuelRenderer {
         return cage;
     }
 
+    /**
+     * Updates the jail visual.
+ * @param {boolean} visual - The visual.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateJailVisual(visual, deltaTime) {
         if (!visual) return;
         visual.rotation.y += deltaTime * 2;
@@ -105,6 +134,11 @@ export class DuelRenderer {
         visual.scale.set(pulse, 1.0, pulse);
     }
 
+    /**
+     * Plaies the hit animation.
+ * @param {any} model - The model.
+ * @param {boolean} isLocal - The isLocal.
+     */
     playHitAnimation(model, isLocal) {
         if (!model) return;
         if (isLocal && window.startShake) window.startShake(1.5);
@@ -120,6 +154,11 @@ export class DuelRenderer {
         });
     }
 
+    /**
+     * Draws.
+ * @param {any} localPlayer - The localPlayer.
+ * @param {any} remotePlayer - The remotePlayer.
+     */
     draw(localPlayer, remotePlayer) {
         if (this.localKeyboard && localPlayer) {
             this.localKeyboard.keyboardLayout.forEach((tile) => {
@@ -136,6 +175,10 @@ export class DuelRenderer {
         }
     }
 
+    /**
+     * Cleanups.
+ * @param {any} scene - The scene.
+     */
     cleanup(scene) {
         if (this.localKeyboardPivot) scene.remove(this.localKeyboardPivot);
         if (this.remoteKeyboardPivot) scene.remove(this.remoteKeyboardPivot);

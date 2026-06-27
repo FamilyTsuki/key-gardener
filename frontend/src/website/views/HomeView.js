@@ -18,6 +18,12 @@ export default class HomeView extends AbstractView {
         this.boundScrollListener = null;
         this.caveAnimation = null;
     }
+
+    /**
+     * Renders the hologram.
+ * @param {any} imgSrc - The imgSrc.
+ * @param {any} altText - The altText.
+     */
     renderHologram(imgSrc, altText) {
         const img = el("img", {
             src: imgSrc,
@@ -39,6 +45,10 @@ export default class HomeView extends AbstractView {
             el("div", { className: "hologram-tear-layer" })
         );
     }
+
+    /**
+     * Renders.
+     */
     async render() {
         this.isCurrentView = true;
         const svgFilter = el("div", {},
@@ -99,7 +109,6 @@ export default class HomeView extends AbstractView {
                             LanguageManager.t("home.startGame")
                         ),
 
-                    
                     )
                 ),
                 el(
@@ -189,6 +198,10 @@ export default class HomeView extends AbstractView {
         );
         return container;
     }
+
+    /**
+     * Initializes the .
+     */
     async init() {
         this.caveAnimation = new CaveAnimation(null);
         this.caveAnimation.init();
@@ -198,6 +211,10 @@ export default class HomeView extends AbstractView {
         this.setupHologramListeners();
         this.startGlitchLoop();
     }
+
+    /**
+     * Initializes the hologram listeners.
+     */
     setupHologramListeners() {
         this.hologramListeners = [];
         const wrappers = document.querySelectorAll(".hologram-wrapper");
@@ -223,6 +240,10 @@ export default class HomeView extends AbstractView {
             this.hologramListeners.push({ wrapper, handleMouseMove, handleMouseEnter, handleMouseLeave });
         });
     }
+
+    /**
+     * Starts the glitch loop.
+     */
     startGlitchLoop() {
         const displacementMap = document.getElementById("displacement-map");
         if (!displacementMap) return;
@@ -311,6 +332,10 @@ export default class HomeView extends AbstractView {
         };
         this.glitchFrameId = requestAnimationFrame(animate);
     }
+
+    /**
+     * Cleanups the hologram listeners.
+     */
     cleanupHologramListeners() {
         if (this.hologramListeners) {
             this.hologramListeners.forEach(({ wrapper, handleMouseMove, handleMouseEnter, handleMouseLeave }) => {
@@ -321,6 +346,10 @@ export default class HomeView extends AbstractView {
             this.hologramListeners = [];
         }
     }
+
+    /**
+     * Destroies.
+     */
     destroy() {
         this.isCurrentView = false;
         if (this.glitchFrameId) {
@@ -339,6 +368,10 @@ export default class HomeView extends AbstractView {
         }
         this.cleanupHologramListeners();
     }
+
+    /**
+     * Get the css.
+     */
     getCss() {
         return ["/asset/css/home.css", "/asset/css/footer.css"];
     }

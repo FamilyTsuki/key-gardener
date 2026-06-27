@@ -14,6 +14,9 @@ export class PlayerRenderer3D {
         this.scene.add(this.mesh);
     }
 
+    /**
+     * Loads the model.
+     */
     async loadModel() {
         try {
             const gltf = await ModelLoader.loadAsync("/asset/game_assets/models/player.glb");
@@ -43,12 +46,20 @@ export class PlayerRenderer3D {
         }
     }
 
+    /**
+     * Updates the position.
+ * @param {any} movementState - The movementState.
+     */
     updatePosition(movementState) {
         const worldCurrentX = movementState.x * this.spacingX + this.offsetX;
         const worldCurrentZ = movementState.y * this.spacingZ + this.offsetZ;
         this.mesh.position.set(worldCurrentX, movementState.offsetY, worldCurrentZ);
     }
 
+    /**
+     * Updates the rotation.
+ * @param {any} facingDirection - The facingDirection.
+     */
     updateRotation(facingDirection) {
         const angle = Math.atan2(
             facingDirection.x * this.spacingX,
@@ -57,6 +68,13 @@ export class PlayerRenderer3D {
         this.mesh.rotation.set(0, angle, 0);
     }
 
+    /**
+     * Renders the movement animation.
+ * @param {any} movementState - The movementState.
+ * @param {any} startPos - The startPos.
+ * @param {any} targetPos - The targetPos.
+ * @param {any} pendingWormRepel - The pendingWormRepel.
+     */
     renderMovementAnimation(movementState, startPos, targetPos, pendingWormRepel) {
         if (!this.playerModel) return;
 
@@ -67,6 +85,13 @@ export class PlayerRenderer3D {
         }
     }
 
+    /**
+     * Applies the jump animation.
+ * @param {any} movementState - The movementState.
+ * @param {any} startPos - The startPos.
+ * @param {any} targetPos - The targetPos.
+ * @param {any} pendingWormRepel - The pendingWormRepel.
+     */
     applyJumpAnimation(movementState, startPos, targetPos, pendingWormRepel) {
         const jumpAmplitude = 2.0;
         this.playerModel.position.y = 0.25 + Math.sin(movementState.movementProgress * Math.PI) * jumpAmplitude;
@@ -92,6 +117,9 @@ export class PlayerRenderer3D {
         this.playerModel.scale.set(shrinkFactor, shrinkFactor, 1.95 * stretchFactor);
     }
 
+    /**
+     * Resets the animation.
+     */
     resetAnimation() {
         this.playerModel.position.y = 0.25;
         this.playerModel.rotation.x = this.baseRotationX || 0;
@@ -105,6 +133,10 @@ export class PlayerRenderer3D {
         });
     }
 
+    /**
+     * Applies the crouch.
+ * @param {any} percentage - The percentage.
+     */
     applyCrouch(percentage) {
         if (!this.playerModel) return;
         
@@ -133,6 +165,9 @@ export class PlayerRenderer3D {
         }
     }
 
+    /**
+     * Renders the death.
+     */
     renderDeath() {
         if (!this.playerModel) return;
         this.playerModel.rotation.x = -Math.PI / 2;
@@ -140,6 +175,9 @@ export class PlayerRenderer3D {
         this.playerModel.scale.set(1.95, 1.95, 1.95);
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.scene && this.mesh) {
             this.scene.remove(this.mesh);

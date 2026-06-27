@@ -12,6 +12,12 @@ export class FallObstacles {
         this.obstacleMaterial = new THREE.MeshStandardMaterial({ color: 0x00fcff });
     }
 
+    /**
+     * Updates.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} movementDelta - The movementDelta.
+ * @param {boolean} isTransitioning - The isTransitioning.
+     */
     update(deltaTime, movementDelta, isTransitioning) {
         if (!isTransitioning) {
             this.handleSpawning(deltaTime);
@@ -22,6 +28,10 @@ export class FallObstacles {
         this.handleMovementAndCollision(movementDelta, isTransitioning);
     }
 
+    /**
+     * Handles the spawning event/action.
+ * @param {any} deltaTime - The deltaTime.
+     */
     handleSpawning(deltaTime) {
         this.obstacleSpawnTimer += deltaTime;
         if (this.obstacleSpawnTimer >= this.phase.state.obstacleSpawnInterval) {
@@ -63,6 +73,10 @@ export class FallObstacles {
         }
     }
 
+    /**
+     * Spawns the obstacle.
+ * @param {any} targetLane - The targetLane.
+     */
     spawnObstacle(targetLane) {
         const obstacleMesh = new THREE.Mesh(this.obstacleGeometry, this.obstacleMaterial);
         
@@ -84,6 +98,11 @@ export class FallObstacles {
         this.obstacles.push(obstacleMesh);
     }
 
+    /**
+     * Handles the movement and collision event/action.
+ * @param {any} movementDelta - The movementDelta.
+ * @param {boolean} isTransitioning - The isTransitioning.
+     */
     handleMovementAndCollision(movementDelta, isTransitioning) {
         for (let i = this.obstacles.length - 1; i >= 0; i--) {
             const obstacleMesh = this.obstacles[i];
@@ -111,6 +130,9 @@ export class FallObstacles {
         }
     }
 
+    /**
+     * Updates the lane positions.
+     */
     updateLanePositions() {
         const player = this.phase.player;
         const currentSpacingX = player ? player.spacingX : 3.2;
@@ -121,6 +143,9 @@ export class FallObstacles {
         });
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         if (this.obstacleGeometry) this.obstacleGeometry.dispose();
         if (this.obstacleMaterial) this.obstacleMaterial.dispose();

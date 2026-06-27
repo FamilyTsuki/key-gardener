@@ -14,6 +14,9 @@ export class DuelSocketManager {
         this.boundOnStartCountdown = this.onStartCountdown.bind(this);
     }
 
+    /**
+     * Registers.
+     */
     register() {
         SocketService.on('spell_spawned', this.boundOnSpellSpawned);
         SocketService.on('spell_blocked', this.boundOnSpellBlocked);
@@ -25,6 +28,9 @@ export class DuelSocketManager {
         SocketService.emit('player_ready');
     }
 
+    /**
+     * Unregisters.
+     */
     unregister() {
         SocketService.off('spell_spawned', this.boundOnSpellSpawned);
         SocketService.off('spell_blocked', this.boundOnSpellBlocked);
@@ -34,6 +40,10 @@ export class DuelSocketManager {
         SocketService.off('start_countdown', this.boundOnStartCountdown);
     }
 
+    /**
+     * Handles the opponent move event/action.
+ * @param {any} data - The data.
+     */
     onOpponentMove(data) {
         if (this.phase.remotePlayer) {
             this.phase.remotePlayer.isJailed = false;
@@ -49,6 +59,9 @@ export class DuelSocketManager {
         }
     }
 
+    /**
+     * Handles the start countdown event/action.
+     */
     onStartCountdown() {
         this.phase.ui.startCountdown(() => {
             this.phase.state.isCountdownActive = false;
@@ -56,6 +69,10 @@ export class DuelSocketManager {
         });
     }
 
+    /**
+     * Handles the spell spawned event/action.
+ * @param {any} data - The data.
+     */
     onSpellSpawned(data) {
         const { spellId, attackerId, targetId, spellType, requiredLength, speedMultiplier } = data;
         const state = this.phase.state;
@@ -106,6 +123,10 @@ export class DuelSocketManager {
         }
     }
 
+    /**
+     * Handles the spell blocked event/action.
+ * @param {any} data - The data.
+     */
     onSpellBlocked(data) {
         const { spellId } = data;
         const state = this.phase.state;
@@ -121,6 +142,10 @@ export class DuelSocketManager {
         }
     }
 
+    /**
+     * Handles the hp update event/action.
+ * @param {any} data - The data.
+     */
     onHpUpdate(data) {
         const state = this.phase.state;
         let localHp, remoteHp;
@@ -150,6 +175,10 @@ export class DuelSocketManager {
         }
     }
 
+    /**
+     * Handles the duel ended event/action.
+ * @param {any} data - The data.
+     */
     onDuelEnded(data) {
         const state = this.phase.state;
         state.isDuelOver = true;

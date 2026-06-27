@@ -15,29 +15,52 @@ export class EnemyState {
         this.listeners = {};
     }
 
+    /**
+     * Retrieves the is dead.
+     */
     get isDead() {
         return this.hp <= 0 || this.hp === undefined;
     }
 
+    /**
+     * Retrieves the is worm.
+     */
     get isWorm() {
         return this.type === "blocker_worm" || this.type === "hazard_worm";
     }
 
+    /**
+     * Retrieves the is sniper.
+     */
     get isSniper() {
         return this.type === "sniper";
     }
 
+    /**
+     * Handles the  event/action.
+ * @param {Event} event - The event.
+ * @param {Function} callback - The callback.
+     */
     on(event, callback) {
         if (!this.listeners[event]) this.listeners[event] = [];
         this.listeners[event].push(callback);
     }
 
+    /**
+     * Emits.
+ * @param {Event} event - The event.
+ * @param {any} data - The data.
+     */
     emit(event, data) {
         if (this.listeners[event]) {
             this.listeners[event].forEach(cb => cb(data));
         }
     }
 
+    /**
+     * Takes the damage.
+ * @param {any} amount - The amount.
+     */
     takeDamage(amount) {
         if (this.isDead) return;
         this.hp -= amount;

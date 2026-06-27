@@ -27,6 +27,11 @@ export class JumpWordAnimation {
         this.waitTimer = 0;
     }
 
+    /**
+     * Starts the event transition.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} triggerY - The triggerY.
+     */
     startEventTransition(worldPhase, triggerY) {
         worldPhase.isTransitioning = true;
         this.transitioningToEvent = true;
@@ -66,6 +71,13 @@ export class JumpWordAnimation {
         this.eventCameraLookAt = new THREE.Vector3(jumpWorldX, 2, jumpWorldZ);
     }
 
+    /**
+     * Handles the camera transition.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} intoEvent - The intoEvent.
+ * @param {any} onTransitionComplete - The onTransitionComplete.
+     */
     handleCameraTransition(worldPhase, deltaTime, intoEvent, onTransitionComplete) {
         this.transitionProgress += deltaTime * 0.5;
 
@@ -101,6 +113,11 @@ export class JumpWordAnimation {
         worldPhase.camera.lookAt(currentLookAt);
     }
 
+    /**
+     * Applies the idle camera shake.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} percentage - The percentage.
+     */
     applyIdleCameraShake(worldPhase, percentage) {
         worldPhase.player.applyCrouch(percentage);
         
@@ -121,6 +138,11 @@ export class JumpWordAnimation {
         worldPhase.camera.lookAt(this.eventCameraLookAt);
     }
 
+    /**
+     * Starts the jump sequence.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} triggerY - The triggerY.
+     */
     startJumpSequence(worldPhase, triggerY) {
         this.isWaitingToJump = true;
         this.waitTimer = 0.5;
@@ -162,6 +184,12 @@ export class JumpWordAnimation {
         this.targetTileLogicalY = targetTile.rawPosition.y;
     }
 
+    /**
+     * Updates the pre jump wait.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} onWaitComplete - The onWaitComplete.
+     */
     updatePreJumpWait(worldPhase, deltaTime, onWaitComplete) {
         this.waitTimer -= deltaTime;
         this.applyIdleCameraShake(worldPhase, 1.0);
@@ -174,6 +202,11 @@ export class JumpWordAnimation {
         }
     }
 
+    /**
+     * Updates the jump.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} deltaTime - The deltaTime.
+     */
     updateJump(worldPhase, deltaTime) {
         const player = worldPhase.player;
         this.jumpProgress += deltaTime / this.jumpDuration;
@@ -220,6 +253,12 @@ export class JumpWordAnimation {
         }
     }
 
+    /**
+     * Updates the landing.
+ * @param {any} worldPhase - The worldPhase.
+ * @param {any} deltaTime - The deltaTime.
+ * @param {any} onLandingComplete - The onLandingComplete.
+     */
     updateLanding(worldPhase, deltaTime, onLandingComplete) {
         this.landingProgress += deltaTime / 0.8;
         if (this.landingProgress >= 1.0) {

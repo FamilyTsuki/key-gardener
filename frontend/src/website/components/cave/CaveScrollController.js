@@ -9,6 +9,9 @@ export class CaveScrollController {
         gsap.registerPlugin(ScrollTrigger);
     }
 
+    /**
+     * Initializes the scroll trigger.
+     */
     setupScrollTrigger() {
         if (this.scrollTween) {
             this.scrollTween.kill();
@@ -133,6 +136,9 @@ export class CaveScrollController {
         this.scrollTween = timeline;
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         if (this.scrollTween) {
             this.scrollTween.kill();

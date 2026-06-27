@@ -1,5 +1,10 @@
 import * as THREE from 'three';
 
+/**
+ * Applies the triplanar mapping.
+ * @param {any} material - The material.
+ * @param {any} scale - The scale.
+ */
 export function applyTriplanarMapping(material, scale = 0.05) {
     material.onBeforeCompile = (shader) => {
         shader.vertexShader = `

@@ -8,6 +8,10 @@ export class StatisticsManager {
         this.playtimeSeconds = 0;
     }
 
+    /**
+     * Records the keystroke.
+ * @param {string} isValid - The isValid.
+     */
     recordKeystroke(isValid) {
         if (isValid) {
             this.correctKeystrokes++;
@@ -16,10 +20,17 @@ export class StatisticsManager {
         }
     }
 
+    /**
+     * Records the word typed.
+     */
     recordWordTyped() {
         this.wordsTyped++;
     }
 
+    /**
+     * Records the enemy defeated.
+ * @param {boolean} isBoss - The isBoss.
+     */
     recordEnemyDefeated(isBoss = false) {
         this.enemiesDefeated++;
         if (isBoss) {
@@ -27,10 +38,17 @@ export class StatisticsManager {
         }
     }
 
+    /**
+     * Adds the playtime.
+ * @param {any} seconds - The seconds.
+     */
     addPlaytime(seconds) {
         this.playtimeSeconds += seconds;
     }
 
+    /**
+     * Get the stats data.
+     */
     getStatsData() {
         const totalKeys = this.correctKeystrokes + this.incorrectKeystrokes;
         const accuracy = totalKeys > 0 ? (this.correctKeystrokes / totalKeys) * 100 : 0;

@@ -27,6 +27,9 @@ export class TrainingUI {
         document.body.appendChild(this.container);
     }
 
+    /**
+     * Injects the styles.
+     */
     injectStyles() {
         if (document.getElementById("training-ui-styles")) return;
         const style = document.createElement("style");
@@ -113,6 +116,12 @@ export class TrainingUI {
         document.head.appendChild(style);
     }
 
+    /**
+     * Shows the prompt.
+ * @param {any} message - The message.
+ * @param {any} wordsToType - The wordsToType.
+ * @param {any} currentTyped - The currentTyped.
+     */
     showPrompt(message, wordsToType, currentTyped) {
         this.container.classList.remove("training-ui-hidden");
         this.wordContainer.classList.add("training-word-container-transparent");
@@ -145,6 +154,12 @@ export class TrainingUI {
         this.statsDisplay.textContent = "";
     }
 
+    /**
+     * Shows the exercise.
+ * @param {any} targetWord - The targetWord.
+ * @param {any} currentTyped - The currentTyped.
+ * @param {any} progressText - The progressText.
+     */
     showExercise(targetWord, currentTyped, progressText) {
         this.container.classList.remove("training-ui-hidden");
         this.wordContainer.classList.remove("training-word-container-transparent");
@@ -186,10 +201,16 @@ export class TrainingUI {
         this.statsDisplay.textContent = progressText;
     }
 
+    /**
+     * Hides.
+     */
     hide() {
         this.container.classList.add("training-ui-hidden");
     }
 
+    /**
+     * Destroies.
+     */
     destroy() {
         if (this.container && this.container.parentNode) {
             this.container.parentNode.removeChild(this.container);

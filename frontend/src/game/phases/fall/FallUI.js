@@ -13,6 +13,9 @@ export class FallUI {
         this.laneWords = [leftWord, rightWord, centerWord];
     }
 
+    /**
+     * Initializes the .
+     */
     init() {
         const leftColumn = document.getElementById("left-column");
         const centerColumn = document.getElementById("center-column");
@@ -45,6 +48,10 @@ export class FallUI {
         this.resetWarnIcons();
     }
 
+    /**
+     * Updates the columns text.
+ * @param {any} typedWord - The typedWord.
+     */
     updateColumnsText(typedWord) {
         const updateElement = (id, targetWord) => {
             const instance = this.scramblers.get(id);
@@ -63,6 +70,10 @@ export class FallUI {
         updateElement("right-column", this.laneWords[1]);
     }
 
+    /**
+     * Get the warn element.
+ * @param {any} laneX - The laneX.
+     */
     getWarnElement(laneX) {
         if (laneX === -6) return document.getElementById("left-warn-img");
         if (laneX === 0) return document.getElementById("center-warn-img");
@@ -70,6 +81,9 @@ export class FallUI {
         return null;
     }
 
+    /**
+     * Resets the warn icons.
+     */
     resetWarnIcons() {
         const icons = ["left-warn-img", "center-warn-img", "right-warn-img"];
         icons.forEach(id => {
@@ -78,6 +92,10 @@ export class FallUI {
         });
     }
 
+    /**
+     * Updates the deep.
+ * @param {any} currentDeep - The currentDeep.
+     */
     updateDeep(currentDeep) {
         const deepContainer = document.getElementById("deep-container");
         if (deepContainer && deepContainer.children[1]) {
@@ -89,12 +107,18 @@ export class FallUI {
         });
     }
 
+    /**
+     * Stops the scramblers.
+     */
     stopScramblers() {
         this.textScrambleInstances.forEach(instance => {
             if (typeof instance.destroy === "function") instance.destroy();
         });
     }
 
+    /**
+     * Cleanups.
+     */
     cleanup() {
         const leftColumn = document.getElementById("left-column");
         const centerColumn = document.getElementById("center-column");

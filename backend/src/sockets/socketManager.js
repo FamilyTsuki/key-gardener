@@ -2,6 +2,10 @@ const DuelManager = require('./duelManager');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+/**
+ * Sanitizes.
+ * @param {any} str - The str.
+ */
 const sanitize = (str) => {
     if (typeof str !== 'string') return str;
     return str.replace(/[<>&'"]/g, (c) => {
@@ -15,6 +19,10 @@ const sanitize = (str) => {
     });
 };
 
+/**
+ * Parses the cookies.
+ * @param {any} cookieString - The cookieString.
+ */
 const parseCookies = (cookieString) => {
     if (!cookieString) return {};
     return cookieString.split(';').reduce((res, item) => {
