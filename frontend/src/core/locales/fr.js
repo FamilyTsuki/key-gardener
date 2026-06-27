@@ -262,6 +262,7 @@ export const fr = {
         deleteAccountBtn: "Supprimer mon compte",
         deleteAccountConfirm: "Êtes-vous absolument sûr de vouloir supprimer votre compte ? Cette action est irréversible et effacera toutes vos sauvegardes, posts et statistiques.",
         deleteAccountSuccess: "Votre compte a été supprimé avec succès.",
+        cancel: "Annuler",
         title: "Profil",
         logout: "Se déconnecter",
         changePasswordTitle: "Changer le mot de passe",

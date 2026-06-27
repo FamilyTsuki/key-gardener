@@ -59,10 +59,8 @@ export default class AccountView extends AbstractView {
             onclick: () => this.fileInput.click()
         });
         
-        const logoutTxt = el("a", { 
-                dataset: { link: true },
-                href: "/",
-                className: "nav-logout", 
+        const logoutTxt = el("button", { 
+                className: "btn-logout", 
                 onclick: () => {
                     AuthService.logout();
                     Navbar.render();
@@ -142,10 +140,24 @@ export default class AccountView extends AbstractView {
             themeSwitchLabel
         );
 
-        const dangerZoneContainer = el("div", { className: "password-container", style: "margin-top: 30px; border: 1px solid var(--danger-color); background: rgba(239, 68, 68, 0.05);" },
-            el("h3", { className: "password-title", style: "color: var(--danger-color);" }, LanguageManager.t("account.deleteAccountTitle")),
-            el("p", { style: "font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;" }, LanguageManager.t("account.deleteAccountConfirm")),
-            el("button", { className: "btn-danger", style: "width: 100%;", onclick: () => this.handleDeleteAccount() }, LanguageManager.t("account.deleteAccountBtn"))
+        const arrowSpan = el("span", { className: "danger-zone-arrow" }, "▼");
+        const dangerZoneHeader = el("div", { className: "danger-zone-header" },
+            el("h3", {}, LanguageManager.t("account.deleteAccountTitle")),
+            arrowSpan
+        );
+        const dangerZoneContent = el("div", { className: "danger-zone-content" },
+            el("p", {}, LanguageManager.t("account.deleteAccountConfirm")),
+            el("button", { className: "btn-danger-small", onclick: () => this.showDeleteModal() }, LanguageManager.t("account.deleteAccountBtn"))
+        );
+
+        dangerZoneHeader.onclick = () => {
+            arrowSpan.classList.toggle("open");
+            dangerZoneContent.classList.toggle("open");
+        };
+
+        const dangerZoneContainer = el("div", { className: "danger-zone" },
+            dangerZoneHeader,
+            dangerZoneContent
         );
             
         const container = el("div", { className: "account-container" },
@@ -166,9 +178,9 @@ export default class AccountView extends AbstractView {
                 passwordContainer,
                 langContainer,
                 themeContainer,
+                logoutTxt,
                 dangerZoneContainer
-            ),
-            logoutTxt
+            )
         );
         
         if (AuthService.isAuthenticated()) {
@@ -377,18 +389,40 @@ export default class AccountView extends AbstractView {
         }
     }
 
+    showDeleteModal() {
+        const modalOverlay = el("div", { className: "delete-modal-overlay" });
+        const modalBox = el("div", { className: "delete-modal-box" },
+            el("h2", { className: "delete-modal-title" }, LanguageManager.t("account.deleteAccountTitle")),
+            el("p", { className: "delete-modal-text" }, LanguageManager.t("account.deleteAccountConfirm")),
+            el("div", { className: "delete-modal-actions" },
+                el("button", { 
+                    className: "delete-modal-btn cancel",
+                    onclick: () => modalOverlay.remove() 
+                }, LanguageManager.t("account.cancel") || "Cancel"),
+                el("button", { 
+                    className: "delete-modal-btn confirm",
+                    onclick: async () => {
+                        modalOverlay.remove();
+                        await this.handleDeleteAccount();
+                    } 
+                }, LanguageManager.t("account.deleteAccountBtn"))
+            )
+        );
+
+        modalOverlay.appendChild(modalBox);
+        document.body.appendChild(modalOverlay);
+    }
+
     async handleDeleteAccount() {
-        if (confirm(LanguageManager.t("account.deleteAccountConfirm"))) {
-            try {
-                const response = await AuthService.deleteAccount();
-                if (response) {
-                    FlashMessageManager.show(LanguageManager.t("account.deleteAccountSuccess"), "success");
-                    history.pushState(null, null, "/");
-                    window.dispatchEvent(new Event("popstate"));
-                }
-            } catch (error) {
-                FlashMessageManager.show(error.message || "Failed to delete account.", "error");
+        try {
+            const response = await AuthService.deleteAccount();
+            if (response) {
+                FlashMessageManager.show(LanguageManager.t("account.deleteAccountSuccess"), "success");
+                history.pushState(null, null, "/");
+                window.dispatchEvent(new Event("popstate"));
             }
+        } catch (error) {
+            FlashMessageManager.show(error.message || "Failed to delete account.", "error");
         }
     }
 }
