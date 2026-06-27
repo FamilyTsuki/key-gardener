@@ -395,3 +395,29 @@ exports.updateSettings = async (req, res, next) => {
         next(err);
     }
 };
+
+/**
+ * Delete the user account (Right to be Forgotten).
+ */
+exports.deleteAccount = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const db = require('../config/database');
+
+        const { rowCount } = await db.query("DELETE FROM users WHERE id = $1", [userId]);
+
+        if (rowCount === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+        });
+
+        res.json({ message: "Account successfully deleted" });
+    } catch (error) {
+        next(error);
+    }
+};

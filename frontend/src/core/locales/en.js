@@ -148,6 +148,8 @@ export const en = {
        REGISTER SECTION
        ============================================================ */
     register: {
+        consentLabel: "I agree to the <a href='/legal' target='_blank'>Terms of Service and Privacy Policy</a>.",
+        consentError: "You must accept the Terms and Privacy Policy to register.",
         title: "Register",
         usernamePlaceholder: "Username",
         emailPlaceholder: "Email",
@@ -232,6 +234,10 @@ export const en = {
        ACCOUNT SECTION
        ============================================================ */
     account: {
+        deleteAccountTitle: "Danger Zone",
+        deleteAccountBtn: "Delete Account",
+        deleteAccountConfirm: "Are you absolutely sure you want to delete your account? This action is irreversible and will erase all your saves, posts, and statistics.",
+        deleteAccountSuccess: "Your account has been successfully deleted.",
         title: "Profile",
         logout: "Logout",
         changePasswordTitle: "Change Password",

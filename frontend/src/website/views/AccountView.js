@@ -141,6 +141,12 @@ export default class AccountView extends AbstractView {
             el("h3", { className: "password-title" }, LanguageManager.t("account.themeTitle")),
             themeSwitchLabel
         );
+
+        const dangerZoneContainer = el("div", { className: "password-container", style: "margin-top: 30px; border: 1px solid var(--danger-color); background: rgba(239, 68, 68, 0.05);" },
+            el("h3", { className: "password-title", style: "color: var(--danger-color);" }, LanguageManager.t("account.deleteAccountTitle")),
+            el("p", { style: "font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;" }, LanguageManager.t("account.deleteAccountConfirm")),
+            el("button", { className: "btn-danger", style: "width: 100%;", onclick: () => this.handleDeleteAccount() }, LanguageManager.t("account.deleteAccountBtn"))
+        );
             
         const container = el("div", { className: "account-container" },
             el("h1", { className: "account-title" }, LanguageManager.t("account.title")),
@@ -159,7 +165,8 @@ export default class AccountView extends AbstractView {
                 (this.statsContainer = el("div", { className: "stats-container hidden" })),
                 passwordContainer,
                 langContainer,
-                themeContainer
+                themeContainer,
+                dangerZoneContainer
             ),
             logoutTxt
         );
@@ -367,6 +374,21 @@ export default class AccountView extends AbstractView {
     destroy() {
         if (this.langSelect && typeof this.langSelect.destroy === "function") {
             this.langSelect.destroy();
+        }
+    }
+
+    async handleDeleteAccount() {
+        if (confirm(LanguageManager.t("account.deleteAccountConfirm"))) {
+            try {
+                const response = await AuthService.deleteAccount();
+                if (response) {
+                    FlashMessageManager.show(LanguageManager.t("account.deleteAccountSuccess"), "success");
+                    history.pushState(null, null, "/");
+                    window.dispatchEvent(new Event("popstate"));
+                }
+            } catch (error) {
+                FlashMessageManager.show(error.message || "Failed to delete account.", "error");
+            }
         }
     }
 }

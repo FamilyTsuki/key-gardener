@@ -343,6 +343,26 @@ export class AuthService {
      */
     static syncSettingsToLocalStorage(settings) {
     }
+
+    /**
+     * Deletes the user account.
+     * @returns {Promise<Object>} The deletion response data.
+     */
+    static async deleteAccount() {
+        const response = await fetch(`${this.API_URL}/me`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        const data = await this.handleResponse(response, "Account deletion failed");
+
+        this._isAuthenticated = false;
+        this._currentUser = null;
+        localStorage.removeItem("username");
+        localStorage.removeItem("userId");
+
+        return data;
+    }
 }
 
 const originalSetItem = localStorage.setItem;

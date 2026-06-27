@@ -31,8 +31,19 @@ export default class RegisterView extends AbstractView {
         const passwordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.passwordPlaceholder"), required: true, className: "form-input", id: "reg-password", "aria-label": "Password", autocomplete: "new-password" });
         const confirmPasswordInput = el("input", { type: "password", placeholder: LanguageManager.t("register.confirmPasswordPlaceholder"), required: true, className: "form-input", id: "confirm-password", "aria-label": "Confirm Password", autocomplete: "new-password" });
 
+        const consentContainer = el("div", { className: "consent-container", style: "display: flex; align-items: flex-start; gap: 10px; text-align: left; margin-bottom: 15px;" },
+            (this.consentCheckbox = el("input", { type: "checkbox", id: "register-consent", required: true, style: "margin-top: 5px;" })),
+            el("label", { htmlFor: "register-consent", style: "font-size: 0.9rem; color: var(--text-muted);" })
+        );
+        consentContainer.querySelector("label").innerHTML = LanguageManager.t("register.consentLabel");
+
         const handleSubmit = async (e) => {
             e.preventDefault();
+
+            if (!this.consentCheckbox.checked) {
+                FlashMessageManager.show(LanguageManager.t("register.consentError"), "error");
+                return;
+            }
 
             const username = usernameInput.value.trim();
             const email = emailInput.value.trim();
@@ -76,6 +87,7 @@ export default class RegisterView extends AbstractView {
             emailInput,
             passwordInput,
             confirmPasswordInput,
+            consentContainer,
             el("button", { type: "submit", className: "btn-primary" }, LanguageManager.t("register.registerBtn")),
             separator,
             googleBtnContainer

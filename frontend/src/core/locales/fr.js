@@ -173,6 +173,8 @@ export const fr = {
        REGISTER SECTION
        ============================================================ */
     register: {
+        consentLabel: "J'accepte les <a href='/legal' target='_blank'>Conditions d'Utilisation et la Politique de Confidentialité</a>.",
+        consentError: "Vous devez accepter les Conditions et la Politique de Confidentialité pour vous inscrire.",
         title: "Inscription",
         usernamePlaceholder: "Nom d'utilisateur",
         emailPlaceholder: "Email",
@@ -256,6 +258,10 @@ export const fr = {
        ACCOUNT SECTION
        ============================================================ */
     account: {
+        deleteAccountTitle: "Zone de Danger",
+        deleteAccountBtn: "Supprimer mon compte",
+        deleteAccountConfirm: "Êtes-vous absolument sûr de vouloir supprimer votre compte ? Cette action est irréversible et effacera toutes vos sauvegardes, posts et statistiques.",
+        deleteAccountSuccess: "Votre compte a été supprimé avec succès.",
         title: "Profil",
         logout: "Se déconnecter",
         changePasswordTitle: "Changer le mot de passe",
