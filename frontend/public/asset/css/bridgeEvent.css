@@ -1,110 +1,7 @@
 /* ============================================================
    BRIDGEEVENT STYLES
    ============================================================ */
-
-.mission-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-}.mission-instruction {
-    position: absolute;
-    top: 40px;
-    color: #e2e8f0;
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-
-    background: rgba(0,0,0,0.5);
-    padding: 12px 35px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-}.mission-word-container {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-}.mission-word {
-    position: absolute;
-    font-size: 2.2rem;
-    font-weight: 800;
-    letter-spacing: 3px;
-    color: #ffffff;
-    -webkit-text-stroke: 2px black;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.5);
-
-    transform-origin: center;
-}.mission-word span.typed {
-    color: #858585;
-}.mission-word span.next-error {
-    color: #ff4757;
-    text-shadow: 0 0 15px rgba(255, 71, 87, 0.9);
-}
-.jump-gauge-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 40px;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}.jump-gauge-title {
-    color: #e2e8f0;
-    font-size: 0.8rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    text-transform: uppercase;
-    white-space: nowrap;
-}.jump-gauge-container {
-    position: relative;
-    width: 40px;
-    height: 320px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(197, 160, 89, 0.4);
-    border-radius: 10px;
-    padding: 3px;
-    box-sizing: border-box;
-    backdrop-filter: blur(5px);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-}.jump-gauge-fill {
-    width: 100%;
-    height: 0%;
-    border-radius: 6px;
-    transition: height 0.3s cubic-bezier(0.1, 0.8, 0.2, 1), background 0.3s, box-shadow 0.3s;
-}.jump-gauge-text {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%) rotate(-90deg);
-    white-space: nowrap;
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    pointer-events: none;
-    z-index: 2;
-}.jump-gauge-container.full {
-    border-color: #f1c40f;
-    animation: gauge-pulse-glow 1.2s infinite alternate;
-}
-/* ============================================================
+.mission-overlay {    position: absolute;    top: 0; left: 0; width: 100%; height: 100%;    pointer-events: none;    z-index: 10;    display: flex;    justify-content: center;}.mission-instruction {    position: absolute;    top: 40px;    color: #e2e8f0;    font-size: 1.2rem;    font-weight: 700;    letter-spacing: 3px;    text-transform: uppercase;    background: rgba(0,0,0,0.5);    padding: 12px 35px;    border-radius: 20px;    border: 1px solid rgba(255, 255, 255, 0.15);    backdrop-filter: blur(8px);}.mission-word-container {    position: absolute;    top: 0; left: 0; width: 100%; height: 100%;}.mission-word {    position: absolute;    font-size: 2.2rem;    font-weight: 800;    letter-spacing: 3px;    color: #ffffff;    -webkit-text-stroke: 2px black;    text-shadow: 2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.5);    transform-origin: center;}.mission-word span.typed {    color: #858585;}.mission-word span.next-error {    color: #ff4757;    text-shadow: 0 0 15px rgba(255, 71, 87, 0.9);}.jump-gauge-wrapper {    position: absolute;    top: 50%;    left: 40px;    transform: translateY(-50%);    display: flex;    flex-direction: column;    align-items: center;    gap: 15px;}.jump-gauge-title {    color: #e2e8f0;    font-size: 0.8rem;    font-weight: 800;    letter-spacing: 2px;    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);    text-transform: uppercase;    white-space: nowrap;}.jump-gauge-container {    position: relative;    width: 40px;    height: 320px;    background: rgba(0, 0, 0, 0.6);    border: 2px solid rgba(197, 160, 89, 0.4);    border-radius: 10px;    padding: 3px;    box-sizing: border-box;    backdrop-filter: blur(5px);    display: flex;    align-items: flex-end;    justify-content: center;    overflow: hidden;    }.jump-gauge-fill {    width: 100%;    height: 0%;    border-radius: 6px;    transition: height 0.3s cubic-bezier(0.1, 0.8, 0.2, 1), background 0.3s;}.jump-gauge-text {    position: absolute;    top: 50%;    transform: translateY(-50%) rotate(-90deg);    white-space: nowrap;    color: #ffffff;    font-size: 1rem;    font-weight: 800;    letter-spacing: 2px;    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);    pointer-events: none;    z-index: 2;}.jump-gauge-container.full {    border-color: #f1c40f;    animation: gauge-pulse-glow 1.2s infinite alternate;}/* ============================================================
    ANIMATIONS
    ============================================================ */
-@keyframes gauge-pulse-glow {
-    0% {
-        box-shadow: 0 0 5px rgba(241, 196, 15, 0.4);
-    }
-    100% {
-        box-shadow: 0 0 20px rgba(241, 196, 15, 0.9);
-    }
-}
+@keyframes gauge-pulse-glow {    0% {            }    100% {            }}

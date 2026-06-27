@@ -1,7 +1,6 @@
 /* ============================================================
    SKILL TREE — Modern Hand-crafted visual style
    ============================================================ */
-
 /* ============================================================
    SKILL TREE
    ============================================================ */
@@ -14,7 +13,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     overflow: hidden;
 }
 .skill-tree-overlay::before {
@@ -209,7 +207,6 @@
 .st-node.can-afford .st-node-circle {
     animation: st-pulse 2s infinite ease-in-out;
 }
-
 /* ============================================================
    ANIMATIONS
    ============================================================ */

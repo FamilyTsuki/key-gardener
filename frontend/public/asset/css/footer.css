@@ -1,8 +1,6 @@
 /* ============================================================
    FOOTER STYLES
    ============================================================ */
-
-
 .home-footer {
     padding: 60px 5vw 20px 5vw;
     display: flex;
@@ -93,12 +91,10 @@
 .footer-support-link:hover {
     color: #0c0e14 !important;
     background: var(--primary-color) !important;
-    box-shadow: none !important;
     transform: translateY(-2px) !important;
     text-shadow: none !important;
     text-decoration: none !important;
 }
-
 @media (max-width: 768px) {
     .home-footer {
         padding: 2rem 1rem;
@@ -122,7 +118,6 @@
 .home-footer .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
-
 /* ============================================================
    BASE LAYOUT & HTML
    ============================================================ */
@@ -132,7 +127,6 @@ body[data-theme="light"] .home-footer {
     -webkit-backdrop-filter: blur(10px);
     border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
-
 body[data-theme="light"] .home-footer,
 body[data-theme="light"] .home-footer .footer-column h3,
 body[data-theme="light"] .home-footer .footer-column a,
@@ -141,21 +135,15 @@ body[data-theme="light"] .home-footer .footer-bottom {
     color: var(--text-color) !important;
     text-shadow: none !important;
 }
-
 body[data-theme="light"] .home-footer .footer-bottom {
     border-top: 1px solid var(--card-border) !important;
 }
-
-
 body[data-theme="light"] .footer-support-link {
     color: #0d9488 !important;
     border-color: #0d9488 !important;
     background: transparent !important;
-    box-shadow: none !important;
 }
-
 body[data-theme="light"] .footer-support-link:hover {
     color: #ffffff !important;
     background: #0d9488 !important;
-    box-shadow: none !important;
 }

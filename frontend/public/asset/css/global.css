@@ -1,4 +1,3 @@
-
 /* ============================================================
    VARIABLES & THEMING
    ============================================================ */
@@ -41,9 +40,7 @@
     --secondary-translucent: var(--secondary-color);
     --pink-threat: var(--danger-color);
     --primary-glow-heavy: none;
-
 }
-
 /* ============================================================
    BASE LAYOUT & HTML
    ============================================================ */
@@ -51,21 +48,18 @@ html {
     overflow: hidden;
     height: 100vh;
 }
-
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
     height: 100vh;
     max-width: 100vw;
-
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow-wrap: break-word;
     display: flex;
     flex-direction: column;
 }
-
 /* ============================================================
    MAIN APP CONTAINER
    ============================================================ */
@@ -78,7 +72,6 @@ body {
     display: flex;
     flex-direction: column;
 }
-
 #bg-canvas {
     position: fixed;
     top: 0;
@@ -94,7 +87,6 @@ body {
     --warning-translucent: #f59e0b;
     --matrix-glow: none;
 }
-
 #bg-canvas {
     position: fixed;
     top: 0;
@@ -103,11 +95,9 @@ body {
     height: 100vh;
     z-index: -1;
 }
-
 .hidden {
     display: none !important;
 }
-
 .tunnel-canvas {
     position: fixed;
     top: 0;
@@ -119,7 +109,6 @@ body {
     opacity: 0;
     transition: opacity 2s ease;
 }
-
 #easter-egg-canvas {
     position: fixed;
     top: 0;
@@ -129,20 +118,16 @@ body {
     pointer-events: none;
     z-index: 9999;
 }
-
 body.in-game #nav-container {
     display: none !important;
 }
-
 body.in-game #app {
     margin-top: 0 !important;
     overflow: hidden !important;
 }
-
 html:has(body.in-game), body.in-game {
     overflow: hidden !important;
 }
-
 #page-transition {
     position: fixed;
     top: 0;
@@ -157,7 +142,6 @@ html:has(body.in-game), body.in-game {
     z-index: 9999;
     transition: opacity 0.8s ease;
 }
-
 #page-transition.fade-in {
     opacity: 1;
     pointer-events: all;
@@ -165,7 +149,6 @@ html:has(body.in-game), body.in-game {
 .hidden {
     display: none !important;
 }
-
 #global-loader {
     position: fixed;
     top: 0;
@@ -181,19 +164,16 @@ html:has(body.in-game), body.in-game {
     align-items: center;
     font-size: 1.5rem;
     font-weight: bold;
-
     text-transform: uppercase;
     letter-spacing: 4px;
     opacity: 1;
     transition: opacity 0.5s ease, visibility 0.5s ease;
 }
-
 #global-loader.hidden {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 }
-
 #mini-loader {
     position: fixed;
     bottom: 20px;
@@ -208,29 +188,23 @@ html:has(body.in-game), body.in-game {
     gap: 4px;
     align-items: center;
     justify-content: center;
-    box-shadow: none;
     backdrop-filter: none;
     transition: opacity 0.3s ease;
 }
-
 #mini-loader.hidden {
     display: none !important;
 }
-
 #mini-loader .dot {
     font-size: 1.5rem;
     line-height: 1;
     animation: pulseDot 1.4s infinite both;
 }
-
 #mini-loader .dot:nth-child(2) {
     animation-delay: 0.2s;
 }
-
 #mini-loader .dot:nth-child(3) {
     animation-delay: 0.4s;
 }
-
 @keyframes pulseDot {
     0%, 80%, 100% {
         opacity: 0.2;
@@ -241,14 +215,12 @@ html:has(body.in-game), body.in-game {
         transform: scale(1.2);
     }
 }
-
 .loader-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2rem;
 }
-
 .cyber-spinner {
     width: 80px;
     height: 80px;
@@ -259,7 +231,6 @@ html:has(body.in-game), body.in-game {
     animation: spin 1s linear infinite;
     position: relative;
 }
-
 .cyber-spinner::before {
     content: "";
     position: absolute;
@@ -273,7 +244,6 @@ html:has(body.in-game), body.in-game {
     border-radius: 50%;
     animation: spin 2s linear infinite reverse;
 }
-
 .cyber-spinner::after {
     content: "";
     position: absolute;
@@ -286,11 +256,9 @@ html:has(body.in-game), body.in-game {
     border-radius: 50%;
     animation: spin 1.5s linear infinite;
 }
-
 .loader-text {
     animation: loader-pulse-glow 2s ease-in-out infinite;
 }
-
 /* ============================================================
    ANIMATIONS
    ============================================================ */
@@ -298,13 +266,10 @@ html:has(body.in-game), body.in-game {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
 @keyframes loader-pulse-glow {
     0%, 100% { opacity: 0.7; }
     50% { opacity: 1; }
 }
-
-
 body[data-theme="light"] {
     --primary-color: #00ff66;
     --primary-hover: #00cc52;
@@ -327,30 +292,23 @@ body[data-theme="light"] {
     --shadow-glow: 0 4px 15px rgba(0, 0, 0, 0.05);
     --focus-ring: 0 0 0 3px rgba(0, 255, 102, 0.3);
 }
-
 body[data-theme="light"] #page-transition {
     background-color: rgba(248, 250, 252, 0.95);
 }
-
 body[data-theme="light"] #global-loader {
     background-color: rgba(248, 250, 252, 0.85);
     color: var(--primary-color);
 }
-
 body[data-theme="light"] #bg-canvas,
 body[data-theme="light"] .tunnel-canvas,
 body[data-theme="light"] #easter-egg-canvas {
     background-color: #0a0c10 !important;
 }
-
-
 .custom-select-container {
     position: relative;
     width: 100%;
     user-select: none;
-
 }
-
 .custom-select-trigger {
     display: flex;
     justify-content: space-between;
@@ -364,33 +322,26 @@ body[data-theme="light"] #easter-egg-canvas {
     cursor: pointer;
     transition: all 0.22s ease;
 }
-
 .custom-select-trigger:hover {
     border-color: var(--primary-color);
     background: var(--light-overlay-hover);
 }
-
 .custom-select-container.open {
     z-index: 1000 !important;
 }
-
 .custom-select-container.open .custom-select-trigger {
     border-color: var(--primary-color);
-    box-shadow: var(--focus-ring);
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
 }
-
 .custom-select-arrow {
     font-size: 0.8rem;
     transition: transform 0.3s ease;
     color: var(--text-muted);
 }
-
 .custom-select-container.open .custom-select-arrow {
     transform: rotate(180deg);
 }
-
 .custom-select-options {
     position: absolute;
     top: 100%;
@@ -401,7 +352,6 @@ body[data-theme="light"] #easter-egg-canvas {
     border-top: none;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     z-index: 100;
     max-height: 250px;
     overflow-y: auto;
@@ -410,13 +360,11 @@ body[data-theme="light"] #easter-egg-canvas {
     transform: translateY(-10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .custom-select-container.open .custom-select-options {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
-
 .custom-option {
     padding: 14px 20px;
     color: var(--text-color);
@@ -424,12 +372,10 @@ body[data-theme="light"] #easter-egg-canvas {
     transition: background 0.2s ease, color 0.2s ease;
     font-size: 1.05rem;
 }
-
 .custom-option:hover {
     background: var(--light-overlay-hover);
     color: var(--primary-color);
 }
-
 /* ============================================================
    FORMS & INPUTS
    ============================================================ */
@@ -439,50 +385,38 @@ body[data-theme="light"] #easter-egg-canvas {
     font-weight: 700;
     position: relative;
 }
-
 .custom-option.selected::after {
     content: "✓";
     position: absolute;
     right: 20px;
     color: var(--primary-color);
 }
-
 .custom-select-options
 ::-webkit-scrollbar {
     width: 6px;
 }
-
-
 ::-webkit-scrollbar {
     width: 14px;
     height: 14px;
 }
-
 ::-webkit-scrollbar-track {
     background: var(--bg-color);
 }
-
 ::-webkit-scrollbar-thumb {
     background-color: var(--card-border);
     border-radius: 7px;
     border: 3px solid var(--bg-color);
 }
-
 ::-webkit-scrollbar-thumb:hover {
     background-color: var(--primary-color);
 }
-
 .custom-select-options::-webkit-scrollbar-thumb {
     background: var(--card-border);
     border-radius: 10px;
 }
-
-
-
 /* ==========================================================================
    Global Modal Styles
    ========================================================================== */
-
 .global-modal-overlay {
     position: fixed;
     top: 0;
@@ -499,7 +433,6 @@ body[data-theme="light"] #easter-egg-canvas {
     opacity: 0;
     animation: globalModalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
 .global-modal-box {
     background: var(--card-bg, #161b22);
     border: 1px solid rgba(239, 68, 68, 0.4);
@@ -514,27 +447,23 @@ body[data-theme="light"] #easter-egg-canvas {
     transform: translateY(20px);
     animation: globalModalSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
-
 .global-modal-title {
     font-size: 1.6rem;
     font-weight: 800;
     color: #fff;
     margin-bottom: 12px;
 }
-
 .global-modal-text {
     font-size: 0.95rem;
     color: var(--text-muted, #8b949e);
     line-height: 1.6;
     margin-bottom: 25px;
 }
-
 .global-modal-actions {
     display: flex;
     gap: 15px;
     width: 100%;
 }
-
 .global-modal-btn {
     flex: 1;
     padding: 14px 20px;
@@ -545,38 +474,29 @@ body[data-theme="light"] #easter-egg-canvas {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
 .global-modal-btn.cancel {
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-muted, #8b949e);
 }
-
 .global-modal-btn.cancel:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
     transform: translateY(-2px);
 }
-
 .global-modal-btn.confirm {
     background: var(--danger-color, #ef4444);
     color: #fff;
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
 }
-
 .global-modal-btn.confirm:hover {
     background: var(--danger-hover, #dc2626);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
-
 .global-modal-btn:active {
     transform: translateY(0);
 }
-
 @keyframes globalModalFadeIn {
     to { opacity: 1; }
 }
-
 @keyframes globalModalSlideIn {
     from {
         opacity: 0;

@@ -1,50 +1,7 @@
 /* ============================================================
    FLAME-WALL STYLES
    ============================================================ */
-
-.flame-wall-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-    background: linear-gradient(
-        to bottom,
-        rgba(180, 30, 0, 0.85),
-        rgba(255, 80, 0, 0.6)
-    );
-    z-index: 9999;
-    pointer-events: all;
-    animation: flame-overlay-in 0.8s ease-out forwards;
-}
-.flame-wall-title {
-
-    font-size: clamp(40px, 7vw, 90px);
-    font-weight: 900;
-    color: #fff8e1;
-    text-transform: uppercase;
-    letter-spacing: 6px;
-    text-shadow:
-        0 0 20px rgba(255, 180, 0, 0.9),
-        0 0 50px rgba(255, 80, 0, 0.7),
-        3px 3px 0 #800;
-    margin: 0;
-}
-.flame-wall-subtitle {
-
-    font-size: clamp(14px, 2vw, 22px);
-    color: rgba(255, 230, 180, 0.85);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    margin: 0;
-}
-
-/* ============================================================
+.flame-wall-overlay {    position: absolute;    inset: 0;    display: flex;    flex-direction: column;    justify-content: center;    align-items: center;    gap: 16px;    background: linear-gradient(        to bottom,        rgba(180, 30, 0, 0.85),        rgba(255, 80, 0, 0.6)    );    z-index: 9999;    pointer-events: all;    animation: flame-overlay-in 0.8s ease-out forwards;}.flame-wall-title {    font-size: clamp(40px, 7vw, 90px);    font-weight: 900;    color: #fff8e1;    text-transform: uppercase;    letter-spacing: 6px;    text-shadow:        0 0 20px rgba(255, 180, 0, 0.9),        0 0 50px rgba(255, 80, 0, 0.7),        3px 3px 0 #800;    margin: 0;}.flame-wall-subtitle {    font-size: clamp(14px, 2vw, 22px);    color: rgba(255, 230, 180, 0.85);    letter-spacing: 4px;    text-transform: uppercase;    margin: 0;}/* ============================================================
    ANIMATIONS
    ============================================================ */
-@keyframes flame-overlay-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
+@keyframes flame-overlay-in {    from { opacity: 0; }    to   { opacity: 1; }}
