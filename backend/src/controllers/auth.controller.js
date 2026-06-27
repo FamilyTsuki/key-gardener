@@ -199,6 +199,9 @@ exports.loginWithGoogle = async (req, res, next) => {
 exports.me = async (req, res, next) => {
     try {
         const user = req.user;
+        if (!user) {
+            return res.json({ success: true, user: null });
+        }
         res.json({
             success: true,
             user: { id: user.id, username: user.username, email: user.email, personalPicture: user.personal_picture, is_admin: user.is_admin, settings: user.settings || {} },

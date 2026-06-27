@@ -14,6 +14,9 @@ export class AuthService {
             if (user) {
                 this._isAuthenticated = true;
                 this._currentUser = user;
+            } else {
+                this._isAuthenticated = false;
+                this._currentUser = null;
             }
         } catch (error) {
             this._isAuthenticated = false;

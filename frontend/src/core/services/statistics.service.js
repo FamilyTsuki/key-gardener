@@ -10,7 +10,7 @@ export class StatisticsService {
      */
     static async getStats() {
         
-        if (!token) throw new Error("User is not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("User is not authenticated");
 
         const response = await fetch("/api/stats", {
             headers: {
@@ -33,7 +33,7 @@ export class StatisticsService {
      */
     static async updateStats(statsData) {
         
-        if (!token) throw new Error("User is not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("User is not authenticated");
 
         const response = await fetch("/api/stats", {
             method: "POST",

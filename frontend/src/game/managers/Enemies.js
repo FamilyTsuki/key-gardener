@@ -323,6 +323,7 @@ export default class Enemies {
      * @returns {Promise<void>}
      */
     async spawnBoss(scene) {
+        this.isSpawningBoss = true;
         const bossRawPosition = { x: 5, y: -2 };
 
         const bossModel = await ModelLoader.loadAsync("/asset/game_assets/models/yameter.glb");
@@ -344,9 +345,11 @@ export default class Enemies {
         this.#container.push(this.#boss);
 
         this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
+        this.isSpawningBoss = false;
     }
 
     async spawnBugBoss(scene, level = 1) {
+        this.isSpawningBoss = true;
         const bossRawPosition = { x: 5, y: -4.2 };
 
         this.#boss = new BugBoss(
@@ -365,9 +368,11 @@ export default class Enemies {
         );
         this.#container.push(this.#boss);
         this.boss.mesh.position.set(this.boss.x * 3.2, 0, this.boss.y * 3.2);
+        this.isSpawningBoss = false;
     }
 
     async spawnEarthBoss(scene) {
+        this.isSpawningBoss = true;
         const bossRawPosition = { x: 5, y: -4.0 };
         const bossModel = await ModelLoader.loadAsync("/asset/game_assets/models/earth-boss.glb");
 
@@ -386,6 +391,7 @@ export default class Enemies {
             bossModel
         );
         this.#container.push(this.#boss);
+        this.isSpawningBoss = false;
     }
 }
 

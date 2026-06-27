@@ -44,11 +44,11 @@ export class SurviveState {
         const allStoryEventsTriggered = !this.storyEvents || this.storyEvents.every(e => e.isTriggered);
         const spawnerFinished = !this.phase.spawner.active;
         const enemiesDead = this.phase.enemies && this.phase.enemies.container.length === 0;
-        const noBoss = !this.phase.enemies || !this.phase.enemies.boss || this.phase.enemies.boss.isDead;
+        const noBoss = !this.phase.enemies || (!this.phase.enemies.boss && !this.phase.enemies.isSpawningBoss) || (this.phase.enemies.boss && this.phase.enemies.boss.isDead);
         const clearedAllEnemies = spawnerFinished && allStoryEventsTriggered && enemiesDead && noBoss;
 
         if (!this.isTransitioningToNextLevel && (timeUp || clearedAllEnemies)) {
-            if (!this.phase.enemies || !this.phase.enemies.boss) {
+            if (!this.phase.enemies || (!this.phase.enemies.boss && !this.phase.enemies.isSpawningBoss)) {
                 this.triggerPhaseTransition(gameEngine);
                 return false;
             }

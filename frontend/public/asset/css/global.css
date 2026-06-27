@@ -481,10 +481,13 @@ html:has(body.in-game), body.in-game {
 
 /* =============== LIGHT MODE CONFIGURATION =============== */
 body[data-theme="light"] {
-    --primary-color: #00b347;
-    --primary-hover: #00cc52;
-    --secondary-color: #009eb3;
-    --secondary-hover: #00b8cc;
+    --primary-color: #008c38;
+    --primary-hover: #00a342;
+    --secondary-color: #007a8c;
+    --secondary-hover: #008f9c;
+    --primary-translucent: rgba(0, 140, 56, 0.15);
+    --primary-translucent-hover: rgba(0, 140, 56, 0.08);
+    --secondary-translucent: rgba(0, 122, 140, 0.15);
     --bg-color: #f8fafc;
     --text-color: #0f172a;
     --text-muted: #475569;

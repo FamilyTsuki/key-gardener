@@ -43,9 +43,6 @@ export class PostsService {
     static async getAllPosts(sort = "hot") {
         
         const headers = {};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${this.API_URL}/?sort=${sort}`, { headers, credentials: "include" });
         return this.handleResponse(response, "Failed to fetch posts");
     }
@@ -58,9 +55,6 @@ export class PostsService {
     static async getPostById(id) {
         
         const headers = {};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${this.API_URL}/${id}`, { headers, credentials: "include" });
         return this.handleResponse(response, "Failed to fetch post");
     }
@@ -73,9 +67,6 @@ export class PostsService {
     static async getUserPosts(userId) {
         
         const headers = {};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${this.API_URL}/user/${userId}`, { headers, credentials: "include" });
         return this.handleResponse(response, "Failed to fetch user posts");
     }
@@ -90,7 +81,7 @@ export class PostsService {
     static async createPost(content, file = null) {
         
 
-        if (!token) {
+        if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
 
@@ -121,7 +112,7 @@ export class PostsService {
     static async updatePost(id, content) {
         
 
-        if (!token) {
+        if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
 
@@ -146,7 +137,7 @@ export class PostsService {
     static async deletePost(id) {
         
 
-        if (!token) {
+        if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
 
@@ -169,7 +160,7 @@ export class PostsService {
     static async upvotePost(id) {
         
 
-        if (!token) {
+        if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
 
@@ -192,7 +183,7 @@ export class PostsService {
     static async downvotePost(id) {
         
 
-        if (!token) {
+        if (!AuthService.isAuthenticated()) {
             throw new Error("Not authenticated");
         }
 
@@ -214,9 +205,6 @@ export class PostsService {
     static async getComments(id) {
         
         const headers = {};
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${this.API_URL}/${id}/comments`, { headers, credentials: "include" });
         return this.handleResponse(response, "Failed to fetch comments");
     }
@@ -229,7 +217,7 @@ export class PostsService {
      */
     static async addComment(id, content) {
         
-        if (!token) throw new Error("Not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/${id}/comments`, {
             method: "POST",
@@ -249,7 +237,7 @@ export class PostsService {
      */
     static async deleteComment(commentId) {
         
-        if (!token) throw new Error("Not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/comments/${commentId}`, {
             method: "DELETE",
@@ -262,7 +250,7 @@ export class PostsService {
 
     static async contestModeration(content, flaggedType) {
         
-        if (!token) throw new Error("Not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/contest`, {
             method: "POST",
@@ -277,7 +265,7 @@ export class PostsService {
 
     static async reportPost(postId, reason) {
         
-        if (!token) throw new Error("Not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/${postId}/report`, {
             method: "POST",
@@ -292,7 +280,7 @@ export class PostsService {
 
     static async getReportedPosts() {
         
-        if (!token) throw new Error("Not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/admin/reported`, {
             headers: {
@@ -304,7 +292,7 @@ export class PostsService {
 
     static async approvePost(postId) {
         
-        if (!token) throw new Error("Not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("Not authenticated");
 
         const response = await fetch(`${this.API_URL}/admin/${postId}/approve`, {
             method: "POST",

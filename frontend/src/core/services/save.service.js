@@ -12,7 +12,7 @@ export class SaveService {
      */
     static async getSaves() {
         
-        if (!token) return { success: false, saves: [] };
+        if (!AuthService.isAuthenticated()) return { success: false, saves: [] };
 
         const response = await fetch(this.API_URL, {
             method: "GET",
@@ -37,7 +37,7 @@ export class SaveService {
      */
     static async getSaveBySlot(slot) {
         
-        if (!token) throw new Error("User not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("User not authenticated");
 
         const response = await fetch(`${this.API_URL}/${slot}`, {
             method: "GET",
@@ -63,7 +63,7 @@ export class SaveService {
      */
     static async saveGame(slotNumber, gameState) {
         
-        if (!token) throw new Error("User not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("User not authenticated");
 
         const response = await fetch(this.API_URL, {
             method: "POST",
@@ -89,7 +89,7 @@ export class SaveService {
      */
     static async deleteSave(slot) {
         
-        if (!token) throw new Error("User not authenticated");
+        if (!AuthService.isAuthenticated()) throw new Error("User not authenticated");
 
         const response = await fetch(`${this.API_URL}/${slot}`, {
             method: "DELETE",

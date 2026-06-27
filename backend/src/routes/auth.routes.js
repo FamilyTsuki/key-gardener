@@ -33,7 +33,7 @@ router.post("/register", authLimiter, authController.register);
 router.post("/login", authLimiter, authController.login);
 router.post("/logout", authController.logout);
 router.post("/google", authLimiter, authController.loginWithGoogle);
-router.get("/me", authMiddleware, authController.me);
+router.get("/me", authMiddleware.optional, authController.me);
 router.post("/upload-avatar", authMiddleware, upload.single("avatar"), authController.uploadAvatar);
 router.post("/update-username", authMiddleware, authController.updateUsername);
 router.post("/update-email", authMiddleware, authController.updateEmail);

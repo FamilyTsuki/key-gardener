@@ -43,7 +43,7 @@ export default class Router {
         window.addEventListener("popstate", () => {
             this.route();
         });
-        document.addEventListener("DOMContentLoaded", () => {
+        const initRouter = () => {
             document.body.addEventListener("click", (e) => {
                 if (e.target.matches("[data-link]")) {
                     e.preventDefault();
@@ -51,7 +51,13 @@ export default class Router {
                 }
             });
             this.route();
-        });
+        };
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initRouter);
+        } else {
+            initRouter();
+        }
     }
     /**
      * Navigates to a specific URL without reloading the page.
