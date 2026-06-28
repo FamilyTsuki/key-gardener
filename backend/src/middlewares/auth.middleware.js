@@ -2,10 +2,11 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 /**
- * Verifies the token.
- * @param {any} req - The req.
- * @param {any} res - The res.
- * @param {any} next - The next.
+ * Express middleware to verify that the request contains a valid JWT token in cookies.
+ * Authenticates the user and sets req.user.
+ * @param {import("express").Request} req - The Express request object.
+ * @param {import("express").Response} res - The Express response object.
+ * @param {import("express").NextFunction} next - The next middleware function in the stack.
  */
 const verifyToken = async (req, res, next) => {
     const token = req.cookies.jwt;
@@ -45,10 +46,11 @@ const verifyToken = async (req, res, next) => {
 };
 
 /**
- * Optionals the verify token.
- * @param {any} req - The req.
- * @param {any} res - The res.
- * @param {any} next - The next.
+ * Express middleware that optionally verifies the JWT token.
+ * Does not block the request if the token is missing or invalid, but populates req.user if valid.
+ * @param {import("express").Request} req - The Express request object.
+ * @param {import("express").Response} res - The Express response object.
+ * @param {import("express").NextFunction} next - The next middleware function in the stack.
  */
 const optionalVerifyToken = async (req, res, next) => {
     const token = req.cookies.jwt;

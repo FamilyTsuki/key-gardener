@@ -11,7 +11,7 @@ const SPELL_CONFIGS = {
 class DuelManager {
     /**
      * Creates an instance of DuelManager.
-     * @param {any} io - The io.
+     * @param {import("socket.io").Server} io - The Socket.io server instance.
      */
     constructor(io) {
         this.io = io;
@@ -20,7 +20,7 @@ class DuelManager {
 
     /**
      * Retrieves a player's average WPM from the database statistics.
-     * @param {any} userId - The userId.
+     * @param {number} userId - The unique user ID.
      * @returns {Promise<number>} The player's average WPM (defaults to 30).
      */
     async getPlayerAverageWpm(userId) {
@@ -38,8 +38,8 @@ class DuelManager {
 
     /**
      * Creates a new multiplayer duel room state and notifies both players.
-     * @param {any} player1Socket - The player1Socket.
-     * @param {any} player2Socket - The player2Socket.
+     * @param {import("socket.io").Socket} player1Socket - The socket of player 1.
+     * @param {import("socket.io").Socket} player2Socket - The socket of player 2.
      * @returns {Promise<void>}
      */
     async createDuel(player1Socket, player2Socket) {
@@ -71,7 +71,7 @@ class DuelManager {
 
     /**
      * Marks a player ready, and starts the countdown once both players are ready.
-     * @param {any} socket - The socket.
+     * @param {import("socket.io").Socket} socket - The active player's socket connection.
      * @returns {void}
      */
     handlePlayerReady(socket) {
@@ -95,8 +95,9 @@ class DuelManager {
 
     /**
      * Updates the player's dynamic WPM in the active duel session.
-     * @param {any} socket - The socket.
-     * @param {any} data - The data.
+     * @param {import("socket.io").Socket} socket - The active player's socket connection.
+     * @param {Object} data - The payload containing the updated WPM.
+     * @param {number} data.wpm - The WPM achieved by the player.
      * @returns {void}
      */
     handleUpdateWpm(socket, data) {
@@ -117,7 +118,7 @@ class DuelManager {
 
     /**
      * Clears all pending automatic spell damage timeout schedules.
-     * @param {any} duel - The duel.
+     * @param {Object} duel - The active duel session object.
      * @returns {void}
      */
     clearDuelTimeouts(duel) {
@@ -132,7 +133,7 @@ class DuelManager {
 
     /**
      * Handles user disconnection during an active duel, notifying the room and cleaning timeouts.
-     * @param {any} socket - The socket.
+     * @param {import("socket.io").Socket} socket - The socket connection of the disconnecting player.
      * @returns {void}
      */
     handleDisconnect(socket) {
@@ -149,8 +150,9 @@ class DuelManager {
     /**
      * Handles the casting of a spell by a player, calculating its speed multiplier
      * dynamically based on the attacker/target WPM ratio for rubberband difficulty balancing.
-     * @param {any} socket - The socket.
-     * @param {any} data - The data.
+     * @param {import("socket.io").Socket} socket - The active player's socket connection.
+     * @param {Object} data - The spell data payload.
+     * @param {string} data.spellType - The name of the spell being cast.
      * @returns {void}
      */
     handleCastSpell(socket, data) {
@@ -207,8 +209,8 @@ class DuelManager {
 
     /**
      * Automatically applies damage for homing spells that fly for too long without being blocked.
-     * @param {any} roomId - The roomId.
-     * @param {any} spellId - The spellId.
+     * @param {string} roomId - The unique room ID.
+     * @param {string} spellId - The unique spell ID.
      * @returns {void}
      */
     applyAutomaticSpellHit(roomId, spellId) {
@@ -238,8 +240,9 @@ class DuelManager {
 
     /**
      * Handles a player's request to block an incoming spell, with validation to prevent cheating.
-     * @param {any} socket - The socket.
-     * @param {any} data - The data.
+     * @param {import("socket.io").Socket} socket - The active player's socket connection.
+     * @param {Object} data - The payload containing block information.
+     * @param {string} data.spellId - The ID of the spell to block.
      * @returns {void}
      */
     handleBlockSpell(socket, data) {
@@ -265,8 +268,9 @@ class DuelManager {
 
     /**
      * Applies damage to a player when hit by a projectile, with distance flight validation.
-     * @param {any} socket - The socket.
-     * @param {any} data - The data.
+     * @param {import("socket.io").Socket} socket - The active player's socket connection.
+     * @param {Object} data - The payload containing damage information.
+     * @param {string} data.spellId - The ID of the spell inflicting damage.
      * @returns {void}
      */
     handleTakeDamage(socket, data) {
@@ -309,8 +313,8 @@ class DuelManager {
 
     /**
      * Ends a duel session, notifying all room participants, cleaning timeouts, and deleting the state.
-     * @param {any} roomId - The roomId.
-     * @param {any} winnerId - The winnerId.
+     * @param {string} roomId - The unique room ID.
+     * @param {number} winnerId - The unique user ID of the winner.
      * @returns {void}
      */
     endDuel(roomId, winnerId) {

@@ -23,8 +23,9 @@ class TextModerator {
     }
 
     /**
-     * Squashs the text.
-     * @param {any} text - The text.
+     * Normalizes and squashes text to make bypass attempts (such as repeating letters or substituting characters) harder.
+     * @param {string} text - The input text to process.
+     * @returns {string} The normalized and squashed text string.
      */
     squashText(text) {
         if (!text) return "";
@@ -42,8 +43,9 @@ class TextModerator {
 
 
     /**
-     * Checks for ASCII Art patterns (e.g. braille characters, repeated special characters).
-     * @param {any} text - The text to check.
+     * Checks for ASCII Art patterns (e.g. braille characters, repeated special characters) to detect visual spam or bypasses.
+     * @param {string} text - The text to check.
+     * @returns {boolean} True if ASCII art patterns are detected, false otherwise.
      */
     checkAsciiArt(text) {
         if (!text) return false;
@@ -69,9 +71,10 @@ class TextModerator {
     }
 
     /**
-     * Checks the local self harm.
-     * @param {any} squashedText - The squashedText.
-     * @param {any} originalText - The originalText.
+     * Analyzes text for self-harm keywords and patterns.
+     * @param {string} squashedText - The squashed version of the text.
+     * @param {string} originalText - The original text before squashing.
+     * @returns {boolean} True if self-harm indicators are detected, false otherwise.
      */
     checkLocalSelfHarm(squashedText, originalText) {
         const lower = originalText.toLowerCase();
@@ -82,8 +85,9 @@ class TextModerator {
     }
 
     /**
-     * Has the inappropriate content.
-     * @param {any} text - The text.
+     * Main moderation entrance: checks text locally, then falls back to OpenAI Moderation API if configured.
+     * @param {string} text - The user content to moderate.
+     * @returns {Promise<boolean>} Resolves to true if inappropriate content is detected, false otherwise.
      */
     async hasInappropriateContent(text) {
         if (!text) return false;
@@ -103,8 +107,9 @@ class TextModerator {
     }
 
     /**
-     * Checks the with open a i l l m.
-     * @param {any} text - The text.
+     * Checks user content with OpenAI Chat Completion API to evaluate appropriateness.
+     * @param {string} text - The text content to analyze.
+     * @returns {Promise<boolean>} Resolves to true if OpenAI flags the content, false otherwise.
      */
         async checkWithOpenAILLM(text) {
         const controller = new AbortController();

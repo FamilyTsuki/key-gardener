@@ -4,8 +4,9 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Retrieves the filesfromdir.
- * @param {any} dirPath - The dirPath.
+ * Scans a directory within the game source folder and returns file basenames, filtering out core game classes.
+ * @param {string} dirPath - The relative path under frontend/src/game to read files from.
+ * @returns {string[]} An array of file names (without extensions).
  */
 const getFilesFromDir = (dirPath) => {
     try {

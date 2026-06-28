@@ -3,10 +3,10 @@ const db = require("../config/database");
 class Comment {
     /**
      * Creates a new comment in the database.
-     * @param {any} postId - The postId.
-     * @param {any} userId - The userId.
-     * @param {any} content - The content.
-     * @returns {Object} The created comment object.
+     * @param {number} postId - The ID of the post being commented on.
+     * @param {number} userId - The ID of the user authoring the comment.
+     * @param {string} content - The text content of the comment.
+     * @returns {Promise<Object>} The created comment object.
      */
     static async create(postId, userId, content) {
         const result = await db.query(
@@ -20,8 +20,8 @@ class Comment {
 
     /**
      * Retrieves all comments for a specific post.
-     * @param {any} postId - The postId.
-     * @returns {Array} Array of comment objects.
+     * @param {number} postId - The ID of the post.
+     * @returns {Promise<Array>} Array of comment objects.
      */
     static async getByPostId(postId) {
         const result = await db.query(
@@ -37,9 +37,9 @@ class Comment {
 
     /**
      * Deletes a comment by its ID and ensures the user owns it.
-     * @param {any} id - The id.
-     * @param {any} userId - The userId.
-     * @returns {Object} The deleted comment (or undefined if not found/unauthorized).
+     * @param {number} id - The ID of the comment to delete.
+     * @param {number} userId - The ID of the user trying to delete the comment.
+     * @returns {Promise<Object>} The deleted comment (or undefined if not found/unauthorized).
      */
     static async delete(id, userId) {
         const result = await db.query(

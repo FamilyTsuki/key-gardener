@@ -3,8 +3,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 /**
- * Sanitizes.
- * @param {any} str - The str.
+ * Sanitizes input strings to prevent basic HTML injection attacks.
+ * @param {string} str - The raw string to sanitize.
+ * @returns {string} The sanitized string with special characters escaped.
  */
 const sanitize = (str) => {
     if (typeof str !== 'string') return str;
@@ -20,8 +21,9 @@ const sanitize = (str) => {
 };
 
 /**
- * Parses the cookies.
- * @param {any} cookieString - The cookieString.
+ * Parses raw Cookie header string into an object dictionary.
+ * @param {string} cookieString - The raw Cookie header string.
+ * @returns {Object} An object mapping cookie names to their values.
  */
 const parseCookies = (cookieString) => {
     if (!cookieString) return {};

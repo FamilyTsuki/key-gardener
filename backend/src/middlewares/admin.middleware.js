@@ -2,10 +2,11 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 /**
- * Requires the admin.
- * @param {any} req - The req.
- * @param {any} res - The res.
- * @param {any} next - The next.
+ * Express middleware to verify that the request contains a valid JWT token (via cookies or Authorization header)
+ * and verify that the authenticated user possesses administrator privileges.
+ * @param {import("express").Request} req - The Express request object.
+ * @param {import("express").Response} res - The Express response object.
+ * @param {import("express").NextFunction} next - The next middleware function in the stack.
  */
 const requireAdmin = async (req, res, next) => {
     try {

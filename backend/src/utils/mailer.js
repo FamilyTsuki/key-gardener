@@ -4,7 +4,8 @@ let testAccount = null;
 let transporter = null;
 
 /**
- * Inits the mailer.
+ * Initializes the Nodemailer transporter using either configured SMTP credentials or a mock Ethereal test account.
+ * @returns {Promise<void>}
  */
 async function initMailer() {
     if (!transporter) {
@@ -36,9 +37,10 @@ async function initMailer() {
 }
 
 /**
- * Sends the reset code email.
- * @param {any} toEmail - The toEmail.
- * @param {any} resetCode - The resetCode.
+ * Sends a password reset email to the user with a secure link containing the reset code.
+ * @param {string} toEmail - The recipient's email address.
+ * @param {string} resetCode - The verification/reset code.
+ * @returns {Promise<string|boolean>} The preview URL for test emails, or true if sent successfully.
  */
 async function sendResetCodeEmail(toEmail, resetCode) {
     await initMailer();

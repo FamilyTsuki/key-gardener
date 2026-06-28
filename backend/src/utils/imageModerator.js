@@ -22,8 +22,9 @@ class ImageModerator {
     }
 
     /**
-     * Analyzes the image.
-     * @param {any} imagePath - The imagePath.
+     * Analyzes an image file for inappropriate content using OpenAI vision model, falling back to Google Cloud Vision Safe Search.
+     * @param {string} imagePath - The absolute filesystem path to the image file to moderate.
+     * @returns {Promise<boolean|Object>} Resolves to true/false from OpenAI, or a SafeSearchAnnotation object from Google.
      */
     async analyzeImage(imagePath) {
         const apiKey = process.env.OPENAI_API_KEY;
@@ -86,8 +87,9 @@ class ImageModerator {
     }
 
     /**
-     * Is the image inappropriate.
-     * @param {any} safeSearchData - The safeSearchData.
+     * Evaluates likelihood of adult or violent content from safe search data.
+     * @param {boolean|Object} safeSearchData - The result from analyzeImage (either boolean or SafeSearchAnnotation object).
+     * @returns {boolean} True if the image is determined to be inappropriate, false otherwise.
      */
     isImageInappropriate(safeSearchData) {
         if (typeof safeSearchData === "boolean") {
