@@ -315,6 +315,33 @@ body.dialogue-active .player-hud {
     display: none !important;
 }
 
+.objective-ui {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10, 10, 20, 0.7);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--primary-color, #4facfe);
+    border-radius: 8px;
+    padding: 10px 15px;
+    z-index: 9998;
+    color: #fff;
+    font-size: 1.2rem;
+    font-family: monospace;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: opacity 0.5s ease;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+}
+
+.objective-ui.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .boss-ui {
     position: fixed;
     top: 20px;
@@ -517,6 +544,12 @@ body.dialogue-active .player-hud {
         padding: 8px 12px;
         transform: translateX(-50%) scale(0.9);
         transform-origin: top center;
+    }
+
+    .objective-ui {
+        top: 10px;
+        font-size: 1rem;
+        padding: 8px 12px;
     }
 
     .boss-name {

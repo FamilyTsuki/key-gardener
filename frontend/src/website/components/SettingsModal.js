@@ -156,7 +156,10 @@ export class SettingsModal {
         );
 
         this.escapeHandler = (e) => {
-            if (e.key === "Escape") {
+            if (e.key === "Escape" || e.code === "Space" || e.key === "Enter") {
+                if ((e.code === "Space" || e.key === "Enter") && ["BUTTON", "INPUT", "SELECT"].includes(e.target.tagName)) {
+                    return;
+                }
                 e.preventDefault();
                 this.close();
             }

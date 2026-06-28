@@ -28,6 +28,14 @@ export default class GameView extends AbstractView {
                 if (!this.settingsModal && !this.skillTreeModal) {
                     this.openSettings();
                 }
+            } else if (e.key === "Enter") {
+                if (!this.settingsModal && !this.skillTreeModal && !document.body.classList.contains("dialogue-active")) {
+                    const unlockPopup = document.querySelector(".spell-unlock-overlay");
+                    const stDetailPopup = document.querySelector(".st-detail-popup");
+                    if (!unlockPopup && !stDetailPopup) {
+                        this.openSkillTree();
+                    }
+                }
             }
         };
         window.addEventListener("keydown", this.handleEscapeKey);
@@ -97,6 +105,12 @@ export default class GameView extends AbstractView {
                 el("span", { className: "clignotant" }, "_")
             ),
             el("div", { className: "spell-list-container none", id: "spell-list-container" }),
+            el(
+                "div",
+                { id: "objective-ui", className: "objective-ui hidden" },
+                el("span", { id: "objective-text" }, "Objectif:"),
+                el("span", { id: "objective-value" }, "--")
+            ),
             el(
                 "div",
                 { id: "boss-ui", className: "boss-ui hidden" },

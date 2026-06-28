@@ -55,8 +55,37 @@ export class SurviveState {
             }
         }
 
+        this.updateObjectiveUI();
         this.processStoryEvents(gameEngine);
         return true;
+    }
+
+    /**
+     * Updates the objective UI.
+     */
+    updateObjectiveUI() {
+        const objectiveUI = document.getElementById("objective-ui");
+        const objectiveText = document.getElementById("objective-text");
+        const objectiveValue = document.getElementById("objective-value");
+        const bossUI = document.getElementById("boss-ui");
+
+        if (!objectiveUI || !objectiveText || !objectiveValue) return;
+
+        if (bossUI && !bossUI.classList.contains("hidden")) {
+            objectiveUI.classList.add("hidden");
+            return;
+        }
+
+        if (this.duration !== null) {
+            objectiveUI.classList.remove("hidden");
+            objectiveText.textContent = "Survie :";
+            const remainingTime = Math.max(0, this.duration - this.survivalTime);
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = Math.floor(remainingTime % 60);
+            objectiveValue.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        } else {
+            objectiveUI.classList.add("hidden");
+        }
     }
 
     /**

@@ -90,10 +90,22 @@ export class SpellUnlockedPopup {
         btn.onclick = () => {
             popup.classList.remove("fade-in");
             popup.classList.add("fade-out");
+            if (popup.escapeHandler) window.removeEventListener("keydown", popup.escapeHandler);
             setTimeout(() => {
                 popup.remove();
                 newOnClose();
             }, 500);
         };
+
+        popup.escapeHandler = (e) => {
+            if (e.key === "Escape" || e.code === "Space" || e.key === "Enter") {
+                if ((e.code === "Space" || e.key === "Enter") && ["BUTTON", "INPUT", "SELECT"].includes(e.target.tagName)) {
+                    return;
+                }
+                e.preventDefault();
+                btn.click();
+            }
+        };
+        window.addEventListener("keydown", popup.escapeHandler);
     }
 }

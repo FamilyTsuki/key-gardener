@@ -39,6 +39,24 @@ export default class Enemy extends Actor {
         if (this.state.isWorm) {
             this.renderer.createSpawnZone(position);
         }
+
+        Object.defineProperty(this, "position", {
+            get: () => this.movement.position,
+            configurable: true,
+            enumerable: true
+        });
+
+        Object.defineProperty(this, "x", {
+            get: () => this.movement.position.x,
+            configurable: true,
+            enumerable: true
+        });
+
+        Object.defineProperty(this, "y", {
+            get: () => this.movement.position.y,
+            configurable: true,
+            enumerable: true
+        });
         this.renderer.loadModel(model);
 
         this.ui = new EnemyUI();

@@ -337,7 +337,10 @@ export class SkillTreeModal {
         );
 
         this.escapeHandler = (e) => {
-            if (e.key === "Escape") {
+            if (e.key === "Escape" || e.code === "Space" || e.key === "Enter") {
+                if ((e.code === "Space" || e.key === "Enter") && ["BUTTON", "INPUT", "SELECT"].includes(e.target.tagName)) {
+                    return;
+                }
                 e.preventDefault();
                 
                 const unlockPopup = document.querySelector(".spell-unlock-overlay");
