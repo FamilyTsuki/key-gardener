@@ -136,11 +136,13 @@ export default class Router {
         const appContainer = document.querySelector("#app");
         const oldLinks = document.querySelectorAll("link[data-dynamic-css]");
         const cssFiles = view.getCss();
+        const url = new URL(import.meta.url);
+        const version = url.searchParams.get("v");
         const loadStyles = cssFiles.map((cssPath) => {
             return new Promise((resolve, reject) => {
                 const linkElement = document.createElement("link");
                 linkElement.rel = "stylesheet";
-                linkElement.href = cssPath;
+                linkElement.href = version ? `${cssPath}?v=${version}` : cssPath;
                 linkElement.setAttribute("data-dynamic-css", "true");
                 linkElement.onload = () => resolve();
                 linkElement.onerror = () => reject(new Error(`Failed to load CSS: ${cssPath}`));

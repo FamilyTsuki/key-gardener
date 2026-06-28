@@ -67,19 +67,22 @@ export class WorldPhase extends GamePhase {
             }
         }
 
+        const url = new URL(import.meta.url);
+        const version = url.searchParams.get("v");
         const loadStyles = Array.from(cssFiles).map((cssPath) => {
-            if (document.querySelector(`link[href="${cssPath}"]`)) {
+            const href = version ? `${cssPath}?v=${version}` : cssPath;
+            if (document.querySelector(`link[href="${href}"]`)) {
                 return Promise.resolve();
             }
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 const linkElement = document.createElement("link");
                 linkElement.rel = "stylesheet";
-                linkElement.href = cssPath;
+                linkElement.href = href;
                 linkElement.setAttribute("data-dynamic-css", "true");
                 
                 linkElement.onload = () => resolve();
                 linkElement.onerror = () => {
-                    console.warn(`Failed to load event CSS: ${cssPath}`);
+                    console.warn(`Failed to load event CSS: ${href}`);
                     resolve();
                 };
                 
