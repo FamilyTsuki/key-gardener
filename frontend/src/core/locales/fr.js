@@ -51,7 +51,8 @@ export const fr = {
         loginRequired: "Vous devez être connecté pour accéder à cette page.",
         loginFailed: "Échec de la connexion",
         logoutFailed: "Échec de la déconnexion",
-        rateLimit: "Limite de requêtes dépassée. Veuillez patienter un instant."
+        rateLimit: "Limite de requêtes dépassée. Veuillez patienter un instant.",
+        sessionExpired: "Session expirée. Veuillez vous reconnecter."
     },
     
     /* ============================================================

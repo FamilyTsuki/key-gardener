@@ -51,7 +51,8 @@ export const en = {
         loginRequired: "You must be logged in to access this page.",
         loginFailed: "Login failed",
         logoutFailed: "Logout failed",
-        rateLimit: "Rate limit exceeded. Please wait a moment."
+        rateLimit: "Rate limit exceeded. Please wait a moment.",
+        sessionExpired: "Session expired. Please log in again."
     },
     
     /* ============================================================

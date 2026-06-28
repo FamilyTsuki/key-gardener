@@ -146,6 +146,26 @@ export class AuthService {
         SocketService.disconnect();
     }
 
+    static forceLogout() {
+        localStorage.removeItem("username");
+        localStorage.removeItem("userId");
+        this._isAuthenticated = false;
+        this._currentUser = null;
+        SocketService.disconnect();
+        import("../utils/FlashMessageManager.js").then(({ FlashMessageManager }) => {
+            import("../utils/LanguageManager.js").then(({ LanguageManager }) => {
+                FlashMessageManager.show(LanguageManager.t("auth.sessionExpired") || "Session expired. Please log in again.", "error");
+            }).catch(() => {
+                FlashMessageManager.show("Session expired. Please log in again.", "error");
+            });
+        }).catch(() => {});
+        if (window.appRouter) {
+            window.appRouter.navigateTo("/login");
+        } else {
+            window.location.href = "/login";
+        }
+    }
+
     /**
      * Checks if the user is authenticated.
      * @returns {boolean} True if the user is authenticated, false otherwise.
