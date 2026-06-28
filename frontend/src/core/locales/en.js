@@ -23,6 +23,28 @@ export const en = {
     },
 
     /* ============================================================
+       STORY SECTION
+       ============================================================ */
+    story: {
+        introLevel1: "Welcome to the system. You just took quite a fall.",
+        introLevel2: "I will be your guide. Move forward and type words to clear the obstacles.",
+        hubWelcome1: "These are the creatures corrupting this world.",
+        hubWelcome2: "Focus. Type fast and without errors to survive.",
+        skillTreePrompt1: "You're doing well. It is time to learn.",
+        skillTreePrompt2: "Visit the Dojo in the main menu to train and unlock new skills.",
+        flameWallWarn1: "Watch out! A wall of flames is approaching!",
+        flameWallWarn2: "Type the word quickly to escape.",
+        bugBossWarn1: "I sense a massive presence in the tunnels...",
+        bugBossWarn2: "It's a Corrupted Guardian. Get ready!",
+        skyfallWarn1: "Another drop! The zone is collapsing!",
+        skyfallWarn2: "Dodge the obstacles on your way down.",
+        midGameEncourage: "Your typing speed is improving. You are almost ready.",
+        postEarthBoss: "The Earth Core has been purified. The path is clear, let's move.",
+        finalBossWarn1: "This is it... The heart of the Infection.",
+        finalBossWarn2: "Focus all your energy on the keyboard. This is the final showdown!"
+    },
+
+    /* ============================================================
        AUTH SECTION
        ============================================================ */
     auth: {

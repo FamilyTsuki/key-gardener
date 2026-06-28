@@ -10,13 +10,13 @@ import { AudioManager } from "../managers/AudioManager.js";
  */
 export class IntroPhase extends GamePhase {
     static ONE_SECOND_MS = 1000;
-    static GLITCH_DELAY_MS = IntroPhase.ONE_SECOND_MS * 15.2;
-    static RIFT_OPENING_DELAY_MS = IntroPhase.GLITCH_DELAY_MS + IntroPhase.ONE_SECOND_MS * 0.8;
-    static STATIC_STATE_DELAY_MS = IntroPhase.RIFT_OPENING_DELAY_MS + IntroPhase.ONE_SECOND_MS * 0.4;
+    static GLITCH_DELAY_MS = IntroPhase.ONE_SECOND_MS * 25.2;
+    static RIFT_OPENING_DELAY_MS = IntroPhase.GLITCH_DELAY_MS + IntroPhase.ONE_SECOND_MS * 3.8;
+    static STATIC_STATE_DELAY_MS = IntroPhase.RIFT_OPENING_DELAY_MS + IntroPhase.ONE_SECOND_MS * 3.4;
     static DIALOGUE_DELAY_MS = IntroPhase.STATIC_STATE_DELAY_MS + IntroPhase.ONE_SECOND_MS * 0.8;
-    static RIFT_TRANSITION_DELAY_MS = IntroPhase.ONE_SECOND_MS * 1;
-    static IDLE_REMINDER_DELAY_MS = IntroPhase.ONE_SECOND_MS * 10;
-    static MIN_AUTO_SKIP_DELAY_MS = IntroPhase.ONE_SECOND_MS * 3;
+    static RIFT_TRANSITION_DELAY_MS = IntroPhase.ONE_SECOND_MS * 10;
+    static IDLE_REMINDER_DELAY_MS = IntroPhase.ONE_SECOND_MS * 20;
+    static MIN_AUTO_SKIP_DELAY_MS = IntroPhase.ONE_SECOND_MS * 10;
 
     /**
      * Creates an instance of IntroPhase.

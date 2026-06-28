@@ -23,6 +23,28 @@ export const fr = {
     },
 
     /* ============================================================
+       STORY SECTION
+       ============================================================ */
+    story: {
+        introLevel1: "Bienvenue dans le système. Tu viens de faire une sacrée chute.",
+        introLevel2: "Je serai ton guide. Avance et tape les mots pour franchir les obstacles.",
+        hubWelcome1: "Voici les créatures qui corrompent ce monde.",
+        hubWelcome2: "Concentre-toi. Frappe vite et sans erreur pour survivre.",
+        skillTreePrompt1: "Tu te débrouilles bien. Il est temps d'apprendre.",
+        skillTreePrompt2: "Va faire un tour au Dojo dans le menu principal pour t'entraîner et débloquer des compétences.",
+        flameWallWarn1: "Attention ! Un mur de flammes approche !",
+        flameWallWarn2: "Tape le mot rapidement pour t'enfuir.",
+        bugBossWarn1: "Je sens une énorme présence dans les galeries...",
+        bugBossWarn2: "C'est un Gardien Corrompu. Prépare-toi !",
+        skyfallWarn1: "Encore une chute ! La zone s'effondre !",
+        skyfallWarn2: "Esquive les obstacles pendant la descente.",
+        midGameEncourage: "Ton rythme de frappe s'améliore. Tu es presque prêt.",
+        postEarthBoss: "Le Cœur de la Terre a été purifié. Le chemin est dégagé, avançons.",
+        finalBossWarn1: "Nous y sommes... Le cœur de l'Infection.",
+        finalBossWarn2: "Concentre toute ton énergie sur le clavier. C'est l'affrontement final !"
+    },
+
+    /* ============================================================
        AUTH SECTION
        ============================================================ */
     auth: {

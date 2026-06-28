@@ -14,6 +14,7 @@ const seedLevels = async () => {
                     introType: "skyfall",
                     dialogue: ["story.introLevel1", "story.introLevel2"],
                     dialogueModel: "/asset/game_assets/models/player.glb",
+                    isSilhouetted: "true",
                     events: ["DoorEvent"]
                 }
             },
@@ -24,9 +25,9 @@ const seedLevels = async () => {
                     decorType: "grotte",
                     hasOuterTiles: "false",
                     playerHp: null,
-                    duration: 45,
-                    spawnInterval: 4,
-                    maxEnemies: 10,
+                    duration: 180,
+                    spawnInterval: 6,
+                    maxEnemies: 5,
                     enemyWeights: { basic: 100 },
                     storyEvents: [
                         {
@@ -34,41 +35,54 @@ const seedLevels = async () => {
                             triggerValue: 2,
                             actionType: "dialogue",
                             dialogue: ["story.hubWelcome1", "story.hubWelcome2"],
-                            dialogueModel: "/asset/game_assets/models/sempai.glb"
+                            dialogueModel: "/asset/game_assets/models/sempai.glb",
+                            isSilhouetted: "true"
                         }
                     ]
                 }
             },
             {
                 level_number: 3,
-                phase_type: "survive",
+                phase_type: "world",
                 options: {
-                    decorType: "styx",
-                    hasOuterTiles: "false",
-                    duration: 60,
-                    spawnInterval: 3.5,
-                    maxEnemies: 15,
-                    enemyWeights: { basic: 100 },
-                    storyEvents: [
-                        {
-                            triggerType: "time",
-                            triggerValue: 5,
-                            actionType: "dialogue",
-                            dialogue: ["story.skillTreePrompt1", "story.skillTreePrompt2"],
-                            dialogueModel: "/asset/game_assets/models/sempai.glb"
-                        }
-                    ]
+                    introType: "staircase",
+                    dialogue: ["story.skillTreePrompt1", "story.skillTreePrompt2"],
+                    dialogueModel: "/asset/game_assets/models/sempai.glb",
+                    isSilhouetted: "true",
+                    events: ["JumpWordEvent", "DoorEvent"]
                 }
             },
             {
                 level_number: 4,
                 phase_type: "survive",
                 options: {
+                    decorType: "styx",
+                    hasOuterTiles: "false",
+                    duration: 300,
+                    spawnInterval: 5,
+                    maxEnemies: 8,
+                    enemyWeights: { basic: 100 }
+                }
+            },
+            {
+                level_number: 5,
+                phase_type: "world",
+                options: {
+                    introType: "skyfall",
+                    dialogue: ["story.flameWallWarn1", "story.flameWallWarn2"],
+                    dialogueModel: "/asset/game_assets/models/sempai.glb",
+                    events: ["FlameWallEvent", "JumpWordEvent", "DoorEvent"]
+                }
+            },
+            {
+                level_number: 6,
+                phase_type: "survive",
+                options: {
                     decorType: "mine",
                     hasOuterTiles: "false",
-                    duration: 90,
-                    spawnInterval: 3,
-                    maxEnemies: 25,
+                    duration: 420,
+                    spawnInterval: 4,
+                    maxEnemies: 12,
                     enemyWeights: { basic: 80, speedy: 20 },
                     storyEvents: [
                         {
@@ -83,74 +97,32 @@ const seedLevels = async () => {
                 }
             },
             {
-                level_number: 5,
+                level_number: 7,
                 phase_type: "world",
                 options: {
-                    introType: "staircase",
-                    dialogue: ["story.flameWallWarn1", "story.flameWallWarn2"],
-                    dialogueModel: "/asset/game_assets/models/sempai.glb",
-                    events: ["FlameWallEvent", "JumpWordEvent", "DoorEvent"]
-                }
-            },
-            {
-                level_number: 6,
-                phase_type: "survive",
-                options: {
-                    decorType: "mine",
-                    hasOuterTiles: "false",
-                    duration: 90,
-                    spawnInterval: 2.5,
-                    maxEnemies: 35,
-                    enemyWeights: { basic: 70, speedy: 30 }
-                }
-            },
-            {
-                level_number: 7,
-                phase_type: "survive",
-                options: {
-                    decorType: "dungeon",
-                    duration: 90,
-                    spawnInterval: 2.5,
-                    maxEnemies: 40,
-                    enemyWeights: { basic: 60, speedy: 30, tank: 10 },
-                    storyEvents: [
-                        {
-                            triggerType: "time",
-                            triggerValue: 45,
-                            actionType: "spawnBoss",
-                            bossType: "giant_bug"
-                        }
-                    ]
+                    introType: "random",
+                    events: ["HoleEvent", "DoorEvent"]
                 }
             },
             {
                 level_number: 8,
+                phase_type: "survive",
+                options: {
+                    decorType: "dungeon",
+                    duration: 600,
+                    spawnInterval: 3.5,
+                    maxEnemies: 18,
+                    enemyWeights: { basic: 70, speedy: 30 }
+                }
+            },
+            {
+                level_number: 9,
                 phase_type: "world",
                 options: {
                     introType: "skyfall",
                     dialogue: ["story.skyfallWarn1", "story.skyfallWarn2"],
                     dialogueModel: "/asset/game_assets/models/sempai.glb",
-                    events: ["HoleEvent", "JumpWordEvent"]
-                }
-            },
-            {
-                level_number: 9,
-                phase_type: "survive",
-                options: {
-                    decorType: "dungeon",
-                    duration: 120,
-                    spawnInterval: 2,
-                    maxEnemies: 50,
-                    enemyWeights: { basic: 50, speedy: 30, tank: 20 },
-                    storyEvents: [
-                        {
-                            triggerType: "time",
-                            triggerValue: 5,
-                            actionType: "dialogue",
-                            dialogue: ["story.midGameEncourage"],
-                            dialogueModel: "/asset/game_assets/models/sempai.glb"
-                        }
-                    ]
+                    events: ["HoleEvent", "JumpWordEvent", "DoorEvent"]
                 }
             },
             {
@@ -178,41 +150,39 @@ const seedLevels = async () => {
                 level_number: 12,
                 phase_type: "survive",
                 options: {
-                    decorType: "grotte",
-                    duration: 150,
-                    spawnInterval: 1.5,
-                    maxEnemies: 70,
-                    enemyWeights: { basic: 40, speedy: 30, tank: 20, sniper: 10 }
+                    decorType: "styx",
+                    duration: 720,
+                    spawnInterval: 3,
+                    maxEnemies: 25,
+                    enemyWeights: { basic: 50, speedy: 30, tank: 10, sniper: 10 },
+                    storyEvents: [
+                        {
+                            triggerType: "time",
+                            triggerValue: 5,
+                            actionType: "dialogue",
+                            dialogue: ["story.midGameEncourage"],
+                            dialogueModel: "/asset/game_assets/models/sempai.glb"
+                        }
+                    ]
                 }
             },
             {
                 level_number: 13,
-                phase_type: "survive",
+                phase_type: "world",
                 options: {
-                    decorType: "default",
-                    duration: 150,
-                    spawnInterval: 1.2,
-                    maxEnemies: 80,
-                    enemyWeights: { basic: 30, speedy: 30, tank: 30, sniper: 10 },
-                    storyEvents: [
-                        {
-                            triggerType: "time",
-                            triggerValue: 60,
-                            actionType: "spawnBoss",
-                            bossType: "giant_bug"
-                        }
-                    ]
+                    introType: "random",
+                    events: ["FlameWallEvent", "JumpWordEvent", "DoorEvent"]
                 }
             },
             {
                 level_number: 14,
                 phase_type: "survive",
                 options: {
-                    decorType: "default",
-                    duration: 180,
-                    spawnInterval: 1,
-                    maxEnemies: 100,
-                    enemyWeights: { basic: 20, speedy: 40, tank: 30, sniper: 10 },
+                    decorType: "dungeon",
+                    duration: 900,
+                    spawnInterval: 2.5,
+                    maxEnemies: 40,
+                    enemyWeights: { basic: 30, speedy: 40, tank: 20, sniper: 10 },
                     storyEvents: [
                         {
                             triggerType: "time",

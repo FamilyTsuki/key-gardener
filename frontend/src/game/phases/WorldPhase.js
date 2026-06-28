@@ -43,6 +43,7 @@ export class WorldPhase extends GamePhase {
             this.introType = options.introType || "random";
             this.dialogue = options.dialogue || [];
             this.dialogueModel = options.dialogueModel || null;
+            this.isSilhouetted = options.isSilhouetted === "true" || options.isSilhouetted === true;
             this.storyEvents = (options.storyEvents || []).map(evt => ({ ...evt, isTriggered: false }));
         }
         
@@ -373,7 +374,8 @@ export class WorldPhase extends GamePhase {
                         this.dBox = null;
                     }
                     this.gameEngine.isPaused = false;
-                }
+                },
+                this.isSilhouetted
             );
         }
     }

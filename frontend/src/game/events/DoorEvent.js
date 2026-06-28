@@ -3,6 +3,7 @@ import { applyTriplanarMapping } from "../utilities/TextureUtils.js";
 import { WorldEvent } from "./WorldEvent.js";
 import { LanguageManager } from "../../core/utils/LanguageManager.js";
 import { Icons } from "../../core/utils/Icons.js";
+import { AudioManager } from "../managers/AudioManager.js";
 
 /**
  * Event for handling interaction with a door in the world phase.
@@ -307,6 +308,7 @@ export class DoorEvent extends WorldEvent {
                 resolve();
                 return;
             }
+            AudioManager.playSFX("/asset/game_assets/sounds/door.wav", "environment", 1.0);
             const duration = 1500;
             const startTime = performance.now();
 
@@ -374,6 +376,7 @@ export class DoorEvent extends WorldEvent {
         }
 
         if (this.isDoorSequenceActive) {
+            AudioManager.playSFX("/asset/game_assets/sounds/tic.wav", "ui", 0.5);
             const keyName = event.key.toUpperCase();
             if (keyName === this.doorSequence[this.doorSequenceIndex]) {
                 this.doorSequenceIndex++;

@@ -254,7 +254,7 @@ export default class GameView extends AbstractView {
             score: 0,
         };
 
-        if (token) {
+        if (AuthService.isAuthenticated()) {
             try {
                 await SaveService.saveGame(activeSlot, currentGameState);
                 FlashMessageManager.show(LanguageManager.t("game.saveSuccess"), "success");
