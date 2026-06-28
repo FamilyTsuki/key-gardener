@@ -1,4 +1,8 @@
 export const en = {
+    common: {
+        yes: "Yes",
+        no: "No"
+    },
 
     /* ============================================================
        FAQ SECTION
@@ -227,7 +231,8 @@ export const en = {
         fallDeep: "deep : ",
         duelDataLost: "Duel data lost. Please restart the duel.",
         deathDevoured: "The enemy devoured you.",
-        deathCrushed: "Crushed by an enemy."
+        deathCrushed: "Crushed by an enemy.",
+        deadCrushed: "Crushed by the environment."
     },
     
     /* ============================================================
@@ -377,8 +382,9 @@ export const en = {
         when: "When?",
         afterTime: "After Time (sec)",
         atDistance: "At Distance (tiles)",
-        model3D: "3D Model (.glb):",
-        dialogues: "Dialogues:",
+        model3D: "3D Model :",
+        isSilhouetted: "Silhouetted :",
+        dialogues: "Dialogues :",
         dialoguePlaceholder: "1 bubble per line...",
         hp: "Health Points (HP):",
         enemyType: "Enemy Type:",

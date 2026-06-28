@@ -1,4 +1,8 @@
 export const fr = {
+    common: {
+        yes: "Oui",
+        no: "Non"
+    },
 
     /* ============================================================
        FAQ SECTION
@@ -251,7 +255,8 @@ export const fr = {
         fallCenter: "milieu",
         fallRight: "droite",
         fallDeep: "profondeur : ",
-        duelDataLost: "Données de duel perdues. Veuillez relancer le duel."
+        duelDataLost: "Données de duel perdues. Veuillez relancer le duel.",
+        deadCrushed: "Écrasé par le décor."
     },
     
     /* ============================================================
@@ -401,8 +406,9 @@ export const fr = {
         when: "Quand ?",
         afterTime: "Après Temps (sec)",
         atDistance: "À Distance (cases)",
-        model3D: "Modèle 3D (.glb):",
-        dialogues: "Dialogues:",
+        model3D: "Modèle 3D :",
+        isSilhouetted: "Modèle noirci :",
+        dialogues: "Dialogues :",
         dialoguePlaceholder: "1 bulle par ligne...",
         hp: "Points de vie (PV) :",
         enemyType: "Type d'ennemi :",

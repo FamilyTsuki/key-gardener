@@ -36,6 +36,7 @@ export const EVENT_REGISTRY = [
         availableIn: ["survive", "world", "fall", "void", "training"],
         fields: [
             { id: "dialogueModel", type: "text", labelKey: "admin.model3D", defaultValue: "/asset/game_assets/models/player.glb" },
+            { id: "isSilhouetted", type: "select", labelKey: "admin.isSilhouetted", options: [{ value: "false", labelKey: "common.no" }, { value: "true", labelKey: "common.yes" }], defaultValue: "false" },
             { id: "dialogue", type: "textarea", labelKey: "admin.dialogues", placeholderKey: "admin.dialoguePlaceholder", defaultValue: "" }
         ]
     },

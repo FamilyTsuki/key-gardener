@@ -133,11 +133,12 @@ export class SurviveState {
             if (eventToTrigger.dialogue && eventToTrigger.dialogue.length > 0 && !(eventToTrigger.dialogue.length === 1 && eventToTrigger.dialogue[0] === 'Hello!')) {
                 gameEngine.isPaused = true;
                 const dBox = new DialogueBox();
+                const isSilhouetted = eventToTrigger.isSilhouetted === "true" || eventToTrigger.isSilhouetted === true;
                 dBox.show(eventToTrigger.dialogue, eventToTrigger.dialogueModel || "/asset/game_assets/models/player.glb", () => {
                     dBox.destroy();
                     gameEngine.isPaused = false;
                     this.executeEventAction(eventToTrigger);
-                });
+                }, isSilhouetted);
             } else {
                 this.executeEventAction(eventToTrigger);
             }
