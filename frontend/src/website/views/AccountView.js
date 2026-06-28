@@ -147,7 +147,20 @@ export default class AccountView extends AbstractView {
         );
         const dangerZoneContent = el("div", { className: "danger-zone-content" },
             el("p", {}, LanguageManager.t("account.deleteAccountConfirm")),
-            el("button", { className: "btn-danger-small", onclick: () => this.showDeleteModal() }, LanguageManager.t("account.deleteAccountBtn"))
+            el("div", { className: "danger-zone-buttons" },
+                el("button", { 
+                    className: "btn-primary-small", 
+                    onclick: async () => {
+                        try {
+                            await AuthService.exportData();
+                            FlashMessageManager.show(LanguageManager.t("account.exportDataSuccess"), "success");
+                        } catch (error) {
+                            FlashMessageManager.show(LanguageManager.t("account.exportDataFailed"), "error");
+                        }
+                    } 
+                }, LanguageManager.t("account.exportDataBtn")),
+                el("button", { className: "btn-danger-small", onclick: () => this.showDeleteModal() }, LanguageManager.t("account.deleteAccountBtn"))
+            )
         );
 
         dangerZoneHeader.onclick = () => {
@@ -418,4 +431,4 @@ export default class AccountView extends AbstractView {
         }
     }
 }
-
+

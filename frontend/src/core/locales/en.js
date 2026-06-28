@@ -263,6 +263,9 @@ export const en = {
     account: {
         deleteAccountTitle: "Danger Zone",
         deleteAccountBtn: "Delete Account",
+        exportDataBtn: "Export My Data",
+        exportDataSuccess: "Data exported successfully!",
+        exportDataFailed: "Failed to export data.",
         deleteAccountConfirm: "Are you absolutely sure you want to delete your account? This action is irreversible and will erase all your saves, posts, and statistics.",
         deleteAccountSuccess: "Your account has been successfully deleted.",
         cancel: "Cancel",

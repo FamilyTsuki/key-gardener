@@ -428,3 +428,43 @@ exports.deleteAccount = async (req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * Exports all user data (Right to Data Portability).
+ * @param {any} req - The req.
+ * @param {any} res - The res.
+ * @param {any} next - The next.
+ */
+exports.exportData = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const db = require('../config/database');
+
+        const userResult = await db.query("SELECT id, username, email, created_at, settings FROM users WHERE id = $1", [userId]);
+        const user = userResult.rows[0];
+
+        const statsResult = await db.query("SELECT * FROM user_statistics WHERE user_id = $1", [userId]);
+        const stats = statsResult.rows[0] || {};
+
+        const postsResult = await db.query("SELECT id, content, created_at, upvotes, downvotes FROM posts WHERE user_id = $1", [userId]);
+        const posts = postsResult.rows;
+
+        const savesResult = await db.query("SELECT slot_number, game_state, last_played FROM saves WHERE user_id = $1", [userId]);
+        const saves = savesResult.rows;
+
+        const exportData = {
+            user_info: user,
+            statistics: stats,
+            posts: posts,
+            game_saves: saves,
+            exported_at: new Date().toISOString()
+        };
+
+        res.setHeader("Content-Disposition", `attachment; filename=keyboard_survivor_data_${user.username}.json`);
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).send(JSON.stringify(exportData, null, 2));
+
+    } catch (error) {
+        next(error);
+    }
+};

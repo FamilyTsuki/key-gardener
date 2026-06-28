@@ -287,6 +287,9 @@ export const fr = {
     account: {
         deleteAccountTitle: "Zone de Danger",
         deleteAccountBtn: "Supprimer mon compte",
+        exportDataBtn: "Exporter mes données",
+        exportDataSuccess: "Données exportées avec succès !",
+        exportDataFailed: "Échec de l'exportation des données.",
         deleteAccountConfirm: "Êtes-vous absolument sûr de vouloir supprimer votre compte ? Cette action est irréversible et effacera toutes vos sauvegardes, posts et statistiques.",
         deleteAccountSuccess: "Votre compte a été supprimé avec succès.",
         cancel: "Annuler",

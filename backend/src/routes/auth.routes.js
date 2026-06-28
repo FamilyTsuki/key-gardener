@@ -42,5 +42,6 @@ router.post("/reset-password", authLimiter, authController.resetPassword);
 router.post("/change-password", authMiddleware, authController.changePassword);
 router.patch("/settings", authMiddleware, authController.updateSettings);
 router.delete("/me", authMiddleware, authController.deleteAccount);
+router.get("/export-data", authMiddleware, authController.exportData);
 
 module.exports = router;

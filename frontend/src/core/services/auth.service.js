@@ -352,17 +352,56 @@ export class AuthService {
     static async deleteAccount() {
         const response = await fetch(`${this.API_URL}/me`, {
             method: "DELETE",
-            credentials: "include"
+            headers: {
+                Authorization: `Bearer ${this.getToken()}`
+            }
         });
 
         const data = await this.handleResponse(response, "Account deletion failed");
 
-        this._isAuthenticated = false;
-        this._currentUser = null;
-        localStorage.removeItem("username");
-        localStorage.removeItem("userId");
+        this.logout();
 
         return data;
+    }
+
+    /**
+     * Downloads the user's data as a JSON file.
+     */
+    static async exportData() {
+        const token = this.getToken();
+        if (!token) throw new Error("Not authenticated");
+
+        const response = await fetch(`${this.API_URL}/export-data`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to export data");
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        
+        let filename = "keyboard_survivor_data.json";
+        const disposition = response.headers.get('Content-Disposition');
+        if (disposition && disposition.indexOf('attachment') !== -1) {
+            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) { 
+              filename = matches[1].replace(/['"]/g, '');
+            }
+        }
+        
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
     }
 }
 
