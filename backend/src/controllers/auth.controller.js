@@ -6,8 +6,9 @@ const { sendResetCodeEmail } = require("../utils/mailer");
 const { validatePassword } = require("../utils/validation");
 
 /**
- * Generates the token.
- * @param {any} userId - The userId.
+ * Generates a signed JWT token for the user.
+ * @param {number} userId - The unique identifier of the user.
+ * @returns {string} The signed JWT token.
  */
 const generateToken = (userId) => {
     return jwt.sign(
@@ -18,9 +19,9 @@ const generateToken = (userId) => {
 };
 
 /**
- * Set the token cookie.
- * @param {Object} res - The Express response object.
- * @param {any} token - The token.
+ * Sets the JWT token in a secure, HTTP-only cookie.
+ * @param {import("express").Response} res - The Express response object.
+ * @param {string} token - The JWT token to store in the cookie.
  */
 const setTokenCookie = (res, token) => {
     res.cookie("jwt", token, {
@@ -132,9 +133,9 @@ exports.login = async (req, res, next) => {
 
 /**
  * Handles authentication via Google OAuth2 credential validation.
- * @param {any} req - The req.
- * @param {any} res - The res.
- * @param {any} next - The next.
+ * @param {import("express").Request} req - The Express request object.
+ * @param {import("express").Response} res - The Express response object.
+ * @param {import("express").NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
  */
 exports.loginWithGoogle = async (req, res, next) => {
@@ -401,10 +402,10 @@ exports.updateSettings = async (req, res, next) => {
 };
 
 /**
- * Delete the user account (Right to be Forgotten).
- * @param {any} req - The req.
- * @param {any} res - The res.
- * @param {any} next - The next.
+ * Deletes the authenticated user's account and clears cookies (Right to be Forgotten).
+ * @param {import("express").Request} req - The Express request object.
+ * @param {import("express").Response} res - The Express response object.
+ * @param {import("express").NextFunction} next - The next middleware function.
  */
 exports.deleteAccount = async (req, res, next) => {
     try {
@@ -430,10 +431,10 @@ exports.deleteAccount = async (req, res, next) => {
 };
 
 /**
- * Exports all user data (Right to Data Portability).
- * @param {any} req - The req.
- * @param {any} res - The res.
- * @param {any} next - The next.
+ * Exports all user data including statistics, saves, and posts in JSON format (Right to Data Portability).
+ * @param {import("express").Request} req - The Express request object.
+ * @param {import("express").Response} res - The Express response object.
+ * @param {import("express").NextFunction} next - The next middleware function.
  */
 exports.exportData = async (req, res, next) => {
     try {
