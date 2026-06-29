@@ -29,6 +29,19 @@ export default class GameView extends AbstractView {
                     this.openSettings();
                 }
             } else if (e.key === "Enter") {
+                if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.isContentEditable) {
+                    return;
+                }
+                const currentPhase = this.engine ? this.engine.gamePhase : null;
+                if (!currentPhase || currentPhase.constructor.name !== "WorldPhase") {
+                    return;
+                }
+                if (currentPhase.isTransitioning || currentPhase.isPlayingIntro || currentPhase.isStunnedAfterFall) {
+                    return;
+                }
+                if (document.querySelector(".enter-prompt-overlay") || document.querySelector(".door-mini-game-overlay")) {
+                    return;
+                }
                 if (!this.settingsModal && !this.skillTreeModal && !document.body.classList.contains("dialogue-active")) {
                     const unlockPopup = document.querySelector(".spell-unlock-overlay");
                     const stDetailPopup = document.querySelector(".st-detail-popup");

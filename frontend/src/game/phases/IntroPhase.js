@@ -71,13 +71,15 @@ export class IntroPhase extends GamePhase {
         if (!this.video) return;
 
         this.video.volume = 0;
-        this.video.muted = false;
+        this.video.muted = true;
 
         const playPromise = this.video.play();
         if (playPromise !== undefined) {
-            playPromise.catch(() => {
+            playPromise.then(() => {
+                this.video.muted = false;
+            }).catch(() => {
                 this.video.muted = true;
-                this.video.play();
+                this.video.play().catch(e => console.warn("Video playback blocked", e));
             });
         }
 
@@ -453,6 +455,16 @@ export class IntroPhase extends GamePhase {
      * Cleans up all DOM elements and timeouts.
      */
     cleanup() {
+        if (this.video) {
+            try {
+                this.video.pause();
+                this.video.src = "";
+                this.video.load();
+            } catch (e) {
+                console.warn(e);
+            }
+            this.video = null;
+        }
         if (this.glitchSoundNode) {
             try { this.glitchSoundNode.stop(); } catch (e) {}
             this.glitchSoundNode = null;
