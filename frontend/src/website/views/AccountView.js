@@ -281,7 +281,7 @@ export default class AccountView extends AbstractView {
      * Replaces the username text with an input field.
      */
     editUsernameClick() {
-        const input = el("input", { maxLength: 50,  type: "text", value: this.usernameSpan.textContent, className: "form-input name"  });
+        const input = el("input", { maxLength: 50,  type: "text", value: this.usernameSpan.textContent, className: "form-input name account-info-input"  });
         this.usernameSpan.replaceWith(input);
         input.focus();
         
@@ -338,7 +338,7 @@ export default class AccountView extends AbstractView {
      * Replaces the email text with an input field.
      */
     editUsermailClick() {
-        const input = el("input", { maxLength: 100,  type: "email", value: this.usermail.textContent, className: "form-input"  });
+        const input = el("input", { maxLength: 100,  type: "email", value: this.usermail.textContent, className: "form-input account-info-input"  });
         this.usermail.replaceWith(input);
         input.focus();
         

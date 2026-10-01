@@ -313,7 +313,8 @@ const startServer = async () => {
             console.log("✅ [STATUS] All systems operational. No errors detected.");
         });
     } catch (error) {
-        const cleanMessage = error.message
+        const errorText = error.message || error.code || String(error);
+        const cleanMessage = errorText
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "");
         console.error("❌ [ERROR] Failed to start server due to database connection error:", cleanMessage);

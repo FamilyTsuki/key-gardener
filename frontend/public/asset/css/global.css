@@ -285,8 +285,8 @@ body.in-game {
     }
 }
 body[data-theme="light"] {
-    --primary-color: #00ff66;
-    --primary-hover: #00cc52;
+    --primary-color: #00be4c;
+    --primary-hover: #008937;
     --secondary-color: #0ea5e9;
     --secondary-hover: #0284c7;
     --primary-translucent: rgba(0, 255, 102, 0.15);

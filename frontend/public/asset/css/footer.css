@@ -143,11 +143,11 @@ body[data-theme="light"] .home-footer .footer-bottom {
     border-top: 1px solid var(--card-border) !important;
 }
 body[data-theme="light"] .footer-support-link {
-    color: #0d9488 !important;
-    border-color: #0d9488 !important;
+    color: #08380d !important;
+    border-color: #02510e !important;
     background: transparent !important;
 }
 body[data-theme="light"] .footer-support-link:hover {
     color: #ffffff !important;
-    background: #0d9488 !important;
+    background: #0b850f !important;
 }

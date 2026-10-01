@@ -619,7 +619,7 @@ body[data-theme="light"] .home-feature-title {
 body[data-theme="light"] .home-presantation-container,
 body[data-theme="light"] .home-info-container,
 body[data-theme="light"] .home-motivation-container {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 1.5rem;
     box-sizing: border-box;
     border-radius: 20px;

@@ -76,6 +76,12 @@
     text-align: center;
 }
 
+.account-info-input {
+    width: 350px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .edit {
     grid-column: 3;
     justify-self: start;
@@ -199,16 +205,13 @@
 }
 .rank-hacker {
     color: #ff0055;
-    text-shadow: 0 0 10px #ff0055;
     font-size: 1.4rem;
 }
 .rank-pro {
     color: #bb86fc;
-    text-shadow: 0 0 8px #bb86fc;
 }
 .rank-intermediate {
     color: #03dac6;
-    text-shadow: 0 0 5px #03dac6;
 }
 .rank-noob {
     color: #9ca3af;

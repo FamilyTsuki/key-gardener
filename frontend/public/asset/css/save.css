@@ -39,9 +39,8 @@
     z-index: 1;
 }
 
-.save-card:hover {
+.save-card:not(.menu-open):hover {
     border-color: var(--primary-color);
-    transform: translateY(-2px);
     z-index: 10;
 }
 
