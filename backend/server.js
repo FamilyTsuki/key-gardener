@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -89,6 +90,11 @@ const staticCacheOptions = {
     },
 };
 
+app.use((req, res, next) => {
+    res.locals.cspNonce = crypto.randomBytes(16).toString("base64");
+    next();
+});
+
 app.use(
     helmet({
         crossOriginOpenerPolicy: false,
@@ -97,7 +103,12 @@ app.use(
             useDefaults: true,
             directives: {
                 "upgrade-insecure-requests": null,
-                "script-src": ["'self'", "'unsafe-inline'", "https://accounts.google.com", "https://static.cloudflareinsights.com"],
+                "script-src": [
+                    "'self'",
+                    (req, res) => `'nonce-${res.locals.cspNonce}'`,
+                    "https://accounts.google.com",
+                    "https://static.cloudflareinsights.com",
+                ],
                 "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com"],
                 "font-src": ["'self'", "data:", "https://fonts.gstatic.com"],
                 "connect-src": ["'self'", "blob:", "https://accounts.google.com", "https://cloudflareinsights.com"],
@@ -255,7 +266,7 @@ const buildSeoTags = ({ title, descFr, descEn, schemaType, canonicalUrl, baseUrl
         </script>
         `;
 
-const injectHtmlPlaceholders = (html, { title, seoTags, canonicalUrl, gameName, googleClientId, supportEmail }) => {
+const injectHtmlPlaceholders = (html, { title, seoTags, canonicalUrl, gameName, googleClientId, supportEmail, nonce }) => {
     return html
         .replace(/<html lang="en">/, `<html lang="fr">`)
         .replace(/<title>.*<\/title>/, `<title>${title}</title>`)
@@ -263,6 +274,7 @@ const injectHtmlPlaceholders = (html, { title, seoTags, canonicalUrl, gameName, 
         .replace("</head>", `  <link rel="canonical" href="${canonicalUrl}" >\n</head>`)
         .replace("GOOGLE_CLIENT_ID_PLACEHOLDER", googleClientId)
         .replace("SUPPORT_EMAIL_PLACEHOLDER", supportEmail)
+        .replaceAll("NONCE_PLACEHOLDER", nonce || "")
         .replaceAll("Key Gardener", gameName);
 };
 
@@ -290,6 +302,7 @@ app.get("*", (req, res) => {
             gameName: GAME_NAME,
             googleClientId: process.env.GOOGLE_CLIENT_ID,
             supportEmail: process.env.SUPPORT_EMAIL,
+            nonce: res.locals.cspNonce,
         });
         res.send(finalHtml);
     });

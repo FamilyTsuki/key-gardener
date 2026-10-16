@@ -28,7 +28,7 @@
         <link rel="stylesheet" href="/asset/css/spellPopup.css" />
         <link rel="stylesheet" href="/asset/css/skillTree.css" />
 
-        <script type="importmap">
+        <script type="importmap" nonce="NONCE_PLACEHOLDER">
             {
                 "imports": {
                     "three": "/node_modules/three/build/three.module.js",
@@ -37,11 +37,12 @@
                 }
             }
         </script>
-        <script>
+        <script nonce="NONCE_PLACEHOLDER">
             window.GOOGLE_CLIENT_ID = "GOOGLE_CLIENT_ID_PLACEHOLDER";
             window.SUPPORT_EMAIL = "SUPPORT_EMAIL_PLACEHOLDER";
             window.GAME_NAME = "Key Gardener";
         </script>
+        <script src="/asset/js/bootstrap.js"></script>
         <script
             src="https://accounts.google.com/gsi/client"
             async
@@ -50,21 +51,6 @@
     </head>
 
     <body>
-        <script>
-            (function () {
-                var savedTheme = localStorage.getItem("theme");
-                if (savedTheme === "light") {
-                    document.body.setAttribute("data-theme", "light");
-                } else if (savedTheme === "dark") {
-                    document.body.removeAttribute("data-theme");
-                } else if (
-                    window.matchMedia &&
-                    window.matchMedia("(prefers-color-scheme: light)").matches
-                ) {
-                    document.body.setAttribute("data-theme", "light");
-                }
-            })();
-        </script>
         <div id="nav-container"></div>
         <div id="app"></div>
         <div id="page-transition"></div>
@@ -78,15 +64,6 @@
             <span class="dot">.</span><span class="dot">.</span
             ><span class="dot">.</span>
         </div>
-        <script>
-            if (window.location.pathname === "/game") {
-                document.body.classList.add("in-game");
-                document.addEventListener("DOMContentLoaded", function () {
-                    var overlay = document.getElementById("page-transition");
-                    if (overlay) overlay.classList.add("fade-in");
-                });
-            }
-        </script>
         <script src="/socket.io/socket.io.js"></script>
         <script type="module" src="/src/main.js"></script>
         <script
