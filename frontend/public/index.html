@@ -1,10 +1,10 @@
- <!doctype html>
+<!doctype html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" >
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Key Gardener</title>
-        
+
         <!-- SSR Tags Placeholder -->
         <!-- SEO meta tags, OpenGraph, Twitter cards, and JSON-LD will be injected here by server.js -->
         <link
@@ -12,18 +12,21 @@
             href="/asset/img/favicon.webp"
             sizes="32x32"
             type="image/png"
-        >
+        />
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/asset/css/global.css" >
-        <link rel="stylesheet" href="/asset/css/components/base.css" >
-        <link rel="stylesheet" href="/asset/css/nav.css" >
-        <link rel="stylesheet" href="/asset/css/flash.css" >
-        <link rel="stylesheet" href="/asset/css/dialogue.css" >
-        <link rel="stylesheet" href="/asset/css/spellPopup.css" >
-        <link rel="stylesheet" href="/asset/css/skillTree.css" >
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="/asset/css/global.css" />
+        <link rel="stylesheet" href="/asset/css/components/base.css" />
+        <link rel="stylesheet" href="/asset/css/nav.css" />
+        <link rel="stylesheet" href="/asset/css/flash.css" />
+        <link rel="stylesheet" href="/asset/css/dialogue.css" />
+        <link rel="stylesheet" href="/asset/css/spellPopup.css" />
+        <link rel="stylesheet" href="/asset/css/skillTree.css" />
 
         <script type="importmap">
             {
@@ -39,18 +42,25 @@
             window.SUPPORT_EMAIL = "SUPPORT_EMAIL_PLACEHOLDER";
             window.GAME_NAME = "Key Gardener";
         </script>
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <script
+            src="https://accounts.google.com/gsi/client"
+            async
+            defer
+        ></script>
     </head>
 
     <body>
         <script>
-            (function() {
+            (function () {
                 var savedTheme = localStorage.getItem("theme");
                 if (savedTheme === "light") {
                     document.body.setAttribute("data-theme", "light");
                 } else if (savedTheme === "dark") {
                     document.body.removeAttribute("data-theme");
-                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                } else if (
+                    window.matchMedia &&
+                    window.matchMedia("(prefers-color-scheme: light)").matches
+                ) {
                     document.body.setAttribute("data-theme", "light");
                 }
             })();
@@ -65,7 +75,8 @@
             </div>
         </div>
         <div id="mini-loader" class="hidden">
-            <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+            <span class="dot">.</span><span class="dot">.</span
+            ><span class="dot">.</span>
         </div>
         <script>
             if (window.location.pathname === "/game") {
@@ -78,5 +89,10 @@
         </script>
         <script src="/socket.io/socket.io.js"></script>
         <script type="module" src="/src/main.js"></script>
+        <script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon='{"token": "886fb07e17b34fa39e2694749d359797"}'
+        ></script>
     </body>
 </html>

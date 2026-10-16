@@ -97,10 +97,10 @@ app.use(
             useDefaults: true,
             directives: {
                 "upgrade-insecure-requests": null,
-                "script-src": ["'self'", "'unsafe-inline'", "https://accounts.google.com"],
+                "script-src": ["'self'", "'unsafe-inline'", "https://accounts.google.com", "https://static.cloudflareinsights.com"],
                 "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com"],
                 "font-src": ["'self'", "data:", "https://fonts.gstatic.com"],
-                "connect-src": ["'self'", "blob:", "https://accounts.google.com"],
+                "connect-src": ["'self'", "blob:", "https://accounts.google.com", "https://cloudflareinsights.com"],
                 "worker-src": ["'self'", "blob:"],
                 "child-src": ["'self'", "blob:", "https://accounts.google.com"],
                 "frame-src": ["'self'", "https://accounts.google.com"],
